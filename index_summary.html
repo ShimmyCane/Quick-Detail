@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Detail Code Map</title>
+<style>
+  :root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { margin: 0 0 4px; }
+  h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+  .muted { color: var(--muted); }
+  .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: stretch; }
+  .box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+  .box h3 { margin: 0 0 4px; font-size: 15px; }
+  .box p { margin: 0; font-size: 13.5px; }
+  .b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); }
+  .arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+  th { background: var(--mint); }
+  td code, p code, li code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+  td:first-child { white-space: nowrap; }
+  .wrap { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Quick Detail: code map</h1>
+  <p class="muted">How the detail editor is put together, where each part lives, and which values you can change. Line numbers match the files as of the MVP (2026-10-23).</p>
+
+  <h2>1. How a drawing flows</h2>
+  <div class="flow">
+    <div class="box b1"><h3>Detail JSON</h3><p>The one source of truth: elements (geometry, graphics, meaning, intent, logic), relationships, and review items. <code>model.js</code></p></div>
+    <div class="box b2"><h3>Primitives</h3><p>Each element becomes paths, circles, arcs, and text in real units, with pen widths in paper mm. Hatches are clipped here. <code>primitives.js</code></p></div>
+    <div class="box b3"><h3>Outputs</h3><p>The screen and SVG (<code>svg.js</code>), PDF and DXF (<code>export.js</code>), and PNG/JPEG (SVG drawn onto a canvas). All read the same primitives, so they match.</p></div>
+    <div class="box b4"><h3>Editor</h3><p>Tools and snapping write new elements; panels edit meaning and relationships; rule checks read them back. <code>app.js</code>, <code>review.js</code></p></div>
+  </div>
+  <p class="muted">Every edit goes through <code>mutate()</code> in app.js. It refuses changes to locked details, takes an undo snapshot, autosaves to browser storage, and redraws.</p>
+
+  <h2>2. index.html: table of contents</h2>
+  <div class="wrap"><table>
+    <tr><th>Lines</th><th>Section</th><th>What it does</th></tr>
+    <tr><td>12–29</td><td>Top bar</td><td>Brand, detail title, scale and status chips, export buttons (<code>data-export</code>).</td></tr>
+    <tr><td>32–75</td><td>Left: drawing side</td><td>Toolbar (filled by app.js), the <code>&lt;svg id="canvas"&gt;</code> with layers grid / drawing / selection / draft / handles / snap, hint bar with coordinate input, zoom buttons, bottom bar (pens, linetype, "Draw as", hatch, undo, cursor readout).</td></tr>
+    <tr><td>77–103</td><td>Right: panels</td><td>Selection, Meaning, Relationships, Critical review, Detail, Library. Each has a +/− toggle.</td></tr>
+    <tr><td>106–113</td><td>Errors</td><td>Bottom error list, hidden unless "Show errors" is on in settings.</td></tr>
+    <tr><td>117–124</td><td>Settings gear</td><td>Lower-right gear and its drawer.</td></tr>
+    <tr><td>127–138</td><td>Text dialog</td><td>Multi-line note entry used by the Text and Leader tools.</td></tr>
+    <tr><td>143–151</td><td>Scripts</td><td>Load order matters: vocab → geom → model → primitives → svg → export → review → sample → app.</td></tr>
+  </table></div>
+
+  <h2>3. js/app.js: table of contents</h2>
+  <div class="wrap"><table>
+    <tr><th>Lines</th><th>Section</th><th>What it does</th></tr>
+    <tr><td>8–58</td><td>1. Storage, settings, state</td><td>Browser storage helpers (all wrapped in try/catch), <code>DEFAULT_SETTINGS</code>, and the <code>st</code> state object.</td></tr>
+    <tr><td>60–87</td><td>2. Errors and toast</td><td>Error log for the bottom panel; short toast messages.</td></tr>
+    <tr><td>89–122</td><td>3. Tools</td><td><code>TOOLS</code> (id, label, key, icon) and step-by-step <code>HINTS</code>.</td></tr>
+    <tr><td>124–187</td><td>4. History and mutation</td><td><code>mutate()</code>, undo/redo, <code>loadDetail()</code>.</td></tr>
+    <tr><td>189–242</td><td>5. View and coordinates</td><td>Screen ↔ drawing coordinates (drawing is y-up), zoom about a point, fit to drawing.</td></tr>
+    <tr><td>244–391</td><td>6. Rendering</td><td>Grid, drawing, selection highlight, point handles, draft preview, snap marker, readout, hint bar.</td></tr>
+    <tr><td>393–518</td><td>7. Hit testing and snapping</td><td><code>hitTest()</code> (linework and notes first, then region interiors), <code>nearestOn()</code> for leader tips, <code>snapPoint()</code> (endpoints, midpoints, grid, Shift for straight lines).</td></tr>
+    <tr><td>520–669</td><td>8. Pointer input</td><td>Mouse, pen, and touch through pointer events: select, move, point drag, pan, two-finger pinch, wheel zoom.</td></tr>
+    <tr><td>671–848</td><td>9. Drafting and creation</td><td>Collects points per tool and builds elements. The leader writes the note and an <code>annotates</code> relationship. Typed coordinates are handled here too.</td></tr>
+    <tr><td>850–921</td><td>10. Toolbar and bottom bar</td><td>Builds tool and pen buttons. "Draw as" sets the material's default pen and hatch and switches to a fitting tool.</td></tr>
+    <tr><td>923–1456</td><td>11. Panels</td><td>Selection (944), Meaning/intent/logic (1092), Relationships (1215), Critical review (1261), Detail (1319), Library (1360).</td></tr>
+    <tr><td>1457–1495</td><td>12. Settings drawer</td><td>Pen widths, text height, grid, snapping, error display, image dpi.</td></tr>
+    <tr><td>1497–1521</td><td>13. Exports</td><td>PDF, SVG, DXF, JSON, PNG, and JPEG downloads.</td></tr>
+    <tr><td>1523–1562</td><td>14. Keyboard</td><td>Tool keys, pens 1–6, Enter, Esc, Delete, undo/redo, F to fit, Space to pan.</td></tr>
+    <tr><td>1564–1629</td><td>15. Start</td><td>Wires events, restores panel open/closed state, and opens the last detail or the sample. Exposes <code>QD.app</code>.</td></tr>
+  </table></div>
+
+  <h2>4. The other modules</h2>
+  <div class="wrap"><table>
+    <tr><th>File</th><th>Key functions</th><th>Notes</th></tr>
+    <tr><td>vocab.js</td><td><code>QD.PENS</code>, <code>HATCHES</code>, <code>MATERIALS</code>, <code>ROLES</code>, <code>RELATIONSHIPS</code>, <code>SCALES</code></td><td>The controlled vocabulary. Add a material or hatch here and it appears in every menu.</td></tr>
+    <tr><td>geom.js</td><td><code>hatchLines</code>, <code>clipSegment</code>, <code>textWidth</code>, <code>formatLength</code></td><td>Hatch lines are scanline-clipped to the region polygon (even-odd).</td></tr>
+    <tr><td>model.js</td><td><code>newDetail</code>, <code>validate</code>, <code>normalize</code>, <code>nextId</code>, <code>points</code></td><td><code>validate</code> runs on import and in the rule checks. The future MCP bridge should call it before every apply.</td></tr>
+    <tr><td>primitives.js</td><td><code>build</code>, <code>element</code>, <code>forExport</code>, <code>titleStrip</code></td><td>Leaders are stored note end first; the last point is the arrow tip. Dimensions use architectural slash ticks.</td></tr>
+    <tr><td>svg.js</td><td><code>prims</code>, <code>document</code></td><td>The only place y is flipped for SVG.</td></tr>
+    <tr><td>export.js</td><td><code>pdf</code>, <code>dxf</code>, <code>raster</code>, <code>download</code></td><td>Hand-written PDF 1.4 (Helvetica) and DXF R12; no libraries, works offline.</td></tr>
+    <tr><td>review.js</td><td><code>run</code></td><td>Each finding is a verified requirement, a likely issue, or an open question.</td></tr>
+  </table></div>
+
+  <h2>5. Values you can change</h2>
+  <div class="wrap"><table>
+    <tr><th>Where</th><th>Variable</th><th>What it does</th><th>How to change it</th></tr>
+    <tr><td>Settings gear</td><td><code>settings.pens.P1–S1</code></td><td>Pen widths in paper mm (default 0.13 / 0.18 / 0.25 / 0.35 / 0.50 / 0.25).</td><td>Match your office pen table. Affects screen, PDF, SVG, and images.</td></tr>
+    <tr><td>Settings gear</td><td><code>textMM</code></td><td>Default note height on paper (2.5 mm ≈ 3/32").</td><td>Use 2.0–3.0. Each note can override it in Selection.</td></tr>
+    <tr><td>Settings gear</td><td><code>gridIn</code>, <code>gridMM</code></td><td>Snap grid size per unit system.</td><td>1/4" or 1/8" suits most details.</td></tr>
+    <tr><td>Settings gear</td><td><code>minScreenPx</code></td><td>Thinnest line on screen when zoomed out.</td><td>0 shows exact weights; 0.75–1 keeps fine pens visible. Exports are not affected.</td></tr>
+    <tr><td>Settings gear</td><td><code>dpi</code></td><td>PNG/JPEG resolution.</td><td>150 for email, 300 for print. Images are capped at 8000 px per side.</td></tr>
+    <tr><td>vocab.js</td><td><code>QD.HATCHES[*].families</code></td><td>Hatch angle and spacing in paper mm, so density looks the same at any scale.</td><td>Smaller spacing gives a denser hatch. <code>dots</code> spaces the stipple.</td></tr>
+    <tr><td>vocab.js</td><td><code>QD.MATERIALS[*]</code></td><td>Each material's default pen, hatch, role, and line or region kind.</td><td>Add entries for your own materials; ids are lower_case_words.</td></tr>
+    <tr><td>vocab.js</td><td><code>QD.PENS[*].dxfColor</code></td><td>DXF layer color per pen, for a CAD plot-style table.</td><td>Change to match your CTB file.</td></tr>
+    <tr><td>vocab.js</td><td><code>QD.LINETYPES</code></td><td>Dash patterns in paper mm, also written into the DXF linetype table.</td><td>Edit the arrays (dash, gap, dash, gap).</td></tr>
+    <tr><td>primitives.js</td><td>arrow <code>L</code>/<code>W</code>, tick <code>t</code>, title strip sizes</td><td>Arrowhead 2.2 × 1.5 mm, dimension tick 2.5 mm, title 3.5 mm text.</td><td>Values are paper mm passed through <code>cx.mm()</code>.</td></tr>
+    <tr><td>style.css</td><td><code>--bg</code>, <code>--mint</code>, <code>--peach</code>, <code>--sky</code>, <code>--butter</code>, <code>--sage</code></td><td>Pastel interface colors (the drawing itself stays black and white).</td><td>Change in <code>:root</code>.</td></tr>
+    <tr><td>style.css</td><td><code>--sel</code>, <code>--draft</code></td><td>Selection blue and in-progress coral on the drawing.</td><td>Pick colors that read clearly against black linework.</td></tr>
+    <tr><td>style.css</td><td><code>--touch</code></td><td>Minimum button height (44 px).</td><td>Raise to 48–56 for easier tapping on iPad.</td></tr>
+    <tr><td>style.css</td><td><code>.cols</code> grid</td><td>Right panel column width (370 px).</td><td>Wider panels leave less drawing space.</td></tr>
+    <tr><td>Browser storage</td><td><code>qd.current</code>, <code>qd.library</code>, <code>qd.settings</code>, <code>qd.closedPanels</code></td><td>Autosaved detail, library, settings, and collapsed panels.</td><td>Clearing site data removes them. Download JSON for real backups.</td></tr>
+  </table></div>
+</main>
+</body>
+</html>

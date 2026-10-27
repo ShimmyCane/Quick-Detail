@@ -58,6 +58,11 @@
     <div class="libpage-head">
       <h2>Library</h2>
       <div class="row">
+        <div class="seg" id="libViews" role="group" aria-label="Where to look">
+          <button class="chip on" data-view="local">This browser</button>
+          <button class="chip" data-view="cloud">Cloud</button>
+        </div>
+        <input type="search" id="libSearch" placeholder="Search name, tag or words" aria-label="Search the library">
         <label class="chip sel">Sort <select id="libSort" aria-label="Sort details"><option value="name">Name</option><option value="recent">Recent</option><option value="scenes">Most scenes</option></select></label>
         <button class="btn" id="libNew">New detail</button>
         <button class="link" id="libClose">Close</button>
@@ -95,7 +100,9 @@
   <script src="sketch/paint.js"></script>
   <script src="sketch/store.js"></script>
   <script src="sketch/record.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="sketch/analyze.js"></script>
+  <script src="sketch/cloud.js"></script>
   <script src="sketch/app.js"></script>
 </body>
 </html>

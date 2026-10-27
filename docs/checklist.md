@@ -4,13 +4,14 @@ Checked boxes are done. Newest decisions are at the top of their section.
 
 ## Decide
 
-- [ ] **Where the details live.** Today they are in this browser only (IndexedDB, database `wallsketch`). Clearing site data or using another device loses them. Options:
-  - [ ] Put them in the Supabase **Architecture** project (`xabgankckrcuhcgdolrg`). Draft tables: `docs/supabase-sketch.sql`. It is not applied. Say yes and I will apply it and wire up sync.
-  - [ ] Keep them local and export JSON as the backup for now.
-- [ ] Link details to the existing `projects` table (optional `project_id`), or keep them standalone?
-- [ ] Are the `sketch-audio` bucket and the policies in the draft right for how you sign in?
+- [x] **Where the details live.** Applied to the Architecture project: `sketch_details`, `sketch_recordings`, `sketch_snapshots`, the private `sketch-media` bucket, and `table_index`, which says which project claims each table. Record: `docs/supabase-sketch.sql`.
+- [x] Access is owner-only, the same rule the practice tables use. Checked in the database: the owner's email can write, another email is refused.
+- [ ] **Sign-in setup (you).** Uploads use an emailed sign-in link. In Supabase → Authentication → URL configuration, set the Site URL and add the page's address to the redirect URLs, and make sure the email provider is on. Without this the link has nowhere to return to.
+- [ ] Link details to the existing `projects` table (`project_id` exists but is not set yet). Decide per detail which practice project it belongs to.
 
 ## Test on real hardware
+
+- [ ] Upload a detail from a browser that has internet: Project info → Upload to cloud. Then Library → Cloud → open it and play the audio. The sandbox could not reach the Supabase library, so the upload path is untested live.
 
 - [ ] Speech to text in Chrome and on the iPad (Safari uses a different recogniser). Speech only reaches the page when the browser supports it.
 - [ ] Replayed sound lines up with the picture. Chrome-recorded WebM files often cannot seek, so check a scrub to the middle of a long scene.
@@ -32,6 +33,9 @@ Checked boxes are done. Newest decisions are at the top of their section.
 - [ ] Import v2 drawings into v3 (v2 stays readable from Settings → Version log).
 
 ## Done
+
+- [x] 2026-10-27 Cloud sync: upload a detail with its recordings, audio, scene JPEGs and metadata (`sketch/cloud.js`). Re-uploading updates the same rows.
+- [x] 2026-10-27 Library: a Cloud view signs in, lists what was uploaded, plays the audio and shows the scene pictures, and shows the table index. Search, delete from browser, and the Quick Detail look.
 
 - [x] 2026-10-27 Endless sheet, scenes, notes, dimensions, library (v3, PR #2).
 - [x] 2026-10-27 Element tags from geometry and from the words said while drawing (`sketch/analyze.js`).

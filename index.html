@@ -54,6 +54,19 @@
     <div id="panelBody"></div>
   </aside>
 
+  <section id="libPage" class="libpage" hidden aria-label="Library">
+    <div class="libpage-head">
+      <h2>Library</h2>
+      <div class="row">
+        <label class="chip sel">Sort <select id="libSort" aria-label="Sort details"><option value="name">Name</option><option value="recent">Recent</option><option value="scenes">Most scenes</option></select></label>
+        <button class="btn" id="libNew">New detail</button>
+        <button class="link" id="libClose">Close</button>
+      </div>
+    </div>
+    <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
+    <div id="libBody" class="libbody"></div>
+  </section>
+
   <section id="log" class="log" hidden aria-label="Log">
     <div class="log-head">
       <h2 id="logTitle">Log</h2>
@@ -82,6 +95,7 @@
   <script src="sketch/paint.js"></script>
   <script src="sketch/store.js"></script>
   <script src="sketch/record.js"></script>
+  <script src="sketch/analyze.js"></script>
   <script src="sketch/app.js"></script>
 </body>
 </html>

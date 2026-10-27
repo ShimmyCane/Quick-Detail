@@ -997,12 +997,11 @@
     var btn = document.querySelector('.rail [data-act="' + kind + '"]');
     if (btn) btn.classList.add('on');
     if (kind === 'log') { $('log').hidden = false; renderLog(); return; }
-    $('panelTitle').textContent = { project: 'Project info', library: 'Library', settings: 'Settings' }[kind];
+    $('panelTitle').textContent = { project: 'Project info', settings: 'Settings' }[kind];
     var body = $('panelBody');
     body.innerHTML = '';
     $('panel').hidden = false;
     if (kind === 'project') renderProject(body);
-    else if (kind === 'library') renderLibrary(body);
     else renderSettings(body);
   }
 
@@ -1068,6 +1067,9 @@
       section('Detail name', [name]),
       section('Scale', [scale, el('p', { class: 'muted', text: 'The drawing stays the same size. Notes and dimension text are sized for the scale.' })]),
       section('Tags', [tagWrap]),
+      section('Metadata', [el('div', { class: 'row' }, [
+        el('button', { class: 'btn', text: 'Tag elements from recordings', on: { click: tagElements } })
+      ]), el('p', { class: 'muted', text: metadataPreview() })]),
       branch,
       section('File', [el('div', { class: 'row' }, [
         el('button', { class: 'btn', text: 'Save', on: { click: function () { saveNow().then(function () { toast('Saved.'); }).catch(fail); } } }),
@@ -1081,45 +1083,200 @@
         el('button', { class: 'btn', text: 'JPEG', on: { click: exportJpeg } }),
         el('button', { class: 'btn', text: 'Scene series', on: { click: exportSeries } }),
         el('button', { class: 'btn', text: 'Data (JSON)', on: { click: exportData } })
-      ]), el('p', { class: 'muted', text: 'Images crop to the drawing. Data holds every scene with its transcript, for rebuilding the library later.' })]),
+      ]), el('p', { class: 'muted', text: 'Each JPEG carries its metadata inside the file, and a .metadata.json sits beside it. Data (JSON) holds everything, for rebuilding the library later.' })]),
       section('Delete', [el('button', { class: 'btn danger', text: 'Delete this detail', on: { click: deleteDetail } })])
     ].forEach(function (s) { if (s) body.appendChild(s); });
   }
 
-  function renderLibrary(body) {
-    body.appendChild(el('div', { class: 'row' }, [
-      el('button', { class: 'btn', text: 'New detail', on: { click: function () {
-        var d = newDetail();
-        SK.DB.put('details', d).then(function () { closePanel(); openDetail(d); });
-      } } })
-    ]));
-    SK.DB.all('details').then(function (list) {
-      list.sort(function (a, b) { return b.modified - a.modified; });
-      var groups = {};
-      list.forEach(function (d) {
-        var tags = d.tags && d.tags.length ? d.tags : ['untagged'];
-        tags.forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
+  // Library page: every detail with its tags and metadata. Sort, filter by tag, and hold a card to flip through its scenes.
+
+  var lib = { sessions: {}, frames: {} };
+
+  function sceneCountOf(d) { return SK.scenesOf(lib.sessions[d.id] || []).length; }
+
+  // A detail's tags: the ones typed on it, plus the ones found in its tagged elements.
+  function detailTags(d) {
+    var out = (d.tags || []).slice();
+    (d.items || []).forEach(function (it) {
+      if (it.meta) (it.meta.tags || []).forEach(function (t) { if (out.indexOf(t) < 0) out.push(t); });
+    });
+    return out;
+  }
+
+  function openLibrary() {
+    closePanel();
+    if (pb) exitReplay();
+    lib.frames = {};
+    $('libPage').hidden = false;
+    document.querySelector('.rail [data-act="library"]').classList.add('on');
+    renderLibrary();
+  }
+
+  function closeLibrary() {
+    $('libPage').hidden = true;
+    document.querySelector('.rail [data-act="library"]').classList.remove('on');
+  }
+
+  function renderLibrary() {
+    Promise.all([SK.DB.all('details'), SK.DB.all('sessions')]).then(function (r) {
+      var details = r[0];
+      lib.sessions = {};
+      r[1].forEach(function (s) { (lib.sessions[s.detailId] = lib.sessions[s.detailId] || []).push(s); });
+
+      var sort = $('libSort').value;
+      details.sort(function (a, b) {
+        if (sort === 'recent') return b.modified - a.modified;
+        if (sort === 'scenes') return sceneCountOf(b) - sceneCountOf(a) || a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name);
       });
-      var names = Object.keys(groups).sort(function (a, b) {
+
+      var tags = [];
+      details.forEach(function (d) { detailTags(d).forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
+      tags.sort();
+      var filters = $('libFilters');
+      filters.innerHTML = '';
+      filters.appendChild(el('button', { class: 'chip' + (!lib.filter ? ' on' : ''), text: 'All', on: { click: function () { lib.filter = null; renderLibrary(); } } }));
+      tags.forEach(function (t) {
+        filters.appendChild(el('button', { class: 'chip' + (lib.filter === t ? ' on' : ''), text: t, on: { click: function () { lib.filter = t; renderLibrary(); } } }));
+      });
+
+      var shown = details.filter(function (d) { return !lib.filter || detailTags(d).indexOf(lib.filter) >= 0; });
+      var body = $('libBody');
+      body.innerHTML = '';
+      if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: 'No details match this tag yet.' })); return; }
+
+      var groups = {};
+      shown.forEach(function (d) {
+        (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
+      });
+      Object.keys(groups).sort(function (a, b) {
         if (a === 'untagged') return 1;
         if (b === 'untagged') return -1;
         return a.localeCompare(b);
-      });
-      var col = colors();
-      names.forEach(function (t) {
+      }).forEach(function (t) {
         var grid = el('div', { class: 'lib-grid' });
-        groups[t].forEach(function (d) {
-          var a = acFor(d);
-          var pic = SK.picture(d.items, SK.itemsBounds(d.items, a), 132, 88, { ac: a, ink: col.ink, paper: col.paper });
-          grid.appendChild(el('button', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), on: { click: function () {
-            closePanel();
-            if (d.id !== detail.id) openDetail(d);
-          } } }, [pic, el('b', { text: d.name }), el('span', { text: SK.scaleOf(d.scale).label + (d.parentId ? ' · branch' : '') })]));
-        });
-        body.appendChild(section(t + ' (' + groups[t].length + ')', [grid]));
+        groups[t].forEach(function (d) { grid.appendChild(libCard(d)); });
+        body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
       });
     }).catch(function (e) { fail(e, 'Could not read the library: '); });
   }
+
+  function libCard(d) {
+    var a = acFor(d);
+    var col = colors();
+    var sess = lib.sessions[d.id] || [];
+    var scenes = SK.scenesOf(sess);
+    var recorded = sess.reduce(function (n, s) { return n + (s.duration || 0); }, 0);
+    var tagged = d.items.filter(function (it) { return it.meta; }).length;
+    var pic = SK.picture(d.items, SK.itemsBounds(d.items, a), 220, 140, { ac: a, ink: col.ink, paper: col.paper });
+    var last = scenes.length ? scenes[scenes.length - 1].text : '';
+    var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
+      pic,
+      el('span', { class: 'flip-label' }),
+      el('b', { text: d.name }),
+      el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.parentId ? ' · branch' : '') }),
+      el('span', { class: 'meta', text: scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' +
+        sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded) + ' · ' +
+        d.items.length + ' elements (' + tagged + ' tagged)' }),
+      el('span', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
+      el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
+    ]);
+    bindFlip(card, pic, d);
+    card.addEventListener('click', function () {
+      if (Date.now() < card._quietUntil) return;
+      closeLibrary();
+      if (d.id !== detail.id) openDetail(d);
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); card.click(); }
+    });
+    return card;
+  }
+
+  // Frames for flipping: one picture per scene, all at the same view so they line up.
+  function framesFor(d) {
+    if (lib.frames[d.id]) return Promise.resolve(lib.frames[d.id]);
+    var sess = lib.sessions[d.id] || [];
+    var byId = {};
+    var all = [];
+    sess.forEach(function (s) {
+      byId[s.id] = s;
+      all = all.concat(s.base);
+      s.events.forEach(function (ev) {
+        if (ev.type === 'put') all.push(ev.item);
+        else if (ev.type === 'replace') all = all.concat(ev.items);
+      });
+    });
+    var a = acFor(d);
+    var col = colors();
+    var b = SK.itemsBounds(all, a) || SK.itemsBounds(d.items, a);
+    var frames = SK.scenesOf(sess).map(function (sc) {
+      return {
+        canvas: SK.picture(SK.stateAt(byId[sc.sessionId], sc.end), b, 220, 140, { ac: a, ink: col.ink, paper: col.paper }),
+        label: 'Scene ' + sc.index + ' · ' + SK.formatTime(sc.start)
+      };
+    });
+    lib.frames[d.id] = frames;
+    return Promise.resolve(frames);
+  }
+
+  // Hold a card to flip through its scenes like a flip book. Release to see the detail as it is now.
+  function bindFlip(card, pic, d) {
+    var HOLD_MS = 220, FRAME_MS = 300;
+    var timer = 0, tickId = 0, frames = null, flipping = false, saved = null, idx = 0;
+    var label = card.querySelector('.flip-label');
+    card._quietUntil = 0;
+
+    function show(i) {
+      var c = pic.getContext('2d');
+      c.clearRect(0, 0, pic.width, pic.height);
+      c.drawImage(frames[i].canvas, 0, 0);
+      label.textContent = frames[i].label;
+    }
+
+    function start() {
+      framesFor(d).then(function (fr) {
+        if (!flipping) return;
+        if (!fr.length) { flipping = false; return; }
+        frames = fr;
+        idx = 0;
+        saved = document.createElement('canvas');
+        saved.width = pic.width;
+        saved.height = pic.height;
+        saved.getContext('2d').drawImage(pic, 0, 0);
+        card.classList.add('flipping');
+        show(0);
+        tickId = setInterval(function () { idx = (idx + 1) % frames.length; show(idx); }, FRAME_MS);
+      });
+    }
+
+    function stop() {
+      clearTimeout(timer);
+      clearInterval(tickId);
+      if (flipping && saved) {
+        pic.getContext('2d').clearRect(0, 0, pic.width, pic.height);
+        pic.getContext('2d').drawImage(saved, 0, 0);
+      }
+      flipping = false;
+      card.classList.remove('flipping');
+      label.textContent = '';
+      card._quietUntil = Date.now() + 400;   // the click that follows a hold must not open the detail
+    }
+
+    card.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () { flipping = true; start(); }, HOLD_MS);
+    });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) {
+      card.addEventListener(ev, function () {
+        clearTimeout(timer);
+        if (flipping) stop();
+      });
+    });
+    card.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  }
+
 
   function renderSettings(body) {
     var caps = el('input', { type: 'checkbox', checked: settings.caps, on: { change: function (e) {
@@ -1409,7 +1566,7 @@
   function sheetCanvas(items, b, d) {
     var dpi = 150, f = factorOf(d);
     var z = dpi / f;
-    var margin = 0.4 * dpi, titleH = 0.75 * dpi;
+    var margin = 0.4 * dpi, titleH = 1.0 * dpi;
     var bw = (b.maxx - b.minx) * z, bh = (b.maxy - b.miny) * z;
     var k = Math.min(1, 7000 / Math.max(bw + 2 * margin, bh + 2 * margin + titleH));
     z *= k;
@@ -1430,6 +1587,7 @@
     c.fillRect(margin, ty + 0.06 * dpi, Math.max(c.measureText(name).width, 1.5 * dpi), Math.max(2, 0.012 * dpi));
     c.font = Math.round(0.11 * dpi) + 'px ' + SK.FONT;
     c.fillText(d.scale === 'NTS' ? 'NOT TO SCALE' : 'SCALE: ' + SK.scaleOf(d.scale).label, margin, ty + 0.25 * dpi);
+    if (d.tags && d.tags.length) c.fillText('TAGS: ' + d.tags.join(', ').toUpperCase(), margin, ty + 0.42 * dpi);
     return cv;
   }
 
@@ -1439,31 +1597,98 @@
     });
   }
 
+  // Current analysis of the open detail, with every element's tags and every scene's transcript.
+  function analysis() { return SK.analyze(detail, sessions, ac()); }
+
+  function metadataPreview() {
+    if (!detail.items.length) return 'Nothing to describe yet. Draw, talk, then tag the elements.';
+    return SK.detailMetadata(detail, analysis()).summary;
+  }
+
+  // Tags each element from its shape and from what was said while it was drawn. Stored on the element as meta.
+  function tagElements() {
+    var an = analysis();
+    var byId = {};
+    an.elements.forEach(function (e) { byId[e.id] = e; });
+    detail.items = detail.items.map(function (it) {
+      var e = byId[it.id];
+      if (!e) return it;
+      var n = clone(it);
+      n.meta = SK.itemMeta(e);
+      return n;
+    });
+    detail.modified = Date.now();
+    saveNow().then(function () {
+      toast('Tagged ' + an.elements.length + (an.elements.length === 1 ? ' element.' : ' elements.'));
+      if (panelKind === 'project') {
+        var body = $('panelBody');
+        body.innerHTML = '';
+        renderProject(body);
+      }
+    }).catch(function (e) { fail(e, 'Could not save the tags: '); });
+  }
+
+  // A JPEG with its metadata inside it (a JPEG comment), and the same metadata as a sidecar file.
+  // If the metadata is too big for a comment, the image gets the summary and element labels only.
+  function jpegWithMeta(cv, name, meta) {
+    return new Promise(function (resolve, reject) {
+      cv.toBlob(function (blob) {
+        blob.arrayBuffer().then(function (buf) {
+          var bytes = new Uint8Array(buf);
+          var tagged;
+          try {
+            tagged = SK.jpegWithComment(bytes, JSON.stringify(meta));
+          } catch (err) {
+            var slim = clone(meta);
+            slim.scenes = (slim.scenes || []).map(function (sc) { return { index: sc.index, at: sc.at, said: (sc.said || '').slice(0, 160) }; });
+            slim.elements = (slim.elements || []).map(function (e) { return { type: e.type, label: e.label, tags: e.tags }; });
+            slim.truncated = true;
+            tagged = SK.jpegWithComment(bytes, JSON.stringify(slim));
+          }
+          download(new Blob([tagged], { type: 'image/jpeg' }), name);
+          download(new Blob([JSON.stringify(meta, null, 1)], { type: 'application/json' }), name.replace(/\.jpg$/, '.metadata.json'));
+          resolve();
+        }).catch(reject);
+      }, 'image/jpeg', 0.92);
+    });
+  }
+
   function exportJpeg() {
     var b = SK.itemsBounds(detail.items, ac());
     if (!b) { toast('Nothing to export yet.'); return; }
-    jpeg(sheetCanvas(detail.items, b, detail), slug(detail.name) + '.jpg');
+    var an = analysis();
+    var meta = SK.detailMetadata(detail, an);
+    jpegWithMeta(sheetCanvas(detail.items, b, detail), slug(detail.name) + '.jpg', meta).catch(fail);
   }
 
+  // One image per scene, each with the scene's own metadata and the elements on the sheet by then.
   function exportSeries() {
-    var shots = [];
+    var an = analysis();
+    if (!an.scenes.length) { toast('No scenes to export yet.'); return; }
+    var byId = {};
+    sessions.forEach(function (s) { byId[s.id] = s; });
+    var frames = an.scenes.map(function (sc) {
+      var items = SK.stateAt(byId[sc.sessionId], sc.end);
+      return { items: items, sc: sc, ids: items.map(function (it) { return it.id; }) };
+    });
     var pts = [];
     sessions.forEach(function (s) {
       var sb = sessionBounds(s);
       if (sb) pts.push([sb.minx, sb.miny], [sb.maxx, sb.maxy]);
-      scenesOf(s).forEach(function (m) { shots.push(SK.stateAt(s, m.end)); });
     });
-    if (!shots.length) { toast('No scenes to export yet.'); return; }
     var b = SK.boundsOf(pts) || SK.itemsBounds(detail.items, ac());
     if (!b) { toast('Nothing to export yet.'); return; }
-    toast('Exporting ' + shots.length + ' images. Allow multiple downloads if asked.');
+    toast('Exporting ' + frames.length + ' images. Allow multiple downloads if asked.');
     var i = 0;
     (function next() {
-      if (i >= shots.length) return;
-      var items = shots[i];
+      if (i >= frames.length) return;
+      var f = frames[i];
       i++;
       var name = slug(detail.name) + '-scene-' + (i < 10 ? '0' : '') + i + '.jpg';
-      jpeg(sheetCanvas(items, b, detail), name).then(function () { setTimeout(next, 350); });
+      var meta = SK.sceneMetadata(detail, an, f.sc, f.ids);
+      jpegWithMeta(sheetCanvas(f.items, b, detail), name, meta)
+        .then(function () { setTimeout(next, 500); })
+        .catch(fail);
     })();
   }
 
@@ -1496,6 +1721,7 @@
     if (act === 'scene') return;
     if (act === 'undo') undo();
     else if (act === 'text' || act === 'dim') { if (pb) exitReplay(); setTool(act); }
+    else if (act === 'library') openLibrary();
     else openPanel(act);
   });
 
@@ -1514,6 +1740,12 @@
   })();
 
   $('hintCancel').addEventListener('click', endDraft);
+  $('libClose').addEventListener('click', closeLibrary);
+  $('libSort').addEventListener('change', renderLibrary);
+  $('libNew').addEventListener('click', function () {
+    var d = newDetail();
+    SK.DB.put('details', d).then(function () { closeLibrary(); openDetail(d); });
+  });
   $('panelClose').addEventListener('click', closePanel);
   $('logClose').addEventListener('click', closePanel);
 
@@ -1521,7 +1753,8 @@
     var tag = e.target && e.target.tagName;
     var typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
     if (e.key === 'Escape') {
-      if (draft) endDraft();
+      if (!$('libPage').hidden) closeLibrary();
+      else if (draft) endDraft();
       else if (sel) select(null);
       else if (panelKind) closePanel();
       else if (pb) exitReplay();

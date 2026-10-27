@@ -441,3 +441,53 @@ The pure files use the same wrapper as `core.js`, so they work both in the brows
 - Export (PDF/DXF) of the new sheet. The old editor in `history/v1` has exporters to borrow later.
 - AI description of whole drawings (Q13).
 - Hatches.
+
+---
+
+## 13. Answers and what v3 built
+
+The questions in section 1 were answered, and the increment was built as **v3** (the front page). The v2 sketch page is archived at `history/v2/` and listed in Settings → Version log, next to v1.
+
+### Answers that changed the plan
+
+| # | Answer | What v3 does |
+|---|---|---|
+| Q1 | Paper size doesn't matter; the sheet is infinite; exports crop to the drawing. | The sheet is endless and drawn in **real inches**. Pan with a finger (once a pen is used), two-finger pinch, Space+drag, or right-drag; zoom with pinch or Ctrl+wheel. JPEG export crops to the drawing at 150 dpi of paper, with the title under it. |
+| Q2 | The drawing stays put, dimensions stay put, the text may change. | Changing the scale leaves geometry and dimension values alone. Note text, arrows and ticks resize, because they keep a fixed size on paper. |
+| Q4 | Tags on the whole detail for now; per-card tagging is left to automation later. | Tags are on the detail only: fixed chips (wall, threshold, door, window, roof, foundation) plus custom tags, which are remembered. |
+| Q5 | Auto-record works. The lower-right button becomes a **scene counter**: tap it to force a new scene (snapshot) while still talking. It also updates itself as pauses are detected. | The pen starts a recording. It stops 5 s after the last pen, edit or voice. The round button shows the running scene count; tapping it starts a new scene (a `mark`) and starts recording if needed. Holding it stops recording at once. Voice activity from the mic level keeps a recording alive while you talk. |
+| Q6 | Save saves the whole file, including snapshots. Snapshots let you branch, edit and merge. | **Save** writes the detail now (it also saves itself). **Save as** copies the detail together with its recordings and scenes. Every scene card in the log can **Restore** (undoable) or **Branch**. Branching makes a new detail linked to its parent; **Merge into parent** copies the branch's items back. |
+| Q7 | A button to zoom out to the project: a library of details sorted by tags. Linking it to another repository can come later. | **Library** panel: details grouped by tag, with thumbnails, plus New detail. |
+| Q8 | Shape reading isn't important. Treat a drawn thing as one element, so a spoken description can be tied to it; hatching inside can be ignored. | Not built. Each scene already records which items were drawn in it (`ids`), next to what was said. That is the link a later "rebuild database" pass can use. |
+| Q9 | Unclear what "eight buttons" meant. | They are the requested tools, as one thin icon rail in the lower right. From the bottom: scene counter, Undo, Text, Dimension, Log, Library, Project info, Settings. |
+| Q12 | No redo; it's pen and pencil. Save as must keep the snapshots. | Undo only. Save as copies the recordings. |
+| Q13 | Transcripts belong in a database, so an LLM can later rebuild tags by reading the drawings. | **Export → Data (JSON)** writes the detail, every recording's events, the speech text, and the scenes (time, transcript, items). |
+
+Q3 (the scale list), Q10 (1/16" rounding) and Q11 (notes in capitals) were taken as written.
+
+### Notes and dimensions as built
+
+- **Text (T):**
+  - Tap the arrow point (it snaps to stroke ends, or onto a stroke). Then tap where the text starts, or drag to set its width, and type.
+  - Select a note by tapping it. Its handles move the arrow tips, the box, the width and the height.
+  - Its chips: Edit text, + Arrow, − Arrow, arrowhead (filled, open, hollow, dot, tick, none), size, Auto height, Delete.
+- **Dimension (D):**
+  - Pick Ortho, Aligned or Angular. Tap the points (snapped), then drag out the line.
+  - Ortho picks horizontal or vertical from the drag direction.
+  - Values are measured in real inches to 1/16" (configurable, also per dimension). Text… sets an override, where `<>` stands for the measured value.
+  - Ends: tick (default), arrows or dot.
+
+### Not built yet
+
+- Shape reading (section 7).
+- Bends on leaders.
+- Importing v2 drawings into v3. v2 keeps its own data in its own page.
+- Per-card tags.
+- Linking the library with another repository.
+- Speech text and audio sync are untested on a real device, as in 001.
+
+### Files
+
+`sketch/core.js` (events, replay, scenes), `sketch/units.js`, `sketch/annot.js` (notes, dimensions, hit testing, snapping), `sketch/paint.js`, `sketch/store.js` (IndexedDB `wallsketch`), `sketch/record.js` (mic, voice activity, speech), `sketch/app.js`.
+
+Tests: `node tests/sketch.js`.

@@ -8,62 +8,80 @@
 </head>
 <body>
 
-  <!-- The sheet. Nothing else is drawn on it: no toolbar, no palette. -->
+  <!-- The sheet: endless, in real inches. -->
   <canvas id="sheet" aria-label="Drawing sheet"></canvas>
 
-  <!-- Shown only while recording. Not a control. -->
+  <!-- Detail title, lower left: tap the name for project info, drag across the scale to change it. -->
+  <div class="title-block" id="title">
+    <button class="tb-name" id="titleName">Untitled detail</button>
+    <div class="tb-scale" id="titleScale" title="Drag sideways to change the scale">
+      <span id="scaleLabel"></span>
+      <span class="bar-wrap"><span class="bar" id="scaleBar"></span><span id="barLabel"></span></span>
+    </div>
+  </div>
+  <div class="scale-big" id="scaleBig" hidden></div>
+
+  <!-- Shown only while a recording runs. Not a control. -->
   <div id="recDot" class="rec-dot" hidden><span></span><time id="recTime">00:00</time></div>
 
-  <!-- The only permanent mark on the page. Opens settings. -->
-  <button id="gear" class="gear" aria-label="Settings" title="Settings">⚙</button>
+  <!-- Step hints for the text and dimension tools. -->
+  <div id="hint" class="hint" hidden>
+    <span id="hintText"></span>
+    <span id="hintExtra" class="hint-extra"></span>
+    <button class="chip" id="hintCancel">Cancel</button>
+  </div>
 
-  <nav id="drawer" class="drawer" hidden aria-label="Settings">
-    <div class="drawer-head">
-      <h2>Settings</h2>
-      <button class="link" id="closeDrawer">Close</button>
-    </div>
+  <!-- Options for the selected note or dimension. -->
+  <div id="chips" class="chips" hidden></div>
 
-    <section>
-      <h3>Recording</h3>
-      <button class="btn" id="recBtn">Record</button>
-      <p class="muted">Drawing, sound and speech are saved together. A pause of 3 seconds starts a new moment.</p>
-    </section>
-
-    <section>
-      <h3>Sheet</h3>
-      <div class="row">
-        <button class="btn" id="undoBtn">Undo</button>
-        <button class="btn" id="clearBtn">Clear sheet</button>
-      </div>
-    </section>
-
-    <section>
-      <h3>Recordings</h3>
-      <ul id="sessionList" class="sessions"></ul>
-    </section>
-
-    <section>
-      <h3>Earlier version</h3>
-      <a href="history/v1/index.html">Open the previous Quick Detail</a>
-    </section>
-
-    <p class="muted small">Keys: R record · Space play or pause · Esc close · Ctrl+Z undo</p>
+  <!-- Lower right. The bottom button counts scenes; tap it for a new scene, hold it to stop recording. -->
+  <nav class="rail" id="rail" aria-label="Tools">
+    <button data-act="settings" title="Settings" aria-label="Settings">⚙</button>
+    <button data-act="project" title="Project info" aria-label="Project info">ⓘ</button>
+    <button data-act="library" title="Library" aria-label="Library">▦</button>
+    <button data-act="log" title="Log" aria-label="Log">☰</button>
+    <button data-act="dim" title="Dimension (D)" aria-label="Dimension">↔</button>
+    <button data-act="text" title="Text with arrow (T)" aria-label="Text">T</button>
+    <button data-act="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
+    <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
   </nav>
 
-  <!-- Playback. Opened from a recording in Settings. -->
-  <section id="player" class="player" hidden aria-label="Playback">
+  <aside id="panel" class="panel" hidden>
+    <div class="panel-head">
+      <h2 id="panelTitle"></h2>
+      <button class="link" id="panelClose">Close</button>
+    </div>
+    <div id="panelBody"></div>
+  </aside>
+
+  <section id="log" class="log" hidden aria-label="Log">
+    <div class="log-head">
+      <h2 id="logTitle">Log</h2>
+      <button class="link" id="logClose">Close</button>
+    </div>
+    <div id="logStrip" class="strip"></div>
+  </section>
+
+  <section id="player" class="player" hidden aria-label="Replay">
     <div class="player-bar">
-      <button class="btn" id="playBtn" aria-label="Play">▶</button>
+      <button class="btn" id="playBtn" aria-label="Play or pause">▶</button>
       <input id="scrub" type="range" min="0" max="0" value="0" aria-label="Position">
       <span id="clock" class="clock">00:00</span>
       <button class="link" id="exitBtn">Done</button>
     </div>
-    <ol id="moments" class="moments"></ol>
+    <div id="playerScenes" class="pscenes"></div>
   </section>
 
+  <textarea id="editor" class="editor" hidden spellcheck="true" aria-label="Note text"></textarea>
+  <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
   <script src="sketch/core.js"></script>
+  <script src="sketch/units.js"></script>
+  <script src="sketch/annot.js"></script>
+  <script src="sketch/paint.js"></script>
+  <script src="sketch/store.js"></script>
+  <script src="sketch/record.js"></script>
   <script src="sketch/app.js"></script>
 </body>
 </html>

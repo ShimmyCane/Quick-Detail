@@ -36,7 +36,9 @@
   var panelKind = null;
   var clip = null;           // audio element playing a scene clip
   var customTags = [];
-  var settings = { caps: true, roundTo: 1 / 16 };
+  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false };
+  var pen = { color: 'ink', weight: 'w2' };       // what new strokes, notes and dimensions are drawn with
+  var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
   var counter = 0;
 
   // ===================================================================
@@ -55,11 +57,14 @@
     return { factor: SK.scaleOf(scaleKey || d.scale).factor, caps: settings.caps, roundTo: settings.roundTo, measure: SK.measure };
   }
   function ac() { return acFor(detail); }
-  function defaultZ(d) { return SK.SCREEN_PX_PER_PAPER_IN / factorOf(d); }
+  function defaultZ(d) { return DETAIL_PX_PER_PAPER_IN / factorOf(d); }
+  // The sheet's colours. The background is a setting; black ink turns white when the background is dark.
   function colors() {
-    var cs = getComputedStyle(document.documentElement);
-    return { ink: cs.getPropertyValue('--ink').trim() || '#1d1d1f', paper: cs.getPropertyValue('--paper').trim() || '#fbfaf7', accent: cs.getPropertyValue('--select').trim() || '#2f6fdd' };
+    var bg = settings.bg;
+    var dark = SK.luma(bg) < 0.3;
+    return { ink: SK.inkFor('ink', bg), paper: bg, accent: dark ? '#7aa7ff' : '#2f6fdd' };
   }
+  function weightWorld() { return SK.WEIGHTS[pen.weight] * factorOf(detail); }
   function rel(ts) { return take ? Math.max(0, Math.round((ts == null ? performance.now() : ts) - take.t0)) : 0; }
   function el(tag, attrs, kids) {
     var e = document.createElement(tag);
@@ -112,7 +117,7 @@
   function homeView(d) {
     var b = SK.itemsBounds(d.items, acFor(d));
     var z = defaultZ(d);
-    return SK.fitView(b, W(), H(), 80, z * 2) || { x: -W() / (2 * z), y: -H() / (2 * z), z: z };
+    return SK.fitView(b, W(), H(), 40, z * 3) || { x: -W() / (2 * z), y: -H() / (2 * z), z: z };
   }
 
   function openDetail(d) {
@@ -297,7 +302,11 @@
     if (!detail) return;
     var col = colors();
     var list = pb ? pb.items : detail.items;
-    SK.paint(ctx, list, view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, ratio: dpr, w: W(), h: H() });
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = col.paper;
+    ctx.fillRect(0, 0, W(), H());
+    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), col.ink, dpr);
+    SK.paint(ctx, list, view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H() });
     if (!pb) {
       drawDraft(col);
       drawSelection(col);
@@ -576,7 +585,7 @@
 
   function startStroke(e, w) {
     ensureTake();
-    var it = { id: uid('s'), kind: 'stroke', t0: rel(e.timeStamp), w: 2.2 / view.z, pts: [] };
+    var it = { id: uid('s'), kind: 'stroke', t0: rel(e.timeStamp), w: weightWorld(), c: pen.color, pts: [] };
     drawing = { item: it };
     detail.items.push(it);
     addPoint(e);
@@ -675,14 +684,14 @@
       draft = { tool: 'dim', mode: dimMode, pts: [] };
       showDimHint();
     }
-    document.querySelectorAll('.rail [data-act]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-act') === t); });
+    document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-act') === t); });
   }
 
   function endDraft() {
     draft = null;
     tool = 'draw';
     $('hint').hidden = true;
-    document.querySelectorAll('.rail [data-act]').forEach(function (b) { b.classList.remove('on'); });
+    document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.remove('on'); });
     redraw();
   }
 
@@ -743,7 +752,7 @@
       var dragged = Math.abs(dx) * view.z > 12;
       var width = dragged ? Math.abs(dx) : 2 * f;
       var note = {
-        id: uid('n'), kind: 'note', text: '',
+        id: uid('n'), kind: 'note', text: '', c: pen.color,
         at: [dragged && dx < 0 ? start[0] - width : start[0], start[1]],
         width: width, height: null, size: SK.PAPER.text, justify: 'auto',
         leaders: [{ id: uid('l'), tip: draft.tip, bends: [], arrow: 'filled' }]
@@ -783,7 +792,7 @@
 
   function buildDim(at) {
     var p = draft.pts;
-    var d = { id: uid('m'), kind: 'dim', mode: draft.mode, at: at, text: null, size: SK.PAPER.text, end: 'tick', roundTo: null };
+    var d = { id: uid('m'), kind: 'dim', mode: draft.mode, at: at, text: null, size: SK.PAPER.text, end: 'tick', roundTo: null, c: pen.color };
     if (draft.mode === 'angular') { d.vertex = p[0]; d.p1 = p[1]; d.p2 = p[2]; }
     else { d.p1 = p[0]; d.p2 = p[1]; }
     if (draft.mode === 'ortho') d.orient = SK.orthoOrient(d.p1, d.p2, at);
@@ -984,7 +993,7 @@
     if (panelKind === 'log') $('log').hidden = true;
     else $('panel').hidden = true;
     panelKind = null;
-    document.querySelectorAll('.rail [data-act]').forEach(function (b) {
+    document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) {
       if (b.getAttribute('data-act') !== tool) b.classList.remove('on');
     });
   }
@@ -1082,6 +1091,7 @@
       ])]),
       section('Export', [el('div', { class: 'row' }, [
         el('button', { class: 'btn', text: 'JPEG', on: { click: exportJpeg } }),
+        el('button', { class: 'btn', text: 'PNG (no background)', on: { click: exportPng } }),
         el('button', { class: 'btn', text: 'Scene series', on: { click: exportSeries } }),
         el('button', { class: 'btn', text: 'Data (JSON)', on: { click: exportData } })
       ]), el('p', { class: 'muted', text: 'Each JPEG carries its metadata inside the file, and a .metadata.json sits beside it. Data (JSON) holds everything, for rebuilding the library later.' })]),
@@ -1267,6 +1277,7 @@
     ]);
   }
 
+  // Cloud collections: each tag is a collection, the same as the library on this device.
   function renderCloud() {
     var body = $('libBody');
     body.innerHTML = '';
@@ -1276,17 +1287,26 @@
     }
     SK.Cloud.session().then(function (s) {
       if (!s) { body.appendChild(signInForm()); return; }
-      return Promise.all([SK.Cloud.details(), SK.Cloud.tableIndex()]).then(function (r) {
+      return SK.Cloud.details().then(function (list) {
         body.appendChild(el('div', { class: 'row' }, [
-          el('span', { class: 'muted', text: 'Signed in. These are the details saved in the cloud.' }),
+          el('span', { class: 'muted', text: 'Signed in. Collections are the tags on each detail.' }),
           el('button', { class: 'btn small', text: 'Sign out', on: { click: function () { SK.Cloud.signOut().then(renderCloud); } } })
         ]));
-        var list = r[0];
         if (!list.length) {
           body.appendChild(el('p', { class: 'muted', text: 'Nothing uploaded yet. Open a detail, then Project info → Upload to cloud.' }));
-        } else {
+          return;
+        }
+        var groups = {};
+        list.forEach(function (d) {
+          (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
+        });
+        Object.keys(groups).sort(function (a, b) {
+          if (a === 'untagged') return 1;
+          if (b === 'untagged') return -1;
+          return a.localeCompare(b);
+        }).forEach(function (t) {
           var grid = el('div', { class: 'lib-grid' });
-          list.forEach(function (d) {
+          groups[t].forEach(function (d) {
             grid.appendChild(el('article', { class: 'lib-card', role: 'button', tabindex: '0', on: {
               click: function () { renderCloudDetail(d); },
               keydown: function (e) { if (e.key === 'Enter') renderCloudDetail(d); }
@@ -1297,24 +1317,13 @@
               el('span', { class: 'meta', text: 'Updated ' + new Date(d.updated_at).toLocaleString() })
             ]));
           });
-          body.appendChild(section('Uploaded details', [grid]));
-        }
-        body.appendChild(section('Table index', [tableIndexTable(r[1])]));
+          body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
+        });
       });
     }).catch(function (e) {
       fail(e, 'Could not reach the cloud: ');
       body.appendChild(el('p', { class: 'muted', text: 'Try again in a moment. Your drawings still save on this device.' }));
     });
-  }
-
-  function tableIndexTable(rows) {
-    var tbody = el('tbody', {}, rows.map(function (r) {
-      return el('tr', {}, [el('td', { text: r.table_name }), el('td', { text: r.project }), el('td', { text: r.purpose })]);
-    }));
-    return el('table', { class: 'tidx' }, [
-      el('thead', {}, [el('tr', {}, [el('th', { text: 'Table' }), el('th', { text: 'Project' }), el('th', { text: 'Purpose' })])]),
-      tbody
-    ]);
   }
 
   function renderCloudDetail(d) {
@@ -1477,6 +1486,46 @@
   }
 
 
+  var BACKGROUNDS = [
+    { v: '#bdbdbd', l: 'Gray (default)' },
+    { v: '#000000', l: 'Black' },
+    { v: '#ffffff', l: 'White' },
+    { v: '#f3ead7', l: 'Cream' },
+    { v: '#2b3a4a', l: 'Slate' }
+  ];
+
+  function saveSettings() { SK.DB.put('kv', settings, 'settings').catch(function () {}); }
+
+  function refreshSettings() {
+    var body = $('panelBody');
+    body.innerHTML = '';
+    renderSettings(body);
+  }
+
+  function setBackground(v) {
+    settings.bg = v;
+    saveSettings();
+    redraw();
+    refreshSettings();
+  }
+
+  function appearanceSection() {
+    var swatches = BACKGROUNDS.map(function (b) {
+      return el('button', { class: 'swatch' + (settings.bg === b.v ? ' on' : ''), title: b.l, 'aria-label': b.l, style: 'background:' + b.v, on: { click: function () { setBackground(b.v); } } });
+    });
+    var custom = el('input', { type: 'color', value: settings.bg, 'aria-label': 'Custom background colour', on: { change: function (e) { setBackground(e.target.value); } } });
+    var grid = el('input', { type: 'checkbox', checked: settings.grid, on: { change: function (e) {
+      settings.grid = e.target.checked;
+      saveSettings();
+      redraw();
+    } } });
+    return section('Appearance', [
+      el('div', { class: 'swatches' }, swatches.concat([el('label', { class: 'swatch custom', title: 'Custom colour' }, [custom])])),
+      el('p', { class: 'muted', text: 'Black ink turns white on a dark background. PNG export has no background.' }),
+      el('label', { class: 'check' }, [grid, ' Show grid (every 1/4" on paper, so it changes with the scale)'])
+    ]);
+  }
+
   function renderSettings(body) {
     var caps = el('input', { type: 'checkbox', checked: settings.caps, on: { change: function (e) {
       settings.caps = e.target.checked;
@@ -1497,6 +1546,7 @@
     ]);
 
     [
+      appearanceSection(),
       section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
       section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' })]),
@@ -1762,7 +1812,8 @@
   // ---- exports ----
 
   // A white sheet at 150 dpi of paper, cropped to the drawing, with the detail title under it.
-  function sheetCanvas(items, b, d) {
+  function sheetCanvas(items, b, d, opts) {
+    opts = opts || {};
     var dpi = 150, f = factorOf(d);
     var z = dpi / f;
     var margin = 0.4 * dpi, titleH = 1.0 * dpi;
@@ -1775,7 +1826,7 @@
     cv.height = h;
     var c = cv.getContext('2d');
     var v = { x: b.minx - margin / z, y: b.miny - margin / z, z: z };
-    SK.paint(c, items, v, { ac: acFor(d), ink: '#000', paper: '#fff', w: w, h: h });
+    SK.paint(c, items, v, { ac: acFor(d), ink: '#000', paper: '#fff', bg: '#ffffff', fill: !opts.transparent, w: w, h: h });
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.fillStyle = '#000';
     c.textAlign = 'left';
@@ -1852,6 +1903,14 @@
     });
   }
 
+  function exportPng() {
+    var b = SK.itemsBounds(detail.items, ac());
+    if (!b) { toast('Nothing to export yet.'); return; }
+    sheetCanvas(detail.items, b, detail, { transparent: true }).toBlob(function (blob) {
+      download(blob, slug(detail.name) + '.png');
+    }, 'image/png');
+  }
+
   function exportJpeg() {
     var b = SK.itemsBounds(detail.items, ac());
     if (!b) { toast('Nothing to export yet.'); return; }
@@ -1913,13 +1972,25 @@
   // Rail, scene button, keys
   // ===================================================================
 
+  // Left rail: pen colours, line weights, and the text and dimension tools.
+  function renderPen() {
+    document.querySelectorAll('#lrail [data-color]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-color') === pen.color); });
+    document.querySelectorAll('#lrail [data-weight]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-weight') === pen.weight); });
+  }
+  $('lrail').addEventListener('click', function (e) {
+    var c = e.target.closest('[data-color]'), w = e.target.closest('[data-weight]'), a = e.target.closest('[data-act]');
+    if (c) { pen.color = c.getAttribute('data-color'); renderPen(); }
+    else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); }
+    else if (a) { if (pb) exitReplay(); setTool(a.getAttribute('data-act')); }
+  });
+  renderPen();
+
   $('rail').addEventListener('click', function (e) {
     var b = e.target.closest('[data-act]');
     if (!b) return;
     var act = b.getAttribute('data-act');
     if (act === 'scene') return;
     if (act === 'undo') undo();
-    else if (act === 'text' || act === 'dim') { if (pb) exitReplay(); setTool(act); }
     else if (act === 'library') openLibrary();
     else openPanel(act);
   });
@@ -1975,6 +2046,7 @@
     else if (e.key === 't' || e.key === 'T') setTool('text');
     else if (e.key === 'd' || e.key === 'D') setTool('dim');
     else if (e.key === 'n' || e.key === 'N') newScene();
+    else if (e.key === 'g' || e.key === 'G') { settings.grid = !settings.grid; saveSettings(); redraw(); toast(settings.grid ? 'Grid on.' : 'Grid off.'); }
     else if (e.key === 'f' || e.key === 'F') fitAll();
     else if (e.key === '+' || e.key === '=') zoomAt([W() / 2, H() / 2], 1.25);
     else if (e.key === '-') zoomAt([W() / 2, H() / 2], 0.8);

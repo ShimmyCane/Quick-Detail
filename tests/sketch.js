@@ -128,5 +128,16 @@ check('snap to a stroke end first', SK.snap([st], [10.2, 0.1], 0.5).kind === 'po
 check('snap onto a stroke', (function () { var s = SK.snap([st], [5, 0.3], 0.5); return s.kind === 'line' && near(s.p[1], 0); })());
 check('no snap when far', SK.snap([st], [5, 5], 0.5).kind === null);
 
+// ---------------- colour, weight and grid ----------------
+check('default gray background: black ink', SK.inkFor('ink', '#bdbdbd') === '#111111');
+check('black ink turns white on black', SK.inkFor('ink', '#000000') === '#f4f4f2');
+check('black ink turns white on slate', SK.inkFor('ink', '#2b3a4a') === '#f4f4f2');
+check('black ink stays black on white and cream', SK.inkFor('ink', '#ffffff') === '#111111' && SK.inkFor('ink', '#f3ead7') === '#111111');
+check('a named pen keeps its colour on any background', SK.inkFor('red', '#000000') === SK.PENS.red && SK.inkFor('blue', '#ffffff') === SK.PENS.blue);
+check('an unknown colour falls back to black', SK.inkFor('purple', '#ffffff') === '#111111');
+check('luma runs from black to white', near(SK.luma('#000000'), 0) && near(SK.luma('#ffffff'), 1, 1e-9));
+check('four line weights, heaviest last', Object.keys(SK.WEIGHTS).length === 4 && SK.WEIGHTS.w4 > SK.WEIGHTS.w3 && SK.WEIGHTS.w3 > SK.WEIGHTS.w2 && SK.WEIGHTS.w2 > SK.WEIGHTS.w1);
+check('grid is a quarter inch on paper, so it scales with the factor', near(SK.gridStep(4), 1) && near(SK.gridStep(48), 12));
+
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

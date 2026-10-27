@@ -34,14 +34,32 @@
   <!-- Options for the selected note or dimension. -->
   <div id="chips" class="chips" hidden></div>
 
+  <!-- Left: pen colours, line weights, and the text and dimension tools. -->
+  <nav class="lrail" id="lrail" aria-label="Pen and annotation tools">
+    <div class="lgroup" aria-label="Pen colour">
+      <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
+      <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
+      <button data-color="blue" class="pen-blue" title="Blue" aria-label="Blue pen"></button>
+      <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
+    </div>
+    <div class="lgroup" aria-label="Line weight">
+      <button data-weight="w1" title="Extra fine" aria-label="Extra fine line"><i></i></button>
+      <button data-weight="w2" title="Fine" aria-label="Fine line"><i></i></button>
+      <button data-weight="w3" title="Medium" aria-label="Medium line"><i></i></button>
+      <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
+    </div>
+    <div class="lgroup" aria-label="Annotation tools">
+      <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
+      <button data-act="text" class="tool" title="Text with arrow (T)" aria-label="Text">T</button>
+    </div>
+  </nav>
+
   <!-- Lower right. The bottom button counts scenes; tap it for a new scene, hold it to stop recording. -->
   <nav class="rail" id="rail" aria-label="Tools">
     <button data-act="settings" title="Settings" aria-label="Settings">⚙</button>
     <button data-act="project" title="Project info" aria-label="Project info">ⓘ</button>
     <button data-act="library" title="Library" aria-label="Library">▦</button>
     <button data-act="log" title="Log" aria-label="Log">☰</button>
-    <button data-act="dim" title="Dimension (D)" aria-label="Dimension">↔</button>
-    <button data-act="text" title="Text with arrow (T)" aria-label="Text">T</button>
     <button data-act="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
     <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
   </nav>

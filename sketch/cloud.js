@@ -210,12 +210,6 @@
         .then(function (r) { if (r.error) throw r.error; return r.data; });
     },
 
-    // Index of which project claims each table.
-    tableIndex: function () {
-      return this.init().from('table_index').select('table_name, project, purpose').order('project', { ascending: true })
-        .then(function (r) { if (r.error) throw r.error; return r.data; });
-    },
-
     signedUrl: function (path) {
       return this.init().storage.from(SK.CLOUD.bucket).createSignedUrl(path, 3600)
         .then(function (r) { if (r.error) throw r.error; return r.data.signedUrl; });

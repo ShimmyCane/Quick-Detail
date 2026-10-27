@@ -266,6 +266,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .panel a { color: var(--ink); }
 .lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 .lib-card {
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
@@ -276,7 +280,43 @@ button { font: inherit; color: inherit; cursor: pointer; }
   gap: 2px;
 }
 .lib-card.on { border-color: var(--ink); }
-.lib-card canvas { width: 100%; height: auto; border-radius: 4px; }
+.lib-card canvas { width: 100%; height: auto; border-radius: 4px; aspect-ratio: 220 / 140; }
+.lib-card .flip-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: none;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.lib-card.flipping { border-color: var(--ink); }
+.lib-card.flipping .flip-label { display: inline-block; }
+.lib-card .meta { font-size: 12px; color: var(--muted); }
+.lib-card .tags-line { font-size: 12px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-card .said { margin: 4px 0 0; font-size: 13px; line-height: 1.35; }
+
+.libpage {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  padding: max(14px, env(safe-area-inset-top)) 16px 16px;
+}
+.libpage-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.libpage-head h2 { margin: 0; font-size: 20px; }
+.lib-filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.libbody { flex: 1; overflow-y: auto; padding-bottom: 24px; }
+.libbody h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 8px; }
+.libbody .lib-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.libpage .lib-card { padding: 8px; display: flex; flex-direction: column; gap: 3px; }
+.libpage .lib-card b { font-size: 14px; }
+.libpage .lib-card > span:not(.flip-label) { font-size: 12px; }
+
 .lib-card b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lib-card span { font-size: 12px; color: var(--muted); }
 

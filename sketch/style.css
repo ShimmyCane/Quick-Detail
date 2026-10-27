@@ -601,20 +601,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   box-shadow: 0 2px 0 var(--qd-ink);
 }
 
-.libpage .tidx {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: var(--qd-panel);
-  border: var(--qd-line);
-  border-radius: 14px;
-  overflow: hidden;
-  font-size: 13px;
-}
-.libpage .tidx th, .libpage .tidx td { padding: 8px 10px; text-align: left; border-bottom: 1.5px solid var(--qd-ink); vertical-align: top; }
-.libpage .tidx th { background: var(--qd-sky); font-weight: 700; }
-.libpage .tidx tr:last-child td { border-bottom: 0; }
-
 .libpage .rec-review {
   display: flex;
   flex-direction: column;

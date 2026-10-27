@@ -1267,6 +1267,7 @@
     ]);
   }
 
+  // Cloud collections: each tag is a collection, the same as the library on this device.
   function renderCloud() {
     var body = $('libBody');
     body.innerHTML = '';
@@ -1276,17 +1277,26 @@
     }
     SK.Cloud.session().then(function (s) {
       if (!s) { body.appendChild(signInForm()); return; }
-      return Promise.all([SK.Cloud.details(), SK.Cloud.tableIndex()]).then(function (r) {
+      return SK.Cloud.details().then(function (list) {
         body.appendChild(el('div', { class: 'row' }, [
-          el('span', { class: 'muted', text: 'Signed in. These are the details saved in the cloud.' }),
+          el('span', { class: 'muted', text: 'Signed in. Collections are the tags on each detail.' }),
           el('button', { class: 'btn small', text: 'Sign out', on: { click: function () { SK.Cloud.signOut().then(renderCloud); } } })
         ]));
-        var list = r[0];
         if (!list.length) {
           body.appendChild(el('p', { class: 'muted', text: 'Nothing uploaded yet. Open a detail, then Project info → Upload to cloud.' }));
-        } else {
+          return;
+        }
+        var groups = {};
+        list.forEach(function (d) {
+          (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
+        });
+        Object.keys(groups).sort(function (a, b) {
+          if (a === 'untagged') return 1;
+          if (b === 'untagged') return -1;
+          return a.localeCompare(b);
+        }).forEach(function (t) {
           var grid = el('div', { class: 'lib-grid' });
-          list.forEach(function (d) {
+          groups[t].forEach(function (d) {
             grid.appendChild(el('article', { class: 'lib-card', role: 'button', tabindex: '0', on: {
               click: function () { renderCloudDetail(d); },
               keydown: function (e) { if (e.key === 'Enter') renderCloudDetail(d); }
@@ -1297,24 +1307,13 @@
               el('span', { class: 'meta', text: 'Updated ' + new Date(d.updated_at).toLocaleString() })
             ]));
           });
-          body.appendChild(section('Uploaded details', [grid]));
-        }
-        body.appendChild(section('Table index', [tableIndexTable(r[1])]));
+          body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
+        });
       });
     }).catch(function (e) {
       fail(e, 'Could not reach the cloud: ');
       body.appendChild(el('p', { class: 'muted', text: 'Try again in a moment. Your drawings still save on this device.' }));
     });
-  }
-
-  function tableIndexTable(rows) {
-    var tbody = el('tbody', {}, rows.map(function (r) {
-      return el('tr', {}, [el('td', { text: r.table_name }), el('td', { text: r.project }), el('td', { text: r.purpose })]);
-    }));
-    return el('table', { class: 'tidx' }, [
-      el('thead', {}, [el('tr', {}, [el('th', { text: 'Table' }), el('th', { text: 'Project' }), el('th', { text: 'Purpose' })])]),
-      tbody
-    ]);
   }
 
   function renderCloudDetail(d) {

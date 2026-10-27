@@ -1068,7 +1068,8 @@
       section('Scale', [scale, el('p', { class: 'muted', text: 'The drawing stays the same size. Notes and dimension text are sized for the scale.' })]),
       section('Tags', [tagWrap]),
       section('Metadata', [el('div', { class: 'row' }, [
-        el('button', { class: 'btn', text: 'Tag elements from recordings', on: { click: tagElements } })
+        el('button', { class: 'btn', text: 'Tag elements from recordings', on: { click: tagElements } }),
+        el('button', { class: 'btn', text: 'Upload to cloud', on: { click: uploadToCloud } })
       ]), el('p', { class: 'muted', text: metadataPreview() })]),
       branch,
       section('File', [el('div', { class: 'row' }, [
@@ -1090,7 +1091,7 @@
 
   // Library page: every detail with its tags and metadata. Sort, filter by tag, and hold a card to flip through its scenes.
 
-  var lib = { sessions: {}, frames: {} };
+  var lib = { sessions: {}, frames: {}, view: 'local', query: '', filter: null };
 
   function sceneCountOf(d) { return SK.scenesOf(lib.sessions[d.id] || []).length; }
 
@@ -1117,7 +1118,23 @@
     document.querySelector('.rail [data-act="library"]').classList.remove('on');
   }
 
+  function matchesQuery(d, q) {
+    var words = SK.scenesOf(lib.sessions[d.id] || []).map(function (s) { return s.text; }).join(' ');
+    return [d.name, d.scale, detailTags(d).join(' '), words].join(' ').toLowerCase().indexOf(q) >= 0;
+  }
+
+  function setLibraryTabs() {
+    document.querySelectorAll('#libViews [data-view]').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-view') === lib.view);
+    });
+    $('libFilters').hidden = lib.view !== 'local';
+    $('libSearch').hidden = lib.view !== 'local';
+    $('libSort').parentNode.hidden = lib.view !== 'local';
+  }
+
   function renderLibrary() {
+    setLibraryTabs();
+    if (lib.view === 'cloud') return renderCloud();
     Promise.all([SK.DB.all('details'), SK.DB.all('sessions')]).then(function (r) {
       var details = r[0];
       lib.sessions = {};
@@ -1140,10 +1157,13 @@
         filters.appendChild(el('button', { class: 'chip' + (lib.filter === t ? ' on' : ''), text: t, on: { click: function () { lib.filter = t; renderLibrary(); } } }));
       });
 
-      var shown = details.filter(function (d) { return !lib.filter || detailTags(d).indexOf(lib.filter) >= 0; });
+      var q = (lib.query || '').trim().toLowerCase();
+      var shown = details.filter(function (d) {
+        return (!lib.filter || detailTags(d).indexOf(lib.filter) >= 0) && (!q || matchesQuery(d, q));
+      });
       var body = $('libBody');
       body.innerHTML = '';
-      if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: 'No details match this tag yet.' })); return; }
+      if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: q || lib.filter ? 'Nothing matches.' : 'No details yet. Draw something, or tap New detail.' })); return; }
 
       var groups = {};
       shown.forEach(function (d) {
@@ -1170,7 +1190,12 @@
     var tagged = d.items.filter(function (it) { return it.meta; }).length;
     var pic = SK.picture(d.items, SK.itemsBounds(d.items, a), 220, 140, { ac: a, ink: col.ink, paper: col.paper });
     var last = scenes.length ? scenes[scenes.length - 1].text : '';
+    var del = el('button', { class: 'lib-del', text: '×', title: 'Delete from this browser', 'aria-label': 'Delete ' + d.name, on: { click: function (e) {
+      e.stopPropagation();
+      removeDetail(d);
+    } } });
     var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
+      del,
       pic,
       el('span', { class: 'flip-label' }),
       el('b', { text: d.name }),
@@ -1191,6 +1216,159 @@
       if (e.key === 'Enter') { e.preventDefault(); card.click(); }
     });
     return card;
+  }
+
+  function removeDetail(d) {
+    if (d.id === detail.id) { closeLibrary(); deleteDetail(); return; }
+    if (!window.confirm('Delete "' + d.name + '" and its recordings from this browser? This cannot be undone.')) return;
+    SK.DB.sessionsOf(d.id)
+      .then(function (list) { return Promise.all(list.map(function (s) { return SK.DB.del('sessions', s.id); })); })
+      .then(function () { return SK.DB.del('details', d.id); })
+      .then(function () { toast('Deleted ' + d.name + '.'); renderLibrary(); })
+      .catch(function (e) { fail(e, 'Could not delete: '); });
+  }
+
+  // ---------------- Cloud: sign in, review what was uploaded, see the table index ----------------
+
+  function signInForm() {
+    var input = el('input', { type: 'email', placeholder: 'you@example.com', 'aria-label': 'Email', class: 'field' });
+    var go = el('button', { class: 'btn primary', text: 'Send sign-in link', on: { click: function () {
+      var v = input.value.trim();
+      if (!v) return;
+      SK.Cloud.signIn(v).then(function (r) {
+        if (r.error) throw r.error;
+        toast('Check your email. Open the link on this device to sign in.');
+      }).catch(function (e) { fail(e, 'Could not send the link: '); });
+    } } });
+    return section('Sign in', [
+      el('p', { class: 'muted', text: 'Uploads need a sign-in. We email you a link. Only the owner account can read or write the cloud tables.' }),
+      el('div', { class: 'row' }, [input, go])
+    ]);
+  }
+
+  function renderCloud() {
+    var body = $('libBody');
+    body.innerHTML = '';
+    if (!SK.Cloud.ready()) {
+      body.appendChild(el('p', { class: 'muted', text: 'The cloud library did not load. Check the connection. Drawings still save on this device.' }));
+      return;
+    }
+    SK.Cloud.session().then(function (s) {
+      if (!s) { body.appendChild(signInForm()); return; }
+      return Promise.all([SK.Cloud.details(), SK.Cloud.tableIndex()]).then(function (r) {
+        body.appendChild(el('div', { class: 'row' }, [
+          el('span', { class: 'muted', text: 'Signed in. These are the details saved in the cloud.' }),
+          el('button', { class: 'btn small', text: 'Sign out', on: { click: function () { SK.Cloud.signOut().then(renderCloud); } } })
+        ]));
+        var list = r[0];
+        if (!list.length) {
+          body.appendChild(el('p', { class: 'muted', text: 'Nothing uploaded yet. Open a detail, then Project info → Upload to cloud.' }));
+        } else {
+          var grid = el('div', { class: 'lib-grid' });
+          list.forEach(function (d) {
+            grid.appendChild(el('article', { class: 'lib-card', role: 'button', tabindex: '0', on: {
+              click: function () { renderCloudDetail(d); },
+              keydown: function (e) { if (e.key === 'Enter') renderCloudDetail(d); }
+            } }, [
+              el('b', { text: d.name }),
+              el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.parent_id ? ' · branch' : '') }),
+              el('span', { class: 'tags-line', text: (d.tags || []).join(' · ') || 'no tags' }),
+              el('span', { class: 'meta', text: 'Updated ' + new Date(d.updated_at).toLocaleString() })
+            ]));
+          });
+          body.appendChild(section('Uploaded details', [grid]));
+        }
+        body.appendChild(section('Table index', [tableIndexTable(r[1])]));
+      });
+    }).catch(function (e) {
+      fail(e, 'Could not reach the cloud: ');
+      body.appendChild(el('p', { class: 'muted', text: 'Try again in a moment. Your drawings still save on this device.' }));
+    });
+  }
+
+  function tableIndexTable(rows) {
+    var tbody = el('tbody', {}, rows.map(function (r) {
+      return el('tr', {}, [el('td', { text: r.table_name }), el('td', { text: r.project }), el('td', { text: r.purpose })]);
+    }));
+    return el('table', { class: 'tidx' }, [
+      el('thead', {}, [el('tr', {}, [el('th', { text: 'Table' }), el('th', { text: 'Project' }), el('th', { text: 'Purpose' })])]),
+      tbody
+    ]);
+  }
+
+  function renderCloudDetail(d) {
+    var body = $('libBody');
+    body.innerHTML = '';
+    body.appendChild(el('div', { class: 'row' }, [
+      el('button', { class: 'btn small', text: '← All uploads', on: { click: renderCloud } }),
+      el('b', { text: d.name })
+    ]));
+    Promise.all([SK.Cloud.recordingsOf(d.id), SK.Cloud.snapshotsOf(d.id)]).then(function (r) {
+      var recs = r[0], snaps = r[1];
+      if (!recs.length) body.appendChild(el('p', { class: 'muted', text: 'No recordings uploaded for this detail yet.' }));
+      return Promise.all(recs.map(function (rec) {
+        var mine = snaps.filter(function (s) { return s.recording_id === rec.id; });
+        var audio = rec.audio_path ? SK.Cloud.signedUrl(rec.audio_path).then(function (u) {
+          return el('audio', { controls: true, preload: 'none', src: u });
+        }) : Promise.resolve(el('span', { class: 'muted', text: 'No sound in this recording.' }));
+        return audio.then(function (player) {
+          return el('article', { class: 'rec-review' }, [
+            el('b', { text: new Date(rec.recorded_at).toLocaleString() + ' · ' + SK.formatTime(rec.duration_ms) + ' · ' + mine.length + (mine.length === 1 ? ' scene' : ' scenes') }),
+            player,
+            el('div', { class: 'snaps' }, mine.map(snapCard))
+          ]);
+        });
+      })).then(function (boxes) { boxes.forEach(function (b) { body.appendChild(b); }); });
+    }).catch(function (e) { fail(e, 'Could not open: '); });
+  }
+
+  function snapCard(s) {
+    var img = el('img', { alt: 'Scene ' + s.scene_index });
+    SK.Cloud.signedUrl(s.image_path).then(function (u) { img.src = u; }).catch(function () {});
+    var words = s.said ? ' · ' + SK.firstWords(s.said, 10) : '';
+    return el('figure', { class: 'snap' }, [img, el('figcaption', { text: 'Scene ' + s.scene_index + ' · ' + SK.formatTime(s.start_ms) + words })]);
+  }
+
+  // Everything one upload needs: the plan, and the media behind each path (audio, scene pictures, metadata).
+  function buildUpload() {
+    var an = analysis();
+    var plan = SK.cloudPlan(detail, sessions, an);
+    var media = {};
+    var jobs = [];
+    plan.files.forEach(function (f) {
+      if (f.kind === 'metadata') {
+        media[f.path] = new Blob([JSON.stringify(SK.detailMetadata(detail, an), null, 1)], { type: 'application/json' });
+        return;
+      }
+      var s = sessions.filter(function (x) { return x.id === f.sessionId; })[0];
+      if (f.kind === 'audio') { media[f.path] = s.audio; return; }
+      var sc = an.scenes.filter(function (x) { return x.sessionId === f.sessionId && x.index === f.sceneIndex; })[0];
+      var items = SK.stateAt(s, sc.end);
+      var b = SK.itemsBounds(items, ac()) || SK.itemsBounds(detail.items, ac());
+      if (!b) return;
+      jobs.push(new Promise(function (resolve) {
+        sheetCanvas(items, b, detail).toBlob(function (blob) { media[f.path] = blob; resolve(); }, 'image/jpeg', 0.9);
+      }));
+    });
+    return Promise.all(jobs).then(function () { return { plan: plan, media: media }; });
+  }
+
+  function uploadToCloud() {
+    if (take) stopRecording();
+    SK.Cloud.session().then(function (s) {
+      if (!s) {
+        toast('Sign in first. Open Library → Cloud to get the link.');
+        lib.view = 'cloud';
+        openLibrary();
+        return null;
+      }
+      toast('Preparing the upload…');
+      return buildUpload().then(function (u) {
+        return SK.Cloud.upload(u.plan, u.media, toast).then(function (res) {
+          toast('Uploaded "' + detail.name + '": ' + res.recordings + (res.recordings === 1 ? ' recording.' : ' recordings.'));
+        });
+      });
+    }).catch(function (e) { fail(e, 'Upload failed: '); });
   }
 
   // Frames for flipping: one picture per scene, all at the same view so they line up.
@@ -1742,6 +1920,10 @@
   $('hintCancel').addEventListener('click', endDraft);
   $('libClose').addEventListener('click', closeLibrary);
   $('libSort').addEventListener('change', renderLibrary);
+  $('libSearch').addEventListener('input', function (e) { lib.query = e.target.value; renderLibrary(); });
+  document.querySelectorAll('#libViews [data-view]').forEach(function (b) {
+    b.addEventListener('click', function () { lib.view = b.getAttribute('data-view'); renderLibrary(); });
+  });
   $('libNew').addEventListener('click', function () {
     var d = newDetail();
     SK.DB.put('details', d).then(function () { closeLibrary(); openDetail(d); });

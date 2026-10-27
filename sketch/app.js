@@ -1231,18 +1231,39 @@
   // ---------------- Cloud: sign in, review what was uploaded, see the table index ----------------
 
   function signInForm() {
-    var input = el('input', { type: 'email', placeholder: 'you@example.com', 'aria-label': 'Email', class: 'field' });
-    var go = el('button', { class: 'btn primary', text: 'Send sign-in link', on: { click: function () {
-      var v = input.value.trim();
-      if (!v) return;
+    var email = el('input', { type: 'email', placeholder: 'you@example.com', 'aria-label': 'Email', class: 'field', autocomplete: 'username' });
+    var password = el('input', { type: 'password', placeholder: 'Password', 'aria-label': 'Password', class: 'field', autocomplete: 'current-password' });
+    var inPassword = function () { return email.value.trim(); };
+    var signIn = el('button', { class: 'btn primary', text: 'Sign in', on: { click: function () {
+      var v = inPassword();
+      if (!v || !password.value) { toast('Enter your email and password.'); return; }
+      SK.Cloud.signInWithPassword(v, password.value).then(function (r) {
+        if (r.error) throw r.error;
+        password.value = '';
+        toast('Signed in.');
+        renderCloud();
+      }).catch(function (e) { fail(e, 'Could not sign in: '); });
+    } } });
+    var forgot = el('button', { class: 'btn small', text: 'Forgot password', on: { click: function () {
+      var v = inPassword();
+      if (!v) { toast('Enter your email first.'); return; }
+      SK.Cloud.resetPassword(v).then(function (r) {
+        if (r.error) throw r.error;
+        toast('If that address has an account, a reset link is on its way.');
+      }).catch(function (e) { fail(e, 'Could not send the reset link: '); });
+    } } });
+    var link = el('button', { class: 'btn small', text: 'Email me a sign-in link', on: { click: function () {
+      var v = inPassword();
+      if (!v) { toast('Enter your email first.'); return; }
       SK.Cloud.signIn(v).then(function (r) {
         if (r.error) throw r.error;
         toast('Check your email. Open the link on this device to sign in.');
       }).catch(function (e) { fail(e, 'Could not send the link: '); });
     } } });
     return section('Sign in', [
-      el('p', { class: 'muted', text: 'Uploads need a sign-in. We email you a link. Only the owner account can read or write the cloud tables.' }),
-      el('div', { class: 'row' }, [input, go])
+      el('p', { class: 'muted', text: 'Uploads need a sign-in. Only the owner account can read or write the cloud tables.' }),
+      el('div', { class: 'row' }, [email, password, signIn]),
+      el('div', { class: 'row' }, [forgot, link])
     ]);
   }
 

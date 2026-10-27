@@ -55,6 +55,29 @@
     return sign + (feet ? feet + '\'-' + inText + '"' : inText + '"');
   };
 
+  // Pen colours. 'ink' is black on light backgrounds and turns white on dark ones.
+  SK.PENS = { red: '#d1342b', blue: '#2456c7', green: '#1f8a4c' };
+
+  // Line weights on paper, in inches. Real width = paper width × scale factor.
+  SK.WEIGHTS = { w1: 0.01, w2: 0.02, w3: 0.035, w4: 0.06 };
+
+  // Relative luminance of a #rrggbb colour, 0 (black) to 1 (white).
+  SK.luma = function (hex) {
+    var n = parseInt(String(hex).replace('#', ''), 16);
+    var lin = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    var r = lin((n >> 16) & 255), g = lin((n >> 8) & 255), b = lin(n & 255);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+
+  // The colour an item is drawn in on a given background.
+  SK.inkFor = function (key, bg) {
+    if (!key || key === 'ink') return SK.luma(bg) < 0.3 ? '#f4f4f2' : '#111111';
+    return SK.PENS[key] || '#111111';
+  };
+
+  // The grid is 1/4" on paper, so its real spacing changes with the scale. It never gets closer than 5 px on screen.
+  SK.gridStep = function (factor) { return 0.25 * factor; };
+
   SK.formatAngle = function (deg) {
     var r = Math.round(deg * 2) / 2;
     return (r % 1 ? r.toFixed(1) : String(r)) + '°';

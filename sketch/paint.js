@@ -11,6 +11,28 @@
   // Text width in world inches for a given text height.
   SK.measure = function (text, size) { return meter.measureText(text).width * size / 100; };
 
+  // Grid lines over the sheet, in screen space. Every fourth line is heavier (one paper inch).
+  SK.paintGrid = function (c, v, factor, w, h, ink, ratio) {
+    var step = SK.gridStep(factor);
+    while (step * v.z < 5) step *= 2;
+    c.setTransform(ratio, 0, 0, ratio, 0, 0);
+    c.strokeStyle = ink;
+    c.lineWidth = 1;
+    var i0 = Math.floor(v.x / step), i1 = Math.ceil((v.x + w / v.z) / step);
+    for (var i = i0; i <= i1; i++) {
+      var sx = Math.round((i * step - v.x) * v.z) + 0.5;
+      c.globalAlpha = ((i % 4) + 4) % 4 === 0 ? 0.22 : 0.09;
+      c.beginPath(); c.moveTo(sx, 0); c.lineTo(sx, h); c.stroke();
+    }
+    var j0 = Math.floor(v.y / step), j1 = Math.ceil((v.y + h / v.z) / step);
+    for (var j = j0; j <= j1; j++) {
+      var sy = Math.round((j * step - v.y) * v.z) + 0.5;
+      c.globalAlpha = ((j % 4) + 4) % 4 === 0 ? 0.22 : 0.09;
+      c.beginPath(); c.moveTo(0, sy); c.lineTo(w, sy); c.stroke();
+    }
+    c.globalAlpha = 1;
+  };
+
   SK.toScreen = function (v, p) { return [(p[0] - v.x) * v.z, (p[1] - v.y) * v.z]; };
   SK.toWorld = function (v, s) { return [s[0] / v.z + v.x, s[1] / v.z + v.y]; };
 
@@ -40,11 +62,12 @@
     }
     c.lineCap = 'round';
     c.lineJoin = 'round';
-    c.strokeStyle = opts.ink;
-    c.fillStyle = opts.ink;
     var annoW = Math.max(SK.PAPER.line * ac.factor * v.z, 0.75);
 
     items.forEach(function (it) {
+      var ink = opts.bg ? SK.inkFor(it.c, opts.bg) : opts.ink;
+      c.strokeStyle = ink;
+      c.fillStyle = ink;
       c.globalAlpha = opts.faded && opts.faded.indexOf(it.id) >= 0 ? 0.35 : 1;
       if (it.kind === 'stroke') {
         var p = it.pts;
@@ -104,7 +127,7 @@
     cv.width = w;
     cv.height = h;
     var v = SK.fitView(b, w, h, opts.pad == null ? 8 : opts.pad, opts.maxZ) || { x: 0, y: 0, z: 1 };
-    SK.paint(cv.getContext('2d'), items, v, { ac: opts.ac, ink: opts.ink, paper: opts.paper, w: w, h: h });
+    SK.paint(cv.getContext('2d'), items, v, { ac: opts.ac, ink: opts.ink, paper: opts.paper, bg: opts.paper, w: w, h: h });
     return cv;
   };
 

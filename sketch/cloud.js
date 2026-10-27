@@ -118,6 +118,16 @@
       });
     },
 
+    // Password sign-in, for the owner account. The session is kept in this browser.
+    signInWithPassword: function (email, password) {
+      return this.init().auth.signInWithPassword({ email: email, password: password });
+    },
+
+    // Sends a password reset link. It returns to this page, so the Site URL and redirect URLs must allow it.
+    resetPassword: function (email) {
+      return this.init().auth.resetPasswordForEmail(email, { redirectTo: location.href.split('#')[0] });
+    },
+
     signOut: function () { return this.init().auth.signOut(); },
 
     // Writes one detail with its recordings, scene snapshots and media. Re-running updates the same rows.

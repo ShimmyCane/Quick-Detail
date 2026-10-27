@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Quick Detail</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== Top bar: brand, detail title, status, exports ===== -->
+  <header class="topbar">
+    <div class="brand">Quick&nbsp;Detail</div>
+    <div class="doc-title">
+      <span id="docTitle">Untitled Detail</span>
+      <span id="docScale" class="chip"></span>
+      <span id="docStatus" class="chip"></span>
+    </div>
+    <div class="exports">
+      <span class="label">Export</span>
+      <button class="btn" data-export="pdf">PDF</button>
+      <button class="btn" data-export="svg">SVG</button>
+      <button class="btn" data-export="png">PNG</button>
+      <button class="btn" data-export="jpeg">JPEG</button>
+      <button class="btn" data-export="dxf">DXF</button>
+      <button class="btn" data-export="json">JSON</button>
+    </div>
+  </header>
+
+  <main class="cols">
+    <!-- ===== Left: drawing side ===== -->
+    <section class="left">
+      <div class="toolbar" id="toolbar"></div>
+
+      <div class="stage" id="stage">
+        <svg id="canvas" xmlns="http://www.w3.org/2000/svg">
+          <g id="gGrid"></g>
+          <g id="gDraw"></g>
+          <g id="gSel" class="sel"></g>
+          <g id="gDraft" class="draft"></g>
+          <g id="gHandles"></g>
+          <g id="gSnap"></g>
+        </svg>
+        <div class="hint" id="hint">
+          <span id="hintText">Select a tool to start drawing.</span>
+          <input id="coordInput" class="coord-input" placeholder="x,y  ·  @dx,dy  ·  length&lt;angle" autocomplete="off" spellcheck="false">
+          <button class="btn small" id="finishBtn">Finish</button>
+          <button class="btn small ghost" id="cancelBtn">Cancel</button>
+        </div>
+        <div class="zoom">
+          <button class="btn icon" id="zoomIn" title="Zoom in">+</button>
+          <button class="btn icon" id="zoomFit" title="Fit drawing (F)">⤢</button>
+          <button class="btn icon" id="zoomOut" title="Zoom out">−</button>
+        </div>
+      </div>
+
+      <div class="bottombar">
+        <div class="group" id="penChips" aria-label="Pen"></div>
+        <label class="field">Line
+          <select id="linetypeSel"></select>
+        </label>
+        <label class="field">Draw as
+          <select id="materialSel"></select>
+        </label>
+        <label class="field">Hatch
+          <select id="hatchSel"></select>
+        </label>
+        <div class="group">
+          <button class="btn" id="undoBtn" title="Undo (Ctrl+Z)">↶ Undo</button>
+          <button class="btn" id="redoBtn" title="Redo (Ctrl+Shift+Z)">↷</button>
+        </div>
+        <div class="readout" id="readout">—</div>
+      </div>
+    </section>
+
+    <!-- ===== Right: stacked panels ===== -->
+    <aside class="right" id="panels">
+      <section class="panel" data-panel="selection">
+        <h2><button class="toggle" aria-expanded="true">−</button> Selection</h2>
+        <div class="body" id="pSelection"></div>
+      </section>
+      <section class="panel" data-panel="meaning">
+        <h2><button class="toggle" aria-expanded="true">−</button> Meaning, intent &amp; logic</h2>
+        <div class="body" id="pMeaning"></div>
+      </section>
+      <section class="panel" data-panel="relationships">
+        <h2><button class="toggle" aria-expanded="true">−</button> Relationships</h2>
+        <div class="body" id="pRelationships"></div>
+      </section>
+      <section class="panel" data-panel="review">
+        <h2><button class="toggle" aria-expanded="true">−</button> Critical review</h2>
+        <div class="body" id="pReview"></div>
+      </section>
+      <section class="panel" data-panel="detail">
+        <h2><button class="toggle" aria-expanded="true">−</button> Detail</h2>
+        <div class="body" id="pDetail"></div>
+      </section>
+      <section class="panel" data-panel="library">
+        <h2><button class="toggle" aria-expanded="true">−</button> Library</h2>
+        <div class="body" id="pLibrary"></div>
+      </section>
+    </aside>
+  </main>
+
+  <!-- ===== Errors live at the bottom, hidden unless turned on in settings ===== -->
+  <section id="errorPanel" class="error-panel" hidden>
+    <div class="error-head">
+      <strong>Errors</strong>
+      <button class="btn small ghost" id="clearErrors">Clear</button>
+    </div>
+    <ol id="errorList"></ol>
+  </section>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- ===== Settings gear (lower right) ===== -->
+  <button id="gear" class="gear" title="Settings" aria-label="Settings">⚙️</button>
+  <div id="settings" class="drawer" hidden>
+    <div class="drawer-head">
+      <h2>Settings</h2>
+      <button class="btn small ghost" id="closeSettings">Close</button>
+    </div>
+    <div id="settingsBody"></div>
+  </div>
+
+  <!-- ===== Text entry dialog ===== -->
+  <dialog id="textDialog">
+    <form method="dialog">
+      <h3 id="textDialogTitle">Note text</h3>
+      <textarea id="textDialogInput" rows="4" spellcheck="true"></textarea>
+      <p class="muted small">Line breaks stay as typed. Notes are usually written in capitals.</p>
+      <div class="row end">
+        <button class="btn ghost" value="cancel">Cancel</button>
+        <button class="btn primary" value="ok" id="textDialogOk">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <input type="file" id="fileInput" accept=".json,application/json" hidden>
+</div>
+
+<script src="js/vocab.js"></script>
+<script src="js/geom.js"></script>
+<script src="js/model.js"></script>
+<script src="js/primitives.js"></script>
+<script src="js/svg.js"></script>
+<script src="js/export.js"></script>
+<script src="js/review.js"></script>
+<script src="js/sample.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

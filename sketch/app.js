@@ -1365,6 +1365,7 @@
     closePanel();
     if (pb) exitReplay();
     lib.frames = {};
+    lib.cloudRows = null;   // the cloud list is read once per visit; search and filters reuse it
     $('libPage').hidden = false;
     document.querySelector('.rail [data-act="library"]').classList.add('on');
     renderLibrary();
@@ -1384,67 +1385,67 @@
     document.querySelectorAll('#libViews [data-view]').forEach(function (b) {
       b.classList.toggle('on', b.getAttribute('data-view') === lib.view);
     });
-    $('libFilters').hidden = lib.view !== 'local';
-    $('libBg').hidden = lib.view !== 'local';
     document.querySelectorAll('#libBg [data-bg]').forEach(function (b) {
       b.classList.toggle('on', b.getAttribute('data-bg') === (settings.libBg || 'sheet'));
     });
-    $('libSearch').hidden = lib.view !== 'local';
-    $('libSort').parentNode.hidden = lib.view !== 'local';
   }
 
   function renderLibrary() {
     setLibraryTabs();
     if (lib.view === 'cloud') return renderCloud();
     Promise.all([SK.DB.all('details'), SK.DB.all('sessions')]).then(function (r) {
-      var details = r[0];
       lib.sessions = {};
       r[1].forEach(function (s) { (lib.sessions[s.detailId] = lib.sessions[s.detailId] || []).push(s); });
-
-      var sort = $('libSort').value;
-      details.sort(function (a, b) {
-        if (sort === 'recent') return b.modified - a.modified;
-        if (sort === 'scenes') return sceneCountOf(b) - sceneCountOf(a) || a.name.localeCompare(b.name);
-        return a.name.localeCompare(b.name);
-      });
-
-      var tags = [];
-      details.forEach(function (d) { detailTags(d).forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
-      tags.sort();
-      var filters = $('libFilters');
-      filters.innerHTML = '';
-      filters.appendChild(el('button', { class: 'chip' + (!lib.filters.length ? ' on' : ''), text: 'All', on: { click: function () { lib.filters = []; renderLibrary(); } } }));
-      tags.forEach(function (t) {
-        var picked = lib.filters.indexOf(t) >= 0;
-        filters.appendChild(el('button', { class: 'chip' + (picked ? ' on' : ''), text: t, 'aria-pressed': String(picked), on: { click: function () {
-          lib.filters = picked ? lib.filters.filter(function (x) { return x !== t; }) : lib.filters.concat([t]);
-          renderLibrary();
-        } } }));
-      });
-
-      var q = (lib.query || '').trim().toLowerCase();
-      var shown = details.filter(function (d) {
-        var own = detailTags(d);
-        return lib.filters.every(function (t) { return own.indexOf(t) >= 0; }) && (!q || matchesQuery(d, q));
-      });
-      var body = $('libBody');
-      body.innerHTML = '';
-      if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: q || lib.filters.length ? 'Nothing matches.' : 'No details yet. Draw something, or tap New detail.' })); return; }
-
-      var groups = {};
-      shown.forEach(function (d) {
-        (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
-      });
-      Object.keys(groups).sort(function (a, b) {
-        if (a === 'untagged') return 1;
-        if (b === 'untagged') return -1;
-        return a.localeCompare(b);
-      }).forEach(function (t) {
-        var grid = el('div', { class: 'lib-grid' });
-        groups[t].forEach(function (d) { grid.appendChild(libCard(d)); });
-        body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
-      });
+      showDetails(r[0], libCard, null, 'No details yet. Draw something, or tap New detail.');
     }).catch(function (e) { fail(e, 'Could not read the library: '); });
+  }
+
+  // Both views list details the same way: sorted, filtered by tags and search, grouped by tag. lead goes on top.
+  function showDetails(details, card, lead, empty) {
+    var sort = $('libSort').value;
+    details.sort(function (a, b) {
+      if (sort === 'recent') return b.modified - a.modified;
+      if (sort === 'scenes') return sceneCountOf(b) - sceneCountOf(a) || a.name.localeCompare(b.name);
+      return a.name.localeCompare(b.name);
+    });
+
+    var tags = [];
+    details.forEach(function (d) { detailTags(d).forEach(function (t) { if (tags.indexOf(t) < 0) tags.push(t); }); });
+    tags.sort();
+    var filters = $('libFilters');
+    filters.innerHTML = '';
+    filters.appendChild(el('button', { class: 'chip' + (!lib.filters.length ? ' on' : ''), text: 'All', on: { click: function () { lib.filters = []; renderLibrary(); } } }));
+    tags.forEach(function (t) {
+      var picked = lib.filters.indexOf(t) >= 0;
+      filters.appendChild(el('button', { class: 'chip' + (picked ? ' on' : ''), text: t, 'aria-pressed': String(picked), on: { click: function () {
+        lib.filters = picked ? lib.filters.filter(function (x) { return x !== t; }) : lib.filters.concat([t]);
+        renderLibrary();
+      } } }));
+    });
+
+    var q = (lib.query || '').trim().toLowerCase();
+    var shown = details.filter(function (d) {
+      var own = detailTags(d);
+      return lib.filters.every(function (t) { return own.indexOf(t) >= 0; }) && (!q || matchesQuery(d, q));
+    });
+    var body = $('libBody');
+    body.innerHTML = '';
+    if (lead) body.appendChild(lead);
+    if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: q || lib.filters.length ? 'Nothing matches.' : empty })); return; }
+
+    var groups = {};
+    shown.forEach(function (d) {
+      (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
+    });
+    Object.keys(groups).sort(function (a, b) {
+      if (a === 'untagged') return 1;
+      if (b === 'untagged') return -1;
+      return a.localeCompare(b);
+    }).forEach(function (t) {
+      var grid = el('div', { class: 'lib-grid' });
+      groups[t].forEach(function (d) { grid.appendChild(card(d)); });
+      body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
+    });
   }
 
   // Library cards as drawn on the sheet, in colour on white, or black only on white.
@@ -1556,49 +1557,72 @@
   function renderCloud() {
     var body = $('libBody');
     body.innerHTML = '';
+    $('libFilters').innerHTML = '';
     if (!SK.Cloud.ready()) {
       body.appendChild(el('p', { class: 'muted', text: 'The cloud library did not load. Check the connection. Drawings still save on this device.' }));
       return;
     }
     SK.Cloud.session().then(function (s) {
       if (!s) { body.appendChild(signInForm()); return; }
-      return SK.Cloud.details().then(function (list) {
-        body.appendChild(el('div', { class: 'row' }, [
-          el('span', { class: 'muted', text: 'Signed in. Collections are the tags on each detail.' }),
-          el('button', { class: 'btn small', text: 'Sign out', on: { click: function () { SK.Cloud.signOut().then(renderCloud); } } })
-        ]));
-        if (!list.length) {
-          body.appendChild(el('p', { class: 'muted', text: 'Nothing uploaded yet. Open a detail, then Project info → Upload to cloud.' }));
-          return;
-        }
-        var groups = {};
-        list.forEach(function (d) {
-          (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
-        });
-        Object.keys(groups).sort(function (a, b) {
-          if (a === 'untagged') return 1;
-          if (b === 'untagged') return -1;
-          return a.localeCompare(b);
-        }).forEach(function (t) {
-          var grid = el('div', { class: 'lib-grid' });
-          groups[t].forEach(function (d) {
-            grid.appendChild(el('article', { class: 'lib-card', role: 'button', tabindex: '0', on: {
-              click: function () { renderCloudDetail(d); },
-              keydown: function (e) { if (e.key === 'Enter') renderCloudDetail(d); }
-            } }, [
-              el('b', { text: d.name }),
-              el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.parent_id ? ' · branch' : '') }),
-              el('span', { class: 'tags-line', text: (d.tags || []).join(' · ') || 'no tags' }),
-              el('span', { class: 'meta', text: 'Updated ' + new Date(d.updated_at).toLocaleString() })
-            ]));
-          });
-          body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
-        });
+      var rows = lib.cloudRows ? Promise.resolve(lib.cloudRows) : SK.Cloud.details().then(function (l) { lib.cloudRows = l; return l; });
+      return rows.then(function (list) {
+        lib.sessions = {};
+        var lead = el('div', { class: 'row' }, [
+          el('span', { class: 'muted', text: 'Signed in. Tap a detail to open it on this device.' }),
+          el('button', { class: 'btn small', text: 'Sign out', on: { click: function () { lib.cloudRows = null; SK.Cloud.signOut().then(renderCloud); } } })
+        ]);
+        showDetails(list.map(fromCloudRow), cloudCard, lead, 'Nothing uploaded yet. Open a detail, then Project info → Upload to cloud.');
       });
     }).catch(function (e) {
       fail(e, 'Could not reach the cloud: ');
       body.appendChild(el('p', { class: 'muted', text: 'Try again in a moment. Your drawings still save on this device.' }));
     });
+  }
+
+  // A cloud row as a detail, keyed by the id it has on the device it came from.
+  function fromCloudRow(r) {
+    return {
+      id: r.local_id, name: r.name, scale: r.scale, tags: r.tags || [], items: r.items || [],
+      parentId: null, created: Date.parse(r.updated_at), modified: Date.parse(r.updated_at), cloud: r
+    };
+  }
+
+  // The same card as the local library; tapping it opens the detail here. Recordings has its own button.
+  function cloudCard(d) {
+    var a = acFor(d);
+    var col = libColors();
+    var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
+    SK.whenImages(d.items).then(function () {
+      if (pic.parentNode) pic.getContext('2d').drawImage(cardPicture(d.items, cardBounds(d.items, a), a, col), 0, 0);
+    });
+    var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
+      pic,
+      el('b', { text: d.name }),
+      el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.cloud.parent_id ? ' · branch' : '') }),
+      el('span', { class: 'meta', text: d.items.length + ' elements · updated ' + new Date(d.modified).toLocaleString() }),
+      el('span', { class: 'tags-line', text: (d.tags || []).join(' · ') || 'no tags yet' }),
+      el('div', { class: 'row' }, [
+        el('button', { class: 'btn small', text: 'Recordings', on: { click: function (e) { e.stopPropagation(); renderCloudDetail(d.cloud); } } })
+      ])
+    ]);
+    card.addEventListener('click', function () { openCloudDetail(d); });
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); openCloudDetail(d); } });
+    return card;
+  }
+
+  // Open a cloud detail on this device. A copy already here is kept unless the cloud one is newer and you agree.
+  function openCloudDetail(d) {
+    SK.DB.get('details', d.id).then(function (mine) {
+      var use = mine;
+      if (!mine) use = d;
+      else if (d.modified > mine.modified && window.confirm('This browser has an older copy of "' + d.name + '". Replace it with the cloud version?')) use = Object.assign({}, mine, d);
+      var copy = { id: use.id, name: use.name, scale: use.scale, tags: use.tags, items: use.items, parentId: use.parentId || null, created: use.created, modified: use.modified };
+      var save = use === mine ? Promise.resolve() : saveDetail(copy, [], null);
+      return save.then(function () {
+        closeLibrary();
+        return openDetail(use === mine ? mine : copy);
+      });
+    }).catch(function (e) { fail(e, 'Could not open: '); });
   }
 
   function renderCloudDetail(d) {
@@ -2334,7 +2358,7 @@
   });
   $('libSearch').addEventListener('input', function (e) { lib.query = e.target.value; renderLibrary(); });
   document.querySelectorAll('#libViews [data-view]').forEach(function (b) {
-    b.addEventListener('click', function () { lib.view = b.getAttribute('data-view'); renderLibrary(); });
+    b.addEventListener('click', function () { lib.view = b.getAttribute('data-view'); lib.filters = []; lib.cloudRows = null; renderLibrary(); });
   });
   $('libNew').addEventListener('click', function () {
     var d = newDetail();

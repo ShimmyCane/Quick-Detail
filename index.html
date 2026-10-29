@@ -34,11 +34,11 @@
   <!-- Options for the selected note or dimension. -->
   <div id="chips" class="chips" hidden></div>
 
-  <!-- Top right: undo, out of the tool group. Ctrl+Z also undoes. -->
-  <button id="undoCorner" class="undo-corner" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
-
   <!-- Left: pen colours, line weights, and the text and dimension tools. -->
   <nav class="lrail" id="lrail" aria-label="Pen and annotation tools">
+    <div class="lgroup undo-group" aria-label="Undo">
+      <button id="undoCorner" class="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
+    </div>
     <div class="lgroup" aria-label="Pen colour">
       <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
       <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
@@ -121,6 +121,7 @@
   <script src="sketch/units.js"></script>
   <script src="sketch/hatch.js"></script>
   <script src="sketch/annot.js"></script>
+  <script src="sketch/author.js"></script>
   <script src="sketch/paint.js"></script>
   <script src="sketch/store.js"></script>
   <script src="sketch/record.js"></script>

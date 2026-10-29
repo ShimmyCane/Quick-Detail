@@ -426,15 +426,24 @@
     ctx.stroke();
   }
 
+  // The grid spacing on screen, in CSS pixels. Same rule as SK.paintGrid: doubled until it is at least 5 px.
+  function gridScreenStep() {
+    var step = SK.gridStep(factorOf(detail));
+    while (step * view.z < 5) step *= 2;
+    return step * view.z;
+  }
+
   // Detail title in the lower left: name, scale, and a graphic scale bar for the current zoom.
   function updateTitle() {
     if (!detail) return;
     $('titleName').textContent = detail.name || 'Untitled detail';
     $('scaleLabel').textContent = detail.scale === 'NTS' ? 'NOT TO SCALE' : 'SCALE: ' + SK.scaleOf(detail.scale).label;
     var steps = [[0.25, '1/4"'], [0.5, '1/2"'], [1, '1"'], [3, '3"'], [6, '6"'], [12, "1'"], [24, "2'"], [60, "5'"], [120, "10'"], [240, "20'"]];
+    // The bar must hold at least two grid ticks, so it reads against the grid at any scale.
+    var need = Math.max(36, 2 * gridScreenStep());
     var pick = steps[steps.length - 1];
-    for (var i = 0; i < steps.length; i++) { if (steps[i][0] * view.z >= 36) { pick = steps[i]; break; } }
-    $('scaleBar').style.width = Math.min(pick[0] * view.z, 220) + 'px';
+    for (var i = 0; i < steps.length; i++) { if (steps[i][0] * view.z >= need) { pick = steps[i]; break; } }
+    $('scaleBar').style.width = pick[0] * view.z + 'px';
     $('barLabel').textContent = pick[1];
   }
 
@@ -1097,6 +1106,37 @@
     return el('section', {}, [el('h3', { text: title })].concat(kids));
   }
 
+  // A new detail drawn from a JSON spec (see sketch/author.js). Opens it, and returns the detail.
+  function drawFromSpec(spec) {
+    var text = typeof spec === 'string' ? spec : JSON.stringify(spec);
+    var parsed = JSON.parse(text);
+    var made = SK.authorDetail(parsed);
+    var d = newDetail(made.name);
+    d.scale = made.scale;
+    d.tags = made.tags;
+    d.items = made.items;
+    return SK.DB.put('details', d).then(function () {
+      closePanel();
+      return openDetail(d);
+    }).then(function () { return d; });
+  }
+
+  // Paste a drawing as JSON and make it a new detail. Errors say which item is wrong.
+  function drawBox() {
+    var box = el('textarea', { class: 'field json-box', rows: '6', placeholder: '{ "name": "...", "items": [ ... ] }', 'aria-label': 'Drawing as JSON' });
+    var err = el('p', { class: 'muted', text: 'Paste a drawing description. Its positions are real inches, y down.' });
+    return el('div', {}, [box, err, el('div', { class: 'row' }, [
+      el('button', { class: 'btn', text: 'Create detail', on: { click: function () {
+        if (!box.value.trim()) { err.textContent = 'Paste a JSON drawing first.'; return; }
+        try {
+          drawFromSpec(box.value).then(function (d) { toast('Drawn: ' + d.name + '.'); });
+        } catch (e) {
+          err.textContent = e.message;
+        }
+      } } })
+    ])]);
+  }
+
   function renderProject(body) {
     var name = el('input', { type: 'text', value: detail.name, 'aria-label': 'Detail name', class: 'field', on: { input: function (e) {
       detail.name = e.target.value;
@@ -1160,6 +1200,7 @@
         el('button', { class: 'btn', text: 'Upload to cloud', on: { click: uploadToCloud } })
       ]), el('p', { class: 'muted', text: metadataPreview() })]),
       branch,
+      section('Draw from JSON', [drawBox()]),
       section('File', [el('div', { class: 'row' }, [
         el('button', { class: 'btn', text: 'Save', on: { click: function () { saveNow().then(function () { toast('Saved.'); }).catch(fail); } } }),
         el('button', { class: 'btn', text: 'Save as…', on: { click: saveAs } }),
@@ -2173,6 +2214,9 @@
       detail = newDetail();
       resize();
     });
+
+  // For tools and scripts: window.QuickDetail.draw(spec) makes and opens a detail from a JSON spec.
+  window.QuickDetail = { draw: drawFromSpec };
 
   // For the browser test.
   window.__sketch = { state: function () { return { detail: detail, sessions: sessions, take: take, view: view, sel: sel, pb: pb }; }, stopRecording: stopRecording };

@@ -40,6 +40,7 @@
       if (tips.length === 1) out.tip = tips[0]; else out.tips = tips;
       return out;
     }
+    if (it.kind === 'block') return { kind: 'block', sourceId: it.sourceId, at: it.at };   // a reference: the source's lines are not copied here
     if (it.kind === 'dim' && it.mode !== 'angular') {
       return { kind: 'dim', mode: it.mode, p1: it.p1, p2: it.p2, at: it.at, end: it.end, pen: pen };
     }

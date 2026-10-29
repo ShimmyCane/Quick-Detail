@@ -289,8 +289,13 @@
 
   // image: { id, kind: 'image', src (a JPEG data URL), at: [x, y] top-left, w, h (world inches), noPrint, name }
   // A no-print image is a reference on screen only; exports and prints leave it out.
+  // A block is an underlay like an image: left out of prints unless its print flag is set.
   SK.printable = function (items) {
-    return items.filter(function (it) { return !(it.kind === 'image' && it.noPrint); });
+    return items.filter(function (it) {
+      if (it.kind === 'image') return !it.noPrint;
+      if (it.kind === 'block') return it.print === true;
+      return true;
+    });
   };
 
   SK.itemBounds = function (item, ac) {

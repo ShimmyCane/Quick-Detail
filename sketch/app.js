@@ -1687,7 +1687,13 @@
         d.items.length + ' elements (' + tagged + ' tagged)' }),
         users ? el('span', { class: 'meta', text: 'Used in ' + users + (users === 1 ? ' block' : ' blocks') }) : null,
       tagsLine(detailTags(d)),
-      el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
+      el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' }),
+      el('div', { class: 'row' }, [
+        el('button', { class: 'btn small', text: 'GIF', title: 'Download a GIF of this detail\'s recordings', 'aria-label': 'Download a GIF of ' + d.name, on: { click: function (e) {
+          e.stopPropagation();   // the card's own click would open its summary
+          downloadGif(d);
+        } } })
+      ])
     ]);
     // Hold a card to preview it: its scenes, or the drawing building up when there are no recordings.
     bindFlip(card, pic, d);
@@ -1789,6 +1795,29 @@
     }
     var job = fromCloud ? SK.Cloud.rename(d.cloud.id, name).then(local) : local();
     job.then(done).catch(function (e) { fail(e, 'Could not rename: '); });
+  }
+
+  // A GIF of a library card's recordings: one frame per scene, at the same pace as the hold-to-flip preview.
+  // A detail with no recordings gets its build-up frames instead. Frames are drawn at twice size so the file reads on a screen.
+  function downloadGif(d) {
+    var GIF_FRAME_MS = 300;
+    framesFor(d).then(function (frames) {
+      if (!frames.length) { toast('Nothing to animate yet. Record a scene, or draw a few lines.'); return; }
+      toast('Making the GIF…');
+      var pics = frames.map(function (f) {
+        var c = document.createElement('canvas');
+        c.width = f.canvas.width * 2;
+        c.height = f.canvas.height * 2;
+        var g = c.getContext('2d');
+        g.imageSmoothingEnabled = false;
+        g.drawImage(f.canvas, 0, 0, c.width, c.height);
+        var px = g.getImageData(0, 0, c.width, c.height);
+        return { width: c.width, height: c.height, data: px.data };
+      });
+      var bytes = SK.encodeGif(pics, GIF_FRAME_MS);
+      download(new Blob([bytes], { type: 'image/gif' }), slug(d.name) + '.gif');
+      toast('Saved "' + slug(d.name) + '.gif".');
+    }).catch(function (e) { fail(e, 'Could not make the GIF: '); });
   }
 
   // A copy with the same lines, tags and scale. Its recordings stay with the original. Blocks in it still link to their sources.

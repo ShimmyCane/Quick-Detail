@@ -109,14 +109,31 @@
     };
   }
 
+  // The JSON parallel of a detail: its line work as a spec, its items, and every take with its commands.
+  // A take still recording is included too, as it is at this moment.
+  function parallelOf(d, list, live) {
+    var takes = list.map(function (s) {
+      return { id: s.id, created: s.created, duration: s.duration, scale: s.scale, base: s.base, events: s.events, speech: s.speech, voice: s.voice };
+    });
+    if (live && live.detailId === d.id) {
+      takes.push({ id: 'live', created: null, duration: null, scale: live.scale, base: live.base, events: live.events, speech: live.speech, voice: live.voice, recording: true });
+    }
+    return SK.parallelOf(d, takes);
+  }
+  function saveDetail(d, list, live) {
+    return Promise.all([
+      SK.DB.put('details', d),
+      SK.DB.put('parallels', parallelOf(d, list, live), d.id)
+    ]);
+  }
   function saveSoon() {
     clearTimeout(saveTimer);
-    var d = detail;
-    saveTimer = setTimeout(function () { SK.DB.put('details', d).catch(function (e) { fail(e, 'Could not save: '); }); }, 400);
+    var d = detail, list = sessions, live = take;
+    saveTimer = setTimeout(function () { saveDetail(d, list, live).catch(function (e) { fail(e, 'Could not save: '); }); }, 400);
   }
   function saveNow() {
     clearTimeout(saveTimer);
-    return SK.DB.put('details', detail);
+    return saveDetail(detail, sessions, take);
   }
 
   function homeView(d) {
@@ -141,6 +158,7 @@
     return SK.DB.sessionsOf(d.id).then(function (list) {
       if (detail !== d) return;
       sessions = list.sort(function (a, b) { return a.created - b.created; });
+      SK.DB.put('parallels', parallelOf(d, sessions, take), d.id).catch(function () {});   // older details get their parallel on open
       updateScenes();
       if (panelKind === 'log') renderLog();
     });
@@ -250,7 +268,7 @@
         audioOffset: r.audioOffset, audio: res.audio
       };
       return SK.DB.put('sessions', s).then(function () {
-        if (detail && detail.id === s.detailId) sessions.push(s);
+        if (detail && detail.id === s.detailId) { sessions.push(s); saveSoon(); }
         updateScenes();
         if (panelKind === 'log') renderLog();
       });
@@ -1115,7 +1133,7 @@
     d.scale = made.scale;
     d.tags = made.tags;
     d.items = made.items;
-    return SK.DB.put('details', d).then(function () {
+    return saveDetail(d, [], null).then(function () {
       closePanel();
       return openDetail(d);
     }).then(function () { return d; });
@@ -1213,7 +1231,8 @@
         el('button', { class: 'btn', text: 'JPEG', on: { click: exportJpeg } }),
         el('button', { class: 'btn', text: 'PNG (no background)', on: { click: exportPng } }),
         el('button', { class: 'btn', text: 'Scene series', on: { click: exportSeries } }),
-        el('button', { class: 'btn', text: 'Data (JSON)', on: { click: exportData } })
+        el('button', { class: 'btn', text: 'Data (JSON)', on: { click: exportData } }),
+        el('button', { class: 'btn', text: 'Parallel JSON', on: { click: exportParallel } })
       ]), el('p', { class: 'muted', text: 'Each JPEG carries its metadata inside the file, and a .metadata.json sits beside it. Data (JSON) holds everything, for rebuilding the library later.' })]),
       section('Delete', [el('button', { class: 'btn danger', text: 'Delete this detail', on: { click: deleteDetail } })])
     ].forEach(function (s) { if (s) body.appendChild(s); });
@@ -2092,6 +2111,14 @@
       })
     };
     download(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }), slug(detail.name) + '.json');
+  }
+
+  function exportParallel() {
+    saveNow().then(function () {
+      return SK.DB.get('parallels', detail.id);
+    }).then(function (p) {
+      download(new Blob([JSON.stringify(p, null, 1)], { type: 'application/json' }), slug(detail.name) + '.parallel.json');
+    }).catch(function (e) { fail(e, 'Could not export: '); });
   }
 
   // ===================================================================

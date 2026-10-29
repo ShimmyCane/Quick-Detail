@@ -108,8 +108,10 @@
   }
 
   // A complete detail from a spec. Throws an Error that says what is wrong, so the caller can correct the spec.
+  // A parallel (see sketch/parallel.js) works too: its spec is used.
   SK.authorDetail = function (spec) {
     if (!spec || typeof spec !== 'object') fail('expected an object with "items"');
+    if (spec.schema === 'quick-detail/parallel-1' && spec.spec) spec = spec.spec;
     if (!Array.isArray(spec.items) || !spec.items.length) fail('"items" must be a non-empty list');
     var scaleKey = spec.scale || SK.DEFAULT_SCALE;
     if (!SK.SCALES.some(function (s) { return s.key === scaleKey; })) fail('unknown scale "' + scaleKey + '"');

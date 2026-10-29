@@ -2311,6 +2311,33 @@
       el('li', {}, [el('a', { href: 'history/v1/index.html', text: 'v1 · Quick Detail' }), el('span', { text: 'Detail editor with tools, meaning and exports' })])
     ]);
 
+    // Changes made in v3, newest first. Add a line here with each change a user would notice.
+    var CHANGES = [
+      ['29 Oct', 'GIF button in a detail\'s info panel, for local and cloud details: an animated GIF of its recordings'],
+      ['29 Oct', 'Library: hold a card to preview it; Rename in the info panel; clearer buttons'],
+      ['29 Oct', 'Starts with a visible message if the sheet fails to load (for example a stale cached script)'],
+      ['29 Oct', 'Library header: Back at the top, tags under More, New detail removed'],
+      ['29 Oct', 'Cloud library options, zoom to extents, 6 in. start view'],
+      ['29 Oct', 'Recording, select tool, recycle bin, names, ten starter details'],
+      ['29 Oct', 'Blocks: insert one detail into another as a block; branch a block as a new version'],
+      ['29 Oct', 'Cloud library works like the local one; cloud details open on this device'],
+      ['29 Oct', 'Images as underlays, hidden by hand; library background switch'],
+      ['29 Oct', 'Roof and floor details as drawing specs'],
+      ['29 Oct', 'A JSON file of each detail, with its takes, kept on disk and uploaded with cloud saves'],
+      ['29 Oct', 'Library: filter by several tags at once'],
+      ['29 Oct', 'Undo on the left rail; scale bar holds two grid ticks; details can be drawn from JSON'],
+      ['28 Oct', 'Library: hold-to-flip on the loaded detail only'],
+      ['28 Oct', 'Hatch patterns follow section conventions; tighter left rail'],
+      ['28 Oct', 'Eraser, hatch patterns, yellow pen, zoom limits; no page zoom on iPad'],
+      ['27 Oct', 'Cloud collections, drawing-view background and grid, pen colours and weights'],
+      ['27 Oct', 'Password sign-in and password reset in the cloud sign-in form'],
+      ['27 Oct', 'Cloud sync to the Architecture project; library review'],
+      ['27 Oct', 'Elements tagged from speech and geometry; library page; metadata in exports']
+    ];
+    var changes = el('ul', { class: 'versions' }, CHANGES.map(function (c) {
+      return el('li', {}, [el('b', { text: c[0] }), el('span', { text: c[1] })]);
+    }));
+
     var autoCollapse = el('input', { type: 'checkbox', checked: settings.autoCollapse, on: { change: function (e) {
       settings.autoCollapse = e.target.checked;
       saveSettings();
@@ -2325,7 +2352,7 @@
       ]),
       section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
-      section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' })]),
+      section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' }), el('p', { class: 'muted small', text: 'Changes in v3, newest first' }), changes]),
       section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · U underlays · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
       section('Pen and fingers', [el('p', { class: 'muted small', text: 'Once a pen is used, fingers pan and pinch and only the pen draws. Without a pen, one finger draws and two fingers pan and zoom.' })])
     ].forEach(function (s) { body.appendChild(s); });

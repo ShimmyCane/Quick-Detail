@@ -1,0 +1,26 @@
+{
+  "name": "Roof expansion joint, two concrete decks, metal cover",
+  "scale": "3\"=1'-0\"",
+  "tags": ["roof", "expansion joint", "low slope"],
+  "items": [
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [18, 0], [18, 6], [0, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "concrete", "pts": [[22, 0], [40, 0], [40, 6], [22, 6]], "outline": true, "pen": "green" },
+
+    { "kind": "hatch", "pattern": "rigid", "pts": [[0, -2], [18, -2], [18, 0], [0, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "rigid", "pts": [[22, -2], [40, -2], [40, 0], [22, 0]], "outline": true },
+
+    { "kind": "hatch", "pattern": "screen", "pts": [[18, 0], [22, 0], [22, 6], [18, 6]], "outline": false },
+
+    { "kind": "line", "pts": [[0, -2.25], [40, -2.25]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[16, -2.25], [16, -4], [17, -5], [23, -5], [24, -4], [24, -2.25]], "weight": "w2", "pen": "blue" },
+
+    { "kind": "note", "text": "Metal cover, 24 ga., fastened on one side only", "at": [53, -10], "width": 13, "tip": [20, -5], "pen": "blue" },
+    { "kind": "note", "text": "Membrane continuous over joint", "at": [53, -3], "width": 13, "tip": [20, -2.25], "pen": "blue" },
+    { "kind": "note", "text": "Compressible joint filler, full depth", "at": [53, 3], "width": 13, "tip": [20, 3], "pen": "ink" },
+    { "kind": "note", "text": "2 in. rigid insulation, cut at joint", "at": [53, 8], "width": 13, "tip": [18, -1], "pen": "ink" },
+    { "kind": "note", "text": "6 in. concrete roof decks, separated at joint", "at": [53, 13], "width": 13, "tip": [18, 4], "pen": "green" },
+    { "kind": "note", "text": "Roof expansion joint. Draft: verify joint width, cover and membrane loop against the manufacturer's details and the building's movement design before use.", "at": [2, 18], "width": 36, "tip": [20, 6] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [18, -10], "p2": [22, -10], "at": [20, -13] }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Wood roof curb on low-slope deck, membrane up and over",
+  "scale": "3\"=1'-0\"",
+  "tags": ["roof", "curb", "wood", "low slope"],
+  "items": [
+    { "kind": "hatch", "pattern": "rigid", "pts": [[0, -2], [40, -2], [40, 0], [0, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "plywood", "pts": [[0, 0], [40, 0], [40, 0.75], [0, 0.75]], "outline": true, "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "wood2", "pts": [[10, -12], [11.5, -12], [11.5, -2], [10, -2]], "outline": true },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[28.5, -12], [30, -12], [30, -2], [28.5, -2]], "outline": true },
+    { "kind": "hatch", "pattern": "wood1", "pts": [[10, -12], [30, -12], [30, -10.5], [10, -10.5]], "outline": true },
+
+    { "kind": "line", "pts": [[0, -2.25], [9, -2.25], [9, -13], [31, -13], [31, -2.25], [40, -2.25]], "weight": "w2", "pen": "blue" },
+    { "kind": "rect", "x": 8.5, "y": -14, "w": 23, "h": 1, "weight": "w2", "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "wood2", "pts": [[5, 0.75], [6.5, 0.75], [6.5, 10], [5, 10]], "outline": true },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[15, 0.75], [16.5, 0.75], [16.5, 10], [15, 10]], "outline": true },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[25, 0.75], [26.5, 0.75], [26.5, 10], [25, 10]], "outline": true },
+    { "kind": "hatch", "pattern": "gypsum", "pts": [[0, 10.5], [40, 10.5], [40, 11.125], [0, 11.125]], "outline": true },
+
+    { "kind": "note", "text": "Wood curb, 2x6 sides with top plate", "at": [53, -12], "width": 13, "tip": [11, -7] },
+    { "kind": "note", "text": "Curb cap flashing, 24 ga. metal", "at": [53, -18], "width": 13, "tip": [9, -13.5], "pen": "blue" },
+    { "kind": "note", "text": "Membrane up curb, 8 in. minimum", "at": [53, -6], "width": 13, "tip": [9, -9], "pen": "blue" },
+    { "kind": "note", "text": "2 in. rigid insulation", "at": [53, 0], "width": 13, "tip": [4, -1] },
+    { "kind": "note", "text": "3/4 in. plywood roof sheathing", "at": [53, 4], "width": 13, "tip": [20, 0.4], "pen": "blue" },
+    { "kind": "note", "text": "2x10 joists @ 16 in. o.c.", "at": [53, 8], "width": 13, "tip": [6, 5] },
+    { "kind": "note", "text": "Gypsum board ceiling", "at": [53, 13], "width": 13, "tip": [40, 10.8] },
+    { "kind": "note", "text": "Wood roof curb. Draft: verify curb height, cap flashing and membrane height against the roofing manufacturer's details and local code before use.", "at": [2, 19], "width": 34, "tip": [20, 0] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [11.5, -20], "p2": [28.5, -20], "at": [20, -23] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, -12], "p2": [0, 0], "at": [-4, -6] }
+  ]
+}

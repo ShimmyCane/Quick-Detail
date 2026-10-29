@@ -1,0 +1,26 @@
+{
+  "name": "Roof edge at CMU parapet, membrane terminated",
+  "scale": "3\"=1'-0\"",
+  "tags": ["roof", "parapet", "low slope"],
+  "items": [
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [40, 0], [40, 6], [0, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "rigid", "pts": [[8, -2], [40, -2], [40, 0], [8, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "cmu", "pts": [[0, -24], [8, -24], [8, 0], [0, 0]], "outline": true },
+
+    { "kind": "rect", "x": -1, "y": -25, "w": 10, "h": 1, "weight": "w2", "pen": "blue" },
+
+    { "kind": "line", "pts": [[40, -2.25], [8.25, -2.25], [8.25, -14]], "weight": "w2", "pen": "blue" },
+    { "kind": "rect", "x": 7.25, "y": -14.5, "w": 1, "h": 1.5, "weight": "w2", "pen": "blue" },
+
+    { "kind": "note", "text": "Metal coping, 24 ga., lapped joints", "at": [53, -28], "width": 13, "tip": [8.5, -24.5], "pen": "blue" },
+    { "kind": "note", "text": "Membrane terminated under the bar, sealed at top", "at": [53, -16], "width": 13, "tip": [8.25, -13], "pen": "blue" },
+    { "kind": "note", "text": "Termination bar, fastened at 8 in. o.c.", "at": [53, -10], "width": 13, "tip": [7.25, -13.8], "pen": "blue" },
+    { "kind": "note", "text": "2 in. rigid insulation, tapered as required", "at": [53, -3], "width": 13, "tip": [30, -1], "pen": "ink" },
+    { "kind": "note", "text": "6 in. concrete roof slab", "at": [53, 4], "width": 13, "tip": [30, 3], "pen": "green" },
+    { "kind": "note", "text": "8 in. CMU parapet, solid grouted", "at": [53, 11], "width": 13, "tip": [4, -12], "pen": "ink" },
+    { "kind": "note", "text": "Roof edge at CMU parapet. Draft: verify membrane height above roof, coping and insulation against the roofing manufacturer's details and local code before use.", "at": [2, 14], "width": 34, "tip": [20, 6] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [0, -27], "p2": [8, -27], "at": [4, -30] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, -24], "p2": [0, 0], "at": [-4, -12] }
+  ]
+}

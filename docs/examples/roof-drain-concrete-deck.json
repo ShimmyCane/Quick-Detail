@@ -1,0 +1,31 @@
+{
+  "name": "Roof drain in concrete deck, clamping ring and strainer",
+  "scale": "3\"=1'-0\"",
+  "tags": ["roof", "drain", "low slope"],
+  "items": [
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [16, 0], [16, 6], [0, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "concrete", "pts": [[24, 0], [40, 0], [40, 6], [24, 6]], "outline": true, "pen": "green" },
+
+    { "kind": "hatch", "pattern": "rigid", "pts": [[0, -3], [15, -3], [15, 0], [0, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "rigid", "pts": [[25, -3], [40, -3], [40, 0], [25, 0]], "outline": true },
+
+    { "kind": "rect", "x": 17, "y": 0, "w": 6, "h": 6, "weight": "w2" },
+    { "kind": "line", "pts": [[17, 6], [17, 12]], "weight": "w2" },
+    { "kind": "line", "pts": [[23, 6], [23, 12]], "weight": "w2" },
+
+    { "kind": "line", "pts": [[0, -3.25], [15, -3.25]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[25, -3.25], [40, -3.25]], "weight": "w2", "pen": "blue" },
+
+    { "kind": "rect", "x": 15, "y": -4.75, "w": 10, "h": 1.5, "weight": "w2", "pen": "blue" },
+    { "kind": "rect", "x": 18, "y": -6.5, "w": 4, "h": 1.75, "weight": "w2" },
+
+    { "kind": "note", "text": "Cast-iron roof drain, strainer dome", "at": [53, -12], "width": 13, "tip": [20, -6.5] },
+    { "kind": "note", "text": "Membrane flange clamped under ring", "at": [53, -6], "width": 13, "tip": [15, -4], "pen": "blue" },
+    { "kind": "note", "text": "Rigid insulation, cut around drain", "at": [53, 0], "width": 13, "tip": [15, -1.5] },
+    { "kind": "note", "text": "Concrete deck, drain set in opening", "at": [53, 6], "width": 13, "tip": [16, 3], "pen": "green" },
+    { "kind": "note", "text": "Drain leader piping below deck", "at": [53, 12], "width": 13, "tip": [23, 10], "pen": "ink" },
+    { "kind": "note", "text": "Roof drain at concrete deck. Draft: verify the drain model, clamping ring and flange against the manufacturer's data and local code before use.", "at": [2, 18], "width": 34, "tip": [20, 6] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [17, -10], "p2": [23, -10], "at": [20, -13] }
+  ]
+}

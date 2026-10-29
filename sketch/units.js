@@ -56,7 +56,7 @@
   };
 
   // Pen colours. 'ink' is black on light backgrounds and turns white on dark ones.
-  SK.PENS = { red: '#d1342b', blue: '#2456c7', green: '#1f8a4c' };
+  SK.PENS = { yellow: '#e8b400', red: '#d1342b', blue: '#2456c7', green: '#1f8a4c' };
 
   // Line weights on paper, in inches. Real width = paper width × scale factor.
   SK.WEIGHTS = { w1: 0.01, w2: 0.02, w3: 0.035, w4: 0.06 };

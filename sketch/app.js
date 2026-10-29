@@ -37,7 +37,7 @@
   var clip = null;           // audio element playing a scene clip
   var customTags = [];
   var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false };
-  var pen = { color: 'ink', weight: 'w2' };       // what new strokes, notes and dimensions are drawn with
+  var pen = { color: 'ink', weight: 'w2', hatch: 'wood1' };   // what new strokes, notes, dimensions and hatches are drawn with
   var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
   var counter = 0;
 
@@ -58,6 +58,11 @@
   }
   function ac() { return acFor(detail); }
   function defaultZ(d) { return DETAIL_PX_PER_PAPER_IN / factorOf(d); }
+  // The sheet zooms within a sensible range, so a pinch cannot run off into nothing.
+  function clampZ(z) {
+    var d = detail ? defaultZ(detail) : 24;
+    return Math.max(d / 6, Math.min(d * 12, z));
+  }
   // The sheet's colours. The background is a setting; black ink turns white when the background is dark.
   function colors() {
     var bg = settings.bg;
@@ -328,6 +333,14 @@
   function drawDraft(col) {
     if (!draft) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (draft.tool === 'hatch' && draft.start && draft.cur) {
+      var h0 = SK.toScreen(view, draft.start), h1 = SK.toScreen(view, draft.cur);
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = col.accent;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(Math.min(h0[0], h1[0]), Math.min(h0[1], h1[1]), Math.abs(h1[0] - h0[0]), Math.abs(h1[1] - h0[1]));
+      ctx.setLineDash([]);
+    }
     if (draft.cur && draft.snapKind) marker(draft.cur, col, draft.snapKind === 'point');
     if (draft.tool === 'text') {
       if (draft.tip) marker(draft.tip, col, true);
@@ -495,7 +508,7 @@
 
   function zoomAt(sp, k) {
     var w = SK.toWorld(view, sp);
-    view.z = Math.max(0.05, Math.min(2000, view.z * k));
+    view.z = clampZ(view.z * k);
     view.x = w[0] - sp[0] / view.z;
     view.y = w[1] - sp[1] / view.z;
     redraw();
@@ -520,7 +533,7 @@
       if (!a || !b) return;
       var c = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
       var w0 = SK.toWorld(g.v0, g.c0);
-      view.z = Math.max(0.05, Math.min(2000, g.v0.z * dist(a, b) / g.d0));
+      view.z = clampZ(g.v0.z * dist(a, b) / g.d0);
       view.x = w0[0] - c[0] / view.z;
       view.y = w0[1] - c[1] / view.z;
     }
@@ -538,6 +551,7 @@
 
   function toolDown(e, sp) {
     var w = SK.toWorld(view, sp);
+    if (tool === 'erase') { eraseAt(w); return; }
     if (sel) {
       var h = hitHandle(sp);
       if (h) { startHandleDrag(h, w); return; }
@@ -548,6 +562,7 @@
 
   function toolMove(e, sp) {
     var w = SK.toWorld(view, sp);
+    if (tool === 'erase') { eraseAt(w); return; }
     if (drag) { moveHandleDrag(w); return; }
     if (drawing) {
       var list = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
@@ -611,6 +626,24 @@
   }
 
   // ---- hits and snapping ----
+
+  // Erases the top element under the point: a whole stroke, note, dimension or hatch. Undo brings it back.
+  function eraseAt(w) {
+    var tol = 10 / view.z, a = ac();
+    for (var i = detail.items.length - 1; i >= 0; i--) {
+      if (SK.hitItem(detail.items[i], w, tol, a)) { commitDel(detail.items[i].id); return true; }
+    }
+    return false;
+  }
+
+  // A closed stroke under the point, for hatching by tapping inside it.
+  function closedShapeAt(w) {
+    for (var i = detail.items.length - 1; i >= 0; i--) {
+      var it = detail.items[i];
+      if (it.kind === 'stroke' && it.pts.length > 2 && SK.strokeGeometry(it).kind === 'closed shape' && SK.pointInPoly(w, it.pts)) return it;
+    }
+    return null;
+  }
 
   function hitAnnotation(w) {
     var tol = HIT_PX / view.z, a = ac();
@@ -683,6 +716,11 @@
     } else if (t === 'dim') {
       draft = { tool: 'dim', mode: dimMode, pts: [] };
       showDimHint();
+    } else if (t === 'hatch') {
+      draft = { tool: 'hatch', start: null, cur: null };
+      showHatchHint();
+    } else if (t === 'erase') {
+      showHint('Tap or drag over what to delete. Undo brings it back.');
     }
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-act') === t); });
   }
@@ -703,6 +741,14 @@
     $('hint').hidden = false;
   }
 
+  function showHatchHint() {
+    var pick = el('select', { class: 'field', 'aria-label': 'Hatch pattern', on: { change: function (e) { pen.hatch = e.target.value; } } });
+    SK.HATCHES.forEach(function (h) {
+      if (h.key !== 'none') pick.appendChild(el('option', { value: h.key, text: h.label, selected: h.key === pen.hatch }));
+    });
+    showHint('Drag a rectangle, or tap inside a closed shape.', [pick]);
+  }
+
   function showDimHint() {
     var need = draft.mode === 'angular' ? 3 : 2;
     var labels = draft.mode === 'angular'
@@ -721,11 +767,13 @@
   }
 
   function draftDown(w) {
+    if (draft.tool === 'hatch') { draft.start = w; draft.cur = w; redraw(); return; }
     if (draft.tool === 'text' && draft.step === 1) { draft.start = w; draft.cur = w; draft.snapKind = null; }
     else draftMove(w);
   }
 
   function draftMove(w) {
+    if (draft.tool === 'hatch') { draft.cur = w; redraw(); return; }
     var placing = (draft.tool === 'text' && draft.step === 1) || (draft.tool === 'dim' && draft.placing);
     if (placing) { draft.cur = w; draft.snapKind = null; }
     else {
@@ -736,7 +784,29 @@
     redraw();
   }
 
+  function hatchUp(w) {
+    var s0 = draft.start || w;
+    var moved = Math.abs(w[0] - s0[0]) + Math.abs(w[1] - s0[1]);
+    var poly, outline;
+    if (moved * view.z > 8) {
+      var x0 = Math.min(s0[0], w[0]), x1 = Math.max(s0[0], w[0]), y0 = Math.min(s0[1], w[1]), y1 = Math.max(s0[1], w[1]);
+      poly = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+      outline = true;
+    } else {
+      var shape = closedShapeAt(w);
+      draft.start = null;
+      draft.cur = null;
+      if (!shape) { toast('Drag a rectangle, or tap inside a closed shape.'); redraw(); return; }
+      poly = shape.pts.map(function (p) { return [p[0], p[1]]; });
+      outline = false;
+    }
+    draft.start = null;
+    draft.cur = null;
+    commitPut({ id: uid('h'), kind: 'hatch', pattern: pen.hatch, pts: poly, outline: outline, c: pen.color }, null);
+  }
+
   function draftUp(w) {
+    if (draft.tool === 'hatch') { hatchUp(w); return; }
     var f = factorOf(detail);
     if (draft.tool === 'text') {
       if (draft.step === 0) {
@@ -862,6 +932,15 @@
         }),
         chipSelect('Size', sizes, it.size, function (v) { edit(function (n) { n.size = +v; }); }),
         it.height != null ? el('button', { class: 'chip', text: 'Auto height', on: { click: function () { edit(function (n) { n.height = null; }); } } }) : null
+      );
+    } else if (it.kind === 'hatch') {
+      chips.push(
+        chipSelect('Pattern', SK.HATCHES.filter(function (h) { return h.key !== 'none'; }).map(function (h) { return { v: h.key, l: h.label }; }), it.pattern, function (v) {
+          edit(function (n) { n.pattern = v; });
+        }),
+        el('button', { class: 'chip', text: it.outline ? 'Hide outline' : 'Show outline', on: { click: function () {
+          edit(function (n) { n.outline = !it.outline; });
+        } } })
       );
     } else if (it.kind === 'dim') {
       chips.push(
@@ -1550,7 +1629,7 @@
       section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
       section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' })]),
-      section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
+      section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
       section('Pen and fingers', [el('p', { class: 'muted small', text: 'Once a pen is used, fingers pan and pinch and only the pen draws. Without a pen, one finger draws and two fingers pan and zoom.' })])
     ].forEach(function (s) { body.appendChild(s); });
   }
@@ -2046,6 +2125,8 @@
     else if (e.key === 't' || e.key === 'T') setTool('text');
     else if (e.key === 'd' || e.key === 'D') setTool('dim');
     else if (e.key === 'n' || e.key === 'N') newScene();
+    else if (e.key === 'e' || e.key === 'E') setTool('erase');
+    else if (e.key === 'h' || e.key === 'H') setTool('hatch');
     else if (e.key === 'g' || e.key === 'G') { settings.grid = !settings.grid; saveSettings(); redraw(); toast(settings.grid ? 'Grid on.' : 'Grid off.'); }
     else if (e.key === 'f' || e.key === 'F') fitAll();
     else if (e.key === '+' || e.key === '=') zoomAt([W() / 2, H() / 2], 1.25);
@@ -2059,6 +2140,10 @@
       SK.Mic.close();
       if (detail) saveNow().catch(function () {});
     }
+  });
+  // iPad: pinch zooms the sheet, never the page. Safari's own page zoom is blocked.
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false });
   });
   window.addEventListener('resize', resize);
   if (window.matchMedia) {

@@ -1,0 +1,150 @@
+[
+  {
+    "id": "C1B6",
+    "run": 8,
+    "title": "C1B6: checker, staggered, spacing 0.22 in",
+    "label": "C1B6: groups of 5, spacing 0.22 in, lines 1.25 in across, 0.71 in along, odd rows staggered, wrapped tile",
+    "status": "generated, not written to the cloud, superseded by C1B2 direction",
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.22,
+      "hLen": 1.25,
+      "vLen": 0.71,
+      "orientation": "checker",
+      "stagger": true
+    }
+  },
+  {
+    "id": "C1B7",
+    "run": 8,
+    "title": "C1B7: checker, spacing 0.22 in, taller lines",
+    "label": "C1B7: groups of 5, spacing 0.22 in, lines 1.25 in across, 0.78 in along, wrapped tile",
+    "status": "generated, not written to the cloud, superseded by C1B2 direction",
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.22,
+      "hLen": 1.25,
+      "vLen": 0.78,
+      "orientation": "checker",
+      "stagger": false
+    }
+  },
+  {
+    "id": "C1B8",
+    "run": 8,
+    "title": "C1B8: flipped checker, spacing 0.22 in",
+    "label": "C1B8: groups of 5, spacing 0.22 in, checker starts vertical, lines 1.25 in across, 0.78 in along, wrapped tile",
+    "status": "generated, not written to the cloud, superseded by C1B2 direction",
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.22,
+      "hLen": 1.25,
+      "vLen": 0.78,
+      "orientation": "checker-flip",
+      "stagger": false
+    }
+  },
+  {
+    "id": "C1B9",
+    "run": 8,
+    "title": "C1B9: checker, spacing 0.20 in, staggered",
+    "label": "C1B9: groups of 5, spacing 0.20 in, lines 1.25 in across, 0.71 in along, odd rows staggered, wrapped tile",
+    "status": "generated, not written to the cloud, superseded by C1B2 direction",
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.2,
+      "hLen": 1.25,
+      "vLen": 0.71,
+      "orientation": "checker",
+      "stagger": true
+    }
+  },
+  {
+    "id": "C1B10",
+    "run": 8,
+    "title": "C1B10: flipped checker, staggered, spacing 0.22 in",
+    "label": "C1B10: groups of 5, spacing 0.22 in, checker starts vertical, odd rows staggered, 1.19 in across, 0.78 in along, wrapped tile",
+    "status": "generated, not written to the cloud, superseded by C1B2 direction",
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.22,
+      "hLen": 1.19,
+      "vLen": 0.78,
+      "orientation": "checker-flip",
+      "stagger": true
+    }
+  },
+  {
+    "id": "C1B11",
+    "run": 8,
+    "title": "C1B11: C1B2 with square groups, every line 0.8 in, spacing 0.20 in (AI collab 8)",
+    "label": "C1B11: C1B2 with every line 0.8 in, square groups, spacing 0.20 in, wrapped tile",
+    "status": "written to Hatch Collab 8 at x 30.3, y 75 (to the right of the sheet); square per request, not judged",
+    "metrics": {
+      "cover": 0.137,
+      "meanGap": 0.085,
+      "maxGap": 0.291,
+      "farWhite": 0.221,
+      "farCV": 0.542
+    },
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.2,
+      "hLen": 0.8,
+      "vLen": 0.8,
+      "orientation": "checker",
+      "stagger": false,
+      "X0": 30.3,
+      "y0": 75
+    }
+  },
+  {
+    "id": "C1B2-reference",
+    "run": 7,
+    "status": "chosen direction (user): spacing 0.20, lines 1.19 across / 0.71 along, 4x4 wrapped checker. Squared in C1B11.",
+    "params": {
+      "cols": 4,
+      "rows": 4,
+      "spacing": 0.2,
+      "hLen": 1.19,
+      "vLen": 0.71,
+      "orientation": "checker",
+      "stagger": false
+    }
+  },
+  {
+    "id": "earth-hatch-v2",
+    "run": 9,
+    "title": "Earth hatch v2: square groups on an equal 0.9 in pitch, every line 0.8 in (AI collab 9)",
+    "label": "Earth hatch v2: groups of 5 at 0.2 in spacing, 0.9 in pitch both ways, every line 0.8 in, wrapped tile",
+    "status": "written to Hatch Collab 9 at x 37.0, y 75 (right of C1B11); requested as the final variant. Lines square 0.8 in, equal 0.9 in pitch both ways, checker, 6 x 4 cells in 5.4 x 3.6 in",
+    "metrics": {
+      "cover": 0.198,
+      "meanGap": 0.05,
+      "maxGap": 0.18,
+      "farWhite": 0.006,
+      "farCV": 0.287
+    },
+    "params": {
+      "cols": 6,
+      "rows": 4,
+      "W": 5.4,
+      "H": 3.6,
+      "spacing": 0.2,
+      "hLen": 0.8,
+      "vLen": 0.8,
+      "orientation": "checker",
+      "stagger": false,
+      "inset": 0.05,
+      "X0": 37,
+      "y0": 75,
+      "run": 9
+    }
+  }
+]

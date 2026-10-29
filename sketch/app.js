@@ -1564,6 +1564,10 @@
         media[f.path] = new Blob([JSON.stringify(SK.detailMetadata(detail, an), null, 1)], { type: 'application/json' });
         return;
       }
+      if (f.kind === 'parallel') {
+        media[f.path] = new Blob([JSON.stringify(parallelOf(detail, sessions, null), null, 1)], { type: 'application/json' });
+        return;
+      }
       var s = sessions.filter(function (x) { return x.id === f.sessionId; })[0];
       if (f.kind === 'audio') { media[f.path] = s.audio; return; }
       var sc = an.scenes.filter(function (x) { return x.sessionId === f.sessionId && x.index === f.sceneIndex; })[0];

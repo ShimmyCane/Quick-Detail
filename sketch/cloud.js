@@ -30,10 +30,11 @@
   //   recordings: rows for sketch_recordings (audio_path points at a file in the bucket)
   //   snapshots:  rows for sketch_snapshots (image_path points at a JPEG in the bucket)
   //   files:      { path, kind, sessionId?, sceneIndex? } for every file the upload must write
+  //               (metadata.json, parallel.json with the JSON parallel of the drawing and its takes, audio, scene JPEGs)
   SK.cloudPlan = function (detail, sessions, an) {
     var base = detail.id + '/';
     var metaPath = base + 'metadata.json';
-    var files = [{ path: metaPath, kind: 'metadata' }];
+    var files = [{ path: metaPath, kind: 'metadata' }, { path: base + 'parallel.json', kind: 'parallel' }];
     var recordings = [];
     var snapshots = [];
 

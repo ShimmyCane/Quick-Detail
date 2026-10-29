@@ -1687,13 +1687,7 @@
         d.items.length + ' elements (' + tagged + ' tagged)' }),
         users ? el('span', { class: 'meta', text: 'Used in ' + users + (users === 1 ? ' block' : ' blocks') }) : null,
       tagsLine(detailTags(d)),
-      el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' }),
-      el('div', { class: 'row' }, [
-        el('button', { class: 'btn small', text: 'GIF', title: 'Download a GIF of this detail\'s recordings', 'aria-label': 'Download a GIF of ' + d.name, on: { click: function (e) {
-          e.stopPropagation();   // the card's own click would open its summary
-          downloadGif(d);
-        } } })
-      ])
+      el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
     ]);
     // Hold a card to preview it: its scenes, or the drawing building up when there are no recordings.
     bindFlip(card, pic, d);
@@ -1764,6 +1758,9 @@
           close();
           renameDetail(d, name.trim(), fromCloud);
         } } }),
+        el('button', { class: 'btn', text: 'GIF', title: 'Download a GIF of this detail\'s recordings', on: { click: function () {
+          downloadGif(d, fromCloud);   // the card stays open, so a second GIF can be made
+        } } }),
         el('button', { class: 'btn', text: 'Close', on: { click: close } })
       ])
     ]);
@@ -1797,20 +1794,54 @@
     job.then(done).catch(function (e) { fail(e, 'Could not rename: '); });
   }
 
-  // A GIF of a library card's recordings: one frame per scene, at the same pace as the hold-to-flip preview.
-  // A detail with no recordings gets its build-up frames instead. Frames are drawn at twice size so the file reads on a screen.
-  function downloadGif(d) {
+  // Cloud scenes: the scene JPEG of each uploaded recording, in recording order. A cloud card has no local sessions to replay.
+  function cloudFrames(d) {
+    var id = d.cloud.id;
+    return Promise.all([SK.Cloud.recordingsOf(id), SK.Cloud.snapshotsOf(id)]).then(function (r) {
+      var ordered = [];
+      r[0].forEach(function (rec) {
+        r[1].filter(function (s) { return s.recording_id === rec.id; }).forEach(function (s) { ordered.push(s); });
+      });
+      return Promise.all(ordered.map(function (s) {
+        return SK.Cloud.signedUrl(s.image_path).then(loadPicture).then(function (img) {
+          var c = document.createElement('canvas');
+          c.width = img.naturalWidth;
+          c.height = img.naturalHeight;
+          c.getContext('2d').drawImage(img, 0, 0);
+          return { canvas: c };
+        });
+      }));
+    });
+  }
+
+  function loadPicture(url) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.crossOrigin = 'anonymous';   // so the canvas can be read back for the GIF
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { reject(new Error('a scene picture did not load')); };
+      img.src = url;
+    });
+  }
+
+  // A GIF of a detail's recordings: one frame per scene, at the same pace as the hold-to-flip preview.
+  // A local detail with no recordings gets its build-up frames instead. Local frames are drawn at twice size so the file
+  // reads on a screen; cloud scene JPEGs are capped at 900 px wide, since they are full sheets.
+  function downloadGif(d, fromCloud) {
     var GIF_FRAME_MS = 300;
-    framesFor(d).then(function (frames) {
+    (fromCloud ? cloudFrames(d) : framesFor(d)).then(function (frames) {
       if (!frames.length) { toast('Nothing to animate yet. Record a scene, or draw a few lines.'); return; }
       toast('Making the GIF…');
+      // Every frame is drawn at the first frame's size, since a GIF has one size.
+      var k = fromCloud ? Math.min(1, 900 / frames[0].canvas.width) : 2;
+      var W = Math.round(frames[0].canvas.width * k), H = Math.round(frames[0].canvas.height * k);
       var pics = frames.map(function (f) {
         var c = document.createElement('canvas');
-        c.width = f.canvas.width * 2;
-        c.height = f.canvas.height * 2;
+        c.width = W;
+        c.height = H;
         var g = c.getContext('2d');
         g.imageSmoothingEnabled = false;
-        g.drawImage(f.canvas, 0, 0, c.width, c.height);
+        g.drawImage(f.canvas, 0, 0, W, H);
         var px = g.getImageData(0, 0, c.width, c.height);
         return { width: c.width, height: c.height, data: px.data };
       });

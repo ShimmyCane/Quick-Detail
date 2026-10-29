@@ -2884,10 +2884,6 @@
   document.querySelectorAll('#libViews [data-view]').forEach(function (b) {
     b.addEventListener('click', function () { lib.view = b.getAttribute('data-view'); lib.filters = []; lib.cloudRows = null; renderLibrary(); });
   });
-  $('libNew').addEventListener('click', function () {
-    var d = newDetail();
-    SK.DB.put('details', d).then(function () { closeLibrary(); openDetail(d); });
-  });
   $('panelClose').addEventListener('click', closePanel);
   $('logClose').addEventListener('click', closePanel);
 

@@ -706,3 +706,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Undo sits at the top of the left rail, above the pen colours. */
 .lrail .undo-group { flex-direction: row; width: max-content; padding: 5px; }
+
+/* ---------- block pop-up: shown when a detail that other details use is opened ---------- */
+.pop-back { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.pop-card { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 20px; max-width: 460px; width: 100%; }
+.pop-card .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.pop-card .btn { min-height: 48px; padding: 0 16px; }

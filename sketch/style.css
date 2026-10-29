@@ -753,3 +753,7 @@ body.collapsed #rail > button:not(#collapseBtn) { display: none; }
 .more > summary::-webkit-details-marker { display: none; }
 .more-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 10px; min-width: 220px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); }
 .more-panel .btn { min-height: 48px; }
+
+/* The More menu holds the tag filters too, so it is taller and scrolls. */
+.more-panel { width: min(360px, 90vw); max-height: 70vh; overflow-y: auto; }
+.more-panel .lib-filters { display: flex; flex-wrap: wrap; gap: 6px; }

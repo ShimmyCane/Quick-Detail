@@ -91,6 +91,7 @@
     <div class="libpage-head">
       <h2>Library</h2>
       <div class="row">
+        <button class="link" id="libClose" aria-label="Back to the sheet">← Back</button>
         <div class="seg" id="libViews" role="group" aria-label="Where to look">
           <button class="chip on" data-view="local">This browser</button>
           <button class="chip" data-view="cloud">Cloud</button>
@@ -106,13 +107,11 @@
               <button class="chip" data-bg="white">On white</button>
               <button class="chip" data-bg="mono">Black on white</button>
             </div>
-            <button class="btn" id="libNew">New detail</button>
+            <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
           </div>
         </details>
-        <button class="link" id="libClose">Close</button>
       </div>
     </div>
-    <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
     <div id="libBody" class="libbody"></div>
   </section>
 

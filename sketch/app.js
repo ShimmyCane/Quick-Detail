@@ -420,6 +420,7 @@
       }
       return hs2;
     }
+    if (it.kind === 'image') return [{ key: 'move', p: it.at }, { key: 'size', p: [it.at[0] + it.w, it.at[1] + it.h] }];
     return [];
   }
 
@@ -675,6 +676,7 @@
   function eraseAt(w) {
     var tol = 10 / view.z, a = ac();
     for (var i = detail.items.length - 1; i >= 0; i--) {
+      if (detail.items[i].kind === 'image') continue;   // images are removed with Delete, so erasing over one is safe
       if (SK.hitItem(detail.items[i], w, tol, a)) { commitDel(detail.items[i].id); return true; }
     }
     return false;
@@ -689,11 +691,15 @@
     return null;
   }
 
+  // Notes, dimensions and hatches win over images, which sit underneath.
   function hitAnnotation(w) {
     var tol = HIT_PX / view.z, a = ac();
-    for (var i = detail.items.length - 1; i >= 0; i--) {
-      var it = detail.items[i];
-      if (it.kind !== 'stroke' && SK.hitItem(it, w, tol, a)) return it;
+    for (var pass = 0; pass < 2; pass++) {
+      for (var i = detail.items.length - 1; i >= 0; i--) {
+        var it = detail.items[i];
+        if (it.kind === 'stroke' || (it.kind === 'image') !== (pass === 1)) continue;
+        if (SK.hitItem(it, w, tol, a)) return it;
+      }
     }
     return null;
   }
@@ -729,6 +735,7 @@
     else if (k === 'move') it.at = [b.at[0] + w[0] - drag.w0[0], b.at[1] + w[1] - drag.w0[1]];
     else if (k === 'width') it.width = Math.max(SK.PAPER.text * f * 4, w[0] - b.at[0]);
     else if (k === 'height') it.height = Math.max(SK.PAPER.text * f * 1.5, w[1] - b.at[1]);
+    else if (k === 'size') { it.w = Math.max(f / 4, w[0] - b.at[0]); it.h = it.w * b.h / b.w; }   // keeps the image's proportions
     else if (k === 'p1' || k === 'p2' || k === 'vertex') it[k] = snapped();
     else if (k === 'at') {
       it.at = w;
@@ -986,6 +993,13 @@
           edit(function (n) { n.outline = !it.outline; });
         } } })
       );
+    } else if (it.kind === 'image') {
+      chips.push(
+        el('button', { class: 'chip' + (it.noPrint ? ' on' : ''), text: it.noPrint ? 'No print' : 'Prints', title: 'No-print images show faintly and are left out of exports', on: { click: function () {
+          edit(function (n) { n.noPrint = !it.noPrint; });
+        } } }),
+        el('button', { class: 'chip', text: 'Accept as detail…', on: { click: function () { acceptImage(it); } } })
+      );
     } else if (it.kind === 'dim') {
       chips.push(
         el('button', { class: 'chip', text: 'Text…', on: { click: function () {
@@ -1139,6 +1153,50 @@
 
   function section(title, kids) {
     return el('section', {}, [el('h3', { text: title })].concat(kids));
+  }
+
+  // Images: placed on the no-print layer, faint on screen and left out of exports. Scaled down to keep the detail light.
+  var IMAGE_MAX_PX = 1600;
+
+  function addImage(file) {
+    var url = URL.createObjectURL(file);
+    var im = new Image();
+    im.onload = function () {
+      URL.revokeObjectURL(url);
+      var k = Math.min(1, IMAGE_MAX_PX / Math.max(im.naturalWidth, im.naturalHeight));
+      var cv = document.createElement('canvas');
+      cv.width = Math.round(im.naturalWidth * k);
+      cv.height = Math.round(im.naturalHeight * k);
+      var c = cv.getContext('2d');
+      c.fillStyle = '#fff';
+      c.fillRect(0, 0, cv.width, cv.height);
+      c.drawImage(im, 0, 0, cv.width, cv.height);
+      // Half the screen wide, centred in the view.
+      var w = Math.min(cv.width, W() * 0.5) / view.z, h = w * cv.height / cv.width;
+      var mid = SK.toWorld(view, [W() / 2, H() / 2]);
+      var item = {
+        id: uid('i'), kind: 'image', src: cv.toDataURL('image/jpeg', 0.85), name: file.name.replace(/\.[^.]+$/, ''),
+        at: [mid[0] - w / 2, mid[1] - h / 2], w: w, h: h, noPrint: true
+      };
+      commitPut(item, null);
+      select(item.id);
+      toast('Image added on the no-print layer. Tap it for options.');
+    };
+    im.onerror = function () { URL.revokeObjectURL(url); toast('That file could not be read as an image.'); };
+    im.src = url;
+  }
+
+  // Keep an image as its own library detail: printable, named, at the top-left of a new sheet.
+  function acceptImage(it) {
+    var title = window.prompt('Title for the new detail', it.name || 'Image detail');
+    if (title == null || !title.trim()) return;
+    var d = newDetail(title.trim());
+    d.scale = detail.scale;
+    d.tags = (detail.tags || []).slice();
+    d.items = [Object.assign(clone(it), { id: uid('i'), at: [0, 0], noPrint: false })];
+    saveDetail(d, [], null).then(function () {
+      toast('Saved "' + d.name + '" to the library.');
+    }).catch(function (e) { fail(e, 'Could not save: '); });
   }
 
   // A new detail drawn from a JSON spec (see sketch/author.js). Opens it, and returns the detail.
@@ -1392,6 +1450,11 @@
     var recorded = sess.reduce(function (n, s) { return n + (s.duration || 0); }, 0);
     var tagged = d.items.filter(function (it) { return it.meta; }).length;
     var pic = SK.picture(d.items, SK.itemsBounds(d.items, a), 220, 140, { ac: a, ink: col.ink, paper: col.paper });
+    SK.whenImages(d.items).then(function () {   // an image may load after the card is drawn
+      var again = SK.picture(d.items, SK.itemsBounds(d.items, a), 220, 140, { ac: a, ink: col.ink, paper: col.paper });
+      if (!pic.parentNode || pic.parentNode.classList.contains('flipping')) return;
+      pic.getContext('2d').drawImage(again, 0, 0);
+    });
     var last = scenes.length ? scenes[scenes.length - 1].text : '';
     var del = el('button', { class: 'lib-del', text: '×', title: 'Delete from this browser', 'aria-label': 'Delete ' + d.name, on: { click: function (e) {
       e.stopPropagation();
@@ -1572,7 +1635,7 @@
       if (f.kind === 'audio') { media[f.path] = s.audio; return; }
       var sc = an.scenes.filter(function (x) { return x.sessionId === f.sessionId && x.index === f.sceneIndex; })[0];
       var items = SK.stateAt(s, sc.end);
-      var b = SK.itemsBounds(items, ac()) || SK.itemsBounds(detail.items, ac());
+      var b = SK.itemsBounds(SK.printable(items), ac()) || SK.itemsBounds(SK.printable(detail.items), ac());
       if (!b) return;
       jobs.push(new Promise(function (resolve) {
         sheetCanvas(items, b, detail).toBlob(function (blob) { media[f.path] = blob; resolve(); }, 'image/jpeg', 0.9);
@@ -2024,7 +2087,7 @@
     cv.height = h;
     var c = cv.getContext('2d');
     var v = { x: b.minx - margin / z, y: b.miny - margin / z, z: z };
-    SK.paint(c, items, v, { ac: acFor(d), ink: '#000', paper: '#fff', bg: '#ffffff', fill: !opts.transparent, w: w, h: h });
+    SK.paint(c, items, v, { ac: acFor(d), ink: '#000', paper: '#fff', bg: '#ffffff', fill: !opts.transparent, w: w, h: h, print: true });
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.fillStyle = '#000';
     c.textAlign = 'left';
@@ -2102,7 +2165,7 @@
   }
 
   function exportPng() {
-    var b = SK.itemsBounds(detail.items, ac());
+    var b = SK.itemsBounds(SK.printable(detail.items), ac());
     if (!b) { toast('Nothing to export yet.'); return; }
     sheetCanvas(detail.items, b, detail, { transparent: true }).toBlob(function (blob) {
       download(blob, slug(detail.name) + '.png');
@@ -2110,7 +2173,7 @@
   }
 
   function exportJpeg() {
-    var b = SK.itemsBounds(detail.items, ac());
+    var b = SK.itemsBounds(SK.printable(detail.items), ac());
     if (!b) { toast('Nothing to export yet.'); return; }
     var an = analysis();
     var meta = SK.detailMetadata(detail, an);
@@ -2187,8 +2250,15 @@
     var c = e.target.closest('[data-color]'), w = e.target.closest('[data-weight]'), a = e.target.closest('[data-act]');
     if (c) { pen.color = c.getAttribute('data-color'); renderPen(); }
     else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); }
+    else if (a && a.getAttribute('data-act') === 'image') $('imageFile').click();
     else if (a) { if (pb) exitReplay(); setTool(a.getAttribute('data-act')); }
   });
+  $('imageFile').addEventListener('change', function (e) {
+    var file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (file) addImage(file);
+  });
+  SK.onImageLoad = function () { redraw(); };
   renderPen();
 
   $('undoCorner').addEventListener('click', undo);

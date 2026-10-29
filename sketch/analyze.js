@@ -65,6 +65,9 @@
       var h = SK.hatchOf(item.pattern);
       return { type: 'hatch', label: 'hatch: ' + (h ? h.label.toLowerCase() : item.pattern), drawn: ['hatch', item.pattern], stated: [] };
     }
+    if (item.kind === 'image') {
+      return { type: 'image', label: 'image' + (item.name ? ': ' + item.name : '') + (item.noPrint ? ' (no print)' : ''), drawn: ['image'], stated: [] };
+    }
     return { type: item.kind, label: item.kind, drawn: [], stated: [] };
   };
 

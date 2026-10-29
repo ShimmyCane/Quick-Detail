@@ -86,9 +86,10 @@
     c.lineJoin = 'round';
     var annoW = Math.max(SK.PAPER.line * ac.factor * v.z, 0.75);
 
-    // Images sit under the linework. A no-print image shows faintly on screen and is left out when opts.print is set.
+    // Images sit under the linework. A no-print image (an underlay) shows faintly on screen; it is left out when
+    // opts.print is set, and when opts.hideUnderlay is set (hidden by hand).
     items.forEach(function (it) {
-      if (it.kind !== 'image' || (it.noPrint && opts.print)) return;
+      if (it.kind !== 'image' || (it.noPrint && (opts.print || opts.hideUnderlay))) return;
       var im = imageOf(it.src);
       if (!im) return;
       var s = SK.toScreen(v, it.at);
@@ -99,7 +100,7 @@
 
     items.forEach(function (it) {
       if (it.kind === 'image') return;
-      var ink = opts.bg ? SK.inkFor(it.c, opts.bg) : opts.ink;
+      var ink = opts.mono ? opts.ink : opts.bg ? SK.inkFor(it.c, opts.bg) : opts.ink;   // mono: every pen in ink
       c.strokeStyle = ink;
       c.fillStyle = ink;
       c.globalAlpha = opts.faded && opts.faded.indexOf(it.id) >= 0 ? 0.35 : 1;
@@ -161,7 +162,7 @@
     cv.width = w;
     cv.height = h;
     var v = SK.fitView(b, w, h, opts.pad == null ? 8 : opts.pad, opts.maxZ) || { x: 0, y: 0, z: 1 };
-    SK.paint(cv.getContext('2d'), items, v, { ac: opts.ac, ink: opts.ink, paper: opts.paper, bg: opts.paper, w: w, h: h });
+    SK.paint(cv.getContext('2d'), items, v, { ac: opts.ac, ink: opts.ink, paper: opts.paper, bg: opts.paper, w: w, h: h, mono: opts.mono, print: opts.print });
     return cv;
   };
 

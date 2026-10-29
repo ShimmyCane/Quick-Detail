@@ -36,7 +36,7 @@
   var panelKind = null;
   var clip = null;           // audio element playing a scene clip
   var customTags = [];
-  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false };
+  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false, underlay: true, libBg: 'sheet' };
   var pen = { color: 'ink', weight: 'w2', hatch: 'wood1' };   // what new strokes, notes, dimensions and hatches are drawn with
   var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
   var counter = 0;
@@ -345,7 +345,7 @@
     ctx.fillStyle = col.paper;
     ctx.fillRect(0, 0, W(), H());
     if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), col.ink, dpr);
-    SK.paint(ctx, list, view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H() });
+    SK.paint(ctx, list, view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), hideUnderlay: !settings.underlay });
     if (!pb) {
       drawDraft(col);
       drawSelection(col);
@@ -698,6 +698,7 @@
       for (var i = detail.items.length - 1; i >= 0; i--) {
         var it = detail.items[i];
         if (it.kind === 'stroke' || (it.kind === 'image') !== (pass === 1)) continue;
+        if (it.kind === 'image' && it.noPrint && !settings.underlay) continue;   // a hidden underlay cannot be picked
         if (SK.hitItem(it, w, tol, a)) return it;
       }
     }
@@ -1384,6 +1385,10 @@
       b.classList.toggle('on', b.getAttribute('data-view') === lib.view);
     });
     $('libFilters').hidden = lib.view !== 'local';
+    $('libBg').hidden = lib.view !== 'local';
+    document.querySelectorAll('#libBg [data-bg]').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-bg') === (settings.libBg || 'sheet'));
+    });
     $('libSearch').hidden = lib.view !== 'local';
     $('libSort').parentNode.hidden = lib.view !== 'local';
   }
@@ -1442,16 +1447,29 @@
     }).catch(function (e) { fail(e, 'Could not read the library: '); });
   }
 
+  // Library cards as drawn on the sheet, in colour on white, or black only on white.
+  function libColors() {
+    if (settings.libBg === 'white' || settings.libBg === 'mono') return { ink: '#111111', paper: '#ffffff', mono: settings.libBg === 'mono' };
+    var c = colors();
+    return { ink: c.ink, paper: c.paper, mono: false };
+  }
+
+  // A card shows what prints: underlays are left out, and the picture is framed on the printed part.
+  function cardPicture(items, b, a, col) {
+    return SK.picture(items, b, 220, 140, { ac: a, ink: col.ink, paper: col.paper, mono: col.mono, print: true });
+  }
+  function cardBounds(items, a) { return SK.itemsBounds(SK.printable(items), a) || SK.itemsBounds(items, a); }
+
   function libCard(d) {
     var a = acFor(d);
-    var col = colors();
+    var col = libColors();
     var sess = lib.sessions[d.id] || [];
     var scenes = SK.scenesOf(sess);
     var recorded = sess.reduce(function (n, s) { return n + (s.duration || 0); }, 0);
     var tagged = d.items.filter(function (it) { return it.meta; }).length;
-    var pic = SK.picture(d.items, SK.itemsBounds(d.items, a), 220, 140, { ac: a, ink: col.ink, paper: col.paper });
+    var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
     SK.whenImages(d.items).then(function () {   // an image may load after the card is drawn
-      var again = SK.picture(d.items, SK.itemsBounds(d.items, a), 220, 140, { ac: a, ink: col.ink, paper: col.paper });
+      var again = cardPicture(d.items, cardBounds(d.items, a), a, col);
       if (!pic.parentNode || pic.parentNode.classList.contains('flipping')) return;
       pic.getContext('2d').drawImage(again, 0, 0);
     });
@@ -1677,11 +1695,11 @@
       });
     });
     var a = acFor(d);
-    var col = colors();
-    var b = SK.itemsBounds(all, a) || SK.itemsBounds(d.items, a);
+    var col = libColors();
+    var b = cardBounds(all, a) || cardBounds(d.items, a);
     var frames = SK.scenesOf(sess).map(function (sc) {
       return {
-        canvas: SK.picture(SK.stateAt(byId[sc.sessionId], sc.end), b, 220, 140, { ac: a, ink: col.ink, paper: col.paper }),
+        canvas: cardPicture(SK.stateAt(byId[sc.sessionId], sc.end), b, a, col),
         label: 'Scene ' + sc.index + ' · ' + SK.formatTime(sc.start)
       };
     });
@@ -1811,7 +1829,7 @@
       section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
       section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' })]),
-      section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
+      section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · U underlays · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
       section('Pen and fingers', [el('p', { class: 'muted small', text: 'Once a pen is used, fingers pan and pinch and only the pen draws. Without a pen, one finger draws and two fingers pan and zoom.' })])
     ].forEach(function (s) { body.appendChild(s); });
   }
@@ -2251,6 +2269,7 @@
     if (c) { pen.color = c.getAttribute('data-color'); renderPen(); }
     else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); }
     else if (a && a.getAttribute('data-act') === 'image') $('imageFile').click();
+    else if (a && a.getAttribute('data-act') === 'underlay') toggleUnderlay();
     else if (a) { if (pb) exitReplay(); setTool(a.getAttribute('data-act')); }
   });
   $('imageFile').addEventListener('change', function (e) {
@@ -2259,6 +2278,21 @@
     if (file) addImage(file);
   });
   SK.onImageLoad = function () { redraw(); };
+
+  // Underlays (no-print images) can be hidden by hand. They stay in the detail, its exports and the cloud upload.
+  function toggleUnderlay() {
+    settings.underlay = !settings.underlay;
+    saveSettings();
+    var it = sel && byId(sel.id);
+    if (!settings.underlay && it && it.kind === 'image' && it.noPrint) select(null);
+    renderUnderlay();
+    redraw();
+    toast(settings.underlay ? 'Underlays shown.' : 'Underlays hidden.');
+  }
+  function renderUnderlay() {
+    var b = document.querySelector('#lrail [data-act="underlay"]');
+    if (b) { b.classList.toggle('on', settings.underlay); b.textContent = settings.underlay ? '◐' : '○'; }
+  }
   renderPen();
 
   $('undoCorner').addEventListener('click', undo);
@@ -2290,6 +2324,14 @@
   $('hintCancel').addEventListener('click', endDraft);
   $('libClose').addEventListener('click', closeLibrary);
   $('libSort').addEventListener('change', renderLibrary);
+  document.querySelectorAll('#libBg [data-bg]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      settings.libBg = b.getAttribute('data-bg');
+      saveSettings();
+      lib.frames = {};
+      renderLibrary();
+    });
+  });
   $('libSearch').addEventListener('input', function (e) { lib.query = e.target.value; renderLibrary(); });
   document.querySelectorAll('#libViews [data-view]').forEach(function (b) {
     b.addEventListener('click', function () { lib.view = b.getAttribute('data-view'); renderLibrary(); });
@@ -2327,6 +2369,7 @@
     else if (e.key === 'e' || e.key === 'E') setTool('erase');
     else if (e.key === 'h' || e.key === 'H') setTool('hatch');
     else if (e.key === 'g' || e.key === 'G') { settings.grid = !settings.grid; saveSettings(); redraw(); toast(settings.grid ? 'Grid on.' : 'Grid off.'); }
+    else if (e.key === 'u' || e.key === 'U') toggleUnderlay();
     else if (e.key === 'f' || e.key === 'F') fitAll();
     else if (e.key === '+' || e.key === '=') zoomAt([W() / 2, H() / 2], 1.25);
     else if (e.key === '-') zoomAt([W() / 2, H() / 2], 0.8);
@@ -2357,6 +2400,7 @@
   Promise.all([SK.DB.get('kv', 'settings'), SK.DB.get('kv', 'customTags'), SK.DB.get('kv', 'currentDetail'), SK.DB.all('details')])
     .then(function (r) {
       if (r[0]) settings = Object.assign(settings, r[0]);
+      renderUnderlay();
       if (r[1]) customTags = r[1];
       var list = r[3].sort(function (a, b) { return b.modified - a.modified; });
       var d = list.filter(function (x) { return x.id === r[2]; })[0] || list[0];

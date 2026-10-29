@@ -1295,7 +1295,8 @@
       el('span', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
       el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
     ]);
-    bindFlip(card, pic, d);
+    // Browsing shows the final picture and last words. Only the loaded detail keeps its history to flip through.
+    if (d.id === detail.id) bindFlip(card, pic, d);
     card.addEventListener('click', function () {
       if (Date.now() < card._quietUntil) return;
       closeLibrary();
@@ -1507,7 +1508,7 @@
     return Promise.resolve(frames);
   }
 
-  // Hold a card to flip through its scenes like a flip book. Release to see the detail as it is now.
+  // Hold the loaded detail's card to flip through its scenes like a flip book. Release to see the detail as it is now.
   function bindFlip(card, pic, d) {
     var HOLD_MS = 220, FRAME_MS = 300;
     var timer = 0, tickId = 0, frames = null, flipping = false, saved = null, idx = 0;

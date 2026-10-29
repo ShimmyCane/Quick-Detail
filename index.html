@@ -57,6 +57,9 @@
       <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
       <button data-act="text" class="tool" title="Text with arrow (T)" aria-label="Text">T</button>
+      <button data-act="image" class="tool" title="Add an image (no-print layer)" aria-label="Add image">▣</button>
+      <button data-act="underlay" class="tool on" title="Show or hide underlays, the no-print images (U)" aria-label="Show or hide underlays">◐</button>
+      <input type="file" id="imageFile" accept="image/*" hidden>
     </div>
   </nav>
 
@@ -84,6 +87,11 @@
         <div class="seg" id="libViews" role="group" aria-label="Where to look">
           <button class="chip on" data-view="local">This browser</button>
           <button class="chip" data-view="cloud">Cloud</button>
+        </div>
+        <div class="seg" id="libBg" role="group" aria-label="Card background">
+          <button class="chip" data-bg="sheet">As drawn</button>
+          <button class="chip" data-bg="white">On white</button>
+          <button class="chip" data-bg="mono">Black on white</button>
         </div>
         <input type="search" id="libSearch" placeholder="Search name, tag or words" aria-label="Search the library">
         <label class="chip sel">Sort <select id="libSort" aria-label="Sort details"><option value="name">Name</option><option value="recent">Recent</option><option value="scenes">Most scenes</option></select></label>

@@ -287,7 +287,14 @@
     return b;
   };
 
+  // image: { id, kind: 'image', src (a JPEG data URL), at: [x, y] top-left, w, h (world inches), noPrint, name }
+  // A no-print image is a reference on screen only; exports and prints leave it out.
+  SK.printable = function (items) {
+    return items.filter(function (it) { return !(it.kind === 'image' && it.noPrint); });
+  };
+
   SK.itemBounds = function (item, ac) {
+    if (item.kind === 'image') return { minx: item.at[0], miny: item.at[1], maxx: item.at[0] + item.w, maxy: item.at[1] + item.h };
     if (item.kind === 'stroke' || item.kind === 'hatch') return SK.boundsOf(item.pts);
     var pts = primsPoints(SK.itemPrims(item, ac), ac);
     if (item.kind === 'note') {
@@ -323,6 +330,9 @@
 
   // Is world point p on the item, within tol world inches?
   SK.hitItem = function (item, p, tol, ac) {
+    if (item.kind === 'image') {
+      return p[0] >= item.at[0] - tol && p[0] <= item.at[0] + item.w + tol && p[1] >= item.at[1] - tol && p[1] <= item.at[1] + item.h + tol;
+    }
     if (item.kind === 'stroke') return nearPath(p, item.pts, tol + (item.w || 0) / 2);
     if (item.kind === 'hatch') return pointInPoly(p, item.pts) || nearPath(p, item.pts.concat([item.pts[0]]), tol);
     if (item.kind === 'note') {

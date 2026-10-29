@@ -11,6 +11,28 @@
   // Text width in world inches for a given text height.
   SK.measure = function (text, size) { return meter.measureText(text).width * size / 100; };
 
+  // Images by source, loaded once. SK.onImageLoad runs when one finishes, so the page can repaint.
+  var images = {};
+  function imageOf(src) {
+    var im = images[src];
+    if (!im) {
+      im = images[src] = new Image();
+      im.onload = function () { if (SK.onImageLoad) SK.onImageLoad(); };
+      im.src = src;
+    }
+    return im.complete && im.naturalWidth ? im : null;
+  }
+
+  // Resolves once every image among the items has loaded (or failed), for pictures drawn once.
+  SK.whenImages = function (items) {
+    return Promise.all(items.filter(function (it) { return it.kind === 'image'; }).map(function (it) {
+      imageOf(it.src);
+      var im = images[it.src];
+      if (im.complete) return null;
+      return new Promise(function (resolve) { im.addEventListener('load', resolve); im.addEventListener('error', resolve); });
+    }));
+  };
+
   // Grid lines over the sheet, in screen space. Every fourth line is heavier (one paper inch).
   SK.paintGrid = function (c, v, factor, w, h, ink, ratio) {
     var step = SK.gridStep(factor);
@@ -64,8 +86,21 @@
     c.lineJoin = 'round';
     var annoW = Math.max(SK.PAPER.line * ac.factor * v.z, 0.75);
 
+    // Images sit under the linework. A no-print image (an underlay) shows faintly on screen; it is left out when
+    // opts.print is set, and when opts.hideUnderlay is set (hidden by hand).
     items.forEach(function (it) {
-      var ink = opts.bg ? SK.inkFor(it.c, opts.bg) : opts.ink;
+      if (it.kind !== 'image' || (it.noPrint && (opts.print || opts.hideUnderlay))) return;
+      var im = imageOf(it.src);
+      if (!im) return;
+      var s = SK.toScreen(v, it.at);
+      c.globalAlpha = it.noPrint ? 0.55 : 1;
+      c.drawImage(im, s[0], s[1], it.w * v.z, it.h * v.z);
+    });
+    c.globalAlpha = 1;
+
+    items.forEach(function (it) {
+      if (it.kind === 'image') return;
+      var ink = opts.mono ? opts.ink : opts.bg ? SK.inkFor(it.c, opts.bg) : opts.ink;   // mono: every pen in ink
       c.strokeStyle = ink;
       c.fillStyle = ink;
       c.globalAlpha = opts.faded && opts.faded.indexOf(it.id) >= 0 ? 0.35 : 1;
@@ -127,7 +162,7 @@
     cv.width = w;
     cv.height = h;
     var v = SK.fitView(b, w, h, opts.pad == null ? 8 : opts.pad, opts.maxZ) || { x: 0, y: 0, z: 1 };
-    SK.paint(cv.getContext('2d'), items, v, { ac: opts.ac, ink: opts.ink, paper: opts.paper, bg: opts.paper, w: w, h: h });
+    SK.paint(cv.getContext('2d'), items, v, { ac: opts.ac, ink: opts.ink, paper: opts.paper, bg: opts.paper, w: w, h: h, mono: opts.mono, print: opts.print });
     return cv;
   };
 

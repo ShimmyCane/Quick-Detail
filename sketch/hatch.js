@@ -9,18 +9,27 @@
 
   SK.HATCH_MARGIN_PAPER = 1 / 32;
 
+  // Material hatches for section drawings, following the common conventions in architectural symbol references:
+  // concrete is stippled; brick is a diagonal fill; wood and plywood are lines; batt insulation is a wavy line;
+  // rigid insulation is a fine crosshatch; concrete block is a running bond; steel is solid.
   // fams: parallel line families (angle in degrees, spacing in paper inches).
-  // dots: stipple (spacing in paper inches, radius in paper inches). solid: a filled region.
+  // zig: a wavy line in rows (row spacing, wave amplitude, wave period, all paper inches).
+  // blocks: running bond (course height and block length in paper inches).
+  // dots: stipple (spacing and radius in paper inches). solid: a filled region.
   SK.HATCHES = [
     { key: 'none', label: 'None' },
-    { key: 'wood1', label: 'Wood, grain across', fams: [{ a: 0, s: 0.16 }] },
-    { key: 'wood2', label: 'Wood, grain on the diagonal', fams: [{ a: 45, s: 0.16 }] },
+    { key: 'wood1', label: 'Wood, along the grain', fams: [{ a: 0, s: 0.16 }] },
+    { key: 'wood2', label: 'Wood, cut across the grain', fams: [{ a: 45, s: 0.16 }] },
     { key: 'plywood', label: 'Plywood', fams: [{ a: 0, s: 0.22 }, { a: 90, s: 0.22 }] },
     { key: 'gypsum', label: 'Gypsum board', fams: [{ a: 45, s: 0.2 }] },
     { key: 'insulation', label: 'Insulation (grid)', fams: [{ a: 0, s: 0.3 }, { a: 90, s: 0.3 }] },
-    { key: 'cmu', label: 'Concrete block', fams: [{ a: 0, s: 0.4 }, { a: 90, s: 0.8 }] },
-    { key: 'earth', label: 'Earth', fams: [{ a: 30, s: 0.25 }, { a: -30, s: 0.25 }] },
+    { key: 'batt', label: 'Insulation, batt (wavy)', zig: { row: 0.26, amp: 0.07, period: 0.36 } },
+    { key: 'rigid', label: 'Insulation, rigid board', fams: [{ a: 45, s: 0.12 }, { a: -45, s: 0.12 }] },
+    { key: 'brick', label: 'Brick', fams: [{ a: 45, s: 0.22 }] },
+    { key: 'cmu', label: 'Concrete block (running bond)', blocks: { h: 0.22, L: 0.44 } },
     { key: 'concrete', label: 'Concrete (stipple)', dots: 0.14, r: 0.012 },
+    { key: 'gravel', label: 'Gravel', dots: 0.24, r: 0.02 },
+    { key: 'earth', label: 'Earth', fams: [{ a: 30, s: 0.25 }, { a: -30, s: 0.25 }] },
     { key: 'screen', label: 'Screen (light tone)', dots: 0.06, r: 0.006 },
     { key: 'steel', label: 'Steel (solid)', solid: true }
   ];
@@ -53,8 +62,33 @@
     return best;
   }
 
+  // The stretches of the line through o with unit direction u that lie inside the polygon, as [t0, t1] along u.
+  function clipLine(poly, o, u) {
+    var n = [-u[1], u[0]];
+    var c = n[0] * o[0] + n[1] * o[1];
+    var ts = [];
+    for (var i = 0; i < poly.length; i++) {
+      var p = poly[i], q = poly[(i + 1) % poly.length];
+      var sp = n[0] * p[0] + n[1] * p[1] - c, sq = n[0] * q[0] + n[1] * q[1] - c;
+      if ((sp > 0) !== (sq > 0)) {
+        var t = sp / (sp - sq);
+        ts.push(u[0] * (p[0] + (q[0] - p[0]) * t) + u[1] * (p[1] + (q[1] - p[1]) * t) - (u[0] * o[0] + u[1] * o[1]));
+      }
+    }
+    ts.sort(function (x, y) { return x - y; });
+    var out = [];
+    for (var j = 0; j + 1 < ts.length; j += 2) out.push([ts[j], ts[j + 1]]);
+    return out;
+  }
+
+  // A segment is kept unless it lies along the boundary (a line on an edge is not hatch).
+  function keep(s0, s1, poly) {
+    var mid = [(s0[0] + s1[0]) / 2, (s0[1] + s1[1]) / 2];
+    return edgeDist(mid, poly) > 1e-7;
+  }
+
   // Parallel lines at angle a (degrees) with spacing d (world inches), clipped to the polygon.
-  // Each line stops m short of its ends. Lines lying on the boundary are left out.
+  // Each line stops m short of its ends.
   function familySegments(poly, a, d, m) {
     var rad = a * Math.PI / 180;
     var u = [Math.cos(rad), Math.sin(rad)], n = [-Math.sin(rad), Math.cos(rad)];
@@ -62,36 +96,65 @@
     poly.forEach(function (p) { var v = n[0] * p[0] + n[1] * p[1]; lo = Math.min(lo, v); hi = Math.max(hi, v); });
     var out = [];
     for (var k = Math.ceil(lo / d); k * d <= hi; k++) {
-      var o = k * d;
-      var ts = [];
-      for (var i = 0; i < poly.length; i++) {
-        var p = poly[i], q = poly[(i + 1) % poly.length];
-        var sp = n[0] * p[0] + n[1] * p[1] - o, sq = n[0] * q[0] + n[1] * q[1] - o;
-        if ((sp > 0) !== (sq > 0)) {
-          var t = sp / (sp - sq);
-          ts.push(u[0] * (p[0] + (q[0] - p[0]) * t) + u[1] * (p[1] + (q[1] - p[1]) * t));
-        }
-      }
-      ts.sort(function (x, y) { return x - y; });
-      for (var j = 0; j + 1 < ts.length; j += 2) {
-        var t0 = ts[j] + m, t1 = ts[j + 1] - m;
-        if (t1 <= t0) continue;
-        var s0 = [n[0] * o + u[0] * t0, n[1] * o + u[1] * t0];
-        var s1 = [n[0] * o + u[0] * t1, n[1] * o + u[1] * t1];
-        var mid = [(s0[0] + s1[0]) / 2, (s0[1] + s1[1]) / 2];
-        if (edgeDist(mid, poly) < 1e-7) continue;
-        out.push([s0, s1]);
+      var o = [n[0] * k * d, n[1] * k * d];
+      clipLine(poly, o, u).forEach(function (iv) {
+        var t0 = iv[0] + m, t1 = iv[1] - m;
+        if (t1 <= t0) return;
+        var s0 = [o[0] + u[0] * t0, o[1] + u[1] * t0];
+        var s1 = [o[0] + u[0] * t1, o[1] + u[1] * t1];
+        if (keep(s0, s1, poly)) out.push([s0, s1]);
+      });
+    }
+    return out;
+  }
+
+  // Running bond: course lines every h, and block joints every L, offset by half a block on alternate courses.
+  function blockSegments(poly, h, L, m) {
+    var out = familySegments(poly, 0, h, m);
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    poly.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+    for (var r = Math.floor(miny / h); r * h <= maxy; r++) {
+      var y0 = r * h, y1 = y0 + h;
+      var off = (r % 2 === 0 ? 0 : 0.5);
+      for (var i = Math.floor(minx / L) - 1; (i - off) * L <= maxx + L; i++) {
+        var x = (i + off) * L;
+        if (x < minx - 1e-9 || x > maxx + 1e-9) continue;
+        clipLine(poly, [x, 0], [0, 1]).forEach(function (iv) {
+          var a = Math.max(iv[0], y0) + m, b = Math.min(iv[1], y1) - m;
+          if (b <= a) return;
+          var s0 = [x, a], s1 = [x, b];
+          if (keep(s0, s1, poly)) out.push([s0, s1]);
+        });
       }
     }
     return out;
   }
 
+  // Batt insulation: a wavy line in rows. Each little piece of wave is kept only where it is inside the region.
+  function waveSegments(poly, row, amp, period, m) {
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    poly.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+    var out = [];
+    var step = period / 8;
+    for (var base = Math.ceil(miny / row) * row; base <= maxy; base += row) {
+      var prev = null;
+      for (var x = minx; x <= maxx + step; x += step) {
+        var phase = ((x - minx) % period) / period;
+        var tri = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+        var pt = [x, base + amp * (tri * 2 - 1)];
+        if (prev && SK.pointInPoly(prev, poly) && SK.pointInPoly(pt, poly) && edgeDist(prev, poly) > m && edgeDist(pt, poly) > m) out.push([prev, pt]);
+        prev = pt;
+      }
+    }
+    return out;
+  }
+
+  // Stipple: one dot per cell, placed by a fixed hash so the same region always draws the same dots.
   function hash(i, j, salt) {
     var x = Math.sin(i * 127.1 + j * 311.7 + salt * 74.7) * 43758.5453;
     return x - Math.floor(x);
   }
 
-  // Stipple: one dot per cell, placed by a fixed hash so the same region always draws the same dots.
   function dotPoints(poly, d, m) {
     var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
     poly.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
@@ -122,6 +185,12 @@
     (h.fams || []).forEach(function (f) {
       familySegments(poly, f.a, f.s * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
     });
+    if (h.blocks) {
+      blockSegments(poly, h.blocks.h * factor, h.blocks.L * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
+    }
+    if (h.zig) {
+      waveSegments(poly, h.zig.row * factor, h.zig.amp * factor, h.zig.period * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
+    }
     return out;
   };
 

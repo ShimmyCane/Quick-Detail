@@ -51,5 +51,43 @@ check('a diagonal pattern runs at 45 degrees', SK.hatchPrims({ kind: 'hatch', pa
 
 check('point in polygon', SK.pointInPoly([2, 2], square) && !SK.pointInPoly([5, 2], square));
 
+var big = [[0, 0], [6, 0], [6, 6], [0, 6]];
+function prims(key, poly) { return SK.hatchPrims({ kind: 'hatch', pattern: key, pts: poly || big, outline: false }, factor); }
+function inside(p, poly) { return SK.pointInPoly(p, poly || big); }
+
+check('the section set includes brick, batt, rigid, block and gravel', ['brick', 'batt', 'rigid', 'cmu', 'gravel'].every(function (k) { return !!SK.hatchOf(k); }));
+
+var brick = prims('brick');
+check('brick is a diagonal fill', brick.length > 5 && brick.every(function (p) {
+  var dx = p.pts[1][0] - p.pts[0][0], dy = p.pts[1][1] - p.pts[0][1];
+  return Math.abs(Math.abs(dx) - Math.abs(dy)) < 1e-9;
+}));
+
+var cmu = prims('cmu');
+var cmuH = cmu.filter(function (p) { return Math.abs(p.pts[0][1] - p.pts[1][1]) < 1e-9; }).length;
+var cmuV = cmu.filter(function (p) { return Math.abs(p.pts[0][0] - p.pts[1][0]) < 1e-9; });
+check('concrete block has courses and joints', cmuH > 0 && cmuV.length > 0, cmuH + ' courses, ' + cmuV.length + ' joints');
+var jointsByRow = {};
+cmuV.forEach(function (p) { var r = Math.round(p.pts[0][1] / (SK.hatchOf('cmu').blocks.h * factor)); (jointsByRow[r] = jointsByRow[r] || []).push(p.pts[0][0]); });
+var r0 = jointsByRow[1] || [], r1 = jointsByRow[2] || [];
+check('running bond: joints on alternate courses are offset', r0.length > 0 && r1.length > 0 && Math.abs(r0[0] - r1[0]) > 1e-6 || (r0.length && r1.length && r0.indexOf(r1[0]) < 0), JSON.stringify([r0.slice(0, 2), r1.slice(0, 2)]));
+check('block joints stop at the course lines', cmuV.every(function (p) {
+  var h = SK.hatchOf('cmu').blocks.h * factor;
+  var rowOf = Math.floor((p.pts[0][1] + 1e-9) / h);
+  return p.pts[0][1] >= rowOf * h - 1e-9 && p.pts[1][1] <= (rowOf + 1) * h + 1e-9;
+}));
+
+var batt = prims('batt');
+check('batt insulation is a wavy line inside the region', batt.length > 20 && batt.every(function (p) {
+  return inside([(p.pts[0][0] + p.pts[1][0]) / 2, (p.pts[0][1] + p.pts[1][1]) / 2]);
+}), batt.length + ' pieces');
+check('batt is wavy, not straight', batt.some(function (p) { return Math.abs(p.pts[0][1] - p.pts[1][1]) > 1e-3 && Math.abs(p.pts[0][0] - p.pts[1][0]) > 1e-3; }));
+
+var rigid = prims('rigid');
+check('rigid board is a crosshatch at 45 degrees both ways', rigid.some(function (p) { return p.pts[1][1] > p.pts[0][1] && p.pts[1][0] > p.pts[0][0]; }) && rigid.some(function (p) { return p.pts[1][1] < p.pts[0][1] && p.pts[1][0] > p.pts[0][0]; }));
+
+var gravel = prims('gravel');
+check('gravel is sparser, larger dots than stipple', gravel.length > 0 && gravel.length < prims('concrete').length && gravel[0].r > prims('concrete')[0].r);
+
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

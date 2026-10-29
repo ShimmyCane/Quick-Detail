@@ -34,6 +34,9 @@
   <!-- Options for the selected note or dimension. -->
   <div id="chips" class="chips" hidden></div>
 
+  <!-- Top right: undo, out of the tool group. Ctrl+Z also undoes. -->
+  <button id="undoCorner" class="undo-corner" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
+
   <!-- Left: pen colours, line weights, and the text and dimension tools. -->
   <nav class="lrail" id="lrail" aria-label="Pen and annotation tools">
     <div class="lgroup" aria-label="Pen colour">
@@ -49,7 +52,7 @@
       <button data-weight="w3" title="Medium" aria-label="Medium line"><i></i></button>
       <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
     </div>
-    <div class="lgroup" aria-label="Annotation tools">
+    <div class="lgroup tools" aria-label="Annotation tools">
       <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
       <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
@@ -63,7 +66,6 @@
     <button data-act="project" title="Project info" aria-label="Project info">ⓘ</button>
     <button data-act="library" title="Library" aria-label="Library">▦</button>
     <button data-act="log" title="Log" aria-label="Log">☰</button>
-    <button data-act="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
     <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
   </nav>
 

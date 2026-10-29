@@ -38,6 +38,7 @@ check('one snapshot per scene, numbered within its recording', plan.snapshots.le
 check('snapshot keeps its words and times', plan.snapshots[0].said.indexOf('threshold') >= 0 && plan.snapshots[0].start_ms === 0);
 check('snapshot metadata lists what is on the sheet by then', Array.isArray(plan.snapshots[0].metadata.elementsOnSheet));
 check('files list metadata, audio and every snapshot', plan.files.filter(function (f) { return f.kind === 'metadata'; }).length === 1 && plan.files.filter(function (f) { return f.kind === 'audio'; }).length === 1 && plan.files.filter(function (f) { return f.kind === 'snapshot'; }).length === plan.snapshots.length);
+check('files list the JSON parallel beside the metadata', plan.files.filter(function (f) { return f.kind === 'parallel' && /\/parallel\.json$/.test(f.path); }).length === 1);
 check('every file path is unique', new Set(plan.files.map(function (f) { return f.path; })).size === plan.files.length);
 check('the metadata path is under the detail', plan.metadataPath === 'd-local-1/metadata.json');
 

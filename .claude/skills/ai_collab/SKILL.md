@@ -37,6 +37,16 @@ Hatch pattern keys come from `sketch/hatch.js` (`SK.HATCHES`): `wood1`, `wood2`,
 
 A key is not always the right drawing. When the user's own marks for a material differ from the key, draw the user's convention as strokes and say so in the report. Earth is the first case: the key `earth` is ±30° lines, but the user draws grouped horizontal and vertical dashes. See `docs/lessons-learned/hatch/earth.md`.
 
+## Method: describe, don't code
+
+Do not write a generator script for each material. A hatch is saved as a plain-words description of its logic, and the drawing is made from that description. The steps:
+
+1. **Read the sketch.** Look at the user's marks and state what you see in words: what repeats, the orientation, the rough spacing, the length of each mark, how the marks group, and where the marks stop.
+2. **Interpret.** Say what the material most likely is and what the marks are meant to show.
+3. **Offer options.** Give three to five options, each a short plain-language description: the rule (spacing, angle, group size, lengths, offset), what it reads as at a distance, what it reads as up close, and the reference it draws on. Cover the common conventions for that material, for example how a hatch pattern file (PAT) would express it, but do not generate that file.
+4. **The user picks.** Record the chosen description and the reason in `docs/lessons-learned/hatch/<pattern>.md`.
+5. **Draw from the description.** Place the marks by hand from the description. Check them with a quick measurement (white share, line ends inside the outline) and a render, not a per-pattern script.
+
 ## Lessons learned
 
 Decisions and their reasons live in `docs/lessons-learned/`. Read the file for the pattern in scope before planning marks, and add to it after each run that settled something. The folder index is `docs/lessons-learned/README.md`.

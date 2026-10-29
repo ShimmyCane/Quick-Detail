@@ -53,3 +53,15 @@ Not a code rule. The pattern is a drawing convention for this user's markup. Not
 - Should the chosen grouped pattern become an app hatch key? Today the app only knows the ±30° lines. Drawing the groups as strokes works for markup, but a key would let the app redraw it at any scale.
 - Is the user's "Better earth" note asking for a specific look that none of the versions gives?
 - The app's ±30° `earth` definition has no source. Find one or leave it marked `assumed`.
+
+## 6. Chosen description (plain words)
+
+Chosen by the user on 2026-10-29 as "earth hatch v2", after C1B2 and C1B11 were tried. Written as a rule, not code.
+
+- Inside the outline, place a grid of square cells, six across and four down, on one equal pitch of 0.9 in both ways.
+- Each cell holds one group of five parallel lines, spaced 0.2 in apart.
+- Cells alternate: horizontal group, then vertical group, like a checkerboard. The first cell in the top-left is horizontal.
+- Every line is the same length, 0.8 in, and the same weight, 0.04 in.
+- Keep every line at least 0.05 in inside the outline.
+- At a distance it reads as an even grey tone with almost no white. Up close, each group reads as a set of parallel marks, and the checker keeps the horizontal and vertical marks visibly different.
+- Reference: a general earth or ground convention of short, random-looking marks, rendered here as a regular checker so it tiles without white seams.

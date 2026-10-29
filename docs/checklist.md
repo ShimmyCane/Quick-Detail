@@ -72,6 +72,11 @@ A block is a finished detail placed inside another detail. It is a live link, so
 - [ ] Edit a source used in two blocks. Check the pop-up lists both hosts, and that both update.
 - [ ] Branch as new version, then edit the new one. The original and the other host must not change.
 
+## Releasing
+
+- [ ] Every local file in `index.html` ends in `?v=...`. Change that value whenever any file in `sketch/` changes, so a browser or host that caches files cannot mix an old script with a new page (that mix gave a blank sheet and a dead library on 2026-10-29).
+- [ ] The Supabase library still loads from a public CDN. Bundle a copy in `sketch/` so the cloud library works when the CDN is slow or blocked. It could not be downloaded from the build sandbox, so it needs to be added from a machine with open internet.
+
 ## Later
 
 - [ ] "Rebuild database" command: find untagged details, read their drawings and scenes, and write tags back. This runs on the JSON export today.

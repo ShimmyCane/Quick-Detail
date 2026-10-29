@@ -2306,12 +2306,13 @@
     ROUNDINGS.forEach(function (r) { round.appendChild(el('option', { value: r.v, text: r.l, selected: r.v === settings.roundTo })); });
 
     var versions = el('ul', { class: 'versions' }, [
-      el('li', {}, [el('b', { text: 'v3 · current' }), el('span', { text: 'Endless sheet, scenes, notes, dimensions, library' })]),
+      el('li', {}, [el('b', { text: 'v4 · current' }), el('span', { text: 'Blocks, hatch patterns, cloud library, GIF of recordings' })]),
+      el('li', {}, [el('b', { text: 'v3' }), el('span', { text: 'Endless sheet, scenes, notes, dimensions, library' })]),
       el('li', {}, [el('a', { href: 'history/v2/index.html', text: 'v2 · Wall sketch' }), el('span', { text: 'Blank sheet with recording and replay' })]),
       el('li', {}, [el('a', { href: 'history/v1/index.html', text: 'v1 · Quick Detail' }), el('span', { text: 'Detail editor with tools, meaning and exports' })])
     ]);
 
-    // Changes made in v3, newest first. Add a line here with each change a user would notice.
+    // Changes made in v4, newest first. Add a line here with each change a user would notice.
     var CHANGES = [
       ['29 Oct', 'GIF button in a detail\'s info panel, for local and cloud details: an animated GIF of its recordings'],
       ['29 Oct', 'Library: hold a card to preview it; Rename in the info panel; clearer buttons'],
@@ -2352,7 +2353,7 @@
       ]),
       section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
-      section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' }), el('p', { class: 'muted small', text: 'Changes in v3, newest first' }), changes]),
+      section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' }), el('p', { class: 'muted small', text: 'Changes in v4, newest first' }), changes]),
       section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · U underlays · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
       section('Pen and fingers', [el('p', { class: 'muted small', text: 'Once a pen is used, fingers pan and pinch and only the pen draws. Without a pen, one finger draws and two fingers pan and zoom.' })])
     ].forEach(function (s) { body.appendChild(s); });

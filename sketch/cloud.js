@@ -211,6 +211,12 @@
         .then(function (r) { if (r.error) throw r.error; return r.data; });
     },
 
+    // Rename a detail in the cloud. Only the owner's signed-in session can write.
+    rename: function (id, name) {
+      return this.init().from('sketch_details').update({ name: name, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function (r) { if (r.error) throw r.error; });
+    },
+
     signedUrl: function (path) {
       return this.init().storage.from(SK.CLOUD.bucket).createSignedUrl(path, 3600)
         .then(function (r) { if (r.error) throw r.error; return r.data.signedUrl; });

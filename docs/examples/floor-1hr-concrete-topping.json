@@ -1,0 +1,35 @@
+{
+  "name": "1 HR Floor/ceiling with concrete topping",
+  "scale": "3\"=1'-0\"",
+  "tags": ["1 hr", "floor", "wood"],
+  "items": [
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [48, 0], [48, 1.5], [0, 1.5]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "plywood", "pts": [[0, 1.5], [48, 1.5], [48, 2.25], [0, 2.25]], "outline": true, "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "wood2", "pts": [[7.25, 2.25], [8.75, 2.25], [8.75, 13.5], [7.25, 13.5]], "outline": true, "pen": "blue" },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[23.25, 2.25], [24.75, 2.25], [24.75, 13.5], [23.25, 13.5]], "outline": true, "pen": "blue" },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[39.25, 2.25], [40.75, 2.25], [40.75, 13.5], [39.25, 13.5]], "outline": true, "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "batt", "pts": [[0, 10], [7.25, 10], [7.25, 13.5], [0, 13.5]], "outline": false, "pen": "blue" },
+    { "kind": "hatch", "pattern": "batt", "pts": [[8.75, 10], [23.25, 10], [23.25, 13.5], [8.75, 13.5]], "outline": false, "pen": "blue" },
+    { "kind": "hatch", "pattern": "batt", "pts": [[24.75, 10], [39.25, 10], [39.25, 13.5], [24.75, 13.5]], "outline": false, "pen": "blue" },
+    { "kind": "hatch", "pattern": "batt", "pts": [[40.75, 10], [48, 10], [48, 13.5], [40.75, 13.5]], "outline": false, "pen": "blue" },
+
+    { "kind": "rect", "x": 0, "y": 13.5, "w": 48, "h": 0.5, "weight": "w1", "pen": "blue" },
+    { "kind": "hatch", "pattern": "gypsum", "pts": [[0, 14], [48, 14], [48, 14.625], [0, 14.625]], "outline": true, "pen": "blue" },
+
+    { "kind": "line", "pts": [[0, -1.5], [0, 4.5], [-0.8, 5.1], [0.8, 5.9], [0, 6.5], [0, 16]], "weight": "w1" },
+    { "kind": "line", "pts": [[48, -1.5], [48, 6.8], [47.2, 7.4], [48.8, 8.2], [48, 8.8], [48, 16]], "weight": "w1" },
+
+    { "kind": "note", "text": "1 1/2” concrete topping", "at": [53, -3], "width": 13, "tip": [45, 0.75], "pen": "green" },
+    { "kind": "note", "text": "3/4” plywood subfloor", "at": [53, 0], "width": 13, "tip": [46, 1.9], "pen": "blue" },
+    { "kind": "note", "text": "2x12 wood joists @ 16” o.c.", "at": [53, 3.25], "width": 13, "tip": [40.6, 6], "pen": "blue" },
+    { "kind": "note", "text": "3 1/2” batt insulation", "at": [53, 9.75], "width": 13, "tip": [44, 11.5], "pen": "blue" },
+    { "kind": "note", "text": "1/2” resilient channel @ 24” o.c.", "at": [53, 13], "width": 13, "tip": [46, 13.75], "pen": "blue" },
+    { "kind": "note", "text": "5/8” Type X gyp. board", "at": [53, 16.25], "width": 13, "tip": [46.5, 14.3], "pen": "blue" },
+    { "kind": "note", "text": "1 hr rated floor/ceiling assembly. Verify against the listed design (UL or GA file) before use.", "at": [2, 19.5], "width": 30, "tip": [24, 14.625] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [8, 0], "p2": [24, 0], "at": [16, -3] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, 0], "p2": [0, 14.625], "at": [-4, 7.3] }
+  ]
+}

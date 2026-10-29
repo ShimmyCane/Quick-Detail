@@ -1,0 +1,22 @@
+{
+  "name": "Roof base flashing at CMU wall, counterflashing",
+  "scale": "3\"=1'-0\"",
+  "tags": ["roof", "flashing", "wall", "low slope"],
+  "items": [
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [40, 0], [40, 6], [0, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "rigid", "pts": [[8, -2], [40, -2], [40, 0], [8, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "cmu", "pts": [[0, -10], [8, -10], [8, 0], [0, 0]], "outline": true },
+
+    { "kind": "line", "pts": [[40, -2.25], [8.25, -2.25], [8.25, -7]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[7, -7.25], [9, -7.25], [9, -4]], "weight": "w2", "pen": "blue" },
+
+    { "kind": "note", "text": "Counterflashing, set in a reglet in the wall", "at": [53, -12], "width": 13, "tip": [9, -6], "pen": "blue" },
+    { "kind": "note", "text": "Base flashing, lapped 8 in. up the wall", "at": [53, -4], "width": 13, "tip": [8.25, -5], "pen": "blue" },
+    { "kind": "note", "text": "2 in. rigid insulation", "at": [53, 2], "width": 13, "tip": [30, -1] },
+    { "kind": "note", "text": "6 in. concrete roof slab", "at": [53, 7], "width": 13, "tip": [30, 3], "pen": "green" },
+    { "kind": "note", "text": "8 in. CMU wall, rising above roof", "at": [53, 12], "width": 13, "tip": [4, -5], "pen": "ink" },
+    { "kind": "note", "text": "Roof base flashing at CMU wall. Draft: verify flashing height, reglet and counterflashing against the membrane manufacturer's details and local code before use.", "at": [2, 16], "width": 34, "tip": [20, 6] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [0, -10], "p2": [0, 0], "at": [-4, -5] }
+  ]
+}

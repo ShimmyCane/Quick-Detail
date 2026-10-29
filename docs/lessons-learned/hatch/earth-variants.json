@@ -117,5 +117,34 @@
       "orientation": "checker",
       "stagger": false
     }
+  },
+  {
+    "id": "earth-hatch-v2",
+    "run": 9,
+    "title": "Earth hatch v2: square groups on an equal 0.9 in pitch, every line 0.8 in (AI collab 9)",
+    "label": "Earth hatch v2: groups of 5 at 0.2 in spacing, 0.9 in pitch both ways, every line 0.8 in, wrapped tile",
+    "status": "written to Hatch Collab 9 at x 37.0, y 75 (right of C1B11); requested as the final variant. Lines square 0.8 in, equal 0.9 in pitch both ways, checker, 6 x 4 cells in 5.4 x 3.6 in",
+    "metrics": {
+      "cover": 0.198,
+      "meanGap": 0.05,
+      "maxGap": 0.18,
+      "farWhite": 0.006,
+      "farCV": 0.287
+    },
+    "params": {
+      "cols": 6,
+      "rows": 4,
+      "W": 5.4,
+      "H": 3.6,
+      "spacing": 0.2,
+      "hLen": 0.8,
+      "vLen": 0.8,
+      "orientation": "checker",
+      "stagger": false,
+      "inset": 0.05,
+      "X0": 37,
+      "y0": 75,
+      "run": 9
+    }
   }
 ]

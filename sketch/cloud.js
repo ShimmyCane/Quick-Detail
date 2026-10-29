@@ -192,7 +192,7 @@
 
     // Read side, for review.
     details: function () {
-      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, updated_at, parent_id')
+      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, updated_at, parent_id')
         .order('updated_at', { ascending: false })
         .then(function (r) { if (r.error) throw r.error; return r.data; });
     },

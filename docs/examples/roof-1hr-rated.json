@@ -1,0 +1,37 @@
+{
+  "name": "1 HR Roof/ceiling assembly",
+  "scale": "3\"=1'-0\"",
+  "tags": ["1 hr", "roof", "wood"],
+  "items": [
+    { "kind": "line", "pts": [[0, -0.15], [48, -0.15]], "weight": "w3" },
+
+    { "kind": "hatch", "pattern": "plywood", "pts": [[0, 0], [48, 0], [48, 0.75], [0, 0.75]], "outline": true, "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "batt", "pts": [[0, 0.75], [7.25, 0.75], [7.25, 10], [0, 10]], "outline": false, "pen": "blue" },
+    { "kind": "hatch", "pattern": "batt", "pts": [[8.75, 0.75], [23.25, 0.75], [23.25, 10], [8.75, 10]], "outline": false, "pen": "blue" },
+    { "kind": "hatch", "pattern": "batt", "pts": [[24.75, 0.75], [39.25, 0.75], [39.25, 10], [24.75, 10]], "outline": false, "pen": "blue" },
+    { "kind": "hatch", "pattern": "batt", "pts": [[40.75, 0.75], [48, 0.75], [48, 10], [40.75, 10]], "outline": false, "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "wood2", "pts": [[7.25, 0.75], [8.75, 0.75], [8.75, 10], [7.25, 10]], "outline": true, "pen": "blue" },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[23.25, 0.75], [24.75, 0.75], [24.75, 10], [23.25, 10]], "outline": true, "pen": "blue" },
+    { "kind": "hatch", "pattern": "wood2", "pts": [[39.25, 0.75], [40.75, 0.75], [40.75, 10], [39.25, 10]], "outline": true, "pen": "blue" },
+
+    { "kind": "rect", "x": 0, "y": 10, "w": 48, "h": 0.5, "weight": "w1", "pen": "blue" },
+
+    { "kind": "hatch", "pattern": "gypsum", "pts": [[0, 10.5], [48, 10.5], [48, 11.125], [0, 11.125]], "outline": true, "pen": "blue" },
+
+    { "kind": "line", "pts": [[0, -1.5], [0, 4.5], [-0.8, 5.1], [0.8, 5.9], [0, 6.5], [0, 12.5]], "weight": "w1" },
+    { "kind": "line", "pts": [[48, -1.5], [48, 6.8], [47.2, 7.4], [48.8, 8.2], [48, 8.8], [48, 12.5]], "weight": "w1" },
+
+    { "kind": "note", "text": "Roofing membrane", "at": [53, -4.5], "width": 13, "tip": [45.5, -0.15], "pen": "blue" },
+    { "kind": "note", "text": "3/4” plywood roof sheathing", "at": [53, -1.5], "width": 13, "tip": [46, 0.4], "pen": "blue" },
+    { "kind": "note", "text": "2x10 wood joists @ 16” o.c.", "at": [53, 1.75], "width": 13, "tip": [40.6, 3], "pen": "blue" },
+    { "kind": "note", "text": "Batt insulation", "at": [53, 5], "width": 13, "tip": [44.5, 5.5], "pen": "blue" },
+    { "kind": "note", "text": "1/2” resilient channel @ 24” o.c.", "at": [53, 8], "width": 13, "tip": [46, 10.25], "pen": "blue" },
+    { "kind": "note", "text": "5/8” Type X gyp. board", "at": [53, 11.5], "width": 13, "tip": [46.5, 10.8], "pen": "blue" },
+    { "kind": "note", "text": "1 hr rated roof/ceiling assembly. Verify against the listed design (UL or GA file) before use.", "at": [2, 16], "width": 30, "tip": [24, 11.125] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [8, -0.15], "p2": [24, -0.15], "at": [16, -3] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, -0.15], "p2": [0, 11.125], "at": [-4, 5.5] }
+  ]
+}

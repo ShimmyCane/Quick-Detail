@@ -60,7 +60,7 @@ For each variant:
 
 ## Lessons log (always)
 
-After each run, add an entry to `docs/lessons-learned.md`:
+After each run, add an entry to `docs/lessons-learned/drafting/ai-detail-runs.md`:
 
 - date and detail name
 - references used, and any that were rejected

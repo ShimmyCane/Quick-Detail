@@ -2064,6 +2064,8 @@
   });
   renderPen();
 
+  $('undoCorner').addEventListener('click', undo);
+
   $('rail').addEventListener('click', function (e) {
     var b = e.target.closest('[data-act]');
     if (!b) return;

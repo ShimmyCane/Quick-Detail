@@ -694,3 +694,30 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border-radius: 12px;
   padding: 8px 12px 8px;
 }
+
+/* Left rail: colours and weights sit in tight rows; the tools stay in a column. */
+.lrail { gap: 8px; }
+.lrail .lgroup { flex-direction: row; flex-wrap: wrap; width: max-content; gap: 4px; padding: 5px; }
+.lrail .lgroup.tools { flex-direction: column; }
+.lrail [data-color] { width: 24px; height: 24px; border-radius: 12px; border-width: 2px; }
+.lrail [data-weight] { width: 30px; height: 26px; border-radius: 8px; }
+.lrail [data-weight] i { width: 18px; }
+
+/* Undo sits in the top right corner, apart from the tools. */
+.undo-corner {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  border: 2px solid var(--ink);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  z-index: 8;
+}
+.undo-corner:active { transform: translateY(1px); }

@@ -1,7 +1,8 @@
 {
   "name": "Wood roof curb on low-slope deck, membrane up and over",
   "scale": "3\"=1'-0\"",
-  "tags": ["roof", "curb", "wood", "low slope"],
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "roof", "curb", "wood", "low slope"],
   "items": [
     { "kind": "hatch", "pattern": "rigid", "pts": [[0, -2], [40, -2], [40, 0], [0, 0]], "outline": true },
     { "kind": "hatch", "pattern": "plywood", "pts": [[0, 0], [40, 0], [40, 0.75], [0, 0.75]], "outline": true, "pen": "blue" },

@@ -1,7 +1,8 @@
 {
   "name": "Roof drain in concrete deck, clamping ring and strainer",
   "scale": "3\"=1'-0\"",
-  "tags": ["roof", "drain", "low slope"],
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "roof", "drain", "low slope"],
   "items": [
     { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [16, 0], [16, 6], [0, 6]], "outline": true, "pen": "green" },
     { "kind": "hatch", "pattern": "concrete", "pts": [[24, 0], [40, 0], [40, 6], [24, 6]], "outline": true, "pen": "green" },

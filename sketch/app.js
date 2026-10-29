@@ -2947,6 +2947,7 @@
       if (r[0]) settings = Object.assign(settings, r[0]);
       renderUnderlay();
       if (r[1]) customTags = r[1];
+      window.__started = true;   // the page's startup-failure message stays hidden once the app is running
       setDetails(r[3]);   // names are counted from this list, so a new sketch never reuses a number
       var list = r[3].filter(function (x) { return !x.deletedAt; }).sort(function (a, b) { return b.modified - a.modified; });
       var d = list.filter(function (x) { return x.id === r[2]; })[0] || list[0];

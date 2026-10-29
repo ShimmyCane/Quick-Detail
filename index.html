@@ -4,7 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>Wall Sketch</title>
-  <link rel="stylesheet" href="sketch/style.css">
+  <!-- The ?v= on every local file keeps this page and its scripts a matched set when a browser or host caches files.
+       Change it whenever any file in sketch/ changes. -->
+  <link rel="stylesheet" href="sketch/style.css?v=20261029a">
+  <script>
+    // If the app fails to start (a stale cached script, say), say so at the bottom instead of leaving a blank sheet.
+    window.addEventListener('error', function (e) {
+      if (window.__started || document.getElementById('bootError')) return;
+      var bar = document.createElement('div');
+      bar.id = 'bootError';
+      bar.setAttribute('role', 'alert');
+      bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#fff;color:#1d1d1f;border:2px solid #1d1d1f;border-radius:12px;padding:12px 14px;font:15px/1.4 system-ui,sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap';
+      var msg = document.createElement('span');
+      msg.textContent = 'The sheet did not start (' + (e.message || 'unknown error') + '). Reload to try again. Your saved details are not affected.';
+      var btn = document.createElement('button');
+      btn.textContent = 'Reload';
+      btn.style.cssText = 'min-height:48px;padding:0 18px;border:2px solid #1d1d1f;border-radius:10px;background:#f1efe9;font:inherit;cursor:pointer';
+      btn.onclick = function () { location.reload(); };
+      bar.appendChild(msg);
+      bar.appendChild(btn);
+      document.body.appendChild(bar);
+    });
+  </script>
 </head>
 <body>
 
@@ -137,20 +158,20 @@
   <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
-  <script src="sketch/core.js"></script>
-  <script src="sketch/units.js"></script>
-  <script src="sketch/hatch.js"></script>
-  <script src="sketch/annot.js"></script>
-  <script src="sketch/blocks.js"></script>
-  <script src="sketch/author.js"></script>
-  <script src="sketch/parallel.js"></script>
-  <script src="sketch/livefile.js"></script>
-  <script src="sketch/paint.js"></script>
-  <script src="sketch/store.js"></script>
-  <script src="sketch/record.js"></script>
+  <script src="sketch/core.js?v=20261029a"></script>
+  <script src="sketch/units.js?v=20261029a"></script>
+  <script src="sketch/hatch.js?v=20261029a"></script>
+  <script src="sketch/annot.js?v=20261029a"></script>
+  <script src="sketch/blocks.js?v=20261029a"></script>
+  <script src="sketch/author.js?v=20261029a"></script>
+  <script src="sketch/parallel.js?v=20261029a"></script>
+  <script src="sketch/livefile.js?v=20261029a"></script>
+  <script src="sketch/paint.js?v=20261029a"></script>
+  <script src="sketch/store.js?v=20261029a"></script>
+  <script src="sketch/record.js?v=20261029a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="sketch/analyze.js"></script>
-  <script src="sketch/cloud.js"></script>
-  <script src="sketch/app.js"></script>
+  <script src="sketch/analyze.js?v=20261029a"></script>
+  <script src="sketch/cloud.js?v=20261029a"></script>
+  <script src="sketch/app.js?v=20261029a"></script>
 </body>
 </html>

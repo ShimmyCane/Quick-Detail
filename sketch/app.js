@@ -1221,7 +1221,7 @@
 
   // Library page: every detail with its tags and metadata. Sort, filter by tag, and hold a card to flip through its scenes.
 
-  var lib = { sessions: {}, frames: {}, view: 'local', query: '', filter: null };
+  var lib = { sessions: {}, frames: {}, view: 'local', query: '', filters: [] };   // filters: tags picked; a detail must have all of them
 
   function sceneCountOf(d) { return SK.scenesOf(lib.sessions[d.id] || []).length; }
 
@@ -1282,18 +1282,23 @@
       tags.sort();
       var filters = $('libFilters');
       filters.innerHTML = '';
-      filters.appendChild(el('button', { class: 'chip' + (!lib.filter ? ' on' : ''), text: 'All', on: { click: function () { lib.filter = null; renderLibrary(); } } }));
+      filters.appendChild(el('button', { class: 'chip' + (!lib.filters.length ? ' on' : ''), text: 'All', on: { click: function () { lib.filters = []; renderLibrary(); } } }));
       tags.forEach(function (t) {
-        filters.appendChild(el('button', { class: 'chip' + (lib.filter === t ? ' on' : ''), text: t, on: { click: function () { lib.filter = t; renderLibrary(); } } }));
+        var picked = lib.filters.indexOf(t) >= 0;
+        filters.appendChild(el('button', { class: 'chip' + (picked ? ' on' : ''), text: t, 'aria-pressed': String(picked), on: { click: function () {
+          lib.filters = picked ? lib.filters.filter(function (x) { return x !== t; }) : lib.filters.concat([t]);
+          renderLibrary();
+        } } }));
       });
 
       var q = (lib.query || '').trim().toLowerCase();
       var shown = details.filter(function (d) {
-        return (!lib.filter || detailTags(d).indexOf(lib.filter) >= 0) && (!q || matchesQuery(d, q));
+        var own = detailTags(d);
+        return lib.filters.every(function (t) { return own.indexOf(t) >= 0; }) && (!q || matchesQuery(d, q));
       });
       var body = $('libBody');
       body.innerHTML = '';
-      if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: q || lib.filter ? 'Nothing matches.' : 'No details yet. Draw something, or tap New detail.' })); return; }
+      if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: q || lib.filters.length ? 'Nothing matches.' : 'No details yet. Draw something, or tap New detail.' })); return; }
 
       var groups = {};
       shown.forEach(function (d) {

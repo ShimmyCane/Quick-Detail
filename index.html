@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>Wall Sketch</title>
   <link rel="stylesheet" href="sketch/style.css">
 </head>
@@ -40,6 +40,7 @@
       <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
       <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
       <button data-color="blue" class="pen-blue" title="Blue" aria-label="Blue pen"></button>
+      <button data-color="yellow" class="pen-yellow" title="Yellow" aria-label="Yellow pen"></button>
       <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
     </div>
     <div class="lgroup" aria-label="Line weight">
@@ -49,6 +50,8 @@
       <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
     </div>
     <div class="lgroup" aria-label="Annotation tools">
+      <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
+      <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
       <button data-act="text" class="tool" title="Text with arrow (T)" aria-label="Text">T</button>
     </div>
@@ -114,6 +117,7 @@
 
   <script src="sketch/core.js"></script>
   <script src="sketch/units.js"></script>
+  <script src="sketch/hatch.js"></script>
   <script src="sketch/annot.js"></script>
   <script src="sketch/paint.js"></script>
   <script src="sketch/store.js"></script>

@@ -61,6 +61,10 @@
     if (item.kind === 'dim') {
       return { type: 'dimension', label: 'dimension ' + SK.dimText(item, ac), drawn: ['dimension'], stated: [] };
     }
+    if (item.kind === 'hatch') {
+      var h = SK.hatchOf(item.pattern);
+      return { type: 'hatch', label: 'hatch: ' + (h ? h.label.toLowerCase() : item.pattern), drawn: ['hatch', item.pattern], stated: [] };
+    }
     return { type: item.kind, label: item.kind, drawn: [], stated: [] };
   };
 

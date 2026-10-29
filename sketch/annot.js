@@ -253,6 +253,7 @@
   SK.itemPrims = function (item, ac) {
     if (item.kind === 'note') return SK.noteLayout(item, ac).prims;
     if (item.kind === 'dim') return SK.dimLayout(item, ac).prims;
+    if (item.kind === 'hatch') return SK.hatchPrims(item, ac.factor);
     return [];
   };
 
@@ -287,7 +288,7 @@
   };
 
   SK.itemBounds = function (item, ac) {
-    if (item.kind === 'stroke') return SK.boundsOf(item.pts);
+    if (item.kind === 'stroke' || item.kind === 'hatch') return SK.boundsOf(item.pts);
     var pts = primsPoints(SK.itemPrims(item, ac), ac);
     if (item.kind === 'note') {
       var box = SK.noteLayout(item, ac).box;
@@ -323,6 +324,7 @@
   // Is world point p on the item, within tol world inches?
   SK.hitItem = function (item, p, tol, ac) {
     if (item.kind === 'stroke') return nearPath(p, item.pts, tol + (item.w || 0) / 2);
+    if (item.kind === 'hatch') return pointInPoly(p, item.pts) || nearPath(p, item.pts.concat([item.pts[0]]), tol);
     if (item.kind === 'note') {
       var box = SK.noteLayout(item, ac).box;
       if (p[0] >= box.x - tol && p[0] <= box.x + box.w + tol && p[1] >= box.y - tol && p[1] <= box.y + box.h + tol) return true;
@@ -341,6 +343,8 @@
     items.forEach(function (it) {
       if (it.kind === 'stroke' && it.pts.length) {
         pts.push(it.pts[0], it.pts[it.pts.length - 1]);
+      } else if (it.kind === 'hatch') {
+        pts = pts.concat(it.pts);
       } else if (it.kind === 'note') {
         (it.leaders || []).forEach(function (ld) { pts.push(ld.tip); });
       } else if (it.kind === 'dim') {

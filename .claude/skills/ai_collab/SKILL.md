@@ -1,6 +1,6 @@
 ---
 name: ai_collab
-description: Collaborate with the user on an existing cloud detail. Reviews a detail the user names, then adds hatch fills and labels either directly on its drawing or to the side of it, and tags it "ai collab N", with N counting the runs on that detail. Use when the user says "ai_collab [detail name] [scopes] [markup or side]".
+description: Collaborate with the user on an existing cloud detail. Reviews a detail the user names, then adds hatch fills and labels either directly on its drawing or to the side of it, tags it "ai collab", and numbers the detail name on each run (Hatch Collab 1, Hatch Collab 2, ...). Use when the user says "ai_collab [detail name] [scopes] [markup or side]".
 ---
 
 # ai_collab
@@ -43,23 +43,24 @@ Hatch pattern keys come from `sketch/hatch.js` (`SK.HATCHES`): `wood1`, `wood2`,
    - `side`: start the column at x = (max x of existing items and notes) + 2 in. Pick a clear region: two columns of 2 in × 1 in swatches, 1.5 in row pitch, a note 0.3 in above each swatch with its label, and a heading note above the block.
    - `markup`: for each closed shape, use its points as the hatch `pts` and set `outline: true`. Shapes that are not closed get a note and no fill.
 4. **Check the marks draw.** In Node, load `sketch/core.js`, `sketch/units.js` and `sketch/hatch.js`, then call `SK.hatchPrims({kind:'hatch', pattern:k, pts:p, outline:true}, 1)` for each new hatch. Every one must return fills. Fix any that come back empty.
-5. **Number the run.** Find the run number N: one more than the highest `ai collab N` tag already on the detail. The first run is `ai collab 1`. A detail with a bare `ai collab` tag from an earlier run counts that as run 1.
-6. **Write.** Use one `update` that appends the new items (`items || '[...]'::jsonb`) and adds the tag `ai collab N`. Earlier collab tags stay, so a detail with three runs has `ai collab 1`, `ai collab 2` and `ai collab 3`. Do not rewrite existing items unless the scope asks for it. Set `updated_at = now()` so the app sees the newer copy.
+5. **Number the run.** Find the run number N from the name. If the name ends in a number, such as `Hatch Collab 1`, N is that number plus one. If it does not, the name is the base, such as `Hatch Collab`, and N is 1.
+6. **Write.** Use one `update` that appends the new items (`items || '[...]'::jsonb`), sets the name to the base name plus ` N`, and adds the tag `ai collab` if it is missing. Do not rewrite existing items unless the scope asks for it. Set `updated_at = now()` so the app sees the newer copy.
    ```sql
    update public.sketch_details
    set items = items || '[...]'::jsonb,
-       tags = case when 'ai collab N' = any(tags) then tags else array_append(tags, 'ai collab N') end,
+       name = '<base name> N',
+       tags = case when 'ai collab' = any(tags) then tags else array_append(tags, 'ai collab') end,
        updated_at = now()
    where local_id = '<local_id>'
    returning name, tags, jsonb_array_length(items) as n_items;
    ```
-7. **Verify.** Re-read the row and confirm the item count went up by the number written, and the tags include `ai collab N`.
+7. **Verify.** Re-read the row and confirm the item count went up by the number written, the name ends in ` N`, and the tags include `ai collab`.
 7. **Report.** Give the user the item count, what was added and where, the review notes from step 1, and the backup path. Say that a copy of the detail already open on this device will be replaced only when the user agrees in the app.
 
 ## Rules
 
 - Every item this skill adds has an `id` that starts `ai-collab-N-`, where N is the run number, so each run can be found and removed as a set. The Hatch Collab run was the first; its ids have no number and stay as they are.
-- Tag is `ai collab N`. It marks collaborative work, and each run gets its own number. It is not the `AI` tag from `draft_AI_detail`: that tag is for drafts the AI produced, and a human drawing marked up with the AI keeps its human origin.
+- Tag is `ai collab`. It marks collaborative work. The number goes on the detail name, not the tag. It is not the `AI` tag from `draft_AI_detail`: that tag is for drafts the AI produced, and a human drawing marked up with the AI keeps its human origin.
 - Never delete or move existing items unless the scope says so, and then only after the backup in step 2.
 - Never claim a detail is code-compliant or that a hatch matches a listed assembly. The hatch is a drawing convention, not a specification. The "verify before use" rule from `docs/details-todo.md` still applies.
 - Commit only when the user asks. Cloud writes happen when the user asks for them in the invocation.

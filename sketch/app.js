@@ -36,7 +36,9 @@
   var panelKind = null;
   var clip = null;           // audio element playing a scene clip
   var customTags = [];
-  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false, underlay: true, libBg: 'sheet' };
+  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false, underlay: true, libBg: 'sheet', autoCollapse: false };
+  var ROT_PX = 26;                                // the round turn handle sits this far above a selected item
+  var recycleQuietUntil = 0;                      // "don't ask for five minutes" after a delete from the library
   var pen = { color: 'ink', weight: 'w2', hatch: 'wood1' };   // what new strokes, notes, dimensions and hatches are drawn with
   var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
   var counter = 0;
@@ -119,9 +121,25 @@
   // Details: open, save, new
   // ===================================================================
 
+  // A sketch with no name yet is "Untitled 0001", "Untitled 0002", and so on, one past the highest in use, and tagged TEMP
+  // until it is renamed or the tag is removed. The digits keep them sorted in the order they were made.
+  function untitledName() {
+    var top = 0;
+    allDetails.forEach(function (d) {
+      var m = /^Untitled (\d+)$/.exec(d.name || '');
+      if (m) top = Math.max(top, +m[1]);
+    });
+    return 'Untitled ' + String(top + 1).padStart(4, '0');
+  }
+
+  function uncache(id) {
+    allDetails = allDetails.filter(function (d) { return d.id !== id; });
+    delete sources[id];
+  }
+
   function newDetail(name) {
     return {
-      id: uid('d'), name: name || 'Untitled detail', scale: SK.DEFAULT_SCALE, tags: [], items: [],
+      id: uid('d'), name: name || untitledName(), scale: SK.DEFAULT_SCALE, tags: name ? [] : ['TEMP'], items: [],
       parentId: null, created: Date.now(), modified: Date.now()
     };
   }
@@ -448,10 +466,8 @@
       }
       return hs2;
     }
-    if (it.kind === 'block') {
-      var bb = SK.blockBounds(it, sourceOf, a);
-      return sourceOf(it.sourceId) && bb ? [{ key: 'size', p: [bb.maxx, bb.maxy] }] : [];
-    }
+    if (it.kind === 'block') return sourceOf(it.sourceId) ? boxHandles(SK.blockBounds(it, sourceOf, a)) : [];
+    if (it.kind === 'stroke' || it.kind === 'hatch') return boxHandles(SK.itemBounds(it, a));
     if (it.kind === 'image') return [{ key: 'move', p: it.at }, { key: 'size', p: [it.at[0] + it.w, it.at[1] + it.h] }];
     return [];
   }
@@ -648,6 +664,7 @@
   function toolDown(e, sp) {
     var w = SK.toWorld(view, sp);
     if (tool === 'erase') { eraseAt(w); return; }
+    if (tool === 'select') { selectDown(e, sp, w); return; }
     if (sel) {
       var h = hitHandle(sp);
       if (h) { startHandleDrag(h, w); return; }
@@ -761,6 +778,43 @@
     return null;
   }
 
+  // The item under the point, top first. Linework (strokes too) is picked before underlays. Used by the select tool.
+  function pickAt(w) {
+    var tol = HIT_PX / view.z, a = ac();
+    for (var pass = 0; pass < 2; pass++) {
+      for (var i = detail.items.length - 1; i >= 0; i--) {
+        var it = detail.items[i];
+        var under = it.kind === 'image' || it.kind === 'block';
+        if (under !== (pass === 1) || (under && !settings.underlay)) continue;
+        if (hitAt(it, w, tol, a)) return it;
+      }
+    }
+    return null;
+  }
+
+  // Select mode: the selected item's handles first, then the item under the pen. Empty space pans the sheet.
+  function selectDown(e, sp, w) {
+    if (sel) {
+      var h = hitHandle(sp);
+      if (h) { startHandleDrag(h, w); return; }
+    }
+    var it = pickAt(w);
+    if (it) {
+      select(it.id);
+      startHandleDrag({ key: 'move' }, w);
+      return;
+    }
+    if (sel) select(null);
+    active = null;
+    startPan(e, sp);
+  }
+
+  // Handles for a box: the bottom-right corner scales, and a round handle above the top edge turns.
+  function boxHandles(b) {
+    if (!b) return [];
+    return [{ key: 'size', p: [b.maxx, b.maxy] }, { key: 'rot', p: [(b.minx + b.maxx) / 2, b.miny - ROT_PX / view.z] }];
+  }
+
   function hitHandle(sp) {
     var it = byId(sel.id);
     if (!it) return null;
@@ -780,7 +834,9 @@
 
   function startHandleDrag(h, w) {
     var it = byId(sel.id);
-    drag = { id: it.id, key: h.key, before: it, w0: w, box: it.kind === 'block' ? SK.blockBounds(it, sourceOf, ac()) : null };
+    var box = it.kind === 'block' ? SK.blockBounds(it, sourceOf, ac()) : (it.kind === 'stroke' || it.kind === 'hatch') ? SK.itemBounds(it, ac()) : null;
+    var c = box ? [(box.minx + box.maxx) / 2, (box.miny + box.maxy) / 2] : null;
+    drag = { id: it.id, key: h.key, before: it, w0: w, box: box, c: c, a0: c ? Math.atan2(w[1] - c[1], w[0] - c[0]) : 0 };
     if (h.key.indexOf('tip:') === 0) { sel.leader = +h.key.slice(4); renderChips(); }
   }
 
@@ -789,7 +845,20 @@
     var snapped = function () { return snapAt(w, b.id).p; };
     var f = factorOf(detail);
     if (k.indexOf('tip:') === 0) it.leaders[+k.slice(4)].tip = snapped();
+    else if (k === 'move' && (b.kind === 'stroke' || b.kind === 'hatch')) {
+      var dx = w[0] - drag.w0[0], dy = w[1] - drag.w0[1];
+      it = SK.transformItem(b, function (p) { return [p[0] + dx, p[1] + dy]; }, 1, 0);
+    }
     else if (k === 'move') it.at = [b.at[0] + w[0] - drag.w0[0], b.at[1] + w[1] - drag.w0[1]];
+    else if (k === 'size' && (b.kind === 'stroke' || b.kind === 'hatch')) {
+      var q = drag.box, s = Math.max(0.05, (w[0] - q.minx) / Math.max(q.maxx - q.minx, 1e-6));
+      it = SK.transformItem(b, function (p) { return [q.minx + s * (p[0] - q.minx), q.miny + s * (p[1] - q.miny)]; }, s, 0);
+    }
+    else if (k === 'rot') {
+      var ang = Math.atan2(w[1] - drag.c[1], w[0] - drag.c[0]) - drag.a0, cs = Math.cos(ang), sn = Math.sin(ang);
+      var cx = drag.c[0], cy = drag.c[1];
+      it = SK.transformItem(b, function (p) { var x = p[0] - cx, y = p[1] - cy; return [cx + cs * x - sn * y, cy + sn * x + cs * y]; }, 1, ang);
+    }
     else if (k === 'width') it.width = Math.max(SK.PAPER.text * f * 4, w[0] - b.at[0]);
     else if (k === 'height') it.height = Math.max(SK.PAPER.text * f * 1.5, w[1] - b.at[1]);
     else if (k === 'size' && b.kind === 'block') {
@@ -829,8 +898,9 @@
     var same = tool === t;
     endDraft();
     select(null);
-    if (same || t === 'draw') return;
+    if (same && t !== 'select') return;
     tool = t;
+    if (t === 'select') showHint('Tap to pick up. Drag to move. Corner: scale. Round handle: turn. Drag empty space to pan.');
     if (t === 'text') {
       draft = { tool: 'text', step: 0 };
       showHint('Tap the arrow point.');
@@ -996,9 +1066,35 @@
 
   function select(id, leader) {
     sel = id ? { id: id, leader: leader == null ? null : leader } : null;
+    if (settings.autoCollapse) setCollapsed(!!id);
     renderChips();
     redraw();
   }
+
+  // Collapsed: both toolbars hide, for more room on a phone or tablet. The collapse button stays to bring them back.
+  function setCollapsed(on) {
+    document.body.classList.toggle('collapsed', on);
+    $('collapseBtn').setAttribute('aria-pressed', String(on));
+  }
+  $('collapseBtn').addEventListener('click', function () { setCollapsed(!document.body.classList.contains('collapsed')); });
+
+  // The microphone starts muted. Unmuting asks for it (once the browser allows it, it is not asked again).
+  function renderMic() {
+    var m = SK.Mic.isMuted(), b = $('micBtn');
+    b.textContent = m ? '🔇' : '🎤';
+    b.setAttribute('aria-pressed', String(!m));
+    b.setAttribute('aria-label', m ? 'Microphone muted' : 'Microphone on');
+    b.title = m ? 'Microphone muted: recordings have no sound. Tap to unmute.' : 'Microphone on: recordings capture sound. Tap to mute.';
+    b.classList.toggle('on', !m);
+  }
+  $('micBtn').addEventListener('click', function () {
+    var unmuting = SK.Mic.isMuted();
+    SK.Mic.setMuted(!unmuting).then(function (live) {
+      renderMic();
+      if (unmuting && !live) toast('The microphone is not available or was refused. Recordings stay silent.');
+    });
+  });
+  renderMic();
 
   function deleteSelected() {
     if (!sel) return;
@@ -1479,11 +1575,12 @@
   function renderLibrary() {
     setLibraryTabs();
     if (lib.view === 'cloud') return renderCloud();
+    if (lib.view === 'bin') return renderBin();
     Promise.all([SK.DB.all('details'), SK.DB.all('sessions')]).then(function (r) {
       lib.sessions = {};
       r[1].forEach(function (s) { (lib.sessions[s.detailId] = lib.sessions[s.detailId] || []).push(s); });
       setDetails(r[0]);
-      showDetails(r[0], libCard, null, 'No details yet. Draw something, or tap New detail.');
+      showDetails(r[0].filter(function (d) { return !d.deletedAt; }), libCard, null, 'No details yet. Draw something, or tap New detail.');
     }).catch(function (e) { fail(e, 'Could not read the library: '); });
   }
 
@@ -1646,14 +1743,97 @@
     }).catch(fail);
   }
 
+  // Delete from the library. The detail goes to the recycle bin, where it can be restored until the bin is emptied.
   function removeDetail(d) {
     if (d.id === detail.id) { closeLibrary(); deleteDetail(); return; }
-    if (!window.confirm('Delete "' + d.name + '" and its recordings from this browser? This cannot be undone.')) return;
-    SK.DB.sessionsOf(d.id)
+    confirmDelete(d, function () { moveToBin(d); });
+  }
+
+  // Asks before a detail goes to the bin. "Don't ask for 5 minutes" skips the question until the time is up.
+  function confirmDelete(d, go) {
+    if (Date.now() < recycleQuietUntil) { go(); return; }
+    var back = null;
+    function close() { if (back) back.remove(); }
+    var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Move to the recycle bin' }, [
+      el('b', { text: 'Move "' + d.name + '" to the recycle bin?' }),
+      el('p', { class: 'muted', text: 'Its recordings go with it. You can restore it from Library → Recycle bin until you empty the bin.' }),
+      el('div', { class: 'row' }, [
+        el('button', { class: 'btn danger', text: 'Move to bin', on: { click: function () { close(); go(); } } }),
+        el('button', { class: 'btn', text: 'Don\'t ask for 5 minutes', on: { click: function () {
+          recycleQuietUntil = Date.now() + 5 * 60 * 1000;
+          close();
+          go();
+        } } }),
+        el('button', { class: 'btn', text: 'Cancel', on: { click: close } })
+      ])
+    ]);
+    back = el('div', { class: 'pop-back' }, [card]);
+    document.body.appendChild(back);
+    card.querySelector('.btn').focus();
+  }
+
+  function moveToBin(d) {
+    d.deletedAt = Date.now();
+    SK.DB.put('details', d).then(function () {
+      cacheDetail(d);
+      toast('Moved "' + d.name + '" to the recycle bin.');
+      renderLibrary();
+    }).catch(function (e) { fail(e, 'Could not delete: '); });
+  }
+
+  function restoreDetail(d) {
+    d.deletedAt = null;
+    SK.DB.put('details', d).then(function () {
+      cacheDetail(d);
+      toast('Restored "' + d.name + '".');
+      renderBin();
+    }).catch(function (e) { fail(e, 'Could not restore: '); });
+  }
+
+  // Deletes a detail and its recordings for good. Used by the recycle bin only.
+  function purgeDetail(d) {
+    return SK.DB.sessionsOf(d.id)
       .then(function (list) { return Promise.all(list.map(function (s) { return SK.DB.del('sessions', s.id); })); })
       .then(function () { return SK.DB.del('details', d.id); })
-      .then(function () { toast('Deleted ' + d.name + '.'); renderLibrary(); })
-      .catch(function (e) { fail(e, 'Could not delete: '); });
+      .then(function () {
+        allDetails = allDetails.filter(function (x) { return x.id !== d.id; });
+        delete sources[d.id];
+      });
+  }
+
+  function emptyBin(gone) {
+    if (!window.confirm('Empty the recycle bin? ' + gone.length + (gone.length === 1 ? ' detail and its recordings' : ' details and their recordings') + ' will be deleted for good.')) return;
+    gone.reduce(function (p, d) { return p.then(function () { return purgeDetail(d); }); }, Promise.resolve())
+      .then(function () { toast('The recycle bin is empty.'); renderBin(); })
+      .catch(function (e) { fail(e, 'Could not empty the bin: '); });
+  }
+
+  // The recycle bin: deleted details wait here. Nothing in it shows in the library.
+  function renderBin() {
+    $('libFilters').innerHTML = '';
+    var body = $('libBody');
+    SK.DB.all('details').then(function (list) {
+      var gone = list.filter(function (d) { return d.deletedAt; }).sort(function (a, b) { return b.deletedAt - a.deletedAt; });
+      body.innerHTML = '';
+      body.appendChild(el('div', { class: 'row bin-head' }, [
+        el('p', { class: 'muted', text: gone.length
+          ? gone.length + (gone.length === 1 ? ' detail' : ' details') + ' in the bin. Restore them, or empty the bin to delete them for good.'
+          : 'The bin is empty. Details you delete wait here until you empty the bin.' }),
+        gone.length ? el('button', { class: 'btn danger', text: 'Empty recycle bin', on: { click: function () { emptyBin(gone); } } }) : null
+      ]));
+      gone.forEach(function (d) {
+        body.appendChild(el('article', { class: 'bin-row' }, [
+          el('b', { text: d.name }),
+          el('span', { class: 'muted', text: 'Deleted ' + new Date(d.deletedAt).toLocaleString() + ' · ' + d.items.length + ' elements' }),
+          el('div', { class: 'row' }, [
+            el('button', { class: 'btn', text: 'Restore', on: { click: function () { restoreDetail(d); } } }),
+            el('button', { class: 'btn danger', text: 'Delete for good', on: { click: function () {
+              if (window.confirm('Delete "' + d.name + '" and its recordings for good? This cannot be undone.')) purgeDetail(d).then(renderBin).catch(function (e) { fail(e, 'Could not delete: '); });
+            } } })
+          ])
+        ]));
+      });
+    }).catch(function (e) { fail(e, 'Could not read the bin: '); });
   }
 
   // ---------------- Cloud: sign in, review what was uploaded, see the table index ----------------
@@ -1990,8 +2170,18 @@
       el('li', {}, [el('a', { href: 'history/v1/index.html', text: 'v1 · Quick Detail' }), el('span', { text: 'Detail editor with tools, meaning and exports' })])
     ]);
 
+    var autoCollapse = el('input', { type: 'checkbox', checked: settings.autoCollapse, on: { change: function (e) {
+      settings.autoCollapse = e.target.checked;
+      saveSettings();
+      setCollapsed(!!sel && settings.autoCollapse);
+    } } });
+
     [
       appearanceSection(),
+      section('Toolbars', [
+        el('label', { class: 'check' }, [autoCollapse, ' Hide both toolbars while an object is selected (more room on a phone or iPad)']),
+        el('p', { class: 'muted small', text: 'The lower-right ⤢ button hides or shows the toolbars at any time.' })
+      ]),
       section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
       section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' })]),
@@ -2211,20 +2401,22 @@
     });
   }
 
+  // The open detail goes to the recycle bin, and another detail opens in its place.
   function deleteDetail() {
-    if (!window.confirm('Delete "' + detail.name + '" and all its recordings? This cannot be undone.')) return;
-    var gone = detail;
-    stopRecording().then(function () {
-      return Promise.all(sessions.map(function (s) { return SK.DB.del('sessions', s.id); }));
-    }).then(function () { return SK.DB.del('details', gone.id); })
-      .then(function () { return SK.DB.all('details'); })
-      .then(function (list) {
-        closePanel();
-        list.sort(function (a, b) { return b.modified - a.modified; });
-        var next = list[0] || newDetail();
-        if (!list[0]) SK.DB.put('details', next);
-        return openDetail(next);
-      }).catch(fail);
+    confirmDelete(detail, function () {
+      var gone = detail;
+      stopRecording().then(function () {
+        gone.deletedAt = Date.now();
+        return SK.DB.put('details', gone);
+      }).then(function () { cacheDetail(gone); return SK.DB.all('details'); })
+        .then(function (list) {
+          closePanel();
+          list = list.filter(function (d) { return !d.deletedAt; }).sort(function (a, b) { return b.modified - a.modified; });
+          var next = list[0] || newDetail();
+          if (!list[0]) return SK.DB.put('details', next).then(function () { cacheDetail(next); return openDetail(next); });
+          return openDetail(next);
+        }).catch(fail);
+    });
   }
 
   // ---- log: a film strip of every scene ----
@@ -2588,11 +2780,15 @@
   }
   $('lrail').addEventListener('click', function (e) {
     var c = e.target.closest('[data-color]'), w = e.target.closest('[data-weight]'), a = e.target.closest('[data-act]');
-    if (c) { pen.color = c.getAttribute('data-color'); renderPen(); }
-    else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); }
+    if (c) { pen.color = c.getAttribute('data-color'); renderPen(); if (tool === 'select') setTool('draw'); }
+    else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); if (tool === 'select') setTool('draw'); }
     else if (a && a.getAttribute('data-act') === 'image') $('imageFile').click();
     else if (a && a.getAttribute('data-act') === 'underlay') toggleUnderlay();
-    else if (a) { if (pb) exitReplay(); setTool(a.getAttribute('data-act')); }
+    else if (a) {
+      if (pb) exitReplay();
+      var act = a.getAttribute('data-act');
+      setTool(act === 'select' && tool === 'select' ? 'draw' : act);   // the arrow toggles back to drawing
+    }
   });
   $('imageFile').addEventListener('change', function (e) {
     var file = e.target.files && e.target.files[0];
@@ -2689,6 +2885,7 @@
     else if (e.key === 'd' || e.key === 'D') setTool('dim');
     else if (e.key === 'n' || e.key === 'N') newScene();
     else if (e.key === 'e' || e.key === 'E') setTool('erase');
+    else if (e.key === 'v' || e.key === 'V') setTool(tool === 'select' ? 'draw' : 'select');
     else if (e.key === 'h' || e.key === 'H') setTool('hatch');
     else if (e.key === 'g' || e.key === 'G') { settings.grid = !settings.grid; saveSettings(); redraw(); toast(settings.grid ? 'Grid on.' : 'Grid off.'); }
     else if (e.key === 'u' || e.key === 'U') toggleUnderlay();
@@ -2724,9 +2921,10 @@
       if (r[0]) settings = Object.assign(settings, r[0]);
       renderUnderlay();
       if (r[1]) customTags = r[1];
-      var list = r[3].sort(function (a, b) { return b.modified - a.modified; });
+      setDetails(r[3]);   // names are counted from this list, so a new sketch never reuses a number
+      var list = r[3].filter(function (x) { return !x.deletedAt; }).sort(function (a, b) { return b.modified - a.modified; });
       var d = list.filter(function (x) { return x.id === r[2]; })[0] || list[0];
-      if (!d) { d = newDetail(); SK.DB.put('details', d); }
+      if (!d) { d = newDetail(); SK.DB.put('details', d); cacheDetail(d); }
       resize();
       return openDetail(d);
     })

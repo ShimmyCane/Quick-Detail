@@ -1,0 +1,18 @@
+{
+  "name": "Window head, wood-framed, with lintel and flashing",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "window", "head", "flashing", "wood"],
+  "items": [
+    { "kind": "hatch", "pattern": "wood1", "pts": [[0, -14], [30, -14], [30, -10], [0, -10]], "outline": true },
+    { "kind": "hatch", "pattern": "wood1", "pts": [[0, -10], [3, -10], [3, 6], [0, 6]], "outline": true },
+    { "kind": "hatch", "pattern": "wood1", "pts": [[27, -10], [30, -10], [30, 6], [27, 6]], "outline": true },
+    { "kind": "line", "pts": [[-2, -12], [-2, -15], [32, -15], [32, -12]], "weight": "w2", "pen": "blue" },
+    { "kind": "rect", "x": 3, "y": -10, "w": 24, "h": 1, "weight": "w2", "pen": "ink" },
+    { "kind": "note", "text": "Head flashing, turned up behind the sheathing and over the head", "at": [40, -20], "width": 16, "tip": [30, -13.5], "pen": "blue" },
+    { "kind": "note", "text": "Header, sized for the opening load (verify)", "at": [40, -10], "width": 16, "tip": [28, -12], "pen": "ink" },
+    { "kind": "note", "text": "Window frame, shimmed and fastened", "at": [40, 0], "width": 16, "tip": [26, -5], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify flashing and header size against the window manufacturer and the code before use.", "at": [2, 14], "width": 36, "tip": [15, -10] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, -14], "p2": [30, -14], "at": [15, -18] }
+  ]
+}

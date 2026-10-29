@@ -1,0 +1,18 @@
+{
+  "name": "Window jamb, wood-framed, to insulated wall",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "window", "jamb", "insulation", "wood"],
+  "items": [
+    { "kind": "hatch", "pattern": "wood1", "pts": [[0, -14], [4, -14], [4, 14], [0, 14]], "outline": true },
+    { "kind": "hatch", "pattern": "batt", "pts": [[4, -14], [16, -14], [16, 14], [4, 14]], "outline": true },
+    { "kind": "hatch", "pattern": "plywood", "pts": [[-2, -14], [0, -14], [0, 14], [-2, 14]], "outline": true },
+    { "kind": "rect", "x": 16, "y": -14, "w": 1, "h": 28, "weight": "w3", "pen": "ink" },
+    { "kind": "line", "pts": [[17, -10], [22, -10], [22, 10], [17, 10]], "weight": "w2", "pen": "blue" },
+    { "kind": "note", "text": "Window frame, shimmed, fastened through the shims", "at": [30, -6], "width": 18, "tip": [16, -3], "pen": "ink" },
+    { "kind": "note", "text": "Exterior: sealant and flashing at the jamb, lapped over the sill pan", "at": [30, 4], "width": 18, "tip": [-2, 4], "pen": "blue" },
+    { "kind": "note", "text": "Batt insulation, friction-fit, no gaps at the frame", "at": [30, 14], "width": 18, "tip": [10, 6], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify the air seal and insulation at the frame against the window and insulation manufacturers before use.", "at": [2, 22], "width": 36, "tip": [10, 0] },
+    { "kind": "dim", "mode": "ortho", "p1": [4, -16], "p2": [16, -16], "at": [10, -19] }
+  ]
+}

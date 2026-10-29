@@ -1,0 +1,18 @@
+{
+  "name": "Control joint in CMU wall",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "wall", "CMU", "control joint", "sealant"],
+  "items": [
+    { "kind": "hatch", "pattern": "cmu", "pts": [[-10, -16], [-1, -16], [-1, 0], [-10, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "cmu", "pts": [[1, -16], [10, -16], [10, 0], [1, 0]], "outline": true },
+    { "kind": "line", "pts": [[-1, -16], [-1, 0]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[1, -16], [1, 0]], "weight": "w2", "pen": "blue" },
+    { "kind": "hatch", "pattern": "screen", "pts": [[-0.6, -10], [0.6, -10], [0.6, -4], [-0.6, -4]], "outline": true },
+    { "kind": "note", "text": "Control joint, spacing per the wall design (verify for this wall)", "at": [16, -16], "width": 16, "tip": [10, -12], "pen": "blue" },
+    { "kind": "note", "text": "Backer rod, then sealant at the face, tooled concave", "at": [16, -6], "width": 16, "tip": [1, -7], "pen": "ink" },
+    { "kind": "note", "text": "Reinforcement stops at the joint; no bar runs across it", "at": [16, 4], "width": 16, "tip": [-1, -2], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify joint spacing and sealant against the masonry and sealant manufacturers before use.", "at": [-22, 8], "width": 30, "tip": [-4, -6] },
+    { "kind": "dim", "mode": "ortho", "p1": [-1, -17], "p2": [1, -17], "at": [0, -20] }
+  ]
+}

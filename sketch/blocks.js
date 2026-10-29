@@ -11,12 +11,16 @@
   // A block's scale. Blocks saved before scaling existed have no k, which means 1.
   SK.blockScale = function (bk) { return bk.k > 0 ? bk.k : 1; };
 
-  // Moves and scales a source point: t = { x, y, k } maps p to [x + k * p0, y + k * p1].
+  // Moves and scales a source point: t = { x, y, k, rot } maps p to t + k * R(rot) * p, where R turns by rot radians.
   // A copy of the item under t, or the item itself when t does nothing.
+  function place(p, t) {
+    var c = Math.cos(t.rot), s = Math.sin(t.rot);
+    return [t.x + t.k * (c * p[0] - s * p[1]), t.y + t.k * (s * p[0] + c * p[1])].concat(p.slice(2));
+  }
   function moved(it, t) {
-    if (!t.x && !t.y && t.k === 1) return it;
+    if (!t.x && !t.y && t.k === 1 && !t.rot) return it;
     var k = t.k;
-    function pt(p) { return [t.x + k * p[0], t.y + k * p[1]].concat(p.slice(2)); }
+    function pt(p) { return place(p, t); }
     if (it.kind === 'stroke' || it.kind === 'hatch') {
       var s = Object.assign({}, it, { pts: it.pts.map(pt) });
       if (it.kind === 'stroke') s.w = it.w * k;
@@ -44,6 +48,31 @@
     return it;
   }
 
+  // Moves, scales or rotates an item. f maps each point; sc scales sizes and widths; angle turns a block (in radians).
+  // Used by the select tool. Note and dimension text stays upright: only their geometry turns.
+  SK.transformItem = function (it, f, sc, angle) {
+    function P(p) { return f(p).concat(p.slice(2)); }
+    var out = Object.assign({}, it);
+    if (it.kind === 'stroke') { out.pts = it.pts.map(P); out.w = it.w * sc; }
+    else if (it.kind === 'hatch') out.pts = it.pts.map(P);
+    else if (it.kind === 'image') { out.at = f(it.at); out.w = it.w * sc; out.h = it.h * sc; }
+    else if (it.kind === 'note') {
+      out.at = f(it.at);
+      out.width = it.width * sc;
+      if (it.height != null) out.height = it.height * sc;
+      if (it.size != null) out.size = it.size * sc;
+      out.leaders = it.leaders.map(function (ld) { return Object.assign({}, ld, { tip: f(ld.tip), bends: (ld.bends || []).map(f) }); });
+    } else if (it.kind === 'dim') {
+      ['p1', 'p2', 'at', 'vertex'].forEach(function (key) { if (Array.isArray(it[key])) out[key] = f(it[key]); });
+      if (it.size != null) out.size = it.size * sc;
+    } else if (it.kind === 'block') {
+      out.at = f(it.at);
+      out.k = SK.blockScale(it) * sc;
+      out.rot = (it.rot || 0) + (angle || 0);
+    }
+    return out;
+  };
+
   // The drawable items of a list, with each block replaced by its source's items, placed and scaled.
   // Ids are the source's own, so a flattened list is for drawing and measuring only, never for editing.
   function expand(items, t, depth, stack, sourceOf, out) {
@@ -51,7 +80,8 @@
       if (it.kind !== 'block') { out.push(moved(it, t)); return; }
       var src = sourceOf(it.sourceId);
       if (!src || depth >= SK.MAX_BLOCK_DEPTH || stack.indexOf(src.id) >= 0) return;
-      var inner = { x: t.x + t.k * it.at[0], y: t.y + t.k * it.at[1], k: t.k * SK.blockScale(it) };
+      var at = place(it.at, t);
+      var inner = { x: at[0], y: at[1], k: t.k * SK.blockScale(it), rot: t.rot + (it.rot || 0) };
       expand(src.items || [], inner, depth + 1, stack.concat([src.id]), sourceOf, out);
     });
     return out;
@@ -59,7 +89,7 @@
 
   // sourceOf(id) returns the detail with that id, or null when it is not on this device.
   SK.flattenItems = function (items, sourceOf) {
-    return expand(items, { x: 0, y: 0, k: 1 }, 0, [], sourceOf, []);
+    return expand(items, { x: 0, y: 0, k: 1, rot: 0 }, 0, [], sourceOf, []);
   };
 
   // The box a block with a missing source is drawn in, so it can be seen and selected.

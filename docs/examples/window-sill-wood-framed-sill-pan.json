@@ -1,0 +1,19 @@
+{
+  "name": "Window sill, wood-framed wall, with sill pan",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "window", "sill", "sill pan", "wood"],
+  "items": [
+    { "kind": "hatch", "pattern": "wood1", "pts": [[-6, -12], [-2, -12], [-2, 4], [-6, 4]], "outline": true },
+    { "kind": "hatch", "pattern": "wood1", "pts": [[26, -12], [30, -12], [30, 4], [26, 4]], "outline": true },
+    { "kind": "hatch", "pattern": "wood1", "pts": [[-2, 0], [26, 0], [26, 2], [-2, 2]], "outline": true },
+    { "kind": "line", "pts": [[-4, -1], [-4, 2], [28, 2], [28, -1]], "weight": "w2", "pen": "blue" },
+    { "kind": "rect", "x": 0, "y": -1, "w": 24, "h": 1, "weight": "w3", "pen": "ink" },
+    { "kind": "line", "pts": [[-6, 4], [30, 4]], "weight": "w3", "pen": "ink" },
+    { "kind": "note", "text": "Sill pan, turned up at the ends and the back, sloped to drain out", "at": [36, -4], "width": 16, "tip": [28, 0.5], "pen": "blue" },
+    { "kind": "note", "text": "Wood sill, rough, set to the slope of the pan", "at": [36, 4], "width": 16, "tip": [20, 1], "pen": "ink" },
+    { "kind": "note", "text": "Sealant at the sill ends, not on the pan face", "at": [36, 12], "width": 16, "tip": [-4, 2], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify pan turn-up height and slope against the window manufacturer and the code before use.", "at": [2, 18], "width": 36, "tip": [20, 2] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, 2], "p2": [24, 2], "at": [12, 6] }
+  ]
+}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quick Detail: screen rules</title>
+  <style>
+    :root { --paper: #fbfaf7; --ink: #1d1d1f; --muted: #6b6b70; --line: #d9d7d0; --chip: #f1efe9; --blue: #2456c7; --accent: #b3261e; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 900px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 24px; margin: 8px 0 4px; }
+    h2 { font-size: 18px; margin: 28px 0 8px; }
+    .muted { color: var(--muted); }
+    /* The screen, as a map. Real sizes are not to scale. */
+    .screen { position: relative; aspect-ratio: 16 / 10; border: 2px solid var(--ink); border-radius: 14px; background: #bdbdbd; overflow: hidden; }
+    .zone { position: absolute; background: var(--chip); border: 2px solid var(--ink); border-radius: 12px; padding: 8px; font-size: 13px; }
+    .zone b { display: block; font-size: 13px; }
+    .sheet { left: 18%; top: 6%; right: 16%; bottom: 8%; background: var(--paper); border: 2px dashed var(--muted); border-radius: 10px; display: grid; place-items: center; color: var(--muted); font-size: 14px; }
+    .left { left: 1%; top: 6%; width: 13%; }
+    .right { right: 1%; bottom: 8%; width: 11%; text-align: center; }
+    .title { left: 1%; bottom: 2%; width: 22%; }
+    .chips { left: 36%; top: 1%; width: 30%; text-align: center; }
+    .panel { right: 0; top: 0; bottom: 0; width: 30%; background: #fff; border-left: 2px solid var(--ink); border-radius: 0; opacity: 0.92; }
+    .rec { background: #fff3cf; }
+    .tap { display: inline-block; min-width: 44px; min-height: 44px; border: 2px solid var(--ink); border-radius: 10px; margin: 2px; line-height: 40px; text-align: center; background: #fff; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 8px 6px; vertical-align: top; }
+    th { font-size: 14px; color: var(--muted); }
+    .rule { border: 2px solid var(--ink); border-radius: 12px; padding: 12px 14px; margin: 10px 0; background: #fff; }
+    .rule b { font-size: 16px; }
+    .done { color: #1f6b3a; font-weight: 600; }
+    .open { color: var(--accent); font-weight: 600; }
+    .legend span { display: inline-block; margin-right: 14px; font-size: 14px; }
+    .sw { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--ink); border-radius: 4px; vertical-align: -2px; margin-right: 4px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Quick Detail: screen rules</h1>
+  <p class="muted">The starting point for every screen. Add a rule when a decision is made, and mark a rule <span class="open">open</span> until it is built and tried on a tablet and a phone.</p>
+
+  <h2>1. The screen map</h2>
+  <p class="muted">The sheet is the middle. Tools sit on the left, panels on the right, and the title in the lower left. Nothing else is on the sheet.</p>
+  <div class="screen" role="img" aria-label="Screen map: toolbars left, panels lower right, sheet in the middle">
+    <div class="zone chips"><b>Options for the selected item</b>appear here, above the sheet</div>
+    <div class="zone left">
+      <b>Left toolbar</b>
+      <div class="rec" style="border-radius:8px;padding:4px;margin:4px 0"><b>Recording</b>scene and mic (starts muted)</div>
+      <div style="margin:4px 0"><b>Undo</b></div>
+      <div style="margin:4px 0"><b>Colour and line weight</b></div>
+      <div style="margin:4px 0"><b>Tools</b>select ↖, erase, hatch, dimension, text, image, underlays</div>
+    </div>
+    <div class="zone sheet">The sheet: draw, pan, zoom</div>
+    <div class="zone title"><b>Detail name and scale</b>tap the name for Project info</div>
+    <div class="zone right">
+      <b>Lower right</b>
+      <span class="tap">⤢</span><span class="tap">⚙</span><span class="tap">ⓘ</span><span class="tap">▦</span><span class="tap">☰</span>
+    </div>
+    <div class="zone panel"><b>Panel (one at a time)</b>same header and same sections, always from the right</div>
+  </div>
+  <p class="legend muted"><span><i class="sw" style="background:#fff3cf"></i>recording, the one thing that captures sound</span><span><i class="sw" style="background:var(--chip)"></i>controls</span></p>
+
+  <h2>2. Rules we follow now</h2>
+  <div class="rule"><b>Touch targets are big.</b> Every button is at least 44 px, and 48 px on the recording and panel buttons. <span class="done">Done.</span></div>
+  <div class="rule"><b>Recording sits beside the pen.</b> The scene button and the microphone are in the left toolbar, next to the colours. <span class="done">Done.</span></div>
+  <div class="rule"><b>The microphone starts muted.</b> Nothing is opened or captured until the user unmutes. While muted, audio and speech are paused, not just hidden. <span class="done">Done.</span></div>
+  <div class="rule"><b>Select is a tool, not a mode you forget.</b> The ↖ button (or V) turns select on and drawing off. Tap picks, drag moves, the corner scales, the round handle turns, and empty space pans. Picking a colour or weight goes back to drawing. <span class="done">Done.</span></div>
+  <div class="rule"><b>The toolbars can be hidden.</b> The ⤢ button hides both toolbars for more room. A setting hides them while an object is selected. The same button brings them back. <span class="done">Done.</span></div>
+  <div class="rule"><b>New sketches are numbered and marked.</b> They are named Untitled 0001, 0002, and so on, tagged TEMP until renamed. <span class="done">Done.</span></div>
+  <div class="rule"><b>Deleting is recoverable.</b> A delete moves the detail to the recycle bin. The question has a "don't ask for 5 minutes" choice. The bin restores or empties. <span class="done">Done.</span></div>
+  <div class="rule"><b>Panels look the same.</b> Each panel has a title, a Close button, and sections that each start with a short line of help. <span class="done">Done for Project info, Settings and the library.</span> The Log panel is not checked yet. <span class="open">open</span></div>
+  <div class="rule"><b>Underlays are faint and kept off prints.</b> Images and blocks are underlays. They can be scaled, faded and moved, and they stay out of the print unless set to print. <span class="done">Done.</span></div>
+
+  <h2>3. Rules still open</h2>
+  <div class="rule"><b>Permission memory.</b> The browser decides how long a microphone permission lasts. The app asks once per page load. On iPad Safari, expect to be asked again. <span class="open">open: test on the iPad</span></div>
+  <div class="rule"><b>Phone real estate.</b> On a phone, the title block and the chips still take space when a detail is open. <span class="open">open: test on a phone</span></div>
+  <div class="rule"><b>Rotation on text.</b> Notes and dimension text stay upright when their item is turned. <span class="open">open: decide whether text should turn</span></div>
+  <div class="rule"><b>Panel layout.</b> Panels should share one grid, with the same spacing, title size and button row. <span class="open">open</span></div>
+
+  <h2>4. How to use this page</h2>
+  <p>When a screen decision is made, add or change a rule here, and link the commit. When a rule is built and tried on the device it is for, change "open" to "done".</p>
+</main>
+</body>
+</html>

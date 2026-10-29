@@ -722,3 +722,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .info-card { max-height: 90vh; overflow-y: auto; }
 .info-card .info-pic { width: 100%; height: auto; border-radius: 8px; background: var(--chip); }
 .info-facts { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+
+/* ---------- recording and microphone, on the left beside the pen ---------- */
+.rec-group { flex-direction: row; width: max-content; gap: 6px; padding: 5px; }
+.lrail .rec-group .scene { min-width: 48px; min-height: 48px; }
+.lrail .mic { min-width: 48px; min-height: 48px; border-radius: 12px; font-size: 20px; border: 2px solid var(--line); background: var(--panel); cursor: pointer; }
+.lrail .mic.on { border-color: var(--accent); }
+
+/* ---------- select tool: the arrow turns on while selecting ---------- */
+.lrail .tool[data-act="select"].on { background: var(--ink); color: var(--paper); }
+
+/* ---------- collapse: hides both toolbars; the collapse button stays in the lower-right rail ---------- */
+body.collapsed #lrail { display: none; }
+body.collapsed #rail > button:not(#collapseBtn) { display: none; }
+#rail .collapse { font-size: 18px; }
+
+/* ---------- recycle bin ---------- */
+.bin-head { justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.bin-row { display: grid; gap: 6px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); margin-top: 10px; }
+.bin-row .row { display: flex; gap: 10px; flex-wrap: wrap; }
+.bin-row .btn { min-height: 48px; }

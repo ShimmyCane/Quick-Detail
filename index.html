@@ -39,6 +39,11 @@
     <div class="lgroup undo-group" aria-label="Undo">
       <button id="undoCorner" class="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
     </div>
+    <!-- Recording: the scene button and the microphone. The mic starts muted, so nothing is captured until it is unmuted. -->
+    <div class="lgroup rec-group" aria-label="Recording">
+      <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
+      <button id="micBtn" class="mic" aria-pressed="false" title="Microphone muted: recordings have no sound. Tap to unmute." aria-label="Microphone muted">🔇</button>
+    </div>
     <div class="lgroup" aria-label="Pen colour">
       <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
       <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
@@ -53,6 +58,7 @@
       <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
     </div>
     <div class="lgroup tools" aria-label="Annotation tools">
+      <button data-act="select" class="tool" title="Select: pick, move, scale and rotate. Drag empty space to pan (V)" aria-label="Select and move">↖</button>
       <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
       <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
@@ -63,13 +69,13 @@
     </div>
   </nav>
 
-  <!-- Lower right. The bottom button counts scenes; tap it for a new scene, hold it to stop recording. -->
+  <!-- Lower right: the panels. The collapse button hides both toolbars, for more room on a phone or tablet. -->
   <nav class="rail" id="rail" aria-label="Tools">
+    <button id="collapseBtn" class="collapse" title="Hide the toolbars (more room). Tap again to show them." aria-label="Hide the toolbars" aria-pressed="false">⤢</button>
     <button data-act="settings" title="Settings" aria-label="Settings">⚙</button>
     <button data-act="project" title="Project info" aria-label="Project info">ⓘ</button>
     <button data-act="library" title="Library" aria-label="Library">▦</button>
     <button data-act="log" title="Log" aria-label="Log">☰</button>
-    <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
   </nav>
 
   <aside id="panel" class="panel" hidden>
@@ -87,6 +93,7 @@
         <div class="seg" id="libViews" role="group" aria-label="Where to look">
           <button class="chip on" data-view="local">This browser</button>
           <button class="chip" data-view="cloud">Cloud</button>
+          <button class="chip" data-view="bin">Recycle bin</button>
         </div>
         <div class="seg" id="libBg" role="group" aria-label="Card background">
           <button class="chip" data-bg="sheet">As drawn</button>

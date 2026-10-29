@@ -14,7 +14,7 @@ Scale for all: 3"=1'-0" unless the item says otherwise.
 - [ ] Wall to roof junction, wood-framed (plate and rafter bearing)
 - [ ] Masonry veneer with air gap, flashing and weep at base
 - [ ] Interior partition to exterior wall, corner
-- [ ] Control joint in CMU wall
+- [x] Control joint in CMU wall: `control-joint-cmu.json` (AI draft, in the cloud library as `ai-control-joint-cmu`)
 - [ ] Shaft wall, 1 hr
 
 ## Roofing details
@@ -26,15 +26,15 @@ Scale for all: 3"=1'-0" unless the item says otherwise.
 - [x] Roof base flashing at CMU wall, counterflashing: `roof-base-flashing-cmu.json`
 - [x] 1 hr rated roof/ceiling assembly: `roof-1hr-rated.json` (earlier sample)
 - [ ] Eave at sloped wood roof with ventilated soffit (needs a sloped drawing)
-- [ ] Ridge vent at sloped roof
+- [x] Ridge vent at sloped roof: `ridge-vent-sloped-roof.json` (AI draft, in the cloud library as `ai-ridge-vent-sloped-roof`)
 - [ ] Step flashing at a sloped roof meeting a wall
-- [ ] Gutter at eave, with drip edge
-- [ ] Overflow scupper through parapet
+- [x] Gutter at eave, with drip edge: `gutter-eave-drip-edge.json` (AI draft, in the cloud library as `ai-gutter-eave-drip-edge`)
+- [x] Overflow scupper through parapet: `scupper-through-parapet.json` (AI draft, in the cloud library as `ai-scupper-through-parapet`)
 
 ## Door details
 
 - [ ] Exterior door head, wood-framed (flashing over head)
-- [ ] Exterior door sill on concrete, with threshold and sill pan
+- [x] Exterior door sill on concrete, with threshold and sill pan: `door-sill-concrete-threshold.json` (AI draft, in the cloud library as `ai-door-sill-concrete-threshold`)
 - [x] Door jamb, wood frame: `Door jamb` (in the cloud library, drawn freehand; not yet a spec)
 - [ ] Door in 1 hr wall: fire-rated frame and head
 - [ ] Door at slab-on-grade, threshold to finish floor
@@ -42,9 +42,9 @@ Scale for all: 3"=1'-0" unless the item says otherwise.
 ## Window details
 
 - [x] Interior window sill, 12in concrete wall: `window-sill-concrete-12in.json`
-- [ ] Window head, wood-framed, with lintel and flashing
-- [ ] Window jamb, wood-framed, to insulated wall
-- [ ] Window sill, wood-framed wall, exterior with sill pan
+- [x] Window head, wood-framed, with lintel and flashing: `window-head-wood-framed.json` (AI draft, in the cloud library as `ai-window-head-wood-framed`)
+- [x] Window jamb, wood-framed, to insulated wall: `window-jamb-wood-insulated.json` (AI draft, in the cloud library as `ai-window-jamb-wood-insulated`)
+- [x] Window sill, wood-framed wall, exterior with sill pan: `window-sill-wood-framed-sill-pan.json` (AI draft, in the cloud library as `ai-window-sill-wood-framed-sill-pan`)
 - [ ] Skylight curb, sloped roof (see Roofing)
 
 ## Floor and ceiling details
@@ -55,14 +55,25 @@ Scale for all: 3"=1'-0" unless the item says otherwise.
 
 ## Foundation and slab details
 
-- [ ] Slab on grade edge with frost protection
+- [x] Slab on grade edge with frost protection: `slab-edge-frost-protection.json` (AI draft, in the cloud library as `ai-slab-edge-frost-protection`)
 - [ ] Footing to wall, cast-in-place
 - [ ] Waterproofing and drainage at below-grade wall
 
 ## Fire-rated and specialty (added)
 
-- [ ] Penetration of 1 hr wall by pipe, sealed with listed firestop
+- [x] Penetration of 1 hr wall by pipe, sealed with listed firestop: `pipe-penetration-1hr-wall-firestop.json` (AI draft, in the cloud library as `ai-pipe-penetration-1hr-wall-firestop`)
 - [ ] Shaft wall at roof (roof-side closure)
+
+## Ideas for review (added in round 3)
+
+Things to decide and review before the drafts are trusted. Nothing here is built yet.
+
+- [ ] Review each AI draft as keep, revise, or discard, and record the choice next to it. Drafts are starting points, not released details.
+- [ ] Practice mode: draw the detail first from the title and the to-do note, then compare with the AI draft and list what it got right or missed.
+- [ ] AI check on my drawing: ask for missing dimensions, unlabelled materials, layer or weight mismatches, and notes that disagree with the drawing. Show the answer as suggestions on the sheet, never as edits.
+- [ ] Settle the drafting standard first: line weights, hatch patterns, note wording, and when a dimension is required.
+- [ ] Code and listing references in notes are a risk. Require a listing or code section number for every fire, wind or frost claim before a draft leaves the tool.
+- [ ] Build a "what is this detail for" card (where it sits, what it must do) so the AI check has the context it needs.
 
 ## Notes for review
 

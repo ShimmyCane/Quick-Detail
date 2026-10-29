@@ -59,6 +59,7 @@
     </div>
     <div class="lgroup tools" aria-label="Annotation tools">
       <button data-act="select" class="tool" title="Select: pick, move, scale and rotate. Drag empty space to pan (V)" aria-label="Select and move">↖</button>
+      <button data-act="extents" id="extentsBtn" class="tool" title="Zoom extents: fit everything on the sheet" aria-label="Zoom to fit everything">⊡</button>
       <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
       <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
@@ -95,14 +96,19 @@
           <button class="chip" data-view="cloud">Cloud</button>
           <button class="chip" data-view="bin">Recycle bin</button>
         </div>
-        <div class="seg" id="libBg" role="group" aria-label="Card background">
-          <button class="chip" data-bg="sheet">As drawn</button>
-          <button class="chip" data-bg="white">On white</button>
-          <button class="chip" data-bg="mono">Black on white</button>
-        </div>
         <input type="search" id="libSearch" placeholder="Search name, tag or words" aria-label="Search the library">
-        <label class="chip sel">Sort <select id="libSort" aria-label="Sort details"><option value="name">Name</option><option value="recent">Recent</option><option value="scenes">Most scenes</option></select></label>
-        <button class="btn" id="libNew">New detail</button>
+        <details class="more">
+          <summary class="chip">More</summary>
+          <div class="more-panel">
+            <label class="chip sel">Sort <select id="libSort" aria-label="Sort details"><option value="name">Name</option><option value="recent">Recent</option><option value="scenes">Most scenes</option></select></label>
+            <div class="seg" id="libBg" role="group" aria-label="Card background">
+              <button class="chip" data-bg="sheet">As drawn</button>
+              <button class="chip" data-bg="white">On white</button>
+              <button class="chip" data-bg="mono">Black on white</button>
+            </div>
+            <button class="btn" id="libNew">New detail</button>
+          </div>
+        </details>
         <button class="link" id="libClose">Close</button>
       </div>
     </div>

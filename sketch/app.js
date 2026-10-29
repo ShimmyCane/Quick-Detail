@@ -186,10 +186,12 @@
       .catch(function (e) { toast('Could not write the JSON file: ' + (e && e.message || e)); });
   }
 
+  // A new view starts at a typical detail: 6 in. square, across the shorter side of the screen, centred on the content.
   function homeView(d) {
+    var z = Math.min(W(), H()) * 0.8 / 6;
     var b = SK.itemsBounds(visible(d.items), acFor(d));
-    var z = defaultZ(d);
-    return SK.fitView(b, W(), H(), 40, z * 3) || { x: -W() / (2 * z), y: -H() / (2 * z), z: z };
+    var cx = b ? (b.minx + b.maxx) / 2 : 0, cy = b ? (b.miny + b.maxy) / 2 : 0;
+    return { x: cx - W() / (2 * z), y: cy - H() / (2 * z), z: z };
   }
 
   // from: the detail whose block was used to open this one (see openSource), or nothing.
@@ -652,8 +654,10 @@
     redraw();
   }
 
+  // Zoom extents: fit everything on the sheet in view.
   function fitAll() {
-    view = homeView(detail);
+    var b = SK.itemsBounds(visible(detail.items), ac());
+    view = SK.fitView(b, W(), H(), 40, defaultZ(detail) * 3) || homeView(detail);
     redraw();
   }
 
@@ -1645,6 +1649,14 @@
   }
   function cardBounds(items, a) { return SK.itemsBounds(visible(SK.printable(items)), a) || SK.itemsBounds(visible(items), a); }
 
+  // Tags take two lines on a card. Tapping them expands the list; the tap does not open the card.
+  function tagsLine(tags) {
+    return el('span', { class: 'tags-line clamp', text: tags.join(' · ') || 'no tags yet', on: { click: function (e) {
+      e.stopPropagation();
+      e.currentTarget.classList.toggle('open');
+    } } });
+  }
+
   function libCard(d) {
     var a = acFor(d);
     var col = libColors();
@@ -1674,7 +1686,7 @@
         sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded) + ' · ' +
         d.items.length + ' elements (' + tagged + ' tagged)' }),
         users ? el('span', { class: 'meta', text: 'Used in ' + users + (users === 1 ? ' block' : ' blocks') }) : null,
-      el('span', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
+      tagsLine(detailTags(d)),
       el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
     ]);
     // Browsing shows the final picture and last words. Only the loaded detail keeps its history to flip through.
@@ -1691,7 +1703,16 @@
   }
 
   // The summary a library card opens: picture, tags and facts, then three actions. Nothing here opens the editor by itself.
-  function showDetailInfo(d) {
+  // A cloud detail becomes a local copy the first time it is duplicated or imported as a block, since both need it on this device.
+  function localCopyOf(d) {
+    return SK.DB.get('details', d.id).then(function (mine) {
+      if (mine) return mine;
+      var copy = { id: d.id, name: d.name, scale: d.scale, tags: d.tags || [], items: d.items || [], parentId: null, created: d.created, modified: d.modified };
+      return saveDetail(copy, [], null).then(function () { return copy; });
+    });
+  }
+
+  function showDetailInfo(d, fromCloud) {
     var a = acFor(d), col = libColors();
     var sess = lib.sessions[d.id] || [];
     var scenes = SK.scenesOf(sess);
@@ -1715,13 +1736,21 @@
       el('p', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
       el('ul', { class: 'info-facts' }, facts.map(function (f) { return el('li', { class: 'muted', text: f }); })),
       el('div', { class: 'row' }, [
-        el('button', { class: 'btn', text: 'Open to edit', on: { click: function () { close(); closeLibrary(); openDetail(d); } } }),
-        el('button', { class: 'btn', text: 'Duplicate', on: { click: function () { close(); duplicateDetail(d); } } }),
+        el('button', { class: 'btn', text: 'Open to edit', on: { click: function () {
+          close();
+          if (fromCloud) { openCloudDetail(d); return; }
+          closeLibrary();
+          openDetail(d);
+        } } }),
+        el('button', { class: 'btn', text: 'Duplicate', on: { click: function () {
+          close();
+          (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(duplicateDetail).catch(fail);
+        } } }),
         el('button', { class: 'btn', text: 'Import as block', on: { click: function () {
           if (inHere) { toast('This is the open detail. Open another one to import it as a block.'); return; }
           close();
           closeLibrary();
-          addBlock(d);
+          (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(addBlock).catch(fail);
         } } }),
         el('button', { class: 'btn', text: 'Close', on: { click: close } })
       ])
@@ -1922,13 +1951,13 @@
       el('b', { text: d.name }),
       el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.cloud.parent_id ? ' · branch' : '') }),
       el('span', { class: 'meta', text: d.items.length + ' elements · updated ' + new Date(d.modified).toLocaleString() }),
-      el('span', { class: 'tags-line', text: (d.tags || []).join(' · ') || 'no tags yet' }),
+      tagsLine(d.tags || []),
       el('div', { class: 'row' }, [
         el('button', { class: 'btn small', text: 'Recordings', on: { click: function (e) { e.stopPropagation(); renderCloudDetail(d.cloud); } } })
       ])
     ]);
-    card.addEventListener('click', function () { openCloudDetail(d); });
-    card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); openCloudDetail(d); } });
+    card.addEventListener('click', function () { showDetailInfo(d, true); });
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); showDetailInfo(d, true); } });
     return card;
   }
 
@@ -2784,6 +2813,7 @@
     else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); if (tool === 'select') setTool('draw'); }
     else if (a && a.getAttribute('data-act') === 'image') $('imageFile').click();
     else if (a && a.getAttribute('data-act') === 'underlay') toggleUnderlay();
+    else if (a && a.getAttribute('data-act') === 'extents') { if (pb) exitReplay(); fitAll(); }
     else if (a) {
       if (pb) exitReplay();
       var act = a.getAttribute('data-act');

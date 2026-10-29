@@ -47,7 +47,9 @@ A block is a finished detail placed inside another detail. It is a live link, so
 - [x] Add a block: Project info → Blocks → pick a finished detail. It lands at the centre of the view, with tags and recordings left out.
 - [x] Draw the expanded lines and notes at the block's offset. Exports, library pictures and the log use the same expansion.
 - [x] Move a block as one unit: once selected, drag anywhere on it. Undo covers the move.
-- [x] Erase removes the whole block. The source is not touched.
+- [x] Underlay (round 2): a block draws faint under the linework, like an image underlay. Its chips set opacity (20–100%), scale (50–300%, and a corner handle that keeps the top-left fixed) and Print (default: left out). The erase tool skips underlays, so remove them with Delete. The U toggle hides them.
+- [x] Library (round 2): tapping a card shows a summary with Open to edit, Duplicate and Import as block. Editing is never opened by a tap on the card.
+- [x] Block details (round 2): a detail named `Block_…` (or tagged `block`) appears as a checkbox in the Blocks checklist of Project info. Ticking adds it as an underlay and selects it; unticking removes it.
 - [x] Pop-up when a detail that blocks use is opened: Keep editing, Branch as new version, and Back to the detail I came from (when opened from a block).
 - [x] Branch as new version: a new detail with a `versionOf` link. The original stays as it is, and only the block you came from is pointed at the new version.
 - [x] Missing source: a dashed box labelled "Block: source not on this device". Its chips are hidden, so use Delete to remove it.

@@ -85,5 +85,19 @@ check('a missing block has a placeholder box', pb && near(pb.minx, 5) && pb.maxx
 check('a block is hit on its line', SK.blockHit(block('x', 'window', 5, 3), [5.5, 3], 0.1, sourceOf, ac));
 check('a block is not hit away from its line', !SK.blockHit(block('x', 'window', 5, 3), [5.5, 9], 0.1, sourceOf, ac));
 
+// ---------------- scale ----------------
+var scaled = SK.flattenItems([{ id: 'sb', kind: 'block', sourceId: 'window', at: [10, 0], k: 2 }], sourceOf);
+check('a scaled block scales its points about its origin', near(scaled[0].pts[0][0], 10) && near(scaled[0].pts[1][0], 12));
+check('a scaled block scales its line weight', near(scaled[0].w, 0.2));
+var nestedK = SK.flattenItems([{ kind: 'block', sourceId: 'nest-outer', at: [0, 0], k: 1 }], function (id) {
+  return { 'nest-outer': { id: 'nest-outer', items: [{ kind: 'block', sourceId: 'window', at: [1, 0], k: 2 }] } }[id] || lib[id] || null;
+});
+check('nested scales multiply', near(nestedK[0].pts[0][0], 1) && near(nestedK[0].pts[1][0], 3));
+check('a block without k draws at scale 1', SK.blockScale({ kind: 'block' }) === 1);
+
+// ---------------- underlay printing ----------------
+var printed = SK.printable([{ kind: 'block', sourceId: 'window', at: [0, 0] }, { kind: 'block', sourceId: 'window', at: [0, 0], print: true }, { kind: 'stroke', pts: [] }]);
+check('a block is left out of prints unless it is set to print', printed.length === 2 && printed[0].print === true && printed[1].kind === 'stroke');
+
 console.log(failures ? failures + ' FAILED' : 'all block checks passed');
 process.exitCode = failures ? 1 : 0;

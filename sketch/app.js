@@ -371,7 +371,8 @@
     ctx.fillStyle = col.paper;
     ctx.fillRect(0, 0, W(), H());
     if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), col.ink, dpr);
-    SK.paint(ctx, visible(list), view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), hideUnderlay: !settings.underlay });
+    if (settings.underlay) list.forEach(function (it) { if (it.kind === 'block') drawUnderlay(it, col); });
+    SK.paint(ctx, visible(list.filter(function (it) { return it.kind !== 'block'; })), view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), hideUnderlay: !settings.underlay });
     SK.missingBlocks(list, sourceOf).forEach(function (bk) { drawPlaceholder(bk, col); });
     if (!pb) {
       drawDraft(col);
@@ -447,8 +448,17 @@
       }
       return hs2;
     }
+    if (it.kind === 'block') {
+      var bb = SK.blockBounds(it, sourceOf, a);
+      return sourceOf(it.sourceId) && bb ? [{ key: 'size', p: [bb.maxx, bb.maxy] }] : [];
+    }
     if (it.kind === 'image') return [{ key: 'move', p: it.at }, { key: 'size', p: [it.at[0] + it.w, it.at[1] + it.h] }];
     return [];
+  }
+
+  // A block is an underlay: drawn faint under the linework, at the block's own opacity.
+  function drawUnderlay(bk, col) {
+    SK.paint(ctx, visible([bk]), view, { ac: ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), alpha: bk.opacity == null ? 0.4 : bk.opacity });
   }
 
   // A block whose source is not on this device: a dashed box with its name, so it can still be selected and erased.
@@ -720,7 +730,7 @@
   function eraseAt(w) {
     var tol = 10 / view.z, a = ac();
     for (var i = detail.items.length - 1; i >= 0; i--) {
-      if (detail.items[i].kind === 'image') continue;   // images are removed with Delete, so erasing over one is safe
+      if (detail.items[i].kind === 'image' || detail.items[i].kind === 'block') continue;   // underlays are removed with Delete, so erasing over one is safe
       if (hitAt(detail.items[i], w, tol, a)) { commitDel(detail.items[i].id); return true; }
     }
     return false;
@@ -741,8 +751,10 @@
     for (var pass = 0; pass < 2; pass++) {
       for (var i = detail.items.length - 1; i >= 0; i--) {
         var it = detail.items[i];
-        if (it.kind === 'stroke' || (it.kind === 'image') !== (pass === 1)) continue;
+        var under = it.kind === 'image' || it.kind === 'block';   // underlays are picked after the linework
+        if (it.kind === 'stroke' || under !== (pass === 1)) continue;
         if (it.kind === 'image' && it.noPrint && !settings.underlay) continue;   // a hidden underlay cannot be picked
+        if (it.kind === 'block' && !settings.underlay) continue;
         if (hitAt(it, w, tol, a)) return it;
       }
     }
@@ -768,7 +780,7 @@
 
   function startHandleDrag(h, w) {
     var it = byId(sel.id);
-    drag = { id: it.id, key: h.key, before: it, w0: w };
+    drag = { id: it.id, key: h.key, before: it, w0: w, box: it.kind === 'block' ? SK.blockBounds(it, sourceOf, ac()) : null };
     if (h.key.indexOf('tip:') === 0) { sel.leader = +h.key.slice(4); renderChips(); }
   }
 
@@ -780,6 +792,10 @@
     else if (k === 'move') it.at = [b.at[0] + w[0] - drag.w0[0], b.at[1] + w[1] - drag.w0[1]];
     else if (k === 'width') it.width = Math.max(SK.PAPER.text * f * 4, w[0] - b.at[0]);
     else if (k === 'height') it.height = Math.max(SK.PAPER.text * f * 1.5, w[1] - b.at[1]);
+    else if (k === 'size' && b.kind === 'block') {
+      var bx = drag.box;
+      scaleBlockTo(it, bx, SK.blockScale(b) * (w[0] - bx.minx) / Math.max(bx.maxx - bx.minx, 1e-6));
+    }
     else if (k === 'size') { it.w = Math.max(f / 4, w[0] - b.at[0]); it.h = it.w * b.h / b.w; }   // keeps the image's proportions
     else if (k === 'p1' || k === 'p2' || k === 'vertex') it[k] = snapped();
     else if (k === 'at') {
@@ -788,6 +804,15 @@
     }
     setItem(it);
     redraw();
+  }
+
+  // Sets a block's scale to k, keeping its top-left corner at box (the block's bounds before the change).
+  function scaleBlockTo(it, box, k) {
+    var src = sourceOf(it.sourceId);
+    if (!src) return;
+    var own = SK.itemsBounds(visible(src.items || []), acFor(src)) || { minx: 0, miny: 0 };
+    it.k = Math.min(20, Math.max(0.05, k));
+    it.at = [box.minx - it.k * own.minx, box.miny - it.k * own.miny];
   }
 
   function endHandleDrag() {
@@ -1064,7 +1089,17 @@
     if (it.kind === 'block' && sourceOf(it.sourceId)) {
       chips.push(
         el('button', { class: 'chip', text: 'Open source', on: { click: function () { openSource(it); } } }),
-        el('button', { class: 'chip', text: 'Copy in', title: 'Turn the lines into plain copies here', on: { click: function () { copyInBlock(it); } } })
+        el('button', { class: 'chip', text: 'Copy in', title: 'Turn the lines into plain copies here', on: { click: function () { copyInBlock(it); } } }),
+        chipSelect('Size', [{ v: 0.5, l: '50%' }, { v: 1, l: '100%' }, { v: 1.5, l: '150%' }, { v: 2, l: '200%' }, { v: 3, l: '300%' }], SK.blockScale(it), function (v) {
+          var box = SK.blockBounds(it, sourceOf, ac());
+          edit(function (n) { scaleBlockTo(n, box, +v); });
+        }),
+        chipSelect('Opacity', [{ v: 0.2, l: '20%' }, { v: 0.4, l: '40%' }, { v: 0.6, l: '60%' }, { v: 0.8, l: '80%' }, { v: 1, l: '100%' }], it.opacity == null ? 0.4 : it.opacity, function (v) {
+          edit(function (n) { n.opacity = +v; });
+        }),
+        chipSelect('Print', [{ v: 'no', l: 'Leave out' }, { v: 'yes', l: 'Include' }], it.print ? 'yes' : 'no', function (v) {
+          edit(function (n) { n.print = v === 'yes'; });
+        })
       );
     }
     chips.push(el('button', { class: 'chip danger', text: 'Delete', on: { click: deleteSelected } }));
@@ -1509,9 +1544,9 @@
 
   // A card shows what prints: underlays are left out, and the picture is framed on the printed part.
   function cardPicture(items, b, a, col) {
-    return SK.picture(visible(items), b, 220, 140, { ac: a, ink: col.ink, paper: col.paper, mono: col.mono, print: true });
+    return SK.picture(visible(SK.printable(items)), b, 220, 140, { ac: a, ink: col.ink, paper: col.paper, mono: col.mono, print: true });
   }
-  function cardBounds(items, a) { return SK.itemsBounds(SK.printable(visible(items)), a) || SK.itemsBounds(visible(items), a); }
+  function cardBounds(items, a) { return SK.itemsBounds(visible(SK.printable(items)), a) || SK.itemsBounds(visible(items), a); }
 
   function libCard(d) {
     var a = acFor(d);
@@ -1547,15 +1582,68 @@
     ]);
     // Browsing shows the final picture and last words. Only the loaded detail keeps its history to flip through.
     if (d.id === detail.id) bindFlip(card, pic, d);
+    // Tapping a card shows its summary. Editing is a separate button, so the detail is never opened by accident.
     card.addEventListener('click', function () {
       if (Date.now() < card._quietUntil) return;
-      closeLibrary();
-      if (d.id !== detail.id) openDetail(d);
+      showDetailInfo(d);
     });
     card.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') { e.preventDefault(); card.click(); }
     });
     return card;
+  }
+
+  // The summary a library card opens: picture, tags and facts, then three actions. Nothing here opens the editor by itself.
+  function showDetailInfo(d) {
+    var a = acFor(d), col = libColors();
+    var sess = lib.sessions[d.id] || [];
+    var scenes = SK.scenesOf(sess);
+    var recorded = sess.reduce(function (n, s) { return n + (s.duration || 0); }, 0);
+    var users = SK.usersOf(d.id, allDetails).length;
+    var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
+    pic.className = 'info-pic';
+    var facts = [
+      scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' + sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded),
+      d.items.length + ' elements · ' + SK.scaleOf(d.scale).label,
+      'Last changed ' + new Date(d.modified).toLocaleString()
+    ];
+    if (users) facts.push('Used in ' + users + (users === 1 ? ' block' : ' blocks'));
+    if (isBlockDetail(d)) facts.push('A block: tick it in a detail\'s Blocks checklist to add it there.');
+    var inHere = d.id === detail.id;
+    var back = null;
+    function close() { if (back) back.remove(); }
+    var card = el('div', { class: 'pop-card info-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': d.name }, [
+      pic,
+      el('b', { text: d.name }),
+      el('p', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
+      el('ul', { class: 'info-facts' }, facts.map(function (f) { return el('li', { class: 'muted', text: f }); })),
+      el('div', { class: 'row' }, [
+        el('button', { class: 'btn', text: 'Open to edit', on: { click: function () { close(); closeLibrary(); openDetail(d); } } }),
+        el('button', { class: 'btn', text: 'Duplicate', on: { click: function () { close(); duplicateDetail(d); } } }),
+        el('button', { class: 'btn', text: 'Import as block', on: { click: function () {
+          if (inHere) { toast('This is the open detail. Open another one to import it as a block.'); return; }
+          close();
+          closeLibrary();
+          addBlock(d);
+        } } }),
+        el('button', { class: 'btn', text: 'Close', on: { click: close } })
+      ])
+    ]);
+    back = el('div', { class: 'pop-back', on: { click: function (e) { if (e.target === back) close(); } } }, [card]);
+    document.body.appendChild(back);
+    card.querySelector('.btn').focus();
+  }
+
+  // A copy with the same lines, tags and scale. Its recordings stay with the original. Blocks in it still link to their sources.
+  function duplicateDetail(d) {
+    var c = newDetail(d.name + ' copy');
+    c.scale = d.scale;
+    c.tags = (d.tags || []).slice();
+    c.items = clone(d.items);
+    saveDetail(c, [], null).then(function () {
+      toast('Duplicated as "' + c.name + '". The original is unchanged.');
+      renderLibrary();
+    }).catch(fail);
   }
 
   function removeDetail(d) {
@@ -1731,7 +1819,7 @@
       if (f.kind === 'audio') { media[f.path] = s.audio; return; }
       var sc = an.scenes.filter(function (x) { return x.sessionId === f.sessionId && x.index === f.sceneIndex; })[0];
       var items = SK.stateAt(s, sc.end);
-      var b = SK.itemsBounds(SK.printable(visible(items)), ac()) || SK.itemsBounds(SK.printable(visible(detail.items)), ac());
+      var b = SK.itemsBounds(visible(SK.printable(items)), ac()) || SK.itemsBounds(visible(SK.printable(detail.items)), ac());
       if (!b) return;
       jobs.push(new Promise(function (resolve) {
         sheetCanvas(items, b, detail).toBlob(function (blob) { media[f.path] = blob; resolve(); }, 'image/jpeg', 0.9);
@@ -1969,18 +2057,29 @@
 
   // ---- blocks: a finished detail placed inside this one ----
 
+  // A block is a detail's own underlay: faint, at 40% opacity, scale 100%, left out of prints. Null (with a reason) when it cannot go here.
+  function makeBlock(src) {
+    var refusal = SK.blockRefusal(detail.id, detail.items, src.id, sourceOf);
+    if (refusal) { toast(refusal); return null; }
+    var b = SK.itemsBounds(SK.flattenItems(src.items || [], sourceOf), acFor(src));
+    if (!b) { toast(src.name + ' has no lines yet.'); return null; }
+    var mid = SK.toWorld(view, [W() / 2, H() / 2]);
+    return { id: uid('b'), kind: 'block', sourceId: src.id, at: [mid[0] - (b.minx + b.maxx) / 2, mid[1] - (b.miny + b.maxy) / 2], k: 1, opacity: 0.4, print: false };
+  }
+
   // Places a block of src at the centre of the view, so it lands where you are looking.
   function addBlock(src) {
-    var refusal = SK.blockRefusal(detail.id, detail.items, src.id, sourceOf);
-    if (refusal) { toast(refusal); return; }
-    var b = SK.itemsBounds(SK.printable(SK.flattenItems(src.items || [], sourceOf)), acFor(src));
-    if (!b) { toast(src.name + ' has no lines yet.'); return; }
-    var mid = SK.toWorld(view, [W() / 2, H() / 2]);
-    var item = { id: uid('b'), kind: 'block', sourceId: src.id, at: [mid[0] - (b.minx + b.maxx) / 2, mid[1] - (b.miny + b.maxy) / 2] };
+    var item = makeBlock(src);
+    if (!item) return;
     closePanel();
     commitPut(item, null);
     select(item.id);
-    toast('Block added. Drag it to move it.');
+    toast('Block added. Drag it to move it, or use its chips to scale and fade it.');
+  }
+
+  // A block detail is named Block_… (Block_door, Block_roof, Block_hatch), or tagged block.
+  function isBlockDetail(d) {
+    return /^block_/i.test(d.name || '') || (d.tags || []).indexOf('block') >= 0;
   }
 
   // Opens the block's detail for editing. Its blocks then show the pop-up, and Branch can repoint this one.
@@ -2005,6 +2104,37 @@
 
   // Blocks in this detail, and the picker that adds another finished detail as a block.
   function blocksSection() {
+    return blocksPicker().concat([blocksChecklist()]);
+  }
+
+  // Block details as a checklist, scrollable. Ticked means this detail has a block of it; unticking removes it.
+  function blocksChecklist() {
+    var list = el('div', { class: 'block-list' });
+    var libs = allDetails.filter(function (d) { return d.id !== detail.id && isBlockDetail(d); })
+      .sort(function (a, b) { return a.name.localeCompare(b.name); });
+    if (!libs.length) {
+      return el('p', { class: 'muted', text: 'No block details yet. Name a finished detail Block_ and its kind, for example Block_door, and it will appear here.' });
+    }
+    libs.forEach(function (d) {
+      var box = el('input', { type: 'checkbox', 'aria-label': 'Block ' + d.name });
+      box.checked = detail.items.some(function (it) { return it.kind === 'block' && it.sourceId === d.id; });
+      box.addEventListener('change', function () {
+        if (box.checked) {
+          var item = makeBlock(d);
+          if (!item) { box.checked = false; return; }
+          commitPut(item, null);
+          select(item.id);   // its chips appear, for scale and opacity
+          return;
+        }
+        detail.items.filter(function (it) { return it.kind === 'block' && it.sourceId === d.id; })
+          .forEach(function (it) { commitDel(it.id); });
+      });
+      list.appendChild(el('label', { class: 'check-row' }, [box, ' ' + d.name]));
+    });
+    return list;
+  }
+
+  function blocksPicker() {
     var here = detail.items.filter(function (it) { return it.kind === 'block'; });
     var picker = el('select', { class: 'field', 'aria-label': 'Finished detail to add as a block' });
     picker.appendChild(el('option', { value: '', text: 'Add a finished detail as a block…' }));
@@ -2297,7 +2427,7 @@
     cv.height = h;
     var c = cv.getContext('2d');
     var v = { x: b.minx - margin / z, y: b.miny - margin / z, z: z };
-    SK.paint(c, visible(items), v, { ac: acFor(d), ink: '#000', paper: '#fff', bg: '#ffffff', fill: !opts.transparent, w: w, h: h, print: true });
+    SK.paint(c, visible(SK.printable(items)), v, { ac: acFor(d), ink: '#000', paper: '#fff', bg: '#ffffff', fill: !opts.transparent, w: w, h: h, print: true });
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.fillStyle = '#000';
     c.textAlign = 'left';
@@ -2375,7 +2505,7 @@
   }
 
   function exportPng() {
-    var b = SK.itemsBounds(SK.printable(visible(detail.items)), ac());
+    var b = SK.itemsBounds(visible(SK.printable(detail.items)), ac());
     if (!b) { toast('Nothing to export yet.'); return; }
     sheetCanvas(detail.items, b, detail, { transparent: true }).toBlob(function (blob) {
       download(blob, slug(detail.name) + '.png');
@@ -2383,7 +2513,7 @@
   }
 
   function exportJpeg() {
-    var b = SK.itemsBounds(SK.printable(visible(detail.items)), ac());
+    var b = SK.itemsBounds(visible(SK.printable(detail.items)), ac());
     if (!b) { toast('Nothing to export yet.'); return; }
     var an = analysis();
     var meta = SK.detailMetadata(detail, an);

@@ -712,3 +712,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .pop-card { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 20px; max-width: 460px; width: 100%; }
 .pop-card .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .pop-card .btn { min-height: 48px; padding: 0 16px; }
+
+/* ---------- block checklist in Project info: scrolls, each row is a large touch target ---------- */
+.block-list { max-height: 260px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; padding: 4px 10px; margin-top: 8px; }
+.check-row { display: flex; align-items: center; gap: 10px; min-height: 48px; cursor: pointer; }
+.check-row input { width: 22px; height: 22px; flex: 0 0 auto; }
+
+/* ---------- library card summary ---------- */
+.info-card { max-height: 90vh; overflow-y: auto; }
+.info-card .info-pic { width: 100%; height: auto; border-radius: 8px; background: var(--chip); }
+.info-facts { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }

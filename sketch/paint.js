@@ -93,7 +93,7 @@
       var im = imageOf(it.src);
       if (!im) return;
       var s = SK.toScreen(v, it.at);
-      c.globalAlpha = it.noPrint ? 0.55 : 1;
+      c.globalAlpha = (it.noPrint ? 0.55 : 1) * (opts.alpha == null ? 1 : opts.alpha);
       c.drawImage(im, s[0], s[1], it.w * v.z, it.h * v.z);
     });
     c.globalAlpha = 1;
@@ -103,7 +103,7 @@
       var ink = opts.mono ? opts.ink : opts.bg ? SK.inkFor(it.c, opts.bg) : opts.ink;   // mono: every pen in ink
       c.strokeStyle = ink;
       c.fillStyle = ink;
-      c.globalAlpha = opts.faded && opts.faded.indexOf(it.id) >= 0 ? 0.35 : 1;
+      c.globalAlpha = opts.faded && opts.faded.indexOf(it.id) >= 0 ? 0.35 : (opts.alpha == null ? 1 : opts.alpha);
       if (it.kind === 'stroke') {
         var p = it.pts;
         if (!p.length) return;

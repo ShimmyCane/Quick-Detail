@@ -1,0 +1,18 @@
+{
+  "name": "Penetration of 1 hr wall by pipe, sealed with listed firestop",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "fire-rated", "penetration", "firestop", "pipe"],
+  "items": [
+    { "kind": "hatch", "pattern": "gypsum", "pts": [[-12, -14], [-8, -14], [-8, 14], [-12, 14]], "outline": true },
+    { "kind": "hatch", "pattern": "gypsum", "pts": [[8, -14], [12, -14], [12, 14], [8, 14]], "outline": true },
+    { "kind": "line", "pts": [[-14, -1.5], [14, -1.5]], "weight": "w3", "pen": "blue" },
+    { "kind": "line", "pts": [[-14, 1.5], [14, 1.5]], "weight": "w3", "pen": "blue" },
+    { "kind": "hatch", "pattern": "screen", "pts": [[-8, -4], [8, -4], [8, 4], [-8, 4]], "outline": true, "pen": "red" },
+    { "kind": "note", "text": "Pipe, metal, sized per the firestop listing. Insulation kept clear of the firestop", "at": [20, -10], "width": 18, "tip": [12, -1.5], "pen": "blue" },
+    { "kind": "note", "text": "Firestop: listed system (UL or manufacturer), installed to its label on both faces", "at": [20, 0], "width": 18, "tip": [8, 0], "pen": "red" },
+    { "kind": "note", "text": "Gypsum board on both faces, to the wall's listed design", "at": [20, 10], "width": 18, "tip": [-12, 6], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify the firestop system and rating against the listing and the code before use.", "at": [-30, 20], "width": 40, "tip": [-10, 0] },
+    { "kind": "dim", "mode": "ortho", "p1": [-12, -14], "p2": [12, -14], "at": [0, -17] }
+  ]
+}

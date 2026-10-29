@@ -1,0 +1,18 @@
+{
+  "name": "Overflow scupper through parapet",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "roof", "parapet", "scupper", "overflow"],
+  "items": [
+    { "kind": "hatch", "pattern": "cmu", "pts": [[0, -20], [8, -20], [8, 0], [0, 0]], "outline": true },
+    { "kind": "hatch", "pattern": "concrete", "pts": [[-20, 0], [8, 0], [8, 4], [-20, 4]], "outline": true, "pen": "green" },
+    { "kind": "line", "pts": [[-20, 0.2], [-0.5, 0.2], [-0.5, 1.2]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[8, -9], [10, -9], [10, -7], [8, -7]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[8, -8], [12, -8], [12, -6], [8, -6]], "weight": "w2", "pen": "ink" },
+    { "kind": "note", "text": "Overflow scupper set above the roof drain, at the overflow depth (verify)", "at": [22, -14], "width": 18, "tip": [10, -8], "pen": "blue" },
+    { "kind": "note", "text": "Membrane turned up into the scupper and sealed to the metal", "at": [22, 0], "width": 18, "tip": [4, 0.2], "pen": "ink" },
+    { "kind": "note", "text": "Scupper sloped to drain out, with a downspout below", "at": [22, 10], "width": 18, "tip": [12, -6], "pen": "blue" },
+    { "kind": "note", "text": "Draft: verify scupper height and size against the overflow and roofing requirements before use.", "at": [-22, 18], "width": 34, "tip": [0, -6] },
+    { "kind": "dim", "mode": "ortho", "p1": [0, -20], "p2": [0, 0], "at": [-4, -12] }
+  ]
+}

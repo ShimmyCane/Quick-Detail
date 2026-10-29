@@ -1,0 +1,18 @@
+{
+  "name": "Ridge vent at sloped roof",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "roof", "ridge", "vent", "sloped"],
+  "items": [
+    { "kind": "hatch", "pattern": "plywood", "pts": [[-20, 4], [0, -4], [0, -2], [-20, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "plywood", "pts": [[20, 4], [0, -4], [0, -2], [20, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "screen", "pts": [[-2, -5], [2, -5], [2, -4], [-2, -4]], "outline": true },
+    { "kind": "line", "pts": [[-2, -5.5], [2, -5.5]], "weight": "w2", "pen": "blue" },
+    { "kind": "rect", "x": -2, "y": -6, "w": 4, "h": 1, "weight": "w3", "pen": "ink" },
+    { "kind": "note", "text": "Ridge vent, continuous, with a baffle on each side", "at": [28, -10], "width": 18, "tip": [2, -5], "pen": "blue" },
+    { "kind": "note", "text": "Attic ventilation: intake at the eave, exhaust at the ridge (verify net free area)", "at": [28, 0], "width": 18, "tip": [-12, 4], "pen": "ink" },
+    { "kind": "note", "text": "Roofing over the vent, cut through the sheathing", "at": [28, 10], "width": 18, "tip": [-8, 3], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify vent area and roofing details against the roofing manufacturer and the code before use.", "at": [-22, 16], "width": 36, "tip": [0, -2] },
+    { "kind": "dim", "mode": "ortho", "p1": [-2, -7], "p2": [2, -7], "at": [0, -10] }
+  ]
+}

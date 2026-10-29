@@ -1,0 +1,17 @@
+{
+  "name": "Gutter at eave, with drip edge",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "roof", "eave", "gutter", "drip edge"],
+  "items": [
+    { "kind": "hatch", "pattern": "wood1", "pts": [[10, -14], [12, -14], [12, 6], [10, 6]], "outline": true },
+    { "kind": "hatch", "pattern": "plywood", "pts": [[-8, -4], [10, -4], [10, -2], [-8, -2]], "outline": true, "pen": "green" },
+    { "kind": "line", "pts": [[-8, -4.5], [11, -4.5], [13, -2.5], [13, 6]], "weight": "w2", "pen": "blue" },
+    { "kind": "line", "pts": [[13, 4], [18, 4], [18, 8], [14, 8], [14, 6]], "weight": "w2", "pen": "blue" },
+    { "kind": "note", "text": "Drip edge, under the underlayment at the eave, over the fascia", "at": [30, -12], "width": 16, "tip": [4, -4.5], "pen": "blue" },
+    { "kind": "note", "text": "Gutter, hung from the fascia, sloped to the downspout", "at": [30, 2], "width": 16, "tip": [17, 6], "pen": "blue" },
+    { "kind": "note", "text": "Fascia, painted. Roof overhang 12 in. (verify)", "at": [30, 14], "width": 16, "tip": [11, 0], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify drip edge and gutter size against the roofing and gutter manufacturers before use.", "at": [-22, 18], "width": 34, "tip": [0, -4] },
+    { "kind": "dim", "mode": "ortho", "p1": [-8, -4], "p2": [10, -4], "at": [1, -8] }
+  ]
+}

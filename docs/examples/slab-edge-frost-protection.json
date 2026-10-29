@@ -1,0 +1,17 @@
+{
+  "name": "Slab on grade edge with frost protection",
+  "scale": "3\"=1'-0\"",
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "slab", "foundation", "frost", "insulation"],
+  "items": [
+    { "kind": "hatch", "pattern": "earth", "pts": [[-30, 0], [-14, 0], [-14, 12], [-30, 12]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "concrete", "pts": [[-14, 0], [12, 0], [12, 6], [-14, 6]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "concrete", "pts": [[-14, 6], [-8, 6], [-8, 12], [-14, 12]], "outline": true, "pen": "green" },
+    { "kind": "hatch", "pattern": "rigid", "pts": [[-16, -1], [-14, -1], [-14, 12], [-16, 12]], "outline": true },
+    { "kind": "note", "text": "Slab edge frost-protected with rigid insulation down to the frost depth (verify for the site)", "at": [18, -8], "width": 18, "tip": [-15, 8], "pen": "blue" },
+    { "kind": "note", "text": "Slab on compacted gravel, sloped away from the building", "at": [18, 4], "width": 18, "tip": [8, 3], "pen": "ink" },
+    { "kind": "note", "text": "Footing below the frost depth, bearing on undisturbed soil", "at": [18, 12], "width": 18, "tip": [-10, 12], "pen": "ink" },
+    { "kind": "note", "text": "Draft: verify frost depth, insulation and footing size against the local code before use.", "at": [-30, 22], "width": 40, "tip": [-12, 6] },
+    { "kind": "dim", "mode": "ortho", "p1": [-16, 0], "p2": [-16, 12], "at": [-19, 6] }
+  ]
+}

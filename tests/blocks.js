@@ -95,6 +95,18 @@ var nestedK = SK.flattenItems([{ kind: 'block', sourceId: 'nest-outer', at: [0, 
 check('nested scales multiply', near(nestedK[0].pts[0][0], 1) && near(nestedK[0].pts[1][0], 3));
 check('a block without k draws at scale 1', SK.blockScale({ kind: 'block' }) === 1);
 
+// ---------------- turning ----------------
+var turned = SK.flattenItems([{ kind: 'block', sourceId: 'window', at: [0, 0], k: 1, rot: Math.PI / 2 }], sourceOf);
+check('a turned block turns its points about its origin', near(turned[0].pts[0][0], 0) && near(turned[0].pts[0][1], 0) && near(turned[0].pts[1][0], 0) && near(turned[0].pts[1][1], 1), JSON.stringify(turned[0].pts));
+var turnedMoved = SK.flattenItems([{ kind: 'block', sourceId: 'window', at: [5, 0], k: 1, rot: Math.PI / 2 }], sourceOf);
+check('a turned block keeps its origin where it was placed', near(turnedMoved[0].pts[0][0], 5) && near(turnedMoved[0].pts[0][1], 0));
+var stroke = { id: 's', kind: 'stroke', w: 0.1, pts: [[1, 0, 0.5, 0], [0, 1, 0.5, 1]] };
+var rotated = SK.transformItem(stroke, function (p) { return [-p[1], p[0]]; }, 1, 0);
+check('transformItem applies the point map to strokes', near(rotated.pts[0][0], 0) && near(rotated.pts[0][1], 1) && near(rotated.pts[1][0], -1) && near(rotated.pts[1][1], 0));
+check('transformItem scales stroke widths', near(SK.transformItem(stroke, function (p) { return p; }, 2, 0).w, 0.2));
+var turnedBlock = SK.transformItem({ id: 'b', kind: 'block', sourceId: 'window', at: [1, 0], k: 1 }, function (p) { return [-p[1], p[0]]; }, 1, Math.PI / 2);
+check('transformItem turns a block and adds the angle', near(turnedBlock.rot, Math.PI / 2) && near(turnedBlock.at[0], 0) && near(turnedBlock.at[1], 1));
+
 // ---------------- underlay printing ----------------
 var printed = SK.printable([{ kind: 'block', sourceId: 'window', at: [0, 0] }, { kind: 'block', sourceId: 'window', at: [0, 0], print: true }, { kind: 'stroke', pts: [] }]);
 check('a block is left out of prints unless it is set to print', printed.length === 2 && printed[0].print === true && printed[1].kind === 'stroke');

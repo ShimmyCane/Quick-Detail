@@ -1689,8 +1689,8 @@
       tagsLine(detailTags(d)),
       el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
     ]);
-    // Browsing shows the final picture and last words. Only the loaded detail keeps its history to flip through.
-    if (d.id === detail.id) bindFlip(card, pic, d);
+    // Hold a card to preview it: its scenes, or the drawing building up when there are no recordings.
+    bindFlip(card, pic, d);
     // Tapping a card shows its summary. Editing is a separate button, so the detail is never opened by accident.
     card.addEventListener('click', function () {
       if (Date.now() < card._quietUntil) return;
@@ -1736,21 +1736,27 @@
       el('p', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
       el('ul', { class: 'info-facts' }, facts.map(function (f) { return el('li', { class: 'muted', text: f }); })),
       el('div', { class: 'row' }, [
-        el('button', { class: 'btn', text: 'Open to edit', on: { click: function () {
+        el('button', { class: 'btn', text: 'Open', on: { click: function () {
           close();
           if (fromCloud) { openCloudDetail(d); return; }
           closeLibrary();
           openDetail(d);
         } } }),
+        el('button', { class: 'btn', text: 'Insert as block', on: { click: function () {
+          if (inHere) { toast('This is the open detail. Open another one to insert it as a block.'); return; }
+          close();
+          closeLibrary();
+          (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(addBlock).catch(fail);
+        } } }),
         el('button', { class: 'btn', text: 'Duplicate', on: { click: function () {
           close();
           (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(duplicateDetail).catch(fail);
         } } }),
-        el('button', { class: 'btn', text: 'Import as block', on: { click: function () {
-          if (inHere) { toast('This is the open detail. Open another one to import it as a block.'); return; }
+        el('button', { class: 'btn', text: 'Rename', on: { click: function () {
+          var name = window.prompt('Rename', d.name);
+          if (name == null || !name.trim()) return;
           close();
-          closeLibrary();
-          (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(addBlock).catch(fail);
+          renameDetail(d, name.trim(), fromCloud);
         } } }),
         el('button', { class: 'btn', text: 'Close', on: { click: close } })
       ])
@@ -1758,6 +1764,31 @@
     back = el('div', { class: 'pop-back', on: { click: function (e) { if (e.target === back) close(); } } }, [card]);
     document.body.appendChild(back);
     card.querySelector('.btn').focus();
+  }
+
+  // Rename a detail from the library. A cloud card renames the cloud copy, and the local copy too when this device has one.
+  function renameDetail(d, name, fromCloud) {
+    function done() {
+      toast('Renamed to "' + name + '".');
+      lib.cloudRows = null;
+      renderLibrary();
+    }
+    function local() {
+      if (detail && detail.id === d.id) {   // the open detail is edited in memory, so change it there and save it
+        detail.name = name;
+        detail.modified = Date.now();
+        updateTitle();
+        return saveNow();
+      }
+      return SK.DB.get('details', d.id).then(function (mine) {
+        if (!mine) return;
+        mine.name = name;
+        mine.modified = Date.now();
+        return SK.DB.put('details', mine).then(function () { cacheDetail(mine); });
+      });
+    }
+    var job = fromCloud ? SK.Cloud.rename(d.cloud.id, name).then(local) : local();
+    job.then(done).catch(function (e) { fail(e, 'Could not rename: '); });
   }
 
   // A copy with the same lines, tags and scale. Its recordings stay with the original. Blocks in it still link to their sources.
@@ -1948,6 +1979,7 @@
     });
     var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
       pic,
+      el('span', { class: 'flip-label' }),
       el('b', { text: d.name }),
       el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.cloud.parent_id ? ' · branch' : '') }),
       el('span', { class: 'meta', text: d.items.length + ' elements · updated ' + new Date(d.modified).toLocaleString() }),
@@ -1956,7 +1988,11 @@
         el('button', { class: 'btn small', text: 'Recordings', on: { click: function (e) { e.stopPropagation(); renderCloudDetail(d.cloud); } } })
       ])
     ]);
-    card.addEventListener('click', function () { showDetailInfo(d, true); });
+    bindFlip(card, pic, d);   // hold to preview, as on a local card
+    card.addEventListener('click', function () {
+      if (Date.now() < card._quietUntil) return;   // the click that follows a hold must not open the summary
+      showDetailInfo(d, true);
+    });
     card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); showDetailInfo(d, true); } });
     return card;
   }
@@ -2056,8 +2092,22 @@
   }
 
   // Frames for flipping: one picture per scene, all at the same view so they line up.
+  // A detail with no recordings builds up instead: up to 12 steps, from the first items to the whole drawing.
+  function buildUpFrames(d, a, col) {
+    var items = d.items || [];
+    if (items.length < 2) return [];
+    var b = cardBounds(items, a);
+    var steps = Math.min(12, items.length), out = [];
+    for (var i = 1; i <= steps; i++) {
+      var n = Math.ceil(items.length * i / steps);
+      out.push({ canvas: cardPicture(items.slice(0, n), b, a, col), label: 'Drawing · ' + n + ' of ' + items.length });
+    }
+    return out;
+  }
+
   function framesFor(d) {
-    if (lib.frames[d.id]) return Promise.resolve(lib.frames[d.id]);
+    var key = (d.cloud ? 'cloud:' : 'local:') + d.id;   // a cloud detail and its local copy can differ
+    if (lib.frames[key]) return Promise.resolve(lib.frames[key]);
     var sess = lib.sessions[d.id] || [];
     var byId = {};
     var all = [];
@@ -2078,7 +2128,8 @@
         label: 'Scene ' + sc.index + ' · ' + SK.formatTime(sc.start)
       };
     });
-    lib.frames[d.id] = frames;
+    if (!frames.length) frames = buildUpFrames(d, a, col);
+    lib.frames[key] = frames;
     return Promise.resolve(frames);
   }
 

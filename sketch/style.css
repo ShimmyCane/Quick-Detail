@@ -757,3 +757,7 @@ body.collapsed #rail > button:not(#collapseBtn) { display: none; }
 /* The More menu holds the tag filters too, so it is taller and scrolls. */
 .more-panel { width: min(360px, 90vw); max-height: 70vh; overflow-y: auto; }
 .more-panel .lib-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* A long press on a library card previews it, so the card must not start a text selection or the iOS callout. */
+.lib-card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.lib-card .tags-line, .lib-card b { -webkit-touch-callout: none; }

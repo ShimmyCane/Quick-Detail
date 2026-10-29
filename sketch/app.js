@@ -1832,9 +1832,10 @@
     (fromCloud ? cloudFrames(d) : framesFor(d)).then(function (frames) {
       if (!frames.length) { toast('Nothing to animate yet. Record a scene, or draw a few lines.'); return; }
       toast('Making the GIF…');
-      // Every frame is drawn at the first frame's size, since a GIF has one size.
-      var k = fromCloud ? Math.min(1, 900 / frames[0].canvas.width) : 2;
-      var W = Math.round(frames[0].canvas.width * k), H = Math.round(frames[0].canvas.height * k);
+      // Every frame is drawn at the last frame's size, since a GIF has one size and a drawing grows as it is built.
+      var last = frames[frames.length - 1].canvas;
+      var k = fromCloud ? Math.min(1, 900 / last.width) : 2;
+      var W = Math.round(last.width * k), H = Math.round(last.height * k);
       var pics = frames.map(function (f) {
         var c = document.createElement('canvas');
         c.width = W;

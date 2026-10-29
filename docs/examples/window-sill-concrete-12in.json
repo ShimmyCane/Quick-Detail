@@ -1,0 +1,23 @@
+{
+  "name": "Interior window sill, 12in concrete wall",
+  "scale": "3\"=1'-0\"",
+  "tags": ["window", "wall"],
+  "items": [
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [12, 0], [12, 30], [0, 30]], "outline": true },
+    { "kind": "hatch", "pattern": "concrete", "pts": [[0, -52], [12, -52], [12, -80], [0, -80]], "outline": true },
+
+    { "kind": "hatch", "pattern": "wood1", "pts": [[-3, -1.25], [12, -1.25], [12, 0], [-3, 0]], "outline": true },
+
+    { "kind": "rect", "x": 3, "y": -50.75, "w": 6, "h": 49.5, "weight": "w3" },
+    { "kind": "line", "pts": [[5.5, -49.5], [5.5, -2.5]], "weight": "w2" },
+    { "kind": "line", "pts": [[6.5, -49.5], [6.5, -2.5]], "weight": "w2" },
+
+    { "kind": "note", "text": "12\" concrete wall", "at": [-34, -74], "width": 18, "tip": [0.5, -66] },
+    { "kind": "note", "text": "1 1/4\" wood sill", "at": [-34, 6], "width": 18, "tip": [-2.5, -0.6] },
+    { "kind": "note", "text": "Aluminum window unit", "at": [18, -40], "width": 16, "tip": [8.8, -30] },
+    { "kind": "note", "text": "Seal joint at sill", "at": [18, 4], "width": 16, "tip": [9.3, -0.6] },
+
+    { "kind": "dim", "mode": "ortho", "p1": [0, 36], "p2": [12, 36], "at": [6, 42] },
+    { "kind": "dim", "mode": "ortho", "p1": [14, 0], "p2": [14, -52], "at": [18, -26] }
+  ]
+}

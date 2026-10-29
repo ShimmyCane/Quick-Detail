@@ -1,7 +1,8 @@
 {
   "name": "Roof edge at CMU parapet, membrane terminated",
   "scale": "3\"=1'-0\"",
-  "tags": ["roof", "parapet", "low slope"],
+  "ai_inferred": true,
+  "tags": ["AI", "draft", "roof", "parapet", "low slope"],
   "items": [
     { "kind": "hatch", "pattern": "concrete", "pts": [[0, 0], [40, 0], [40, 6], [0, 6]], "outline": true, "pen": "green" },
     { "kind": "hatch", "pattern": "rigid", "pts": [[8, -2], [40, -2], [40, 0], [8, 0]], "outline": true },

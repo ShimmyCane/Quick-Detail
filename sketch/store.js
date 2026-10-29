@@ -8,12 +8,15 @@
 
   function open() {
     if (!opened) opened = new Promise(function (resolve, reject) {
-      var req = indexedDB.open('wallsketch', 1);
-      req.onupgradeneeded = function () {
+      var req = indexedDB.open('wallsketch', 2);
+      req.onupgradeneeded = function (e) {
         var db = req.result;
-        db.createObjectStore('details', { keyPath: 'id' });
-        db.createObjectStore('sessions', { keyPath: 'id' }).createIndex('detailId', 'detailId');
-        db.createObjectStore('kv');
+        if (e.oldVersion < 1) {
+          db.createObjectStore('details', { keyPath: 'id' });
+          db.createObjectStore('sessions', { keyPath: 'id' }).createIndex('detailId', 'detailId');
+          db.createObjectStore('kv');
+        }
+        if (e.oldVersion < 2) db.createObjectStore('parallels');   // one JSON parallel per detail, keyed by detail id
       };
       req.onsuccess = function () { resolve(req.result); };
       req.onerror = function () { reject(req.error); };

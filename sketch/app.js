@@ -136,6 +136,20 @@
     return saveDetail(detail, sessions, take);
   }
 
+  // The live JSON file: rewritten about four times a second while you draw, and after each change.
+  var liveTimer = 0, liveChain = Promise.resolve();
+  function scheduleLive() {
+    if (!detail || liveTimer || !SK.LiveFile.linked(detail.id)) return;
+    var id = detail.id;
+    liveTimer = setTimeout(function () { liveTimer = 0; writeLive(id); }, 250);
+  }
+  function writeLive(id) {
+    if (!detail || detail.id !== id || !SK.LiveFile.linked(id)) return;
+    var text = JSON.stringify(parallelOf(detail, sessions, take), null, 1);
+    liveChain = liveChain.then(function () { return SK.LiveFile.write(id, text); })
+      .catch(function (e) { toast('Could not write the JSON file: ' + (e && e.message || e)); });
+  }
+
   function homeView(d) {
     var b = SK.itemsBounds(d.items, acFor(d));
     var z = defaultZ(d);
@@ -159,6 +173,7 @@
       if (detail !== d) return;
       sessions = list.sort(function (a, b) { return a.created - b.created; });
       SK.DB.put('parallels', parallelOf(d, sessions, take), d.id).catch(function () {});   // older details get their parallel on open
+      SK.LiveFile.restore(d.id).then(function (live) { if (live && detail === d) writeLive(d.id); });
       updateScenes();
       if (panelKind === 'log') renderLog();
     });
@@ -178,6 +193,7 @@
   function changed() {
     detail.modified = Date.now();
     saveSoon();
+    scheduleLive();
     if (sel && !byId(sel.id)) sel = null;
     renderChips();
     redraw();
@@ -268,7 +284,7 @@
         audioOffset: r.audioOffset, audio: res.audio
       };
       return SK.DB.put('sessions', s).then(function () {
-        if (detail && detail.id === s.detailId) { sessions.push(s); saveSoon(); }
+        if (detail && detail.id === s.detailId) { sessions.push(s); saveSoon(); scheduleLive(); }
         updateScenes();
         if (panelKind === 'log') renderLog();
       });
@@ -641,6 +657,7 @@
     if (last && dist(w, last) * view.z < 1.5) return false;
     var r = function (n) { return Math.round(n * 1e4) / 1e4; };
     it.pts.push([r(w[0]), r(w[1]), r(e.pressure > 0 ? e.pressure : 0.5), Math.max(0, rel(e.timeStamp) - it.t0)]);
+    scheduleLive();
     return true;
   }
 
@@ -1155,6 +1172,37 @@
     ])]);
   }
 
+  // Keep a JSON file on this computer in step with the drawing. Choose it once; it is rewritten as you draw.
+  function liveBox() {
+    var id = detail.id;
+    if (!SK.LiveFile.supported()) {
+      return el('p', { class: 'muted', text: 'A live file needs Chrome or Edge on a computer. The detail and its JSON parallel still save in this browser.' });
+    }
+    var note = el('p', { class: 'muted' });
+    var row = el('div', { class: 'row' });
+    var draw = function () {
+      row.innerHTML = '';
+      if (SK.LiveFile.linked(id)) {
+        note.textContent = 'Keeping ' + SK.LiveFile.name(id) + ' up to date as you draw.';
+        row.appendChild(el('button', { class: 'btn', text: 'Stop', on: { click: function () { SK.LiveFile.stop(id); draw(); } } }));
+      } else if (SK.LiveFile.waiting(id)) {
+        note.textContent = SK.LiveFile.name(id) + ' is saved from an earlier visit. Resume to keep it up to date.';
+        row.appendChild(el('button', { class: 'btn', text: 'Resume', on: { click: function () {
+          SK.LiveFile.resume(id).then(function (ok) { if (ok) { writeLive(id); draw(); } else toast('Permission to write the file was not given.'); });
+        } } }));
+      } else {
+        note.textContent = 'No file chosen. Choose one, and it will hold this detail as JSON as you draw.';
+        row.appendChild(el('button', { class: 'btn', text: 'Choose JSON file…', on: { click: function () {
+          SK.LiveFile.choose(id, slug(detail.name) + '.live.json').then(function () { writeLive(id); draw(); }).catch(function (e) {
+            if (e && e.name !== 'AbortError') toast('Could not choose the file: ' + e.message);
+          });
+        } } }));
+      }
+    };
+    draw();
+    return el('div', {}, [note, row]);
+  }
+
   function renderProject(body) {
     var name = el('input', { type: 'text', value: detail.name, 'aria-label': 'Detail name', class: 'field', on: { input: function (e) {
       detail.name = e.target.value;
@@ -1219,6 +1267,7 @@
       ]), el('p', { class: 'muted', text: metadataPreview() })]),
       branch,
       section('Draw from JSON', [drawBox()]),
+      section('JSON file, kept as you draw', [liveBox()]),
       section('File', [el('div', { class: 'row' }, [
         el('button', { class: 'btn', text: 'Save', on: { click: function () { saveNow().then(function () { toast('Saved.'); }).catch(fail); } } }),
         el('button', { class: 'btn', text: 'Save as…', on: { click: saveAs } }),

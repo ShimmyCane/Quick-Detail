@@ -508,7 +508,9 @@
       ctx.strokeRect(p[0] - 4, p[1] - 4, q[0] - p[0] + 8, q[1] - p[1] + 8);
       ctx.setLineDash([]);
     }
-    handlesOf(it).forEach(function (h) {
+    // An underlay shows its outline only; its handles wait for the arrow tool.
+    var handles = tool === 'select' || !SK.isUnderlay(it) ? handlesOf(it) : [];
+    handles.forEach(function (h) {
       var s = SK.toScreen(view, h.p);
       var on = sel.leader != null && h.key === 'tip:' + sel.leader;
       ctx.fillStyle = on ? col.accent : col.paper;
@@ -669,11 +671,10 @@
     var w = SK.toWorld(view, sp);
     if (tool === 'erase') { eraseAt(w); return; }
     if (tool === 'select') { selectDown(e, sp, w); return; }
-    if (sel) {
+    // Drawing tools never take an underlay: a selected image or block is moved only with the arrow tool, so the pen goes over it.
+    if (sel && !selectedUnderlay()) {
       var h = hitHandle(sp);
       if (h) { startHandleDrag(h, w); return; }
-      var cur = byId(sel.id);
-      if (cur && cur.kind === 'block' && hitAt(cur, w, HIT_PX / view.z, ac())) { startHandleDrag({ key: 'move' }, w); return; }   // a selected block moves as a whole
     }
     if (draft) { draftDown(w); return; }
     startStroke(e, w);
@@ -766,18 +767,13 @@
     return null;
   }
 
-  // Notes, dimensions and hatches win over images, which sit underneath.
+  // A tap with a drawing tool picks a note, dimension or hatch, top first. Underlays are left to the arrow tool.
   function hitAnnotation(w) {
     var tol = HIT_PX / view.z, a = ac();
-    for (var pass = 0; pass < 2; pass++) {
-      for (var i = detail.items.length - 1; i >= 0; i--) {
-        var it = detail.items[i];
-        var under = it.kind === 'image' || it.kind === 'block';   // underlays are picked after the linework
-        if (it.kind === 'stroke' || under !== (pass === 1)) continue;
-        if (it.kind === 'image' && it.noPrint && !settings.underlay) continue;   // a hidden underlay cannot be picked
-        if (it.kind === 'block' && !settings.underlay) continue;
-        if (hitAt(it, w, tol, a)) return it;
-      }
+    for (var i = detail.items.length - 1; i >= 0; i--) {
+      var it = detail.items[i];
+      if (it.kind === 'stroke' || SK.isUnderlay(it)) continue;
+      if (hitAt(it, w, tol, a)) return it;
     }
     return null;
   }
@@ -1075,6 +1071,12 @@
     redraw();
   }
 
+  // The selected item, when it is an image or block (an underlay).
+  function selectedUnderlay() {
+    var it = sel && byId(sel.id);
+    return !!it && SK.isUnderlay(it);
+  }
+
   // Collapsed: both toolbars hide, for more room on a phone or tablet. The collapse button stays to bring them back.
   function setCollapsed(on) {
     document.body.classList.toggle('collapsed', on);
@@ -1122,6 +1124,15 @@
     return el('label', { class: 'chip sel' }, [label + ' ', s]);
   }
 
+  // Draw order for a hatch: where it sits among the linework. Underlays always paint first, so they are not offered here.
+  // A button is off when its move would change nothing.
+  function drawOrderChips(it) {
+    return [['front', 'Bring to front'], ['forward', 'Move forward'], ['backward', 'Move back'], ['back', 'Send to back']].map(function (o) {
+      var moved = SK.drawOrderMove(detail.items, it.id, o[0]);
+      return el('button', { class: 'chip', text: o[1], disabled: !moved, on: { click: function () { commitReplace(SK.drawOrderMove(detail.items, it.id, o[0])); } } });
+    });
+  }
+
   function renderChips() {
     var bar = $('chips');
     bar.innerHTML = '';
@@ -1163,6 +1174,7 @@
           edit(function (n) { n.outline = !it.outline; });
         } } })
       );
+      chips.push.apply(chips, drawOrderChips(it));
     } else if (it.kind === 'image') {
       chips.push(
         el('button', { class: 'chip' + (it.noPrint ? ' on' : ''), text: it.noPrint ? 'No print' : 'Prints', title: 'No-print images show faintly and are left out of exports', on: { click: function () {
@@ -1366,7 +1378,7 @@
       };
       commitPut(item, null);
       select(item.id);
-      toast('Image added on the no-print layer. Tap it for options.');
+      toast('Image added on the no-print layer. Draw over it freely. Use the arrow tool to move it or see its options.');
     };
     im.onerror = function () { URL.revokeObjectURL(url); toast('That file could not be read as an image.'); };
     im.src = url;
@@ -2433,7 +2445,7 @@
     closePanel();
     commitPut(item, null);
     select(item.id);
-    toast('Block added. Drag it to move it, or use its chips to scale and fade it.');
+    toast('Block added. Draw over it freely. Use the arrow tool to move it, or its chips to scale and fade it.');
   }
 
   // A block detail is named Block_… (Block_door, Block_roof, Block_hatch), or tagged block.

@@ -92,6 +92,39 @@
     return expand(items, { x: 0, y: 0, k: 1, rot: 0 }, 0, [], sourceOf, []);
   };
 
+  // An underlay is an image or a block. It paints under all the linework, so it never takes a pen stroke.
+  SK.isUnderlay = function (it) { return it.kind === 'image' || it.kind === 'block'; };
+
+  // Draw order. Items paint in list order, later ones on top, but underlays always paint first. So a move only
+  // reorders the other items. how: 'front', 'forward', 'backward' or 'back'. Returns the new list, or null when the item
+  // is already where it asked to go, or when it is an underlay (which has no order of its own).
+  SK.drawOrderMove = function (items, id, how) {
+    var i = -1;
+    items.forEach(function (it, k) { if (it.id === id) i = k; });
+    if (i < 0 || SK.isUnderlay(items[i])) return null;
+    var layer = [];
+    items.forEach(function (it, k) { if (!SK.isUnderlay(it)) layer.push(k); });
+    var pos = layer.indexOf(i);
+    var out = items.slice();
+    if (how === 'front') {
+      if (pos === layer.length - 1) return null;
+      out.push(out.splice(i, 1)[0]);
+      return out;
+    }
+    if (how === 'back') {
+      if (pos === 0) return null;
+      out.splice(i, 1);
+      out.splice(layer[0], 0, items[i]);
+      return out;
+    }
+    var step = { forward: 1, backward: -1 }[how];
+    var j = step ? layer[pos + step] : undefined;
+    if (j == null) return null;
+    out[i] = items[j];
+    out[j] = items[i];
+    return out;
+  };
+
   // The box a block with a missing source is drawn in, so it can be seen and selected.
   function placeholderBox(block, ac) {
     var k = SK.blockScale(block);

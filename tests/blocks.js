@@ -111,5 +111,20 @@ check('transformItem turns a block and adds the angle', near(turnedBlock.rot, Ma
 var printed = SK.printable([{ kind: 'block', sourceId: 'window', at: [0, 0] }, { kind: 'block', sourceId: 'window', at: [0, 0], print: true }, { kind: 'stroke', pts: [] }]);
 check('a block is left out of prints unless it is set to print', printed.length === 2 && printed[0].print === true && printed[1].kind === 'stroke');
 
+// ---------------- underlays and draw order ----------------
+function image(id) { return { id: id, kind: 'image', src: 'x', at: [0, 0], w: 1, h: 1, noPrint: true }; }
+function orderOf(list) { return list.map(function (it) { return it.id; }).join(','); }
+var order = [line('a', 0, 0, 1, 0), block('bk', 'window', 0, 0), line('b', 0, 1, 1, 1), line('c', 0, 2, 1, 2)];
+check('a block and an image are underlays, linework is not', SK.isUnderlay(block('x', 'w', 0, 0)) && SK.isUnderlay(image('i')) && !SK.isUnderlay(line('l', 0, 0, 1, 0)));
+check('an underlay has no draw order of its own', SK.drawOrderMove(order, 'bk', 'front') === null);
+check('bring to front moves linework to the top of the linework', orderOf(SK.drawOrderMove(order, 'a', 'front')) === 'bk,b,c,a');
+check('send to back moves linework under the rest, above underlays', orderOf(SK.drawOrderMove(order, 'c', 'back')) === 'c,a,bk,b');
+check('move forward swaps with the next linework item', orderOf(SK.drawOrderMove(order, 'b', 'forward')) === 'a,bk,c,b');
+check('move back swaps with the previous linework item', orderOf(SK.drawOrderMove(order, 'b', 'backward')) === 'b,bk,a,c');
+check('an underlay keeps its slot when linework moves past it', orderOf(SK.drawOrderMove([line('a', 0, 0, 1, 0), block('bk', 'window', 0, 0), line('b', 0, 1, 1, 1)], 'a', 'forward')) === 'b,bk,a');
+check('a move that changes nothing gives null', SK.drawOrderMove(order, 'c', 'front') === null && SK.drawOrderMove(order, 'a', 'back') === null && SK.drawOrderMove(order, 'c', 'forward') === null && SK.drawOrderMove(order, 'a', 'backward') === null);
+check('an unknown item or direction gives null', SK.drawOrderMove(order, 'nope', 'front') === null && SK.drawOrderMove(order, 'b', 'sideways') === null);
+check('a draw order move leaves the list it was given alone', orderOf(order) === 'a,bk,b,c');
+
 console.log(failures ? failures + ' FAILED' : 'all block checks passed');
 process.exitCode = failures ? 1 : 0;

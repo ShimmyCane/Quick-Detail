@@ -72,6 +72,16 @@ A block is a finished detail placed inside another detail. It is a live link, so
 - [ ] Edit a source used in two blocks. Check the pop-up lists both hosts, and that both update.
 - [ ] Branch as new version, then edit the new one. The original and the other host must not change.
 
+## Underlays and draw order
+
+- [x] Drawing tools go over a selected image or block. Only the arrow tool picks up, scales or turns an underlay, and a tap with a drawing tool no longer selects one. Covered by `tests/blocks.js` and a headless Chromium check of the pen over a block's line.
+- [x] Hatch draw order: Bring to front, Move forward, Move back and Send to back, in the hatch's chips. A button is off when its move changes nothing. Undo works.
+- [x] Underlays always paint under the linework, so they have no order of their own. Send to back is their default and cannot be changed.
+
+### Test on real hardware (you)
+
+- [ ] On the iPad, add a block, then draw across it with the pen. It must draw and not move. Then pick the arrow and drag it.
+
 ## Releasing
 
 - [ ] Every local file in `index.html` ends in `?v=...`. Change that value whenever any file in `sketch/` changes, so a browser or host that caches files cannot mix an old script with a new page (that mix gave a blank sheet and a dead library on 2026-10-29).

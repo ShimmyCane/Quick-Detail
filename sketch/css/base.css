@@ -1,0 +1,91 @@
+/* Quick Detail styles — Colours (CSS variables), dark mode, page basics, buttons and chips.
+   Part of the stylesheet split across sketch/css/*.css. The files load in order (see index.html), as one stylesheet would. */
+
+:root {
+  --paper: #fbfaf7;
+  --ink: #1d1d1f;
+  --muted: #6b6b70;
+  --panel: #ffffff;
+  --line: #d9d7d0;
+  --accent: #b3261e;
+  --select: #2f6fdd;
+  --chip: #f1efe9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b1b1d;
+    --ink: #ecebe6;
+    --muted: #9a9aa0;
+    --panel: #242427;
+    --line: #3a3a3f;
+    --accent: #ff8a80;
+    --select: #7aa7ff;
+    --chip: #2e2e33;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b1b1d;
+  --ink: #ecebe6;
+  --muted: #9a9aa0;
+  --panel: #242427;
+  --line: #3a3a3f;
+  --accent: #ff8a80;
+  --select: #7aa7ff;
+  --chip: #2e2e33;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body {
+  touch-action: pan-x pan-y;
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+input, textarea, select { -webkit-user-select: text; user-select: text; }
+
+#sheet {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+body.replaying #sheet { cursor: grab; }
+
+button { font: inherit; color: inherit; cursor: pointer; }
+.btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 8px 14px;
+  min-height: 40px;
+}
+.btn.danger, .chip.danger { color: var(--accent); }
+.link { border: 0; background: none; padding: 8px 4px; color: var(--muted); text-decoration: underline; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.chip {
+  border: 1px solid var(--line);
+  background: var(--chip);
+  border-radius: 16px;
+  padding: 6px 12px;
+  min-height: 34px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chip.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chip.sel select { font: inherit; border: 0; background: transparent; color: inherit; }

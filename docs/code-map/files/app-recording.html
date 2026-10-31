@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/recording.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/recording.js</code></h1>
+<p class="muted">App: foundation · 88 lines · App part 4 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Recording and scenes.<br>
+A take starts with the pen and stops 5 s after the last activity. The scene button marks a new scene.</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">7</td><td>Recording: starts with the pen, stops 5 s after the last activity. The scene button forces a new scene.</td></tr>
+</table></div>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">12</td><td class="name"><code>ensureTake()</code></td><td>Starts a take if none is running.</td><td><a href="app-tools.html">tools</a>, <a href="app-draft.html">draft</a></td></tr>
+<tr><td class="n">21</td><td class="name"><code>activity()</code></td><td>Something happened: push the auto-stop back. Never stops while a pointer is down.</td><td><a href="app-changes.html">changes</a>, <a href="app-input.html">input</a></td></tr>
+<tr><td class="n">29</td><td class="name"><code>stopRecording()</code></td><td>Stops the take and saves it as a recording, unless nothing happened.</td><td><a href="app-details.html">details</a>, <a href="app-branches.html">branches</a>, <a href="app-log.html">log</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="app-rail.html">rail</a>, <a href="app-start.html">start</a></td></tr>
+<tr><td class="n">51</td><td class="name"><code>newScene()</code></td><td>Marks a new scene (the scene button or N), with a flash.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">65</td><td class="name"><code>scenesOf(s)</code></td><td>The scenes of a recording, worked out once and kept on it.</td><td><a href="app-log.html">log</a></td></tr>
+<tr><td class="n">68</td><td class="name"><code>updateScenes()</code></td><td>Updates the scene count on the scene button.</td><td><a href="app-details.html">details</a></td></tr>
+<tr><td class="n">76</td><td class="name"><code>showRec(on)</code></td><td>Shows or hides the recording dot and its clock.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

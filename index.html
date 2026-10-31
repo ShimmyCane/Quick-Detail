@@ -6,7 +6,13 @@
   <title>Wall Sketch</title>
   <!-- The ?v= on every local file keeps this page and its scripts a matched set when a browser or host caches files.
        Change it whenever any file in sketch/ changes. -->
-  <link rel="stylesheet" href="sketch/style.css?v=20261031o">
+  <link rel="stylesheet" href="sketch/css/base.css?v=20261031r">
+  <link rel="stylesheet" href="sketch/css/sheet.css?v=20261031r">
+  <link rel="stylesheet" href="sketch/css/panels.css?v=20261031r">
+  <link rel="stylesheet" href="sketch/css/library.css?v=20261031r">
+  <link rel="stylesheet" href="sketch/css/left-bar.css?v=20261031r">
+  <link rel="stylesheet" href="sketch/css/later.css?v=20261031r">
+  <link rel="stylesheet" href="sketch/css/library-late.css?v=20261031r">
   <script>
     // If the app fails to start (a stale cached script, say), say so at the bottom instead of leaving a blank sheet.
     window.addEventListener('error', function (e) {
@@ -212,21 +218,44 @@
   <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
-  <script src="sketch/core.js?v=20261031o"></script>
-  <script src="sketch/units.js?v=20261031o"></script>
-  <script src="sketch/hatch.js?v=20261031o"></script>
-  <script src="sketch/annot.js?v=20261031o"></script>
-  <script src="sketch/blocks.js?v=20261031o"></script>
-  <script src="sketch/author.js?v=20261031o"></script>
-  <script src="sketch/parallel.js?v=20261031o"></script>
-  <script src="sketch/livefile.js?v=20261031o"></script>
-  <script src="sketch/paint.js?v=20261031o"></script>
-  <script src="sketch/store.js?v=20261031o"></script>
-  <script src="sketch/record.js?v=20261031o"></script>
-  <script src="sketch/gif.js?v=20261031o"></script>
+  <script src="sketch/core.js?v=20261031r"></script>
+  <script src="sketch/units.js?v=20261031r"></script>
+  <script src="sketch/hatch.js?v=20261031r"></script>
+  <script src="sketch/annot.js?v=20261031r"></script>
+  <script src="sketch/blocks.js?v=20261031r"></script>
+  <script src="sketch/author.js?v=20261031r"></script>
+  <script src="sketch/parallel.js?v=20261031r"></script>
+  <script src="sketch/livefile.js?v=20261031r"></script>
+  <script src="sketch/paint.js?v=20261031r"></script>
+  <script src="sketch/store.js?v=20261031r"></script>
+  <script src="sketch/record.js?v=20261031r"></script>
+  <script src="sketch/gif.js?v=20261031r"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="sketch/analyze.js?v=20261031o"></script>
-  <script src="sketch/cloud.js?v=20261031o"></script>
-  <script src="sketch/app.js?v=20261031o"></script>
+  <script src="sketch/analyze.js?v=20261031r"></script>
+  <script src="sketch/cloud.js?v=20261031r"></script>
+  <!-- The app, in parts that share one global scope. Keep this order: start.js runs last. -->
+  <script src="sketch/app/base.js?v=20261031r"></script>
+  <script src="sketch/app/details.js?v=20261031r"></script>
+  <script src="sketch/app/changes.js?v=20261031r"></script>
+  <script src="sketch/app/recording.js?v=20261031r"></script>
+  <script src="sketch/app/canvas.js?v=20261031r"></script>
+  <script src="sketch/app/input.js?v=20261031r"></script>
+  <script src="sketch/app/tools.js?v=20261031r"></script>
+  <script src="sketch/app/draft.js?v=20261031r"></script>
+  <script src="sketch/app/selection.js?v=20261031r"></script>
+  <script src="sketch/app/editor.js?v=20261031r"></script>
+  <script src="sketch/app/panels.js?v=20261031r"></script>
+  <script src="sketch/app/library.js?v=20261031r"></script>
+  <script src="sketch/app/tags.js?v=20261031r"></script>
+  <script src="sketch/app/library-info.js?v=20261031r"></script>
+  <script src="sketch/app/bin.js?v=20261031r"></script>
+  <script src="sketch/app/cloud-ui.js?v=20261031r"></script>
+  <script src="sketch/app/changelog.js?v=20261031r"></script>
+  <script src="sketch/app/settings.js?v=20261031r"></script>
+  <script src="sketch/app/branches.js?v=20261031r"></script>
+  <script src="sketch/app/log.js?v=20261031r"></script>
+  <script src="sketch/app/export.js?v=20261031r"></script>
+  <script src="sketch/app/rail.js?v=20261031r"></script>
+  <script src="sketch/app/start.js?v=20261031r"></script>
 </body>
 </html>

@@ -1,0 +1,132 @@
+/* Quick Detail styles — The left bar: colour, weight and dimension pickers, tools, undo and redo, the overflow column.
+   Part of the stylesheet split across sketch/css/*.css. The files load in order (see index.html), as one stylesheet would. */
+
+/* ---- left rail: pen colours, line weights, text and dimension tools ---- */
+/* Dimension type picker: icons, sized like the colour and weight dots. */
+.lrail #dimCur { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 0; border: 2px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.lrail #dimCur.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lrail #dimCur svg, .pick-row [data-dimmode] svg { width: 24px; height: 24px; display: block; }
+.pick-row [data-dimmode] { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--ink); }
+.pick-row [data-dimmode].on { background: var(--ink); color: var(--paper); }
+
+.lrail {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  top: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 8;
+}
+.lgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.lrail button {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  background: transparent;
+  font-size: 17px;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.lrail button.on { border-color: var(--ink); }
+.lrail .pen-ink { background: #111111; }
+.lrail .pen-red { background: #d1342b; }
+.lrail .pen-blue { background: #2456c7; }
+.lrail .pen-green { background: #1f8a4c; }
+.lrail .pen-yellow { background: #e8b400; }
+.lrail [data-color] { border-radius: 50%; }
+.lrail [data-weight] i { display: block; width: 22px; background: var(--ink); border-radius: 2px; }
+.lrail [data-weight="w1"] i { height: 1px; }
+.lrail [data-weight="w2"] i { height: 3px; }
+.lrail [data-weight="w3"] i { height: 5px; }
+.lrail [data-weight="w4"] i { height: 8px; }
+.lrail .tool { font-size: 16px; font-weight: 600; }
+
+/* ---- settings: background swatches ---- */
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 8px; }
+.swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+.swatch.on { border-color: var(--ink); box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--ink); }
+.swatch.custom { display: inline-flex; align-items: center; justify-content: center; background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red); }
+.swatch.custom input { width: 40px; height: 40px; opacity: 0; cursor: pointer; }
+
+/* Chrome that sits over the sheet keeps a panel behind it, so it reads on any background. */
+.title-block {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 12px 8px;
+}
+
+/* Left rail: colours and weights sit in tight rows; the tools stay in a column. */
+.lrail { gap: 8px; }
+.lrail .lgroup { flex-direction: row; flex-wrap: wrap; width: max-content; gap: 4px; padding: 5px; }
+.lrail .lgroup.tools { flex-direction: column; }
+.lrail [data-color] { width: 24px; height: 24px; border-radius: 12px; border-width: 2px; }
+.lrail [data-weight] { width: 30px; height: 26px; border-radius: 8px; }
+.lrail [data-weight] i { width: 18px; }
+
+/* Undo sits under the recording buttons. Hold it to open Redo on the right. */
+.lrail .undo-group { flex-direction: row; width: max-content; padding: 5px; position: relative; }
+.lrail .undo { -webkit-touch-callout: none; user-select: none; touch-action: none; }
+.undo-menu { position: absolute; left: 100%; top: 0; margin-left: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 5px; z-index: 9; }
+.undo-menu[hidden] { display: none; }
+.lrail .undo-item { width: auto; height: 40px; padding: 0 14px; border-radius: 8px; border: 2px solid transparent; background: transparent; font: inherit; font-size: 15px; color: var(--ink); white-space: nowrap; cursor: pointer; }
+.lrail .undo-item.hot { border-color: var(--ink); background: var(--chip); }
+.lrail .undo-item:disabled { opacity: 0.45; }
+
+/* Every group spans the full width of the bar, and its tools sit on the bar's centre line. Dividers run edge to edge. */
+.lrail .lgroup, .lrail .lgroup.undo-group, .lrail .lgroup.tools, .lrail .lgroup.picker, .lrail .rec-group { width: auto; align-self: stretch; }
+.lrail .lgroup, .lrail .lgroup.undo-group, .lrail .rec-group { align-items: center; justify-content: center; }
+
+/* Hidden must win over the bar's own display rules. */
+.lrail[hidden], .lrail button[hidden], .lgroup[hidden] { display: none; }
+
+/* Recording: the microphone sits on its own row, just in front of the scene button. */
+.lrail .rec-group { flex-direction: column; align-items: center; }
+
+/* Small screens: a + at the end of the bar opens a second column with the tools that do not fit. */
+.lrail .more-group { padding: 4px; }
+.lrail .more-btn { font-size: 20px; font-weight: 600; border-color: var(--line); }
+.lrail .more-btn[aria-expanded="true"] { background: var(--ink); color: var(--paper); }
+.lrail-more { left: 0; top: 52px; margin: 0; max-height: calc(100vh - 150px); overflow-y: auto; }
+body.collapsed #lrailMore { display: none; }
+
+/* The whole left bar is one panel. Its groups sit inside it, divided by hairlines, not as separate cards. */
+.lrail { gap: 0; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
+.lrail .lgroup { background: transparent; border: 0; border-radius: 0; }
+.lrail .lgroup + .lgroup { border-top: 1px solid var(--line); }
+
+/* Colour and line-weight pickers: one dot shows the current choice. The row opens to the right of it. */
+.lrail .picker { position: relative; }
+.lrail .pick-cur { border-width: 2px; }
+.lrail #colorCur { width: 24px; height: 24px; border-radius: 12px; }
+.lrail #weightCur { width: 30px; height: 26px; border-radius: 8px; }
+.lrail #weightCur i { display: block; width: 18px; background: var(--ink); border-radius: 2px; }
+.lrail #weightCur[data-w="w1"] i { height: 1px; }
+.lrail #weightCur[data-w="w2"] i { height: 3px; }
+.lrail #weightCur[data-w="w3"] i { height: 5px; }
+.lrail #weightCur[data-w="w4"] i { height: 8px; }
+.pick-row { position: absolute; left: 100%; top: 0; margin-left: 10px; display: flex; flex-direction: row; gap: 4px; padding: 5px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; z-index: 9; }
+.pick-row[hidden] { display: none; }
+.pick-row button.hot { border-color: var(--ink); }

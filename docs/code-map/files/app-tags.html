@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/tags.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/tags.js</code></h1>
+<p class="muted">App: library · 257 lines · App part 13 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Edit tags page.<br>
+Every tag as a panel with thumbnails. Delete or replace a tag across the library, remove element tags, and undo.<br>
+Writes to the local copy and the cloud copy. A tag change never deletes a detail.</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">8</td><td>Edit tags: every tag as a panel, with thumbnails of its details. Tags sort the files; a change never deletes a detail.</td></tr>
+</table></div>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">14</td><td class="name"><code>tagSource()</code></td><td>The details the Edit tags page works on: this browser's or the cloud's, following the library view.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">16</td><td class="name"><code>inTagSource(id)</code></td><td>Whether a detail is in that list.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">18</td><td class="name"><code>elementTagsOf(d)</code></td><td>The element tags (from speech and shape) on a detail's items.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">27</td><td class="name"><code>loadTagSources()</code></td><td>Reads this browser's details and, when signed in, the cloud's.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">36</td><td class="name"><code>openTags()</code></td><td>Opens the Edit tags page.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">45</td><td class="name"><code>closeTags()</code></td><td>Closes it and goes back to the library. Its undo ends here.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">54</td><td class="name"><code>renderTagsPage()</code></td><td>Draws the tag list, the element tags and the panel for the picked tag.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">92</td><td class="name"><code>onTagClick(t)</code></td><td>A tap on a tag: picks it, or picks the tag to replace it with.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">105</td><td class="name"><code>renderTagPanel()</code></td><td>The panel beside the list: the picked tag's details, or the replace step.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">128</td><td class="name"><code>tagThumb(d)</code></td><td>A small picture of a detail, with its name.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">136</td><td class="name"><code>popup(title, body, okText, onOk, onCancel)</code></td><td>A confirm box over the page. Cancel is the safe choice, so it has focus.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">153</td><td class="name"><code>confirmDeleteTag(t, n)</code></td><td>Asks before a tag is taken off every detail.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">159</td><td class="name"><code>confirmReplace(a, b)</code></td><td>Asks before one tag replaces another everywhere.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">170</td><td class="name"><code>deleteTag(t)</code></td><td>The three changes. Each returns the new { tags, items } for one copy of a detail, or null when it is unchanged.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">178</td><td class="name"><code>replaceTag(a, b)</code></td><td>A change that swaps tag a for b, without duplicates.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">188</td><td class="name"><code>removeElementTag(t)</code></td><td>A change that removes an element tag from every item.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">203</td><td class="name"><code>changeTags(label, transform)</code></td><td>Applies a change to every copy of the details on this page, and keeps it for undo.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">224</td><td class="name"><code>undoTagEdit()</code></td><td>Undoes the last tag change on this page.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">236</td><td class="name"><code>writeTagEntries(entries, key)</code></td><td>Writes one set of entries, the 'before' or the 'after' values, one copy at a time.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

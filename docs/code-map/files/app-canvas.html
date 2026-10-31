@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/canvas.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/canvas.js</code></h1>
+<p class="muted">App: the sheet · 184 lines · App part 5 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Painting the sheet.<br>
+redraw() paints the grid, underlays, linework, the draft in progress and the selection handles on the canvas.</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">7</td><td>Painting</td></tr>
+</table></div>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">12</td><td class="name"><code>resize()</code></td><td>Matches the canvas to the window and the screen's pixel ratio.</td><td><a href="app-rail.html">rail</a>, <a href="app-start.html">start</a></td></tr>
+<tr><td class="n">20</td><td class="name"><code>redraw()</code></td><td>Paints the whole sheet: background, grid, underlays, items, missing blocks, then the draft and the selection.</td><td><a href="app-details.html">details</a>, <a href="app-changes.html">changes</a>, <a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-draft.html">draft</a>, <a href="app-selection.html">selection</a>, <a href="app-editor.html">editor</a>, <a href="app-settings.html">settings</a>, <a href="app-log.html">log</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">39</td><td class="name"><code>marker(p, col, filled)</code></td><td>A small circle at a snap point or a picked point.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">51</td><td class="name"><code>drawDraft(col)</code></td><td>Paints the step in progress: the hatch rectangle, the note's arrow and box, or the dimension being placed.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">87</td><td class="name"><code>handlesOf(it)</code></td><td>The drag handles of an item: { key, p } for each, in world inches.</td><td><a href="app-tools.html">tools</a></td></tr>
+<tr><td class="n">115</td><td class="name"><code>drawUnderlay(bk, col)</code></td><td>A block is an underlay: drawn faint under the linework, at the block's own opacity.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">120</td><td class="name"><code>drawPlaceholder(bk, col)</code></td><td>A block whose source is not on this device: a dashed box with its name, so it can still be selected and erased.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">135</td><td class="name"><code>drawSelection(col)</code></td><td>Paints the dashed box and handles of the selected item.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">161</td><td class="name"><code>drawPiece(item, a, b)</code></td><td>Live pen: only the newest piece is painted; the whole stroke is repainted on pen up.</td><td><a href="app-tools.html">tools</a></td></tr>
+<tr><td class="n">175</td><td class="name"><code>updateTitle()</code></td><td>Updates the title block: name, scale and graphic scale bar.</td><td><a href="app-panels.html">panels</a>, <a href="app-library-info.html">library-info</a></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

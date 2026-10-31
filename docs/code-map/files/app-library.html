@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/library.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/library.js</code></h1>
+<p class="muted">App: library · 337 lines · App part 12 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Library page.<br>
+Ratings, the header menus, the library list (sort, filter, search), catalogue cards, and hold-to-flip frames.</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">7</td><td>Ratings: 0 to 5 stars. A new detail starts at 1. Tap a star to set it; tap the top star again for 0.</td></tr>
+<tr><td class="n">48</td><td>Header menus: the sort (⇅) and the + (tags and card background) menus open one at a time</td></tr>
+</table></div>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">8</td><td class="name"><code>ratingOf(d)</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">10</td><td class="name"><code>starsText(n)</code></td><td>A rating as five stars, filled and empty.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">13</td><td class="name"><code>setRating(d, n, fromCloud)</code></td><td>Sets the rating on the cloud copy (when there is one) and on the local copy. The open detail is saved through saveNow.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">28</td><td class="name"><code>ratingRow(d, fromCloud)</code></td><td>Five stars in the info popup. Tapping a star sets the rating; tapping the top star again clears it to 0.</td><td><a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">49</td><td class="name"><code>closeMenus()</code></td><td><span class="muted">—</span></td><td><a href="app-tags.html">tags</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">54</td><td class="name"><code>toggleMenu(btnId, menuId)</code></td><td>Opens one header menu and closes the other.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">66</td><td class="name"><code>sceneCountOf(d)</code></td><td>How many scenes a detail's recordings have.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">70</td><td class="name"><code>detailTags(d)</code></td><td>A detail's tags: the ones typed on it. Element tags (from speech and shape) are not tags: they are listed on the Edit tags page.</td><td><a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">73</td><td class="name"><code>openLibrary()</code></td><td>Opens the library page, on All, sorted by last edited.</td><td><a href="app-cloud-ui.html">cloud-ui</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">86</td><td class="name"><code>closeLibrary()</code></td><td>Closes the library page.</td><td><a href="app-library-info.html">library-info</a>, <a href="app-bin.html">bin</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">92</td><td class="name"><code>matchesQuery(d, q)</code></td><td>Whether a detail matches the search: name, scale, tags or words said.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">98</td><td class="name"><code>setLibraryTabs()</code></td><td>Marks the current view, sort and card background in the header.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">111</td><td class="name"><code>renderLibrary()</code></td><td>Draws the library for the current view: this browser, the cloud or the bin.</td><td><a href="app-library-info.html">library-info</a>, <a href="app-bin.html">bin</a>, <a href="app-tags.html">tags</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">124</td><td class="name"><code>dateOf(t)</code></td><td>Dates as the cards and the info panel show them.</td><td><a href="app-cloud-ui.html">cloud-ui</a></td></tr>
+<tr><td class="n">126</td><td class="name"><code>editedLine(d)</code></td><td>Edited and created dates, as one line.</td><td><a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">129</td><td class="name"><code>showDetails(details, card, lead, empty)</code></td><td>Both views list details the same way: one flat list, sorted, filtered by tags and search. lead goes on top.</td><td><a href="app-cloud-ui.html">cloud-ui</a></td></tr>
+<tr><td class="n">170</td><td class="name"><code>libColors()</code></td><td>Library cards as drawn on the sheet, in colour on white, or black only on white.</td><td><a href="app-library-info.html">library-info</a>, <a href="app-tags.html">tags</a></td></tr>
+<tr><td class="n">177</td><td class="name"><code>cardPicture(items, b, a, col)</code></td><td>A card shows what prints: underlays are left out, and the picture is framed on the printed part.</td><td><a href="app-library-info.html">library-info</a>, <a href="app-tags.html">tags</a></td></tr>
+<tr><td class="n">181</td><td class="name"><code>cardBounds(items, a)</code></td><td>The bounds a card frames: the printable items, or all of them when nothing prints.</td><td><a href="app-library-info.html">library-info</a>, <a href="app-tags.html">tags</a></td></tr>
+<tr><td class="n">185</td><td class="name"><code>cardInfo(d)</code></td><td>The catalogue card: the picture, the title, and one line that follows the sort (date, rating, tags or scene count). Holding it previews the scenes. Tapping it opens the detail's card. The × deletes it (to the bin).</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">196</td><td class="name"><code>catalogueCard(d, fromCloud)</code></td><td>A library card: picture, title and one line that follows the sort. Hold to flip, tap for the popup, × to bin.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">225</td><td class="name"><code>libCard(d)</code></td><td>A card for a detail in this browser.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">227</td><td class="name"><code>cloudCard(d)</code></td><td>A card for a cloud detail.</td><td><a href="app-cloud-ui.html">cloud-ui</a></td></tr>
+<tr><td class="n">230</td><td class="name"><code>localCopyOf(d)</code></td><td>A cloud detail becomes a local copy the first time it is duplicated or inserted as a block, since both need it on this device.</td><td><a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">240</td><td class="name"><code>buildUpFrames(d, a, col)</code></td><td>Frames for flipping: one picture per scene, all at the same view so they line up. A detail with no recordings builds up instead: up to 12 steps, from the first items to the whole drawing.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">253</td><td class="name"><code>framesFor(d)</code></td><td>One picture per scene for flipping and GIFs, all framed alike. Cached per visit.</td><td><a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">282</td><td class="name"><code>bindFlip(card, pic, d)</code></td><td>Hold the loaded detail's card to flip through its scenes like a flip book. Release to see the detail as it is now.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">63</td><td class="name"><code>lib</code><span class="tag">state</span></td><td>filters: tags picked; a detail must have all of them</td><td><a href="app-library-info.html">library-info</a>, <a href="app-tags.html">tags</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="app-rail.html">rail</a></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

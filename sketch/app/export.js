@@ -36,15 +36,10 @@ function sheetCanvas(items, b, d, opts) {
   return cv;
 }
 
-function jpeg(cv, name) {
-  return new Promise(function (resolve) {
-    cv.toBlob(function (blob) { download(blob, name); resolve(); }, 'image/jpeg', 0.92);
-  });
-}
-
 // Current analysis of the open detail, with every element's tags and every scene's transcript.
 function analysis() { return SK.analyze(detail, sessions, ac()); }
 
+// The one-line summary shown under Metadata in Info.
 function metadataPreview() {
   if (!detail.items.length) return 'Nothing to describe yet. Draw, talk, then tag the elements.';
   return SK.detailMetadata(detail, analysis()).summary;
@@ -98,6 +93,7 @@ function jpegWithMeta(cv, name, meta) {
   });
 }
 
+// Info → PNG: the printable sheet, transparent, with the title.
 function exportPng() {
   var b = SK.itemsBounds(visible(SK.printable(detail.items)), ac());
   if (!b) { toast('Nothing to export yet.'); return; }
@@ -106,6 +102,7 @@ function exportPng() {
   }, 'image/png');
 }
 
+// Info → JPEG: the sheet with its metadata inside and beside it.
 function exportJpeg() {
   var b = SK.itemsBounds(visible(SK.printable(detail.items)), ac());
   if (!b) { toast('Nothing to export yet.'); return; }
@@ -145,6 +142,7 @@ function exportSeries() {
   })();
 }
 
+// Info → Data: the detail and every recording as one JSON file.
 function exportData() {
   var data = {
     app: 'wall-sketch',
@@ -163,6 +161,7 @@ function exportData() {
   download(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }), slug(detail.name) + '.json');
 }
 
+// Info → Parallel: the stored JSON parallel of the detail.
 function exportParallel() {
   saveNow().then(function () {
     return SK.DB.get('parallels', detail.id);

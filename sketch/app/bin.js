@@ -39,6 +39,7 @@ function confirmBin(where, body, d, go) {
   card.querySelector('.row .btn:last-child').focus();
 }
 
+// Marks a detail deleted (deletedAt), so it shows in the recycle bin only.
 function moveToBin(d) {
   d.deletedAt = Date.now();
   SK.DB.put('details', d).then(function () {
@@ -48,6 +49,7 @@ function moveToBin(d) {
   }).catch(function (e) { fail(e, 'Could not delete: '); });
 }
 
+// Takes a detail out of the recycle bin.
 function restoreDetail(d) {
   d.deletedAt = null;
   SK.DB.put('details', d).then(function () {
@@ -65,6 +67,7 @@ function purgeDetail(d) {
     .then(function () { uncache(d.id); });
 }
 
+// Deletes every detail in the bin for good, after a confirm.
 function emptyBin(gone) {
   if (!window.confirm('Empty the recycle bin? ' + gone.length + (gone.length === 1 ? ' detail and its recordings' : ' details and their recordings') + ' will be deleted for good.')) return;
   gone.reduce(function (p, d) { return p.then(function () { return purgeDetail(d); }); }, Promise.resolve())

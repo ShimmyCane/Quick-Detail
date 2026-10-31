@@ -9,6 +9,7 @@
 // Changes: every edit goes through these, for undo and for the recording
 // ===================================================================
 
+// Adds an event to the take in progress (nothing when not recording).
 function logEvent(ev) {
   if (!take) return;
   if (ev.t == null) ev.t = rel();
@@ -16,6 +17,7 @@ function logEvent(ev) {
   activity();
 }
 
+// After every change: marks it modified, saves soon, rewrites the live file, refreshes the chips and redraws.
 function changed() {
   detail.modified = Date.now();
   saveSoon();
@@ -25,11 +27,13 @@ function changed() {
   redraw();
 }
 
+// Puts an item in the open detail, replacing the one with its id.
 function setItem(item) {
   var i = indexOf(detail.items, item.id);
   if (i >= 0) detail.items[i] = item; else detail.items.push(item);
 }
 
+// Adds or replaces an item, as one undo step. before is the old item (null for a new one); anim replays it stroke by stroke.
 function commitPut(item, before, anim) {
   setItem(item);
   ops.push({ type: 'put', before: before || null, after: item });
@@ -38,6 +42,7 @@ function commitPut(item, before, anim) {
   changed();
 }
 
+// Deletes an item, as one undo step.
 function commitDel(id) {
   var i = indexOf(detail.items, id);
   if (i < 0) return;
@@ -48,6 +53,7 @@ function commitDel(id) {
   changed();
 }
 
+// Replaces every item at once, as one undo step (draw order, restore, copy in).
 function commitReplace(items) {
   ops.push({ type: 'replace', before: detail.items, after: items });
   redos = [];
@@ -56,6 +62,7 @@ function commitReplace(items) {
   changed();
 }
 
+// Takes back the last step: put, del, replace or scale.
 function undo() {
   if (pb || drawing || editing) return;
   var op = ops.pop();
@@ -74,9 +81,6 @@ function undo() {
     op.after = detail.items;
     detail.items = op.before;
     logEvent({ type: 'replace', items: clone(op.before) });
-  } else if (op.type === 'meta') {
-    op.after = detail[op.key];
-    detail[op.key] = op.before;
   } else if (op.type === 'scale') {
     op.after = { scale: detail.scale, items: clone(detail.items) };
     detail.scale = op.before.scale;
@@ -103,8 +107,6 @@ function redo() {
   } else if (op.type === 'replace') {
     detail.items = clone(op.after);
     logEvent({ type: 'replace', items: clone(detail.items) });
-  } else if (op.type === 'meta') {
-    detail[op.key] = op.after;
   } else if (op.type === 'scale') {
     detail.scale = op.after.scale;
     detail.items = clone(op.after.items);

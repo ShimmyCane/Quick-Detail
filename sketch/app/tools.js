@@ -9,6 +9,7 @@
 // Tools
 // ===================================================================
 
+// Pointer down on the sheet: hands it to the active tool, a handle, the step in progress or a new stroke.
 function toolDown(e, sp) {
   var w = SK.toWorld(view, sp);
   if (tool === 'erase') { eraseAt(w); return; }
@@ -22,6 +23,7 @@ function toolDown(e, sp) {
   startStroke(e, w);
 }
 
+// Pointer move: erases, drags a handle, extends the stroke, or follows the step in progress.
 function toolMove(e, sp) {
   var w = SK.toWorld(view, sp);
   if (tool === 'erase') { eraseAt(w); return; }
@@ -39,6 +41,7 @@ function toolMove(e, sp) {
   if (draft) draftMove(w);
 }
 
+// Pointer up: ends a drag, commits a stroke (a short tap selects instead), or a tool step.
 function toolUp(e, sp, a) {
   var w = SK.toWorld(view, sp);
   if (drag) { endHandleDrag(); return; }
@@ -60,6 +63,7 @@ function toolUp(e, sp, a) {
 
 // ---- pen strokes ----
 
+// Starts a pen stroke at the current pen colour and weight.
 function startStroke(e, w) {
   ensureTake();
   var it = { id: uid('s'), kind: 'stroke', t0: rel(e.timeStamp), w: weightWorld(), c: pen.color, pts: [] };
@@ -69,6 +73,7 @@ function startStroke(e, w) {
   drawPiece(it, it.pts[0], it.pts[0]);
 }
 
+// Adds a pointer position to the stroke, skipping points closer than 1.5 px.
 function addPoint(e) {
   var it = drawing.item;
   var w = SK.toWorld(view, [e.clientX, e.clientY]);
@@ -80,6 +85,7 @@ function addPoint(e) {
   return true;
 }
 
+// Drops the stroke in progress (a second finger came down).
 function abortStroke() {
   if (!drawing) return;
   var i = indexOf(detail.items, drawing.item.id);
@@ -157,6 +163,7 @@ function boxHandles(b) {
   return [{ key: 'size', p: [b.maxx, b.maxy] }, { key: 'rot', p: [(b.minx + b.maxx) / 2, b.miny - ROT_PX / view.z] }];
 }
 
+// The handle of the selected item under a screen point, or null.
 function hitHandle(sp) {
   var it = byId(sel.id);
   if (!it) return null;
@@ -167,6 +174,7 @@ function hitHandle(sp) {
   return null;
 }
 
+// Snaps a world point to the nearest end, point or line, within 12 px.
 function snapAt(w, exceptId) {
   var list = visible(detail.items).filter(function (it) { return it.id !== exceptId; });
   return SK.snap(list, w, SNAP_PX / view.z);
@@ -174,6 +182,7 @@ function snapAt(w, exceptId) {
 
 // ---- handle drags ----
 
+// Starts dragging a handle of the selected item.
 function startHandleDrag(h, w) {
   var it = byId(sel.id);
   var box = it.kind === 'block' ? SK.blockBounds(it, sourceOf, ac()) : (it.kind === 'stroke' || it.kind === 'hatch') ? SK.itemBounds(it, ac()) : null;
@@ -182,6 +191,7 @@ function startHandleDrag(h, w) {
   if (h.key.indexOf('tip:') === 0) { sel.leader = +h.key.slice(4); renderChips(); }
 }
 
+// Moves, scales or turns the selected item, or moves one of its points, while dragging.
 function moveHandleDrag(w) {
   var b = drag.before, it = clone(b), k = drag.key;
   var snapped = function () { return snapAt(w, b.id).p; };
@@ -226,6 +236,7 @@ function scaleBlockTo(it, box, k) {
   it.at = [box.minx - it.k * own.minx, box.miny - it.k * own.miny];
 }
 
+// Ends a handle drag; a real change is one undo step.
 function endHandleDrag() {
   var d = drag;
   drag = null;

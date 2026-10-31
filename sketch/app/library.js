@@ -6,6 +6,7 @@
 
 // ---- Ratings: 0 to 5 stars. A new detail starts at 1. Tap a star to set it; tap the top star again for 0. ----
 function ratingOf(d) { return d.rating == null ? 1 : d.rating; }
+// A rating as five stars, filled and empty.
 function starsText(n) { var out = ''; for (var i = 1; i <= 5; i++) out += i <= n ? '★' : '☆'; return out; }
 
 // Sets the rating on the cloud copy (when there is one) and on the local copy. The open detail is saved through saveNow.
@@ -49,6 +50,7 @@ function closeMenus() {
   ['libSortMenu', 'libMore'].forEach(function (id) { $(id).hidden = true; });
   ['libSortBtn', 'libMoreBtn'].forEach(function (id) { $(id).setAttribute('aria-expanded', 'false'); });
 }
+// Opens one header menu and closes the other.
 function toggleMenu(btnId, menuId) {
   var open = $(menuId).hidden;
   closeMenus();
@@ -60,12 +62,14 @@ function toggleMenu(btnId, menuId) {
 
 var lib = { sessions: {}, frames: {}, view: 'local', query: '', filters: [] };   // filters: tags picked; a detail must have all of them
 
+// How many scenes a detail's recordings have.
 function sceneCountOf(d) { return SK.scenesOf(lib.sessions[d.id] || []).length; }
 
 // A detail's tags: the ones typed on it.
 // Element tags (from speech and shape) are not tags: they are listed on the Edit tags page.
 function detailTags(d) { return (d.tags || []).slice(); }
 
+// Opens the library page, on All, sorted by last edited.
 function openLibrary() {
   closePanel();
   if (pb) exitReplay();
@@ -78,16 +82,19 @@ function openLibrary() {
   renderLibrary();
 }
 
+// Closes the library page.
 function closeLibrary() {
   $('libPage').hidden = true;
   document.querySelector('.rail [data-act="library"]').classList.remove('on');
 }
 
+// Whether a detail matches the search: name, scale, tags or words said.
 function matchesQuery(d, q) {
   var words = SK.scenesOf(lib.sessions[d.id] || []).map(function (s) { return s.text; }).join(' ');
   return [d.name, d.scale, detailTags(d).join(' '), words].join(' ').toLowerCase().indexOf(q) >= 0;
 }
 
+// Marks the current view, sort and card background in the header.
 function setLibraryTabs() {
   document.querySelectorAll('#libPage [data-view]').forEach(function (b) {
     b.classList.toggle('on', b.getAttribute('data-view') === lib.view);
@@ -100,6 +107,7 @@ function setLibraryTabs() {
   });
 }
 
+// Draws the library for the current view: this browser, the cloud or the bin.
 function renderLibrary() {
   setLibraryTabs();
   if (lib.view === 'cloud') return renderCloud();
@@ -114,6 +122,7 @@ function renderLibrary() {
 
 // Dates as the cards and the info panel show them.
 function dateOf(t) { return new Date(t).toLocaleString([], { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+// Edited and created dates, as one line.
 function editedLine(d) { return 'Edited ' + dateOf(d.modified) + (d.created ? ' · Created ' + dateOf(d.created) : ''); }
 
 // Both views list details the same way: one flat list, sorted, filtered by tags and search. lead goes on top.
@@ -168,6 +177,7 @@ function libColors() {
 function cardPicture(items, b, a, col) {
   return SK.picture(visible(SK.printable(items)), b, 220, 140, { ac: a, ink: col.ink, paper: col.paper, mono: col.mono, print: true });
 }
+// The bounds a card frames: the printable items, or all of them when nothing prints.
 function cardBounds(items, a) { return SK.itemsBounds(visible(SK.printable(items)), a) || SK.itemsBounds(visible(items), a); }
 
 // The catalogue card: the picture, the title, and one line that follows the sort (date, rating, tags or scene count).
@@ -182,6 +192,7 @@ function cardInfo(d) {
   return 'Edited ' + dateOf(d.modified);
 }
 
+// A library card: picture, title and one line that follows the sort. Hold to flip, tap for the popup, × to bin.
 function catalogueCard(d, fromCloud) {
   var a = acFor(d), col = libColors();
   var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
@@ -210,14 +221,16 @@ function catalogueCard(d, fromCloud) {
   card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); showDetailInfo(d, fromCloud); } });
   return card;
 }
+// A card for a detail in this browser.
 function libCard(d) { return catalogueCard(d, false); }
+// A card for a cloud detail.
 function cloudCard(d) { return catalogueCard(d, true); }
 
 // A cloud detail becomes a local copy the first time it is duplicated or inserted as a block, since both need it on this device.
 function localCopyOf(d) {
   return SK.DB.get('details', d.id).then(function (mine) {
     if (mine) return mine;
-    var copy = { id: d.id, name: d.name, scale: d.scale, tags: d.tags || [], items: d.items || [], parentId: null, created: d.created, modified: d.modified };
+    var copy = { id: d.id, name: d.name, scale: d.scale, tags: d.tags || [], items: d.items || [], parentId: null, created: d.created, modified: d.modified, rating: d.rating };
     return saveDetail(copy, [], null).then(function () { return copy; });
   });
 }
@@ -236,6 +249,7 @@ function buildUpFrames(d, a, col) {
   return out;
 }
 
+// One picture per scene for flipping and GIFs, all framed alike. Cached per visit.
 function framesFor(d) {
   var key = (d.cloud ? 'cloud:' : 'local:') + d.id;   // a cloud detail and its local copy can differ
   if (lib.frames[key]) return Promise.resolve(lib.frames[key]);

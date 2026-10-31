@@ -19,11 +19,13 @@ function untitledName() {
   return 'Untitled ' + String(top + 1).padStart(4, '0');
 }
 
+// Drops a detail from the cache.
 function uncache(id) {
   allDetails = allDetails.filter(function (d) { return d.id !== id; });
   delete sources[id];
 }
 
+// A new, unsaved detail. With no name it is Untitled 000N and tagged TEMP.
 function newDetail(name) {
   return {
     id: uid('d'), name: name || untitledName(), scale: SK.DEFAULT_SCALE, tags: name ? [] : ['TEMP'], items: [],
@@ -42,6 +44,7 @@ function parallelOf(d, list, live) {
   }
   return SK.parallelOf(d, takes);
 }
+// Saves a detail and its JSON parallel to IndexedDB.
 function saveDetail(d, list, live) {
   cacheDetail(d);
   return Promise.all([
@@ -49,11 +52,13 @@ function saveDetail(d, list, live) {
     SK.DB.put('parallels', parallelOf(d, list, live), d.id)
   ]);
 }
+// Saves the open detail 400 ms after the last change.
 function saveSoon() {
   clearTimeout(saveTimer);
   var d = detail, list = sessions, live = take;
   saveTimer = setTimeout(function () { saveDetail(d, list, live).catch(function (e) { fail(e, 'Could not save: '); }); }, 400);
 }
+// Saves the open detail now.
 function saveNow() {
   clearTimeout(saveTimer);
   return saveDetail(detail, sessions, take);
@@ -61,11 +66,13 @@ function saveNow() {
 
 // The live JSON file: rewritten about four times a second while you draw, and after each change.
 var liveTimer = 0, liveChain = Promise.resolve();
+// Rewrites the live JSON file within 250 ms, when one is linked.
 function scheduleLive() {
   if (!detail || liveTimer || !SK.LiveFile.linked(detail.id)) return;
   var id = detail.id;
   liveTimer = setTimeout(function () { liveTimer = 0; writeLive(id); }, 250);
 }
+// Writes the open detail's parallel to its live JSON file.
 function writeLive(id) {
   if (!detail || detail.id !== id || !SK.LiveFile.linked(id)) return;
   var text = JSON.stringify(parallelOf(detail, sessions, take), null, 1);

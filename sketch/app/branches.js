@@ -7,6 +7,7 @@
 
 // ---- save as, branch, merge, delete ----
 
+// Copies recordings to another detail, with new ids.
 function copySessions(fromList, toId) {
   return Promise.all(fromList.map(function (s) {
     var c = Object.assign({}, s, { id: uid('r'), detailId: toId });
@@ -15,6 +16,7 @@ function copySessions(fromList, toId) {
   }));
 }
 
+// Save as: a copy of the open detail, with its recordings, then opens it.
 function saveAs() {
   var name = window.prompt('Save as', detail.name + ' copy');
   if (!name) return;
@@ -48,6 +50,7 @@ function branchFrom(items, label, fork) {
   }).catch(fail);
 }
 
+// Merge: copies this branch's items into its parent detail. Items with the same id replace the parent's.
 function mergeIntoParent() {
   SK.DB.get('details', detail.parentId).then(function (p) {
     if (!p) { toast('The parent detail was deleted.'); return; }
@@ -142,6 +145,7 @@ function blocksChecklist() {
   return list;
 }
 
+// The note about blocks in this detail, and a picker that adds any finished detail as a block.
 function blocksPicker() {
   var here = detail.items.filter(function (it) { return it.kind === 'block'; });
   var picker = el('select', { class: 'field', 'aria-label': 'Finished detail to add as a block' });
@@ -203,6 +207,7 @@ function branchVersion(d) {
   }).catch(fail);
 }
 
+// Points the blocks in a host detail at another source (used by Branch as new version).
 function repointBlock(hostId, fromId, toId) {
   return SK.DB.get('details', hostId).then(function (host) {
     if (!host) return;

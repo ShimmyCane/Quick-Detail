@@ -10,8 +10,11 @@
 // when both exist. Undo reverses the changes made since the page was opened.
 var tagEdit = { local: [], cloud: [], undo: [], sel: null, replacing: false, from: null, pick: null };
 
+// The details the Edit tags page works on: this browser's or the cloud's, following the library view.
 function tagSource() { return lib.view === 'cloud' ? tagEdit.cloud : tagEdit.local; }
+// Whether a detail is in that list.
 function inTagSource(id) { return tagSource().some(function (d) { return d.id === id; }); }
+// The element tags (from speech and shape) on a detail's items.
 function elementTagsOf(d) {
   var out = [];
   (d.items || []).forEach(function (it) {
@@ -20,6 +23,7 @@ function elementTagsOf(d) {
   return out;
 }
 
+// Reads this browser's details and, when signed in, the cloud's.
 function loadTagSources() {
   var locals = SK.DB.all('details').then(function (l) { return l.filter(function (d) { return !d.deletedAt; }); });
   var clouds = !SK.Cloud.ready() ? Promise.resolve([]) : SK.Cloud.session().then(function (s) {
@@ -28,6 +32,7 @@ function loadTagSources() {
   return Promise.all([locals, clouds]).then(function (r) { tagEdit.local = r[0]; tagEdit.cloud = r[1]; });
 }
 
+// Opens the Edit tags page.
 function openTags() {
   closeMenus();
   $('libPage').hidden = true;
@@ -36,6 +41,7 @@ function openTags() {
   $('tagsPage').hidden = false;
   loadTagSources().then(renderTagsPage).catch(function (e) { fail(e, 'Could not read the tags: '); });
 }
+// Closes it and goes back to the library. Its undo ends here.
 function closeTags() {
   $('tagsPage').hidden = true;
   tagEdit.undo = [];
@@ -44,6 +50,7 @@ function closeTags() {
   renderLibrary();
 }
 
+// Draws the tag list, the element tags and the panel for the picked tag.
 function renderTagsPage() {
   var src = tagSource();
   $('tagsSource').textContent = (lib.view === 'cloud' ? 'Cloud' : 'This browser') + ' · ' + src.length + (src.length === 1 ? ' detail' : ' details');
@@ -81,6 +88,7 @@ function renderTagsPage() {
   renderTagPanel();
 }
 
+// A tap on a tag: picks it, or picks the tag to replace it with.
 function onTagClick(t) {
   if (tagEdit.replacing) {
     if (t === tagEdit.from) { tagEdit.replacing = false; tagEdit.from = null; tagEdit.pick = null; renderTagsPage(); return; }
@@ -93,6 +101,7 @@ function onTagClick(t) {
   renderTagsPage();
 }
 
+// The panel beside the list: the picked tag's details, or the replace step.
 function renderTagPanel() {
   var panel = $('tagsPanel');
   panel.innerHTML = '';
@@ -115,6 +124,7 @@ function renderTagPanel() {
   panel.appendChild(el('div', { class: 'tag-thumbs' }, items.map(tagThumb)));
 }
 
+// A small picture of a detail, with its name.
 function tagThumb(d) {
   var a = acFor(d), col = libColors();
   var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
@@ -139,11 +149,13 @@ function popup(title, body, okText, onOk, onCancel) {
   card.querySelector('.row .btn:last-child').focus();
 }
 
+// Asks before a tag is taken off every detail.
 function confirmDeleteTag(t, n) {
   popup('Delete tag "' + t + '"?',
     'It is taken off ' + n + (n === 1 ? ' detail' : ' details') + '. The details themselves stay. Undo lasts until this page closes.',
     'Delete tag', function () { tagEdit.sel = null; changeTags('Delete tag "' + t + '"', deleteTag(t)); });
 }
+// Asks before one tag replaces another everywhere.
 function confirmReplace(a, b) {
   popup('Replace tag "' + a + '" with "' + b + '"?',
     'Every detail with "' + a + '" gets "' + b + '" instead. A detail that has both keeps one. Undo lasts until this page closes.',
@@ -162,6 +174,7 @@ function deleteTag(t) {
     return { tags: tags.filter(function (x) { return x !== t; }), items: rec.items || [] };
   };
 }
+// A change that swaps tag a for b, without duplicates.
 function replaceTag(a, b) {
   return function (rec) {
     var tags = rec.tags || [];
@@ -171,6 +184,7 @@ function replaceTag(a, b) {
     return { tags: out, items: rec.items || [] };
   };
 }
+// A change that removes an element tag from every item.
 function removeElementTag(t) {
   return function (rec) {
     var hit = false;
@@ -206,6 +220,7 @@ function changeTags(label, transform) {
   }).catch(function (e) { fail(e, 'Could not change the tags: '); });
 }
 
+// Undoes the last tag change on this page.
 function undoTagEdit() {
   var last = tagEdit.undo[tagEdit.undo.length - 1];
   if (!last) return;

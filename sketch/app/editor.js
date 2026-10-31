@@ -8,6 +8,7 @@
 // Note text editor (an overlay textarea; Scribble and dictation work in it on the iPad)
 // ===================================================================
 
+// Opens the text box over a note. isNew: the note is added only if text is typed.
 function openEditor(note, isNew) {
   var ta = $('editor');
   var f = factorOf(detail);
@@ -25,6 +26,7 @@ function openEditor(note, isNew) {
   setTimeout(function () { ta.focus(); }, 0);
 }
 
+// Closes the text box. keep: save the text as one undo step.
 function closeEditor(keep) {
   if (!editing) return;
   var e = editing;

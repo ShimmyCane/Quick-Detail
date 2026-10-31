@@ -6,6 +6,7 @@
 
 // ---- log: a film strip of every scene ----
 
+// The bounds of everything a recording ever drew.
 function sessionBounds(s) {
   var items = s.base.slice();
   s.events.forEach(function (ev) {
@@ -24,6 +25,7 @@ var thumbObserver = 'IntersectionObserver' in window ? new IntersectionObserver(
   });
 }, { root: null, rootMargin: '200px' }) : null;
 
+// The Log: a film strip of every scene, with Clip, Replay, Restore and Branch.
 function renderLog() {
   var strip = $('logStrip');
   strip.innerHTML = '';
@@ -80,6 +82,7 @@ function renderLog() {
   strip.scrollLeft = strip.scrollWidth;
 }
 
+// Plays the sound of one scene.
 function playClip(s, m) {
   if (clip) { clip.pause(); URL.revokeObjectURL(clip.src); clip = null; }
   if (!s.audio) { toast('This recording has no sound.'); return; }
@@ -94,6 +97,7 @@ function playClip(s, m) {
 
 // ---- replay ----
 
+// Opens the replay of a recording at time T, in the right panel.
 function openReplay(s, T) {
   stopRecording();
   closePanel();
@@ -121,6 +125,7 @@ function openReplay(s, T) {
   seekTo(T || 0);
 }
 
+// Shows the replay at time T: sheet, scrubber, clock and current scene.
 function setT(T) {
   pb.T = Math.max(0, Math.min(T, pb.s.duration));
   pb.items = SK.stateAt(pb.s, pb.T);
@@ -138,6 +143,7 @@ function setT(T) {
   }
 }
 
+// Jumps the replay, and its sound, to time T.
 function seekTo(T) {
   setT(T);
   pb.startT = pb.T;
@@ -145,6 +151,7 @@ function seekTo(T) {
   if (pb.audio) pb.audio.currentTime = Math.max(0, pb.T - (pb.s.audioOffset || 0)) / 1000;
 }
 
+// Plays the replay from where it is.
 function startPlay() {
   if (!pb || pb.playing) return;
   if (pb.T >= pb.s.duration) seekTo(0);
@@ -156,6 +163,7 @@ function startPlay() {
   setT(pb.T);
 }
 
+// Pauses the replay.
 function pausePlay() {
   if (!pb || !pb.playing) return;
   pb.playing = false;
@@ -164,6 +172,7 @@ function pausePlay() {
   setT(pb.T);
 }
 
+// One animation frame of the replay.
 function frame() {
   if (!pb || !pb.playing) return;
   var T = pb.startT + performance.now() - pb.startedAt;
@@ -172,6 +181,7 @@ function frame() {
   pb.raf = requestAnimationFrame(frame);
 }
 
+// Ends the replay and puts the view back.
 function exitReplay() {
   if (!pb) return;
   pausePlay();

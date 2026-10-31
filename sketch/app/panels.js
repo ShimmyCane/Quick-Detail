@@ -9,6 +9,7 @@
 // Panels: project info, library, settings, log
 // ===================================================================
 
+// Closes the right panel or the log, and ends a replay.
 function closePanel() {
   if (panelKind === 'log') $('log').hidden = true;
   else $('panel').hidden = true;
@@ -34,6 +35,7 @@ function renderPlayback(body) {
   body.appendChild($('player'));
 }
 
+// Opens a right panel: project (Info), playback, settings or log. The same one again closes it.
 function openPanel(kind) {
   if (panelKind === kind) { closePanel(); return; }
   if (panelKind) closePanel();
@@ -52,6 +54,7 @@ function openPanel(kind) {
   else renderSettings(body);
 }
 
+// A panel section: a heading and its contents.
 function section(title, kids) {
   return el('section', {}, [el('h3', { text: title })].concat(kids));
 }
@@ -59,6 +62,7 @@ function section(title, kids) {
 // Images: placed on the no-print layer, faint on screen and left out of exports. Scaled down to keep the detail light.
 var IMAGE_MAX_PX = 1600;
 
+// Adds an image file as a no-print underlay, half the screen wide, in the middle of the view.
 function addImage(file) {
   var url = URL.createObjectURL(file);
   var im = new Image();
@@ -162,6 +166,7 @@ function liveBox() {
   return el('div', {}, [note, row]);
 }
 
+// The Info panel: New, name, scale, tags, blocks, branch, metadata, exports, file, JSON and Delete.
 function renderProject(body) {
   var name = el('input', { type: 'text', value: detail.name, 'aria-label': 'Detail name', class: 'name-field', on: { input: function (e) {
     detail.name = e.target.value;

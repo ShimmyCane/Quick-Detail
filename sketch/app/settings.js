@@ -12,14 +12,17 @@ var BACKGROUNDS = [
   { v: '#2b3a4a', l: 'Slate' }
 ];
 
+// Saves the settings to IndexedDB.
 function saveSettings() { SK.DB.put('kv', settings, 'settings').catch(function () {}); }
 
+// Redraws the Settings panel.
 function refreshSettings() {
   var body = $('panelBody');
   body.innerHTML = '';
   renderSettings(body);
 }
 
+// Sets the sheet's background colour.
 function setBackground(v) {
   settings.bg = v;
   saveSettings();
@@ -27,6 +30,7 @@ function setBackground(v) {
   refreshSettings();
 }
 
+// Settings → Appearance: background swatches and the grid.
 function appearanceSection() {
   var swatches = BACKGROUNDS.map(function (b) {
     return el('button', { class: 'swatch' + (settings.bg === b.v ? ' on' : ''), title: b.l, 'aria-label': b.l, style: 'background:' + b.v, on: { click: function () { setBackground(b.v); } } });
@@ -43,6 +47,7 @@ function appearanceSection() {
   ]);
 }
 
+// The Settings panel.
 function renderSettings(body) {
   var caps = el('input', { type: 'checkbox', checked: settings.caps, on: { change: function (e) {
     settings.caps = e.target.checked;

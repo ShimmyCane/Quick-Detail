@@ -8,6 +8,7 @@
 // Recording: starts with the pen, stops 5 s after the last activity. The scene button forces a new scene.
 // ===================================================================
 
+// Starts a take if none is running.
 function ensureTake() {
   if (take || pb) return;
   take = SK.startTake(clone(detail.items), activity);
@@ -24,6 +25,7 @@ function activity() {
   stopTimer = setTimeout(stopRecording, AUTO_STOP_MS);
 }
 
+// Stops the take and saves it as a recording, unless nothing happened.
 function stopRecording() {
   var r = take;
   if (!r) return Promise.resolve();
@@ -45,6 +47,7 @@ function stopRecording() {
   }).catch(function (e) { fail(e, 'Could not save the recording: '); });
 }
 
+// Marks a new scene (the scene button or N), with a flash.
 function newScene() {
   if (pb) return;
   ensureTake();
@@ -58,8 +61,10 @@ function newScene() {
   updateScenes();
 }
 
+// The scenes of a recording, worked out once and kept on it.
 function scenesOf(s) { return s._scenes || (s._scenes = SK.segment(s)); }
 
+// Updates the scene count on the scene button.
 function updateScenes() {
   var n = 0;
   sessions.forEach(function (s) { n += scenesOf(s).length; });
@@ -67,6 +72,7 @@ function updateScenes() {
   $('sceneCount').textContent = n;
 }
 
+// Shows or hides the recording dot and its clock.
 function showRec(on) {
   $('recDot').hidden = !on;
   $('sceneBtn').classList.toggle('live', on);

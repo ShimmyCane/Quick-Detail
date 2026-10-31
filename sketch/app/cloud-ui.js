@@ -7,6 +7,7 @@
 
 // ---------------- Cloud: sign in, review what was uploaded, see the table index ----------------
 
+// Email and password sign-in, password reset and the emailed sign-in link.
 function signInForm() {
   var email = el('input', { type: 'email', placeholder: 'you@example.com', 'aria-label': 'Email', class: 'field', autocomplete: 'username' });
   var password = el('input', { type: 'password', placeholder: 'Password', 'aria-label': 'Password', class: 'field', autocomplete: 'current-password' });
@@ -97,6 +98,7 @@ function purgeCloud(r) {
   return SK.Cloud.purge(r).then(function () { lib.cloudRows = null; toast('Deleted "' + r.name + '" from the cloud.'); });
 }
 
+// Deletes every detail in the cloud bin for good, after a confirm.
 function emptyCloudBin(rows) {
   if (!window.confirm('Empty the cloud recycle bin? ' + rows.length + (rows.length === 1 ? ' detail and its recordings' : ' details and their recordings') + ' will be deleted from the cloud for good.')) return;
   rows.reduce(function (p, r) { return p.then(function () { return SK.Cloud.purge(r); }); }, Promise.resolve())
@@ -144,7 +146,8 @@ function openCloudDetail(d) {
     var use = mine;
     if (!mine) use = d;
     else if (d.modified > mine.modified && window.confirm('This browser has an older copy of "' + d.name + '". Replace it with the cloud version?')) use = Object.assign({}, mine, d);
-    var copy = { id: use.id, name: use.name, scale: use.scale, tags: use.tags, items: use.items, parentId: use.parentId || null, created: use.created, modified: use.modified };
+    var copy = { id: use.id, name: use.name, scale: use.scale, tags: use.tags, items: use.items, parentId: use.parentId || null, created: use.created, modified: use.modified,
+      rating: use.rating == null && mine ? mine.rating : use.rating };   // the cloud's rating, else this browser's
     var save = use === mine ? Promise.resolve() : saveDetail(copy, [], null);
     return save.then(function () {
       closeLibrary();
@@ -153,6 +156,7 @@ function openCloudDetail(d) {
   }).catch(function (e) { fail(e, 'Could not open: '); });
 }
 
+// The recordings uploaded for a cloud detail: audio and scene pictures.
 function renderCloudDetail(d) {
   var body = $('libBody');
   body.innerHTML = '';
@@ -179,6 +183,7 @@ function renderCloudDetail(d) {
   }).catch(function (e) { fail(e, 'Could not open: '); });
 }
 
+// One uploaded scene picture with its time and words.
 function snapCard(s) {
   var img = el('img', { alt: 'Scene ' + s.scene_index });
   SK.Cloud.signedUrl(s.image_path).then(function (u) { img.src = u; }).catch(function () {});
@@ -214,6 +219,7 @@ function buildUpload() {
   return Promise.all(jobs).then(function () { return { plan: plan, media: media }; });
 }
 
+// Uploads the open detail with its recordings, scene pictures and metadata. Asks to sign in first.
 function uploadToCloud() {
   if (take) stopRecording();
   SK.Cloud.session().then(function (s) {

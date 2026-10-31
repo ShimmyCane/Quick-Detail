@@ -188,6 +188,7 @@ function cloudFrames(d) {
   });
 }
 
+// Loads an image from a URL, readable by a canvas.
 function loadPicture(url) {
   return new Promise(function (resolve, reject) {
     var img = new Image();

@@ -44,6 +44,7 @@ canvas.addEventListener('pointermove', function (e) {
   }
 });
 
+// Pointer up or cancel: ends a gesture or the tool's action.
 function pointerEnd(e) {
   delete touches[e.pointerId];
   if (gesture) {
@@ -72,6 +73,7 @@ canvas.addEventListener('wheel', function (e) {
   }
 }, { passive: false });
 
+// Zooms by k, keeping the screen point sp still.
 function zoomAt(sp, k) {
   var w = SK.toWorld(view, sp);
   view.z = clampZ(view.z * k);
@@ -80,14 +82,17 @@ function zoomAt(sp, k) {
   redraw();
 }
 
+// Starts panning with this pointer.
 function startPan(e, sp) {
   canvas.setPointerCapture(e.pointerId);
   gesture = { kind: 'pan', id: e.pointerId, s0: sp, v0: clone(view) };
 }
+// Starts a two-finger pinch.
 function startPinch(ids) {
   var a = touches[ids[0]], b = touches[ids[1]];
   gesture = { kind: 'pinch', ids: ids.slice(0, 2), v0: clone(view), c0: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], d0: Math.max(dist(a, b), 1) };
 }
+// Moves the view for a pan or pinch.
 function moveGesture(e, sp) {
   var g = gesture;
   if (g.kind === 'pan') {

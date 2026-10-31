@@ -50,6 +50,7 @@ try {
   if (['ink', 'red', 'blue', 'yellow', 'green'].indexOf(savedPen.color) >= 0) pen.color = savedPen.color;
   if (['w1', 'w2', 'w3', 'w4'].indexOf(savedPen.weight) >= 0) pen.weight = savedPen.weight;
 } catch (err) { /* storage can be blocked; the defaults still work */ }
+// Remembers the pen colour and weight between visits.
 function savePen() { try { localStorage.setItem('qd.pen', JSON.stringify({ color: pen.color, weight: pen.weight })); } catch (err) { /* ignore */ } }
 var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
 var counter = 0;
@@ -60,33 +61,49 @@ var originHost = null;               // the detail a block was opened from, so B
 // Helpers
 // ===================================================================
 
+// Screen width in CSS pixels.
 function W() { return window.innerWidth; }
+// Screen height in CSS pixels.
 function H() { return window.innerHeight; }
+// A new unique id, starting with prefix p (s stroke, n note, m dim, h hatch, i image, b block, d detail, r recording).
 function uid(p) { counter++; return p + Date.now().toString(36) + counter.toString(36) + Math.random().toString(36).slice(2, 5); }
+// A deep copy through JSON.
 function clone(v) { return v == null ? v : JSON.parse(JSON.stringify(v)); }
+// Distance between two points.
 function dist(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1]); }
+// Index of the item with this id in a list, or -1.
 function indexOf(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return i; return -1; }
+// The item with this id in the open detail, or null.
 function byId(id) { var i = indexOf(detail.items, id); return i < 0 ? null : detail.items[i]; }
+// The detail a block points at, from the cache of every detail on this device.
 function sourceOf(id) { return sources[id] || null; }
 // The drawable items of a list, with blocks replaced by their sources' lines. Never edit these: their ids belong to the sources.
 function visible(items) { return SK.flattenItems(items, sourceOf); }
+// Whether point w hits an item, within tol. Blocks are tested through their source's lines.
 function hitAt(it, w, tol, a) { return it.kind === 'block' ? SK.blockHit(it, w, tol, sourceOf, a) : SK.hitItem(it, w, tol, a); }
+// Replaces the cache of every detail on this device (allDetails and sources).
 function setDetails(list) {
   allDetails = list;
   sources = {};
   list.forEach(function (d) { sources[d.id] = d; });
 }
+// Adds or updates one detail in the cache.
 function cacheDetail(d) {
   sources[d.id] = d;
   var i = indexOf(allDetails, d.id);
   if (i >= 0) allDetails[i] = d; else allDetails.push(d);
 }
+// Reads every detail from IndexedDB into the cache.
 function loadDetails() { return SK.DB.all('details').then(function (list) { setDetails(list); return list; }); }
+// Real inches per printed inch for a detail's scale.
 function factorOf(d) { return SK.scaleOf(d.scale).factor; }
+// The annotation context for a detail: scale factor, capitals, rounding and text measuring. Passed to annot.js and paint.js.
 function acFor(d, scaleKey) {
   return { factor: SK.scaleOf(scaleKey || d.scale).factor, caps: settings.caps, roundTo: settings.roundTo, measure: SK.measure };
 }
+// The annotation context for the open detail.
 function ac() { return acFor(detail); }
+// The starting zoom for a detail: 140 screen px per printed inch.
 function defaultZ(d) { return DETAIL_PX_PER_PAPER_IN / factorOf(d); }
 // The sheet zooms within a sensible range, so a pinch cannot run off into nothing.
 function clampZ(z) {
@@ -99,8 +116,11 @@ function colors() {
   var dark = SK.luma(bg) < 0.3;
   return { ink: SK.inkFor('ink', bg), paper: bg, accent: dark ? '#7aa7ff' : '#2f6fdd' };
 }
+// The current pen weight in world inches.
 function weightWorld() { return SK.WEIGHTS[pen.weight] * factorOf(detail); }
+// Milliseconds since the take in progress started (0 when not recording).
 function rel(ts) { return take ? Math.max(0, Math.round((ts == null ? performance.now() : ts) - take.t0)) : 0; }
+// Makes a DOM element. attrs: text, on: { event: handler }, and plain attributes; kids: elements or strings.
 function el(tag, attrs, kids) {
   var e = document.createElement(tag);
   Object.keys(attrs || {}).forEach(function (k) {
@@ -111,6 +131,7 @@ function el(tag, attrs, kids) {
   (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
   return e;
 }
+// A short message at the bottom of the screen.
 function toast(msg) {
   var t = $('toast');
   t.textContent = msg;
@@ -118,8 +139,11 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
 }
+// Shows an error as a toast.
 function fail(err, prefix) { toast((prefix || '') + (err && err.message ? err.message : err)); }
+// A file-safe name.
 function slug(s) { return String(s || 'detail').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'detail'; }
+// Saves a blob as a file.
 function download(blob, name) {
   var a = el('a', { href: URL.createObjectURL(blob), download: name });
   document.body.appendChild(a);

@@ -8,6 +8,7 @@
 // Painting
 // ===================================================================
 
+// Matches the canvas to the window and the screen's pixel ratio.
 function resize() {
   dpr = window.devicePixelRatio || 1;
   canvas.width = Math.round(W() * dpr);
@@ -15,6 +16,7 @@ function resize() {
   redraw();
 }
 
+// Paints the whole sheet: background, grid, underlays, items, missing blocks, then the draft and the selection.
 function redraw() {
   if (!detail) return;
   var col = colors();
@@ -33,6 +35,7 @@ function redraw() {
   updateTitle();
 }
 
+// A small circle at a snap point or a picked point.
 function marker(p, col, filled) {
   var s = SK.toScreen(view, p);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -44,6 +47,7 @@ function marker(p, col, filled) {
   if (filled) ctx.fill(); else ctx.stroke();
 }
 
+// Paints the step in progress: the hatch rectangle, the note's arrow and box, or the dimension being placed.
 function drawDraft(col) {
   if (!draft) return;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -79,6 +83,7 @@ function drawDraft(col) {
   }
 }
 
+// The drag handles of an item: { key, p } for each, in world inches.
 function handlesOf(it) {
   var a = ac();
   if (it.kind === 'note') {
@@ -126,6 +131,7 @@ function drawPlaceholder(bk, col) {
   ctx.fillText('Block: source not on this device', p[0] + 8, p[1] + 20);
 }
 
+// Paints the dashed box and handles of the selected item.
 function drawSelection(col) {
   if (!sel) return;
   var it = byId(sel.id);
@@ -165,6 +171,7 @@ function drawPiece(item, a, b) {
   ctx.stroke();
 }
 
+// Updates the title block: name, scale and graphic scale bar.
 function updateTitle() {
   if (!detail) return;
   $('titleName').textContent = detail.name || 'Untitled detail';

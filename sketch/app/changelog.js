@@ -15,6 +15,7 @@ var VERSIONS = [
 
 // Changes, newest first: [date, what changed].
 var CHANGES = [
+  ['31 Oct', 'A cloud detail opened, duplicated or inserted here keeps its star rating (it used to reset to 1)'],
   ['31 Oct', 'Recycle bin question: Cancel has the focus for the local bin too, as it already had for the cloud bin'],
   ['31 Oct', 'Code tidy: the app and its styles are split into smaller files; nothing changes on screen'],
   ['31 Oct', 'v5: clean screen also hides the title card'],

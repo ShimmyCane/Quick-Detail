@@ -6,6 +6,7 @@
 
 // ---- text, dimension and add-arrow steps ----
 
+// Picks a tool: draw, select, text, dim, hatch or erase. Picking the same one again goes back to drawing.
 function setTool(t) {
   var same = tool === t;
   endDraft();
@@ -29,6 +30,7 @@ function setTool(t) {
   renderDimPicker();
 }
 
+// Ends any tool step and goes back to drawing.
 function endDraft() {
   draft = null;
   tool = 'draw';
@@ -38,6 +40,7 @@ function endDraft() {
   redraw();
 }
 
+// Shows a step hint at the top, with optional extra controls.
 function showHint(text, extra) {
   $('hintText').textContent = text;
   var x = $('hintExtra');
@@ -46,6 +49,7 @@ function showHint(text, extra) {
   $('hint').hidden = false;
 }
 
+// The hatch hint, with the pattern picker.
 function showHatchHint() {
   var pick = el('select', { class: 'field', 'aria-label': 'Hatch pattern', on: { change: function (e) { pen.hatch = e.target.value; } } });
   SK.HATCHES.forEach(function (h) {
@@ -54,6 +58,7 @@ function showHatchHint() {
   showHint('Drag a rectangle, or tap inside a closed shape.', [pick]);
 }
 
+// The hint for the next dimension step.
 function showDimHint() {
   var need = draft.mode === 'angular' ? 3 : 2;
   var labels = draft.mode === 'angular'
@@ -63,12 +68,14 @@ function showDimHint() {
   showHint(text);
 }
 
+// Pointer down during a tool step.
 function draftDown(w) {
   if (draft.tool === 'hatch') { draft.start = w; draft.cur = w; redraw(); return; }
   if (draft.tool === 'text' && draft.step === 1) { draft.start = w; draft.cur = w; draft.snapKind = null; }
   else draftMove(w);
 }
 
+// Pointer move during a tool step: snaps the cursor, or follows it while placing.
 function draftMove(w) {
   if (draft.tool === 'hatch') { draft.cur = w; redraw(); return; }
   var placing = (draft.tool === 'text' && draft.step === 1) || (draft.tool === 'dim' && draft.placing);
@@ -81,6 +88,7 @@ function draftMove(w) {
   redraw();
 }
 
+// Finishes a hatch: a dragged rectangle, or a tap inside a closed stroke.
 function hatchUp(w) {
   var s0 = draft.start || w;
   var moved = Math.abs(w[0] - s0[0]) + Math.abs(w[1] - s0[1]);
@@ -102,6 +110,7 @@ function hatchUp(w) {
   commitPut({ id: uid('h'), kind: 'hatch', pattern: pen.hatch, pts: poly, outline: outline, c: pen.color }, null);
 }
 
+// Pointer up during a tool step: places the arrow point, the note, a dimension point or line, or a new arrow.
 function draftUp(w) {
   if (draft.tool === 'hatch') { hatchUp(w); return; }
   var f = factorOf(detail);
@@ -157,6 +166,7 @@ function draftUp(w) {
   }
 }
 
+// A dimension from the picked points, with its line through at.
 function buildDim(at) {
   var p = draft.pts;
   var d = { id: uid('m'), kind: 'dim', mode: draft.mode, at: at, text: null, size: SK.PAPER.text, end: 'tick', roundTo: null, c: pen.color };

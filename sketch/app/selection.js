@@ -8,6 +8,7 @@
 // Selection and its chips
 // ===================================================================
 
+// Selects an item (or nothing), optionally one of a note's arrows, and shows its chips.
 function select(id, leader) {
   sel = id ? { id: id, leader: leader == null ? null : leader } : null;
   if (settings.autoCollapse) setCollapsed(!!id);
@@ -47,6 +48,7 @@ $('micBtn').addEventListener('click', function () {
 });
 renderMic();
 
+// Deletes the selected item.
 function deleteSelected() {
   if (!sel) return;
   var id = sel.id;
@@ -85,6 +87,7 @@ function edit(fn) {
   commitPut(n, it);
 }
 
+// A dropdown chip.
 function chipSelect(label, options, value, onChange) {
   var s = el('select', { 'aria-label': label, on: { change: function (e) { onChange(e.target.value); } } });
   options.forEach(function (o) { s.appendChild(el('option', { value: o.v, text: o.l, selected: String(o.v) === String(value) })); });
@@ -100,6 +103,7 @@ function drawOrderChips(it) {
   });
 }
 
+// The chips bar for the selected item: its options, Duplicate, draw order and Delete.
 function renderChips() {
   var bar = $('chips');
   bar.innerHTML = '';

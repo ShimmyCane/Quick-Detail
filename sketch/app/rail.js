@@ -20,6 +20,7 @@ function renderPen() {
   var wcur = $('weightCur');
   wcur.setAttribute('data-w', pen.weight);
 }
+// Wires a dot picker (colour, weight, dimension type): tap to open, or press, drag along the row and let go.
 function setupPicker(boxId, attr, apply) {
   var box = $(boxId), cur = box.querySelector('.pick-cur'), row = box.querySelector('.pick-row');
   var pressing = false;
@@ -91,6 +92,7 @@ function toggleUnderlay() {
   redraw();
   toast(settings.underlay ? 'Underlays shown.' : 'Underlays hidden.');
 }
+// Shows whether underlays are on, on the left bar.
 function renderUnderlay() {
   var b = document.querySelector('#lrail [data-act="underlay"]');
   if (b) { b.classList.toggle('on', settings.underlay); b.textContent = settings.underlay ? '◐' : '○'; }
@@ -112,6 +114,7 @@ var DIM_NAME = { ortho: 'Orthographic (horizontal or vertical)', aligned: 'Align
     row.appendChild(b);
   });
 })();
+// Shows the current dimension type on the left bar.
 function renderDimPicker() {
   var cur = $('dimCur');
   cur.innerHTML = DIM_ICON[dimMode];
@@ -132,12 +135,15 @@ renderDimPicker();
 var LEFT_BAR_TOP = 60, LEFT_BAR_BOTTOM = 124;   // px kept clear: the title block (about 97 px) and its 14 px margin (see style.css)
 var railMoved = [];      // { unit, slot } for each tool moved out
 var railOpen = false;    // whether the second column is open
+// Puts every tool moved to the overflow column back on the left bar.
 function railHome() {
   while (railMoved.length) { var m = railMoved.pop(); m.slot.parentNode.replaceChild(m.unit, m.slot); }
 }
+// Hides tool groups that are left empty.
 function railTidy() {
   document.querySelectorAll('#lrail .lgroup.tools').forEach(function (g) { g.hidden = !g.querySelector('.tool'); });
 }
+// Opens or closes the overflow column, beside the bar's bottom edge.
 function railShowMore() {
   var more = $('lrailMore'), plus = $('lrailPlus'), body = $('lrailMoreBody');
   var on = railOpen && body.children.length > 0;
@@ -152,6 +158,7 @@ function railShowMore() {
     more.style.bottom = Math.round(window.innerHeight - r.bottom) + 'px';
   }
 }
+// Moves the tools that do not fit on the left bar into the overflow column, from the bottom up.
 function fitLeftRail() {
   var rail = $('lrail'), plusGroup = $('lrailMoreGroup'), body = $('lrailMoreBody');
   railHome();

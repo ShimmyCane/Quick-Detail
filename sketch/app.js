@@ -37,7 +37,7 @@
   var panelKind = null;
   var clip = null;           // audio element playing a scene clip
   var customTags = [];
-  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false, underlay: true, libBg: 'sheet', autoCollapse: false };
+  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: true, underlay: true, libBg: 'sheet', autoCollapse: false };
   var ROT_PX = 26;                                // the round turn handle sits this far above a selected item
   var recycleQuietUntil = 0;                      // "don't ask for five minutes" after a delete from the library
   var pen = { color: 'ink', weight: 'w2', hatch: 'wood1' };   // what new strokes, notes, dimensions and hatches are drawn with
@@ -428,7 +428,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = col.paper;
     ctx.fillRect(0, 0, W(), H());
-    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), col.ink, dpr);
+    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), dpr);
     if (settings.underlay) list.forEach(function (it) { if (it.kind === 'block') drawUnderlay(it, col); });
     SK.paint(ctx, visible(list.filter(function (it) { return it.kind !== 'block'; })), view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), hideUnderlay: !settings.underlay });
     SK.missingBlocks(list, sourceOf).forEach(function (bk) { drawPlaceholder(bk, col); });
@@ -2365,7 +2365,7 @@
     return section('Appearance', [
       el('div', { class: 'swatches' }, swatches.concat([el('label', { class: 'swatch custom', title: 'Custom colour' }, [custom])])),
       el('p', { class: 'muted', text: 'Black ink turns white on a dark background. PNG export has no background.' }),
-      el('label', { class: 'check' }, [grid, ' Show grid (every 1/4" on paper, so it changes with the scale)'])
+      el('label', { class: 'check' }, [grid, ' Show the red grid (one true inch a square, on screen only, never printed or exported)'])
     ]);
   }
 

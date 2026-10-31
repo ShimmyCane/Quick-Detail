@@ -137,7 +137,7 @@ check('a named pen keeps its colour on any background', SK.inkFor('red', '#00000
 check('an unknown colour falls back to black', SK.inkFor('purple', '#ffffff') === '#111111');
 check('luma runs from black to white', near(SK.luma('#000000'), 0) && near(SK.luma('#ffffff'), 1, 1e-9));
 check('four line weights, heaviest last', Object.keys(SK.WEIGHTS).length === 4 && SK.WEIGHTS.w4 > SK.WEIGHTS.w3 && SK.WEIGHTS.w3 > SK.WEIGHTS.w2 && SK.WEIGHTS.w2 > SK.WEIGHTS.w1);
-check('grid is a quarter inch on paper, so it scales with the factor', near(SK.gridStep(4), 1) && near(SK.gridStep(48), 12));
+check("grid is one true inch a square: a quarter inch on paper at 3\" = 1'-0\" (four squares a paper inch)", near(SK.gridStep(4), 1) && near(SK.gridStep(4) / 4, 0.25));
 
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

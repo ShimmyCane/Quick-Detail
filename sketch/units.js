@@ -75,8 +75,10 @@
     return SK.PENS[key] || '#111111';
   };
 
-  // The grid is 1/4" on paper, so its real spacing changes with the scale. It never gets closer than 5 px on screen.
-  SK.gridStep = function (factor) { return 0.25 * factor; };
+  // The grid is one true inch per square. The sheet is in real inches, so a square is 1 world unit whatever the scale:
+  // at 3" = 1'-0" (factor 4) it is 1/4" on paper, so four squares make one paper inch. It never gets closer than 5 px on screen.
+  // It is painted on screen only and is left out of every export.
+  SK.gridStep = function () { return 1; };
 
   SK.formatAngle = function (deg) {
     var r = Math.round(deg * 2) / 2;

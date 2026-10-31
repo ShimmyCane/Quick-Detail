@@ -113,8 +113,6 @@
 .lib-card.flipping { border-color: var(--ink); }
 .lib-card.flipping .flip-label { display: inline-block; }
 .lib-card .meta { font-size: 12px; color: var(--muted); }
-.lib-card .tags-line { font-size: 12px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lib-card .said { margin: 4px 0 0; font-size: 13px; line-height: 1.35; }
 
 .libpage {
   position: fixed;

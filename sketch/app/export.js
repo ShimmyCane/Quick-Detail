@@ -53,10 +53,10 @@ function metadataPreview() {
 // Tags each element from its shape and from what was said while it was drawn. Stored on the element as meta.
 function tagElements() {
   var an = analysis();
-  var byId = {};
-  an.elements.forEach(function (e) { byId[e.id] = e; });
+  var element = {};
+  an.elements.forEach(function (e) { element[e.id] = e; });
   detail.items = detail.items.map(function (it) {
-    var e = byId[it.id];
+    var e = element[it.id];
     if (!e) return it;
     var n = clone(it);
     n.meta = SK.itemMeta(e);
@@ -118,10 +118,10 @@ function exportJpeg() {
 function exportSeries() {
   var an = analysis();
   if (!an.scenes.length) { toast('No scenes to export yet.'); return; }
-  var byId = {};
-  sessions.forEach(function (s) { byId[s.id] = s; });
+  var bySession = {};
+  sessions.forEach(function (s) { bySession[s.id] = s; });
   var frames = an.scenes.map(function (sc) {
-    var items = SK.stateAt(byId[sc.sessionId], sc.end);
+    var items = SK.stateAt(bySession[sc.sessionId], sc.end);
     return { items: items, sc: sc, ids: items.map(function (it) { return it.id; }) };
   });
   var pts = [];

@@ -89,25 +89,7 @@ function deleteFromCloud(d) {
       renderLibrary();
     }).catch(function (e) { fail(e, 'Could not move to the bin: '); });
   }
-  if (Date.now() < recycleQuietUntil) { go(); return; }
-  var back = null;
-  function close() { if (back) back.remove(); }
-  var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Move to the cloud recycle bin' }, [
-    el('b', { text: 'Move "' + d.name + '" to the cloud recycle bin?' }),
-    el('p', { class: 'muted', text: 'Its recordings go with it. You can restore it from Library → Recycle bin until you empty the cloud bin. The copy in this browser stays.' }),
-    el('div', { class: 'row' }, [
-      el('button', { class: 'btn danger', text: 'Move to bin', on: { click: function () { close(); go(); } } }),
-      el('button', { class: 'btn', text: 'Don\'t ask for 5 minutes', on: { click: function () {
-        recycleQuietUntil = Date.now() + 5 * 60 * 1000;
-        close();
-        go();
-      } } }),
-      el('button', { class: 'btn', text: 'Cancel', on: { click: close } })
-    ])
-  ]);
-  back = el('div', { class: 'pop-back' }, [card]);
-  document.body.appendChild(back);
-  card.querySelector('.row .btn:last-child').focus();   // Cancel is the safe choice, so it has focus
+  confirmBin('cloud recycle bin', 'Its recordings go with it. You can restore it from Library → Recycle bin until you empty the cloud bin. The copy in this browser stays.', d, go);
 }
 
 // Deletes a detail from the cloud for good. Used by the cloud recycle bin only.

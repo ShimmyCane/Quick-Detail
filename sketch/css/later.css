@@ -48,8 +48,6 @@ body.collapsed .title-block { display: none; }   /* the title card and its scale
 .panel .pscenes { flex-direction: column; overflow: visible; padding: 0; }
 .panel .pscene { max-width: none; }
 .panel .pscene span { white-space: normal; }
-.panel .pscene-list { display: flex; flex-direction: column; gap: 8px; }
-.panel .pscene-list .pscene { flex: none; }
 .panel .clock { white-space: nowrap; min-width: 0; }
 
 /* ---------- narrow screens: a side panel covers the left bar, so the bar steps aside while it is open ---------- */
@@ -63,24 +61,14 @@ body.collapsed .title-block { display: none; }   /* the title card and its scale
 .bin-row .row { display: flex; gap: 10px; flex-wrap: wrap; }
 .bin-row .btn { min-height: 48px; }
 
-/* ---------- library: tags take two lines; tap to expand ---------- */
-.tags-line.clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
-.tags-line.clamp.open { display: block; overflow: visible; }
-
 /* ---------- library header: the less-used controls sit under More ---------- */
 .more { position: relative; }
 .more > summary { list-style: none; cursor: pointer; }
 .more > summary::-webkit-details-marker { display: none; }
-.more-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 10px; min-width: 220px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); }
-.more-panel .btn { min-height: 48px; }
-
-/* The More menu holds the tag filters too, so it is taller and scrolls. */
-.more-panel { width: min(360px, 90vw); max-height: 70vh; overflow-y: auto; }
-.more-panel .lib-filters { display: flex; flex-wrap: wrap; gap: 6px; }
 
 /* A long press on a library card previews it, so the card must not start a text selection or the iOS callout. */
 .lib-card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
-.lib-card .tags-line, .lib-card b { -webkit-touch-callout: none; }
+.lib-card b { -webkit-touch-callout: none; }
 
 /* ---------- the left bar starts from the lower left corner, above the title block, and grows upwards ---------- */
 .lrail { top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 110px); }

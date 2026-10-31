@@ -54,7 +54,7 @@ function showDetailInfo(d, fromCloud) {
   var facts = [];
   if (!fromCloud) facts.push(scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' + sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded));
   facts.push(d.items.length + ' elements · ' + SK.scaleOf(d.scale).label);
-  facts.push('Edited ' + dateOf(d.modified) + (d.created ? ' · Created ' + dateOf(d.created) : ''));
+  facts.push(editedLine(d));
   if (users) facts.push('Used in ' + users + (users === 1 ? ' block' : ' blocks'));
   if (isBlockDetail(d)) facts.push('A block: tick it in a detail\'s Blocks checklist to add it there.');
 
@@ -209,14 +209,14 @@ function downloadGif(d, fromCloud) {
     // Every frame is drawn at the last frame's size, since a GIF has one size and a drawing grows as it is built.
     var last = frames[frames.length - 1].canvas;
     var k = fromCloud ? Math.min(1, 900 / last.width) : 2;
-    var W = Math.round(last.width * k), H = Math.round(last.height * k);
+    var gw = Math.round(last.width * k), gh = Math.round(last.height * k);
     var pics = frames.map(function (f) {
       var c = document.createElement('canvas');
-      c.width = W;
-      c.height = H;
+      c.width = gw;
+      c.height = gh;
       var g = c.getContext('2d');
       g.imageSmoothingEnabled = false;
-      g.drawImage(f.canvas, 0, 0, W, H);
+      g.drawImage(f.canvas, 0, 0, gw, gh);
       var px = g.getImageData(0, 0, c.width, c.height);
       return { width: c.width, height: c.height, data: px.data };
     });

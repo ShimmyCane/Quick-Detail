@@ -201,7 +201,7 @@ function changeTags(label, transform) {
   writeTagEntries(entries, 'after').then(function () {
     tagEdit.undo.push({ label: label, entries: entries });
     lib.cloudRows = null;
-    refreshTagSources().then(renderTagsPage);
+    loadTagSources().then(renderTagsPage);
     toast(label + ': ' + entries.length + (entries.length === 1 ? ' copy' : ' copies') + ' changed.');
   }).catch(function (e) { fail(e, 'Could not change the tags: '); });
 }
@@ -212,12 +212,10 @@ function undoTagEdit() {
   writeTagEntries(last.entries, 'before').then(function () {
     tagEdit.undo.pop();
     lib.cloudRows = null;
-    refreshTagSources().then(renderTagsPage);
+    loadTagSources().then(renderTagsPage);
     toast('Undid: ' + last.label + '.');
   }).catch(function (e) { fail(e, 'Could not undo: '); });
 }
-
-function refreshTagSources() { return loadTagSources(); }
 
 // Writes one set of entries, the 'before' or the 'after' values, one copy at a time.
 function writeTagEntries(entries, key) {

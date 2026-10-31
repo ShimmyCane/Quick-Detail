@@ -62,7 +62,7 @@ var lib = { sessions: {}, frames: {}, view: 'local', query: '', filters: [] };  
 
 function sceneCountOf(d) { return SK.scenesOf(lib.sessions[d.id] || []).length; }
 
-// A detail's tags: the ones typed on it, plus the ones found in its tagged elements.
+// A detail's tags: the ones typed on it.
 // Element tags (from speech and shape) are not tags: they are listed on the Edit tags page.
 function detailTags(d) { return (d.tags || []).slice(); }
 
@@ -170,14 +170,6 @@ function cardPicture(items, b, a, col) {
 }
 function cardBounds(items, a) { return SK.itemsBounds(visible(SK.printable(items)), a) || SK.itemsBounds(visible(items), a); }
 
-// Tags take two lines on a card. Tapping them expands the list; the tap does not open the card.
-function tagsLine(tags) {
-  return el('span', { class: 'tags-line clamp', text: tags.join(' · ') || 'no tags yet', on: { click: function (e) {
-    e.stopPropagation();
-    e.currentTarget.classList.toggle('open');
-  } } });
-}
-
 // The catalogue card: the picture, the title, and one line that follows the sort (date, rating, tags or scene count).
 // Holding it previews the scenes. Tapping it opens the detail's card. The × deletes it (to the bin).
 function cardInfo(d) {
@@ -248,10 +240,10 @@ function framesFor(d) {
   var key = (d.cloud ? 'cloud:' : 'local:') + d.id;   // a cloud detail and its local copy can differ
   if (lib.frames[key]) return Promise.resolve(lib.frames[key]);
   var sess = lib.sessions[d.id] || [];
-  var byId = {};
+  var bySession = {};
   var all = [];
   sess.forEach(function (s) {
-    byId[s.id] = s;
+    bySession[s.id] = s;
     all = all.concat(s.base);
     s.events.forEach(function (ev) {
       if (ev.type === 'put') all.push(ev.item);
@@ -263,7 +255,7 @@ function framesFor(d) {
   var b = cardBounds(all, a) || cardBounds(d.items, a);
   var frames = SK.scenesOf(sess).map(function (sc) {
     return {
-      canvas: cardPicture(SK.stateAt(byId[sc.sessionId], sc.end), b, a, col),
+      canvas: cardPicture(SK.stateAt(bySession[sc.sessionId], sc.end), b, a, col),
       label: 'Scene ' + sc.index + ' · ' + SK.formatTime(sc.start)
     };
   });

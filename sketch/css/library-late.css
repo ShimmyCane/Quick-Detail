@@ -15,7 +15,6 @@
 .lib-menu button.on { background: var(--qd-butter); font-weight: 700; }
 .lib-more { min-width: 260px; }
 .lib-more .lib-filters { margin: 0; }
-.stars-line { color: var(--qd-ink); letter-spacing: 1px; font-size: 13px; }
 .stars { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .star { min-width: 44px; min-height: 44px; font-size: 22px; line-height: 1; border: 2px solid var(--qd-ink); border-radius: 10px; background: var(--qd-panel); color: var(--qd-ink); }
 .star.on { background: var(--qd-butter); }

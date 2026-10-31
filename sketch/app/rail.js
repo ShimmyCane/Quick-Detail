@@ -223,9 +223,7 @@ $('rail').addEventListener('click', function (e) {
   var b = e.target.closest('[data-act]');
   if (!b) return;
   var act = b.getAttribute('data-act');
-  if (act === 'scene') return;
-  if (act === 'undo') undo();
-  else if (act === 'library') openLibrary();
+  if (act === 'library') openLibrary();
   else openPanel(act);
 });
 

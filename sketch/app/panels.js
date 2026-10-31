@@ -27,8 +27,7 @@ function parkPlayer() {
   pl.hidden = true;
 }
 
-// Playback in the right panel: the replay controls while a replay is open, otherwise the recordings' scenes to replay.
-// Replay only: its controls go into the panel. Entered from the Log's Replay chip.
+// Playback in the right panel: the replay controls, while a replay is open. Entered from the Log's Replay chip.
 function renderPlayback(body) {
   if (!pb) return;
   $('player').hidden = false;

@@ -12,12 +12,18 @@ function removeDetail(d) {
 
 // Asks before a detail goes to the bin. "Don't ask for 5 minutes" skips the question until the time is up.
 function confirmDelete(d, go) {
+  confirmBin('recycle bin', 'Its recordings go with it. You can restore it from Library → Recycle bin until you empty the bin.', d, go);
+}
+
+// The move-to-bin question, for this browser's bin and the cloud bin. The 5-minute quiet time is shared by both.
+// Cancel is the safe choice, so it has focus.
+function confirmBin(where, body, d, go) {
   if (Date.now() < recycleQuietUntil) { go(); return; }
   var back = null;
   function close() { if (back) back.remove(); }
-  var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Move to the recycle bin' }, [
-    el('b', { text: 'Move "' + d.name + '" to the recycle bin?' }),
-    el('p', { class: 'muted', text: 'Its recordings go with it. You can restore it from Library → Recycle bin until you empty the bin.' }),
+  var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Move to the ' + where }, [
+    el('b', { text: 'Move "' + d.name + '" to the ' + where + '?' }),
+    el('p', { class: 'muted', text: body }),
     el('div', { class: 'row' }, [
       el('button', { class: 'btn danger', text: 'Move to bin', on: { click: function () { close(); go(); } } }),
       el('button', { class: 'btn', text: 'Don\'t ask for 5 minutes', on: { click: function () {
@@ -30,7 +36,7 @@ function confirmDelete(d, go) {
   ]);
   back = el('div', { class: 'pop-back' }, [card]);
   document.body.appendChild(back);
-  card.querySelector('.btn').focus();
+  card.querySelector('.row .btn:last-child').focus();
 }
 
 function moveToBin(d) {
@@ -56,10 +62,7 @@ function purgeDetail(d) {
   return SK.DB.sessionsOf(d.id)
     .then(function (list) { return Promise.all(list.map(function (s) { return SK.DB.del('sessions', s.id); })); })
     .then(function () { return SK.DB.del('details', d.id); })
-    .then(function () {
-      allDetails = allDetails.filter(function (x) { return x.id !== d.id; });
-      delete sources[d.id];
-    });
+    .then(function () { uncache(d.id); });
 }
 
 function emptyBin(gone) {

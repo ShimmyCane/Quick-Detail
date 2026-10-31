@@ -50,7 +50,7 @@ For each variant:
 1. Write a spec in `docs/examples/` following `sketch/author.js`. Positions are real inches, y down, in the `3"=1'-0"` scale unless the request says otherwise.
 2. Include a "Draft: verify ... before use" note, as the existing roof drafts do.
 3. Check it builds: load `sketch/author.js` in Node and call `SK.authorDetail(spec)`. A spec that throws is not done.
-4. Export a JPEG or PNG for review. The app exports a 150 dpi JPEG with the title block (`sheetCanvas` in `sketch/app.js`). Use it from the browser, or note in the output that the image still needs exporting.
+4. Export a JPEG or PNG for review. The app exports a 150 dpi JPEG with the title block (`sheetCanvas` in `sketch/app/export.js`). Use it from the browser, or note in the output that the image still needs exporting.
 
 ## Stage 5: Review loop
 

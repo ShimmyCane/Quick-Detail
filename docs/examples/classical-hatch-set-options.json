@@ -1,0 +1,973 @@
+{
+  "name": "Classical hatch set, options and variations (AI draft)",
+  "scale": "3\"=1'-0\"",
+  "tags": [
+    "AI",
+    "draft",
+    "hatch"
+  ],
+  "ai_inferred": true,
+  "items": [
+    {
+      "kind": "note",
+      "text": "Classical hatch set, options A and variations B. AI draft: verify before use.",
+      "at": [
+        0,
+        -8
+      ],
+      "width": 90,
+      "tip": [
+        4,
+        -0.2
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "steel",
+      "pts": [
+        [
+          0,
+          0
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          8,
+          4
+        ],
+        [
+          0,
+          4
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "steel",
+      "pts": [
+        [
+          14,
+          0
+        ],
+        [
+          38,
+          0
+        ],
+        [
+          38,
+          12
+        ],
+        [
+          14,
+          12
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        -2.2
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        0
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        12.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        12
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-01  steel (P-01).  Steel. Solid today. Decided: two diagonal lines (P-01). Check after the pair kind is built.",
+      "at": [
+        44,
+        1
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        6
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "concrete",
+      "pts": [
+        [
+          0,
+          16
+        ],
+        [
+          8,
+          16
+        ],
+        [
+          8,
+          20
+        ],
+        [
+          0,
+          20
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "concrete",
+      "pts": [
+        [
+          14,
+          16
+        ],
+        [
+          38,
+          16
+        ],
+        [
+          38,
+          28
+        ],
+        [
+          14,
+          28
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        13.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        16
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        28.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        28
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-02  concrete (P-02).  Concrete. Stipple dots. The reference also has small triangles, not in this key yet.",
+      "at": [
+        44,
+        17
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        22
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "gravel",
+      "pts": [
+        [
+          0,
+          32
+        ],
+        [
+          8,
+          32
+        ],
+        [
+          8,
+          36
+        ],
+        [
+          0,
+          36
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "gravel",
+      "pts": [
+        [
+          14,
+          32
+        ],
+        [
+          38,
+          32
+        ],
+        [
+          38,
+          44
+        ],
+        [
+          14,
+          44
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        29.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        32
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        44.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        44
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-03  gravel (P-04).  Gravel. Coarse, widely spaced dots. Check against the CAD gravel sheets.",
+      "at": [
+        44,
+        33
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        38
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "earth",
+      "pts": [
+        [
+          0,
+          48
+        ],
+        [
+          8,
+          48
+        ],
+        [
+          8,
+          52
+        ],
+        [
+          0,
+          52
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "earth",
+      "pts": [
+        [
+          14,
+          48
+        ],
+        [
+          38,
+          48
+        ],
+        [
+          38,
+          60
+        ],
+        [
+          14,
+          60
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        45.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        48
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        60.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        60
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-04  earth (P-05).  Earth. Crosshatch today. The reference shows stipple with angled bands. Decide.",
+      "at": [
+        44,
+        49
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        54
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "brick",
+      "pts": [
+        [
+          0,
+          64
+        ],
+        [
+          8,
+          64
+        ],
+        [
+          8,
+          68
+        ],
+        [
+          0,
+          68
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "brick",
+      "pts": [
+        [
+          14,
+          64
+        ],
+        [
+          38,
+          64
+        ],
+        [
+          38,
+          76
+        ],
+        [
+          14,
+          76
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        61.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        64
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        76.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        76
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-05  brick (P-06).  Brick, diagonal. Runs down to the right today (B-01). B-02, up to the right, is recommended.",
+      "at": [
+        44,
+        65
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        70
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "wood1",
+      "pts": [
+        [
+          0,
+          80
+        ],
+        [
+          8,
+          80
+        ],
+        [
+          8,
+          84
+        ],
+        [
+          0,
+          84
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "wood1",
+      "pts": [
+        [
+          14,
+          80
+        ],
+        [
+          38,
+          80
+        ],
+        [
+          38,
+          92
+        ],
+        [
+          14,
+          92
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        77.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        80
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        92.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        92
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-06  wood1 (P-09).  Wood along the grain. Parallel lines. No change expected.",
+      "at": [
+        44,
+        81
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        86
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "wood2",
+      "pts": [
+        [
+          0,
+          96
+        ],
+        [
+          8,
+          96
+        ],
+        [
+          8,
+          100
+        ],
+        [
+          0,
+          100
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "wood2",
+      "pts": [
+        [
+          14,
+          96
+        ],
+        [
+          38,
+          96
+        ],
+        [
+          38,
+          108
+        ],
+        [
+          14,
+          108
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        93.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        96
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        108.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        108
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-07  wood2 (P-10).  Wood across the grain. 45 degree lines today. End-grain rings still open.",
+      "at": [
+        44,
+        97
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        102
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "plywood",
+      "pts": [
+        [
+          0,
+          112
+        ],
+        [
+          8,
+          112
+        ],
+        [
+          8,
+          116
+        ],
+        [
+          0,
+          116
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "plywood",
+      "pts": [
+        [
+          14,
+          112
+        ],
+        [
+          38,
+          112
+        ],
+        [
+          38,
+          124
+        ],
+        [
+          14,
+          124
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        109.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        112
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        124.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        124
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-08  plywood (P-11).  Plywood. Square grid today. Herringbone still open.",
+      "at": [
+        44,
+        113
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        118
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "batt",
+      "pts": [
+        [
+          0,
+          128
+        ],
+        [
+          8,
+          128
+        ],
+        [
+          8,
+          132
+        ],
+        [
+          0,
+          132
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "batt",
+      "pts": [
+        [
+          14,
+          128
+        ],
+        [
+          38,
+          128
+        ],
+        [
+          38,
+          140
+        ],
+        [
+          14,
+          140
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        125.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        128
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        140.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        140
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-09  batt (P-12).  Insulation, batt. Wavy rows. No change expected.",
+      "at": [
+        44,
+        129
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        134
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "rigid",
+      "pts": [
+        [
+          0,
+          144
+        ],
+        [
+          8,
+          144
+        ],
+        [
+          8,
+          148
+        ],
+        [
+          0,
+          148
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "rigid",
+      "pts": [
+        [
+          14,
+          144
+        ],
+        [
+          38,
+          144
+        ],
+        [
+          38,
+          156
+        ],
+        [
+          14,
+          156
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        141.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        144
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        156.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        156
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-10  rigid (P-13).  Insulation, rigid. Fine crosshatch. Keep distinct from block (P-08).",
+      "at": [
+        44,
+        145
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        150
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "gypsum",
+      "pts": [
+        [
+          0,
+          160
+        ],
+        [
+          8,
+          160
+        ],
+        [
+          8,
+          164
+        ],
+        [
+          0,
+          164
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "hatch",
+      "pattern": "gypsum",
+      "pts": [
+        [
+          14,
+          160
+        ],
+        [
+          38,
+          160
+        ],
+        [
+          38,
+          172
+        ],
+        [
+          14,
+          172
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  8 x 4 in",
+      "at": [
+        0,
+        157.8
+      ],
+      "width": 16,
+      "tip": [
+        4,
+        160
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "B  24 x 12 in patch, same key",
+      "at": [
+        14,
+        172.6
+      ],
+      "width": 26,
+      "tip": [
+        26,
+        172
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "C-11  gypsum (P-14).  Gypsum. 45 degree lines. No reference sheet shows it. Keep or drop.",
+      "at": [
+        44,
+        161
+      ],
+      "width": 60,
+      "tip": [
+        38.4,
+        166
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "Draft: verify before use. Keys are today's hatch keys. Open points are marked in docs/hatch/palette-plan.md.",
+      "at": [
+        0,
+        178
+      ],
+      "width": 70,
+      "tip": [
+        4,
+        172.4
+      ]
+    }
+  ]
+}

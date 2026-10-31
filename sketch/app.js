@@ -571,25 +571,25 @@
     ctx.stroke();
   }
 
-  // The grid spacing on screen, in CSS pixels. Same rule as SK.paintGrid: doubled until it is at least 5 px.
-  function gridScreenStep() {
-    var step = SK.gridStep(factorOf(detail));
-    while (step * view.z < 5) step *= 2;
-    return step * view.z;
+  // A round real length for the scale bar: eighths of an inch under a foot, then whole feet.
+  function niceLength(inches) {
+    if (inches < 12) {
+      var step = inches < 1 ? 1 / 8 : inches < 3 ? 1 / 4 : 1 / 2;
+      return Math.max(step, Math.round(inches / step) * step);
+    }
+    var ft = inches / 12;
+    var fstep = ft < 10 ? 1 : ft < 40 ? 5 : 10;
+    return Math.max(12, Math.round(ft / fstep) * fstep * 12);
   }
-
-  // Detail title in the lower left: name, scale, and a graphic scale bar for the current zoom.
   function updateTitle() {
     if (!detail) return;
     $('titleName').textContent = detail.name || 'Untitled detail';
     $('scaleLabel').textContent = detail.scale === 'NTS' ? 'NOT TO SCALE' : 'SCALE: ' + SK.scaleOf(detail.scale).label;
-    var steps = [[0.25, '1/4"'], [0.5, '1/2"'], [1, '1"'], [3, '3"'], [6, '6"'], [12, "1'"], [24, "2'"], [60, "5'"], [120, "10'"], [240, "20'"]];
-    // The bar must hold at least two grid ticks, so it reads against the grid at any scale.
-    var need = Math.max(36, 2 * gridScreenStep());
-    var pick = steps[steps.length - 1];
-    for (var i = 0; i < steps.length; i++) { if (steps[i][0] * view.z >= need) { pick = steps[i]; break; } }
-    $('scaleBar').style.width = pick[0] * view.z + 'px';
-    $('barLabel').textContent = pick[1];
+    // A graphic scale of fixed length. Its label is the real length it stands for at this zoom and scale, so the
+    // label changes from inches to feet as you zoom while the bar itself stays the same length.
+    var BAR_PX = 110;
+    $('scaleBar').style.width = BAR_PX + 'px';
+    $('barLabel').textContent = SK.formatLength(niceLength(BAR_PX / view.z), 1 / 8);
   }
 
   // ===================================================================
@@ -2489,6 +2489,8 @@
       ['31 Oct', 'Element pop-up: Duplicate, and layer order (front, forward, back, send to back) for every drawable element'],
       ['31 Oct', 'Colour and line weight: one dot each; tap or drag along the row to choose; the choice is remembered'],
       ['31 Oct', 'Reference grid on the sheet, on by default, screen only and never in exports: one true inch a square, shades of the background; every fifth line is major'],
+      ['31 Oct', 'Phone: a narrower left bar, with tools still easy to tap'],
+      ['31 Oct', 'Graphic scale bar keeps a fixed length; its label changes from inches to feet as you zoom'],
       ['31 Oct', 'Reference grid follows the scale: a square is one printed inch and the major lines print at 5 in. x 5 in. at any scale'],
       ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
       ['31 Oct', 'Cloud recycle bin: × on each cloud card moves it to the bin, where it can be restored or deleted for good. The local copy stays'],

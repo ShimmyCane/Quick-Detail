@@ -1119,6 +1119,7 @@
   function setCollapsed(on) {
     document.body.classList.toggle('collapsed', on);
     $('collapseBtn').setAttribute('aria-pressed', String(on));
+    if (typeof fitLeftRail === 'function') fitLeftRail();   // the bar may need its second column again once shown
   }
   $('collapseBtn').addEventListener('click', function () { setCollapsed(!document.body.classList.contains('collapsed')); });
 
@@ -3105,6 +3106,54 @@
     if (b) { b.classList.toggle('on', settings.underlay); b.textContent = settings.underlay ? '◐' : '○'; }
   }
   renderPen();
+
+  // Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the "+".
+  // Each tool is put back where it was before every refit, so the bar always fills from the top.
+  var railMoved = [];      // { unit, slot } for each tool moved out
+  var railOpen = false;    // whether the second column is open
+  function railHome() {
+    while (railMoved.length) { var m = railMoved.pop(); m.slot.parentNode.replaceChild(m.unit, m.slot); }
+  }
+  function railTidy() {
+    document.querySelectorAll('#lrail .lgroup.tools').forEach(function (g) { g.hidden = !g.querySelector('.tool'); });
+  }
+  function railShowMore() {
+    var more = $('lrailMore'), plus = $('lrailPlus'), body = $('lrailMoreBody');
+    var on = railOpen && body.children.length > 0;
+    more.hidden = !on;
+    plus.setAttribute('aria-expanded', String(on));
+    plus.classList.toggle('on', on);
+    if (on) {
+      var r = $('lrail').getBoundingClientRect();
+      more.style.left = Math.round(r.right + 10) + 'px';
+      more.style.top = Math.round(r.top) + 'px';
+    }
+  }
+  function fitLeftRail() {
+    var rail = $('lrail'), plusGroup = $('lrailMoreGroup'), body = $('lrailMoreBody');
+    railHome();
+    plusGroup.hidden = true;
+    railTidy();
+    var limit = window.innerHeight - 96;   // keeps clear of the title block at the bottom of the sheet
+    if (rail.getBoundingClientRect().bottom > limit) {
+      plusGroup.hidden = false;
+      var units = Array.prototype.slice.call(rail.querySelectorAll('.tool, .picker'));
+      for (var i = units.length - 1; i >= 0 && rail.getBoundingClientRect().bottom > limit; i--) {
+        var unit = units[i], slot = document.createElement('span');
+        slot.hidden = true;
+        unit.parentNode.insertBefore(slot, unit);
+        railMoved.push({ unit: unit, slot: slot });
+        body.insertBefore(unit, body.firstChild);   // walking up from the bottom keeps the original order
+      }
+      railTidy();
+    }
+    if (!body.children.length) railOpen = false;
+    railShowMore();
+  }
+  $('lrailPlus').addEventListener('click', function () { railOpen = !railOpen; railShowMore(); });
+  window.addEventListener('resize', fitLeftRail);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLeftRail);
+  fitLeftRail();
 
   // Undo: a tap undoes. Holding it opens Redo to the right. Drag onto Redo and let go to redo; let go anywhere else to cancel.
   (function () {

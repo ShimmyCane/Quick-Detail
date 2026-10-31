@@ -60,8 +60,8 @@
   <nav class="lrail" id="lrail" aria-label="Pen and annotation tools">
     <!-- Recording: the scene button and the microphone. The mic starts muted, so nothing is captured until it is unmuted. -->
     <div class="lgroup rec-group" aria-label="Recording">
-      <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
       <button id="micBtn" class="mic" aria-pressed="false" title="Microphone muted: recordings have no sound. Tap to unmute." aria-label="Microphone muted">🔇</button>
+      <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
     </div>
     <!-- Undo: a tap undoes. Hold to open Redo on the right, then drag onto it and let go. -->
     <div class="lgroup undo-group" aria-label="Undo">
@@ -102,6 +102,13 @@
       <button data-act="underlay" class="tool on" title="Show or hide underlays, the no-print images (U)" aria-label="Show or hide underlays">◐</button>
       <input type="file" id="imageFile" accept="image/*" hidden>
     </div>
+    <!-- Small screens: tools that do not fit on the bar move to the second column, opened by this button. -->
+    <div class="lgroup more-group" id="lrailMoreGroup" hidden>
+      <button type="button" id="lrailPlus" class="more-btn" aria-expanded="false" aria-controls="lrailMore" title="More tools" aria-label="More tools">+</button>
+    </div>
+  </nav>
+  <nav class="lrail lrail-more" id="lrailMore" aria-label="More tools" hidden>
+    <div class="lgroup tools" id="lrailMoreBody"></div>
   </nav>
 
   <!-- Lower right: the panels. The collapse button hides both toolbars, for more room on a phone or tablet. -->

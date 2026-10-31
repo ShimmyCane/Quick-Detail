@@ -713,6 +713,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lrail .undo-item.hot { border-color: var(--ink); background: var(--chip); }
 .lrail .undo-item:disabled { opacity: 0.45; }
 
+/* Hidden must win over the bar's own display rules. */
+.lrail[hidden], .lrail button[hidden], .lgroup[hidden] { display: none; }
+
+/* Recording: the microphone sits on its own row, just in front of the scene button. */
+.lrail .rec-group { flex-direction: column; align-items: center; }
+
+/* Small screens: a + at the end of the bar opens a second column with the tools that do not fit. */
+.lrail .more-group { padding: 4px; }
+.lrail .more-btn { font-size: 20px; font-weight: 600; border-color: var(--line); }
+.lrail .more-btn[aria-expanded="true"] { background: var(--ink); color: var(--paper); }
+.lrail-more { left: 0; top: 52px; margin: 0; max-height: calc(100vh - 150px); overflow-y: auto; }
+body.collapsed #lrailMore { display: none; }
+
+/* The whole left bar is one panel. Its groups sit inside it, divided by hairlines, not as separate cards. */
+.lrail { gap: 0; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
+.lrail .lgroup { background: transparent; border: 0; border-radius: 0; }
+.lrail .lgroup + .lgroup { border-top: 1px solid var(--line); }
+
 /* Colour and line-weight pickers: one dot shows the current choice. The row opens to the right of it. */
 .lrail .picker { position: relative; }
 .lrail .pick-cur { border-width: 2px; }

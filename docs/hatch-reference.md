@@ -113,3 +113,31 @@ A batch is done when: its keys are in `sketch/hatch.js`, each has a test, a refe
 2. Steel: solid or lines in the classic?
 3. Is the sheet `01` the classic, as the first batch? Or is a different set meant?
 4. Are the images in `docs/hatch/reference/` allowed in the repo, given the McGraw-Hill notice on `02`?
+
+---
+
+## 8. Basic palette (proposed, for review)
+
+Status: **proposed, not agreed.** Drafted from the catalogue (`docs/hatch/catalogue.json`) for review after the detail is drawn. Each row says whether the key exists, and which reference it follows.
+
+| # | Material | Key | Status | Follows | Open point |
+|---|---|---|---|---|---|
+| 1 | Steel | `steel` | exists (solid) | 01 solid, 02-B, 06 | Solid or lines (section 4.3) |
+| 2 | Concrete | `concrete` | exists (dots) | 01, 03 | Add triangles |
+| 3 | Sand / fill | `sand` | new | 01 sand/cement, 02-P | Replaces `screen` for this use |
+| 4 | Gravel | `gravel` | exists | 05 Ghiaia, 08 gravel | Check against 04 GRAVEL1 |
+| 5 | Earth | `earth` | exists (crosshatch) | 02-N, 03 | Crosshatch or stipple (section 4.3) |
+| 6 | Brick, diagonal | `brick` | exists, mirrored | 01 brick | Negative angle (section 4.2) |
+| 7 | Brick, running bond | `brick-bond` | new | 01, 03, 07 | Brick course size |
+| 8 | Concrete block | `block` | new | 01 block, 03 | Diagonal crosshatch, not running bond |
+| 9 | Wood, along grain | `wood1` | exists | 05 Wood1, 02-R | None |
+| 10 | Wood, across grain | `wood2` | exists (45 degree lines) | 02-R end grain | Rings or lines (section 4.3) |
+| 11 | Plywood | `plywood` | exists (grid) | 06 plywood | Herringbone? (section 4.3) |
+| 12 | Insulation, batt | `batt` | exists (wavy) | 02-G, 06 | None |
+| 13 | Insulation, rigid | `rigid` | exists (crosshatch) | 02-I, 06 | Thermal zigzag (02-I) as an alternative |
+| 14 | Gypsum | `gypsum` | exists | none in the references | Needs a source sheet, or leave out |
+| 15 | Glass | `glass` | new | 03, 06, 02-M | Short diagonal dashes |
+
+**Counts.** Eleven keys exist and can be drawn as they are today (`steel`, `concrete`, `gravel`, `earth`, `brick`, `wood1`, `wood2`, `plywood`, `batt`, `rigid`, `gypsum`). Four are new (`sand`, `brick-bond`, `block`, `glass`). The `screen` key stays for light tone, outside the palette.
+
+**Not in the palette, for later batches:** metals other than steel (02-A, 02-C to E, 06 aluminium and zinc), cork, sound and thermal insulation, stone, parquet and tile.

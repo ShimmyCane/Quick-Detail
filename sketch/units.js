@@ -75,10 +75,11 @@
     return SK.PENS[key] || '#111111';
   };
 
-  // The grid is one true inch per square. The sheet is in real inches, so a square is 1 world unit whatever the scale:
-  // at 3" = 1'-0" (factor 4) it is 1/4" on paper, so four squares make one paper inch. It never gets closer than 5 px on screen.
-  // It is painted on screen only and is left out of every export.
-  SK.gridStep = function () { return 1; };
+  // The grid follows the scale, which is the printed sheet. A minor square is one printed inch, and the sheet is in
+  // real inches, so a square is factor real inches (at 3" = 1'-0", factor 4). Every fifth line is a major line, so the
+  // major grid prints at 5" x 5" at any scale. It is painted on screen only and is left out of every export.
+  SK.gridStep = function (factor) { return factor; };
+  SK.GRID_MAJOR = 5;
 
   // Grid colours are shades of the background, never a hue of their own. "Percent white" is the brightest channel.
   // Minor lines sit 10 points away from the background and major lines 25 points away: darker on a light

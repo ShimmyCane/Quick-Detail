@@ -191,16 +191,38 @@
     },
 
     // Read side, for review.
+    // The library: details that are not in the cloud recycle bin.
     details: function () {
       return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, created_at, updated_at, parent_id')
+        .is('deleted_at', null)
         .order('updated_at', { ascending: false })
         .then(function (r) { if (r.error) throw r.error; return r.data; });
     },
 
-    // Deletes one detail from the cloud: its media in the bucket, then its row, which takes its recordings and
-    // snapshots with it (ON DELETE CASCADE). Media goes first, so a failure leaves the row listed and the delete can be retried.
+    // The cloud recycle bin: details moved to the bin, most recently deleted first.
+    trashed: function () {
+      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, created_at, updated_at, deleted_at, parent_id')
+        .not('deleted_at', 'is', null)
+        .order('deleted_at', { ascending: false })
+        .then(function (r) { if (r.error) throw r.error; return r.data; });
+    },
+
+    // Moves a detail to the cloud recycle bin. Its files stay until it is deleted for good.
+    softDelete: function (id) {
+      return this.init().from('sketch_details').update({ deleted_at: new Date().toISOString() }).eq('id', id)
+        .then(function (r) { if (r.error) throw r.error; });
+    },
+
+    // Takes a detail out of the cloud recycle bin.
+    restore: function (id) {
+      return this.init().from('sketch_details').update({ deleted_at: null }).eq('id', id)
+        .then(function (r) { if (r.error) throw r.error; });
+    },
+
+    // Deletes one detail from the cloud for good: its media in the bucket, then its row, which takes its recordings and
+    // snapshots with it (ON DELETE CASCADE). Media goes first, so a failure leaves the row in the bin and the delete can be retried.
     // row: a sketch_details row (needs id and local_id). The copy on this device is not touched.
-    remove: function (row) {
+    purge: function (row) {
       var c = this.init();
       var bucket = c.storage.from(SK.CLOUD.bucket);
       // Lists every file under a folder. Folders come back without an id; files come back with one.

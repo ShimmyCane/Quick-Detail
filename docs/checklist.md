@@ -100,7 +100,7 @@ Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editi
 - [ ] **Sort, recycle bin and search in the header.** Sort stays under the header, and the recycle bin moves up there too. The search box gets smaller. A `+` and a sort symbol replace the wide controls. The sort menu offers Last edited, Created, Rating, Name and Most scenes.
 - [ ] **Tag row back under More.** You liked the tags hidden under More, so they go back there. The All chip stays the default. (The Sort control stays in the header.)
 - [ ] **Rating, 0 to 5 stars.** A basic star rating on every detail. New details start at 1 star. Sort by rating in the library. Higher stars mean the detail is more likely to be kept for future work.
-- [ ] **Cloud recycle bin, approved 31 Oct.** Cloud delete goes to a bin instead of being permanent. It needs a `deleted_at` column on `sketch_details` in the Architecture project. The migration has been approved but not yet run. Until it is built, cloud delete is permanent, and the change-log entry says so.
+- [x] **Cloud recycle bin.** Approved and built 31 Oct. Cloud delete moves a detail to the bin (`sketch_details.deleted_at`, added to the Architecture project). The bin lists under Library → Recycle bin when signed in, with Restore, Delete for good and Empty cloud bin. Delete for good removes its media and recordings. The local copy is never touched.
 
 ## Later
 

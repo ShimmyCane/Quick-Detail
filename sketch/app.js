@@ -2915,19 +2915,22 @@
       d.tags = detail.tags.slice();
       d.items = clone(detail.items);
       d.parentId = detail.parentId;
+      d.fork = detail.fork || null;
       return SK.DB.put('details', d)
         .then(function () { return copySessions(sessions, d.id); })
         .then(function () { closePanel(); toast('Saved as ' + d.name + ', with its scenes.'); return openDetail(d); });
     }).catch(fail);
   }
 
-  function branchFrom(items, label) {
+  // fork: { step } where it branched from, the number of the scene in this lane (see sketch/lanes.js).
+  function branchFrom(items, label, fork) {
     stopRecording().then(function () {
       var d = newDetail(detail.name + ' — ' + label);
       d.scale = detail.scale;
       d.tags = detail.tags.slice();
       d.items = clone(items);
       d.parentId = detail.id;
+      d.fork = fork ? { step: fork.step } : null;
       return SK.DB.put('details', d).then(function () {
         closePanel();
         toast('Branched. Edit freely; merge back from Project info.');
@@ -3180,7 +3183,7 @@
             } } }),
             el('button', { class: 'chip', text: 'Branch', on: { click: function (e) {
               e.stopPropagation();
-              branchFrom(SK.stateAt(s, m.end), 'branch from scene ' + num);
+              branchFrom(SK.stateAt(s, m.end), 'branch from scene ' + num, { step: num });
             } } })
           ])
         ]);

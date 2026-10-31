@@ -1808,7 +1808,7 @@
     var back = null;
     function close() { if (back) back.remove(); }
     // The × deletes, as on the card: from the cloud for a cloud detail, to the recycle bin for a local one.
-    var del = el('button', { class: 'lib-del', text: '×', title: fromCloud ? 'Delete from the cloud' : 'Delete from this browser',
+    var del = el('button', { class: 'lib-del', text: '×', title: fromCloud ? 'Move to the cloud recycle bin' : 'Delete from this browser',
       'aria-label': 'Delete ' + d.name, on: { click: function () {
         close();
         if (fromCloud) deleteFromCloud(d); else removeDetail(d);
@@ -2038,6 +2038,7 @@
           ])
         ]));
       });
+      renderCloudBin(body);
     }).catch(function (e) { fail(e, 'Could not read the bin: '); });
   }
 
@@ -2114,22 +2115,28 @@
     };
   }
 
-  // Deletes a detail from the cloud, after a confirmation. It has no recycle bin, so this cannot be undone.
-  // The copy on this device stays.
+  // Moves a detail from the cloud library to the cloud recycle bin. Its files stay until it is deleted for good from the bin.
+  // The copy on this device stays. "Don't ask for 5 minutes" is shared with the local bin.
   function deleteFromCloud(d) {
+    function go() {
+      SK.Cloud.softDelete(d.cloud.id).then(function () {
+        toast('Moved "' + d.name + '" to the cloud recycle bin.');
+        lib.cloudRows = null;
+        renderLibrary();
+      }).catch(function (e) { fail(e, 'Could not move to the bin: '); });
+    }
+    if (Date.now() < recycleQuietUntil) { go(); return; }
     var back = null;
     function close() { if (back) back.remove(); }
-    var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Delete from the cloud' }, [
-      el('b', { text: 'Delete "' + d.name + '" from the cloud?' }),
-      el('p', { class: 'muted', text: 'Its recordings and scene pictures are deleted for good. This cannot be undone. The copy in this browser stays.' }),
+    var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Move to the cloud recycle bin' }, [
+      el('b', { text: 'Move "' + d.name + '" to the cloud recycle bin?' }),
+      el('p', { class: 'muted', text: 'Its recordings go with it. You can restore it from Library → Recycle bin until you empty the cloud bin. The copy in this browser stays.' }),
       el('div', { class: 'row' }, [
-        el('button', { class: 'btn danger', text: 'Delete for good', on: { click: function () {
+        el('button', { class: 'btn danger', text: 'Move to bin', on: { click: function () { close(); go(); } } }),
+        el('button', { class: 'btn', text: 'Don\'t ask for 5 minutes', on: { click: function () {
+          recycleQuietUntil = Date.now() + 5 * 60 * 1000;
           close();
-          SK.Cloud.remove(d.cloud).then(function () {
-            toast('Deleted "' + d.name + '" from the cloud.');
-            lib.cloudRows = null;
-            renderLibrary();
-          }).catch(function (e) { fail(e, 'Could not delete from the cloud: '); });
+          go();
         } } }),
         el('button', { class: 'btn', text: 'Cancel', on: { click: close } })
       ])
@@ -2137,6 +2144,52 @@
     back = el('div', { class: 'pop-back' }, [card]);
     document.body.appendChild(back);
     card.querySelector('.row .btn:last-child').focus();   // Cancel is the safe choice, so it has focus
+  }
+
+  // Deletes a detail from the cloud for good. Used by the cloud recycle bin only.
+  function purgeCloud(r) {
+    return SK.Cloud.purge(r).then(function () { lib.cloudRows = null; toast('Deleted "' + r.name + '" from the cloud.'); });
+  }
+
+  function emptyCloudBin(rows) {
+    if (!window.confirm('Empty the cloud recycle bin? ' + rows.length + (rows.length === 1 ? ' detail and its recordings' : ' details and their recordings') + ' will be deleted from the cloud for good.')) return;
+    rows.reduce(function (p, r) { return p.then(function () { return SK.Cloud.purge(r); }); }, Promise.resolve())
+      .then(function () { lib.cloudRows = null; toast('The cloud recycle bin is empty.'); renderBin(); })
+      .catch(function (e) { fail(e, 'Could not empty the cloud bin: '); });
+  }
+
+  // The cloud recycle bin, listed under the local bin when this browser is signed in to the cloud.
+  function renderCloudBin(body) {
+    if (!SK.Cloud.ready()) return;
+    SK.Cloud.session().then(function (s) {
+      if (!s) return;
+      return SK.Cloud.trashed().then(function (rows) {
+        body.appendChild(el('h3', { text: 'Cloud recycle bin · ' + rows.length }));
+        if (!rows.length) { body.appendChild(el('p', { class: 'muted', text: 'The cloud bin is empty.' })); return; }
+        body.appendChild(el('div', { class: 'row bin-head' }, [
+          el('p', { class: 'muted', text: rows.length + (rows.length === 1 ? ' detail' : ' details') + ' in the cloud bin. Restore them, or delete them for good from the cloud.' }),
+          el('button', { class: 'btn danger', text: 'Empty cloud bin', on: { click: function () { emptyCloudBin(rows); } } })
+        ]));
+        rows.forEach(function (r) {
+          body.appendChild(el('article', { class: 'bin-row' }, [
+            el('b', { text: r.name }),
+            el('span', { class: 'muted', text: 'Deleted ' + dateOf(Date.parse(r.deleted_at)) + ' · ' + (r.items || []).length + ' elements' }),
+            el('div', { class: 'row' }, [
+              el('button', { class: 'btn', text: 'Restore', on: { click: function () {
+                SK.Cloud.restore(r.id).then(function () {
+                  toast('Restored "' + r.name + '" from the cloud bin.');
+                  lib.cloudRows = null;
+                  renderBin();
+                }).catch(function (e) { fail(e, 'Could not restore: '); });
+              } } }),
+              el('button', { class: 'btn danger', text: 'Delete for good', on: { click: function () {
+                if (window.confirm('Delete "' + r.name + '" from the cloud for good? Its recordings and scene pictures go too. This cannot be undone.')) purgeCloud(r).then(renderBin).catch(function (e) { fail(e, 'Could not delete: '); });
+              } } })
+            ])
+          ]));
+        });
+      });
+    }).catch(function (e) { fail(e, 'Could not read the cloud bin: '); });
   }
 
   // The same card as the local library; tapping it opens the detail here. Recordings has its own button.
@@ -2147,7 +2200,7 @@
     SK.whenImages(visible(d.items)).then(function () {
       if (pic.parentNode) pic.getContext('2d').drawImage(cardPicture(d.items, cardBounds(d.items, a), a, col), 0, 0);
     });
-    var del = el('button', { class: 'lib-del', text: '×', title: 'Delete from the cloud', 'aria-label': 'Delete ' + d.name + ' from the cloud', on: { click: function (e) {
+    var del = el('button', { class: 'lib-del', text: '×', title: 'Move to the cloud recycle bin', 'aria-label': 'Move ' + d.name + ' to the cloud recycle bin', on: { click: function (e) {
       e.stopPropagation();
       deleteFromCloud(d);
     } } });
@@ -2438,7 +2491,7 @@
       ['31 Oct', 'Reference grid on the sheet, on by default, screen only and never in exports: one true inch a square, shades of the background; every fifth line is major'],
       ['31 Oct', 'Reference grid follows the scale: a square is one printed inch and the major lines print at 5 in. x 5 in. at any scale'],
       ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
-      ['31 Oct', 'Cloud library: × on each card and in its info panel deletes the cloud copy for good, after a confirmation. The local copy stays'],
+      ['31 Oct', 'Cloud recycle bin: × on each cloud card moves it to the bin, where it can be restored or deleted for good. The local copy stays'],
       ['29 Oct', 'GIF button in a detail\'s info panel, for local and cloud details: an animated GIF of its recordings'],
       ['29 Oct', 'Library: hold a card to preview it; Rename in the info panel; clearer buttons'],
       ['29 Oct', 'Starts with a visible message if the sheet fails to load (for example a stale cached script)'],

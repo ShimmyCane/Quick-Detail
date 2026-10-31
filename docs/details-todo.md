@@ -75,6 +75,10 @@ Things to decide and review before the drafts are trusted. Nothing here is built
 - [ ] Code and listing references in notes are a risk. Require a listing or code section number for every fire, wind or frost claim before a draft leaves the tool.
 - [ ] Build a "what is this detail for" card (where it sits, what it must do) so the AI check has the context it needs.
 
+## Infrastructure (added)
+
+- [ ] Extend what a detail can hold in Supabase. Some hatch detail rows now carry 250 to 270 items, and a save has failed in the app for a large detail. Find the real limit (row size, payload, or the app's save path). Store large details as files, for example in Supabase Storage, with the row holding a pointer, so a detail can carry many more objects without a large row.
+
 ## Notes for review
 
 - Each drawing carries a "verify before use" note. Before a detail leaves this tool, check it against the listed assembly (UL, GA or manufacturer data) and the local code.

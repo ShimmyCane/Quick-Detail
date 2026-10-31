@@ -1,0 +1,171 @@
+{
+  "name": "Classic hatches, middle scale (AI draft)",
+  "scale": "3\"=1'-0\"",
+  "tags": [
+    "AI",
+    "draft",
+    "hatch",
+    "starting point"
+  ],
+  "ai_inferred": true,
+  "text_scale": 4,
+  "items": [
+    {
+      "kind": "note",
+      "text": "Classic hatches, middle scale only. AI draft: verify before use.",
+      "at": [
+        0,
+        -6
+      ],
+      "width": 120,
+      "tip": [
+        6.4,
+        -0.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "brick-classic",
+      "pts": [
+        [
+          0,
+          2
+        ],
+        [
+          12.8,
+          2
+        ],
+        [
+          12.8,
+          6.8
+        ],
+        [
+          0,
+          6.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "1  BRICK. Running bond, about four courses in the symbol, joints thin. Drawn as courses every 0.30 paper in and bricks 0.60 long. Joints are the same weight as courses; the sheet draws them slightly heavier.",
+      "at": [
+        18.8,
+        2.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        4.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "stone-classic",
+      "pts": [
+        [
+          0,
+          16
+        ],
+        [
+          12.8,
+          16
+        ],
+        [
+          12.8,
+          20.8
+        ],
+        [
+          0,
+          20.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "2  STONE. Irregular rounded stones, about seven in the symbol, with background between them. Drawn as seven-sided stones on a 0.45 grid. The sheet packs them tighter and draws heavier outlines.",
+      "at": [
+        18.8,
+        16.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        18.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "concrete-classic",
+      "pts": [
+        [
+          0,
+          30
+        ],
+        [
+          12.8,
+          30
+        ],
+        [
+          12.8,
+          34.8
+        ],
+        [
+          0,
+          34.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "3  CONCRETE. Fine dots with small open triangles, not in rows. Drawn as dots every 0.14 paper in, with a triangle in about 60 percent of cells. Triangles are a little larger on the sheet.",
+      "at": [
+        18.8,
+        30.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        32.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "steel-classic",
+      "pts": [
+        [
+          0,
+          44
+        ],
+        [
+          12.8,
+          44
+        ],
+        [
+          12.8,
+          48.8
+        ],
+        [
+          0,
+          48.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "4  STEEL. Diagonal lines rising to the right. Drawn as pairs at minus 45 degrees, the agreed two-line steel. The sheet shows single lines; confirm the pair.",
+      "at": [
+        18.8,
+        44.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        46.4
+      ]
+    }
+  ]
+}

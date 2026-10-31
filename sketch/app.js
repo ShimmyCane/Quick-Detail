@@ -2489,6 +2489,7 @@
       ['31 Oct', 'Element pop-up: Duplicate, and layer order (front, forward, back, send to back) for every drawable element'],
       ['31 Oct', 'Colour and line weight: one dot each; tap or drag along the row to choose; the choice is remembered'],
       ['31 Oct', 'Reference grid on the sheet, on by default, screen only and never in exports: one true inch a square, shades of the background; every fifth line is major'],
+      ['31 Oct', 'Left bar starts from the lower left corner, above the title block, and grows upwards'],
       ['31 Oct', 'Reference grid follows the scale: a square is one printed inch and the major lines print at 5 in. x 5 in. at any scale'],
       ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
       ['31 Oct', 'Cloud recycle bin: × on each cloud card moves it to the bin, where it can be restored or deleted for good. The local copy stays'],
@@ -3210,6 +3211,7 @@
 
   // Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the "+".
   // Each tool is put back where it was before every refit, so the bar always fills from the top.
+  var LEFT_BAR_TOP = 60, LEFT_BAR_BOTTOM = 124;   // px kept clear: the title block (about 97 px) and its 14 px margin (see style.css)
   var railMoved = [];      // { unit, slot } for each tool moved out
   var railOpen = false;    // whether the second column is open
   function railHome() {
@@ -3225,9 +3227,11 @@
     plus.setAttribute('aria-expanded', String(on));
     plus.classList.toggle('on', on);
     if (on) {
+      // The bar grows up from the lower left corner, so the second column lines up with its bottom edge.
       var r = $('lrail').getBoundingClientRect();
       more.style.left = Math.round(r.right + 10) + 'px';
-      more.style.top = Math.round(r.top) + 'px';
+      more.style.top = 'auto';
+      more.style.bottom = Math.round(window.innerHeight - r.bottom) + 'px';
     }
   }
   function fitLeftRail() {
@@ -3235,11 +3239,12 @@
     railHome();
     plusGroup.hidden = true;
     railTidy();
-    var limit = window.innerHeight - 96;   // keeps clear of the title block at the bottom of the sheet
-    if (rail.getBoundingClientRect().bottom > limit) {
+    // The bar sits between the top of the sheet and the title block at the bottom left, so that is the room it has.
+    var room = window.innerHeight - LEFT_BAR_BOTTOM - LEFT_BAR_TOP;
+    if (rail.getBoundingClientRect().height > room) {
       plusGroup.hidden = false;
       var units = Array.prototype.slice.call(rail.querySelectorAll('.tool, .picker'));
-      for (var i = units.length - 1; i >= 0 && rail.getBoundingClientRect().bottom > limit; i--) {
+      for (var i = units.length - 1; i >= 0 && rail.getBoundingClientRect().height > room; i--) {
         var unit = units[i], slot = document.createElement('span');
         slot.hidden = true;
         unit.parentNode.insertBefore(slot, unit);

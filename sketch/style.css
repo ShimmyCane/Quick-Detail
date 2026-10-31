@@ -805,3 +805,6 @@ body.collapsed #rail > button:not(#collapseBtn) { display: none; }
 /* A long press on a library card previews it, so the card must not start a text selection or the iOS callout. */
 .lib-card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .lib-card .tags-line, .lib-card b { -webkit-touch-callout: none; }
+
+/* ---------- the left bar starts from the lower left corner, above the title block, and grows upwards ---------- */
+.lrail { top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 110px); }

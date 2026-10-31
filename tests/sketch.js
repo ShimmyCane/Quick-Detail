@@ -143,5 +143,39 @@ check('grid follows the scale: a minor square is one printed inch, so five squar
 check('grid shades on 80% white: minor 70%, major 55%', SK.gridShades('#cccccc').minor === 'rgb(179,179,179)' && SK.gridShades('#cccccc').major === 'rgb(140,140,140)');
 check('grid shades stay a shade of a coloured background', SK.gridShades('#ccaa88').minor.indexOf('rgb(') === 0 && SK.gridShades('#000000').minor === 'rgb(26,26,26)');
 
+// Graphic scale bar: whole increments only, drawn at its true length for the zoom.
+check('scale bar at 24 px per inch is 6" at 144 px', (function () { var b = SK.scaleBarChoice(24, 110); return b.inches === 6 && b.label === '6"' && near(b.px, 144); })());
+check('scale bar at 10 px per inch is 12" at 120 px', (function () { var b = SK.scaleBarChoice(10, 110); return b.inches === 12 && b.label === '12"' && near(b.px, 120); })());
+check('scale bar at 1.2 px per inch is 8\' (96 in.) at 115 px', (function () { var b = SK.scaleBarChoice(1.2, 110); return b.inches === 96 && b.label === "8'" && near(b.px, 115.2); })());
+check('scale bar marks: 1", 12", 2\'', SK.formatScaleLabel(1) === '1"' && SK.formatScaleLabel(24) === "2'" && SK.formatScaleLabel(12) === '12"');
+check('scale bar at 200 px per inch stays at 1" (no fractions)', (function () { var b = SK.scaleBarChoice(200, 110); return b.inches === 1 && b.label === '1"'; })());
+check('scale bar labels are whole numbers at every zoom', (function () {
+  for (var z = 1; z <= 400; z += 0.7) {
+    var b = SK.scaleBarChoice(z, 110);
+    if (!b || !/^\d+("|')$/.test(b.label) || SK.SCALE_BAR_STEPS.indexOf(b.inches) < 0) return false;
+  }
+  return true;
+})());
+check('scale bar grows and shrinks with zoom while its label holds (the right edge moves)', (function () { var a = SK.scaleBarChoice(20, 110), b = SK.scaleBarChoice(22, 110); return a.inches === 6 && b.inches === 6 && b.px > a.px; })());
+check('scale bar refuses a zoom of zero', SK.scaleBarChoice(0, 110) === null);
+
+// Scale change: annotations keep their paper size. The note box and a dimension's offset follow the factor; anchors stay.
+(function () {
+  var fake = function (text, size) { return text.length * size * 0.6; };
+  var note = { kind: 'note', text: 'WOOD SILL FLASHING', at: [14, -4], width: 6, height: null, size: 3 / 32, leaders: [{ tip: [6, 0] }] };
+  var ac4 = { factor: 4, caps: false, roundTo: 1 / 16, measure: fake };
+  var ac8 = { factor: 8, caps: false, roundTo: 1 / 16, measure: fake };
+  var scaled = SK.rescaleAnnotations([note], 2)[0];
+  check('scale change doubles a note box when the factor doubles', near(scaled.width, 12) && near(scaled.at[0], 14) && near(scaled.leaders[0].tip[0], 6));
+  check('a note wraps to the same number of lines after the scale change', SK.noteLayout(note, ac4).prims.filter(function (p) { return p.k === 'text'; }).length === SK.noteLayout(scaled, ac8).prims.filter(function (p) { return p.k === 'text'; }).length);
+  var dim = { kind: 'dim', mode: 'ortho', orient: 'h', p1: [0, 0], p2: [12, 0], at: [6, 3] };
+  var dimScaled = SK.rescaleAnnotations([dim], 2)[0];
+  check('an ortho dimension offset doubles with the factor; its points stay', near(dimScaled.at[1], 6) && dimScaled.p1[0] === 0 && dimScaled.p2[0] === 12);
+  var al = { kind: 'dim', mode: 'aligned', p1: [0, 0], p2: [10, 10], at: [0, 10] };
+  var alScaled = SK.rescaleAnnotations([al], 3)[0];
+  check('an aligned dimension offset scales across its line: (0,10) at ratio 3 goes to (-10,20)', near(alScaled.at[0], -10, 1e-6) && near(alScaled.at[1], 20, 1e-6));
+  check('ratio 1 leaves items as they are', SK.rescaleAnnotations([note], 1)[0] === note);
+})();
+
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

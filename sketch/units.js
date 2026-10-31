@@ -55,6 +55,25 @@
     return sign + (feet ? feet + '\'-' + inText + '"' : inText + '"');
   };
 
+  // Graphic scale: whole increments only (1", 2", 3", 6", then feet). The bar's on-screen length is the real length
+  // it stands for at this zoom (zoom = screen pixels per sheet inch), so its right edge moves as you zoom.
+  SK.SCALE_BAR_STEPS = [1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536];   // inches: 1", 2", 3", 6", 12", then 2', 4', 8' …
+  // The bar's end label, with unit marks: inches as 12", feet as 8' (up to 12 inches in inches, then feet).
+  SK.formatScaleLabel = function (inches) {
+    if (inches <= 12) return inches + '"';
+    return (inches / 12) + "'";
+  };
+  SK.scaleBarChoice = function (zoom, targetPx) {
+    if (!(zoom > 0)) return null;
+    var best = null;
+    SK.SCALE_BAR_STEPS.forEach(function (inches) {
+      var px = inches * zoom;
+      var d = Math.abs(Math.log(px / targetPx));
+      if (!best || d < best.d) best = { inches: inches, px: px, d: d };
+    });
+    return { inches: best.inches, px: best.px, label: SK.formatScaleLabel(best.inches) };
+  };
+
   // Pen colours. 'ink' is black on light backgrounds and turns white on dark ones.
   SK.PENS = { yellow: '#e8b400', red: '#d1342b', blue: '#2456c7', green: '#1f8a4c' };
 

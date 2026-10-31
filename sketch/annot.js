@@ -91,6 +91,32 @@
     return out;
   }
 
+  // A scale change keeps annotations the same size on paper. Text, arrows, ticks and gaps already follow the factor;
+  // the note's box and a dimension's offset from its points are real inches, so they grow or shrink by ratio
+  // (new factor / old factor). Anchor points stay on the drawing.
+  SK.rescaleAnnotations = function (items, ratio) {
+    if (!ratio || ratio === 1) return items;
+    return items.map(function (it) {
+      var c = JSON.parse(JSON.stringify(it));
+      if (c.kind === 'note') {
+        c.width = c.width * ratio;
+        if (c.height != null) c.height = c.height * ratio;
+      } else if (c.kind === 'dim' && c.at) {
+        if (c.mode === 'angular' && c.vertex) {
+          c.at = add(c.vertex, mul(sub(c.at, c.vertex), ratio));
+        } else if (c.mode === 'ortho' && c.p1) {
+          if (c.orient === 'v') c.at = [c.p1[0] + (c.at[0] - c.p1[0]) * ratio, c.at[1]];
+          else if (c.orient === 'h') c.at = [c.at[0], c.p1[1] + (c.at[1] - c.p1[1]) * ratio];
+        } else if (c.mode === 'aligned' && c.p1 && c.p2) {
+          var L = unit(sub(c.p2, c.p1)), n = [-L[1], L[0]], d = sub(c.at, c.p1);
+          var along = d[0] * L[0] + d[1] * L[1], perp = d[0] * n[0] + d[1] * n[1];
+          c.at = add(c.p1, add(mul(L, along), mul(n, perp * ratio)));
+        }
+      }
+      return c;
+    });
+  };
+
   // Layout of a note: its box, its text lines and its leaders.
   // note: { id, kind: 'note', text, at: [x, y] top-left of the box, width, height (null = auto), size, justify, leaders: [{ id, tip, bends, arrow }] }
   SK.noteLayout = function (note, ac) {

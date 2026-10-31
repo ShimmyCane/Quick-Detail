@@ -121,11 +121,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
   touch-action: none;
 }
 .bar-wrap { display: inline-flex; align-items: center; gap: 6px; }
+/* Four equal blocks, alternating ink and paper: each block is a quarter of the labelled length. */
 .bar {
   display: inline-block;
-  height: 6px;
+  height: 8px;
   border: 1px solid var(--ink);
-  background: linear-gradient(90deg, var(--ink) 50%, transparent 50%);
+  background: repeating-linear-gradient(90deg, var(--ink) 0 25%, transparent 25% 50%);
 }
 .scale-big {
   position: fixed;
@@ -627,6 +628,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .libpage .snap figcaption { font-size: 12px; color: var(--qd-muted); }
 
 /* ---- left rail: pen colours, line weights, text and dimension tools ---- */
+/* Dimension type picker: icons, sized like the colour and weight dots. */
+.lrail #dimCur { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 0; border: 2px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.lrail #dimCur.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lrail #dimCur svg, .pick-row [data-dimmode] svg { width: 24px; height: 24px; display: block; }
+.pick-row [data-dimmode] { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--ink); }
+.pick-row [data-dimmode].on { background: var(--ink); color: var(--paper); }
+
 .lrail {
   position: fixed;
   left: max(12px, env(safe-area-inset-left));

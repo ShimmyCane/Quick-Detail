@@ -306,6 +306,11 @@
     } else if (op.type === 'meta') {
       op.after = detail[op.key];
       detail[op.key] = op.before;
+    } else if (op.type === 'scale') {
+      op.after = { scale: detail.scale, items: clone(detail.items) };
+      detail.scale = op.before.scale;
+      detail.items = clone(op.before.items);
+      logEvent({ type: 'replace', items: clone(detail.items) });
     }
     redos.push(op);
     changed();
@@ -329,6 +334,10 @@
       logEvent({ type: 'replace', items: clone(detail.items) });
     } else if (op.type === 'meta') {
       detail[op.key] = op.after;
+    } else if (op.type === 'scale') {
+      detail.scale = op.after.scale;
+      detail.items = clone(op.after.items);
+      logEvent({ type: 'replace', items: clone(detail.items) });
     }
     ops.push(op);
     changed();
@@ -571,25 +580,14 @@
     ctx.stroke();
   }
 
-  // A round real length for the scale bar: eighths of an inch under a foot, then whole feet.
-  function niceLength(inches) {
-    if (inches < 12) {
-      var step = inches < 1 ? 1 / 8 : inches < 3 ? 1 / 4 : 1 / 2;
-      return Math.max(step, Math.round(inches / step) * step);
-    }
-    var ft = inches / 12;
-    var fstep = ft < 10 ? 1 : ft < 40 ? 5 : 10;
-    return Math.max(12, Math.round(ft / fstep) * fstep * 12);
-  }
   function updateTitle() {
     if (!detail) return;
     $('titleName').textContent = detail.name || 'Untitled detail';
     $('scaleLabel').textContent = detail.scale === 'NTS' ? 'NOT TO SCALE' : 'SCALE: ' + SK.scaleOf(detail.scale).label;
-    // A graphic scale of fixed length. Its label is the real length it stands for at this zoom and scale, so the
-    // label changes from inches to feet as you zoom while the bar itself stays the same length.
-    var BAR_PX = 110;
-    $('scaleBar').style.width = BAR_PX + 'px';
-    $('barLabel').textContent = SK.formatLength(niceLength(BAR_PX / view.z), 1 / 8);
+    // Graphic scale: a whole-increment length (1", 2", 3", 6", 12", 2'…) drawn at its true length for this zoom,
+    // so the right edge moves as you zoom. The step is the one closest to 110 px.
+    var bar = SK.scaleBarChoice(view.z, 110);
+    if (bar) { $('scaleBar').style.width = bar.px.toFixed(1) + 'px'; $('barLabel').textContent = bar.label; }
   }
 
   // ===================================================================
@@ -952,6 +950,7 @@
       showHint('Tap or drag over what to delete. Undo brings it back.');
     }
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-act') === t); });
+    renderDimPicker();
   }
 
   function endDraft() {
@@ -959,6 +958,7 @@
     tool = 'draw';
     $('hint').hidden = true;
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.remove('on'); });
+    renderDimPicker();
     redraw();
   }
 
@@ -984,15 +984,7 @@
       ? ['Tap the corner (vertex).', 'Tap a point on the first side.', 'Tap a point on the second side.']
       : ['Tap the first point.', 'Tap the second point.'];
     var text = draft.placing ? 'Drag out the dimension line, then let go.' : labels[Math.min(draft.pts.length, need - 1)];
-    var modes = ['ortho', 'aligned', 'angular'].map(function (m) {
-      return el('button', { class: 'chip' + (draft.mode === m ? ' on' : ''), text: m[0].toUpperCase() + m.slice(1), on: { click: function () {
-        dimMode = m;
-        draft = { tool: 'dim', mode: m, pts: [] };
-        showDimHint();
-        redraw();
-      } } });
-    });
-    showHint(text, modes);
+    showHint(text);
   }
 
   function draftDown(w) {
@@ -1346,7 +1338,7 @@
       if (pb) return;
       box.setPointerCapture(e.pointerId);
       var i0 = SK.SCALES.indexOf(SK.scaleOf(detail.scale));
-      sdrag = { x0: e.clientX, i0: i0, i: i0, moved: false, before: detail.scale };
+      sdrag = { x0: e.clientX, i0: i0, i: i0, moved: false, before: { scale: detail.scale, items: clone(detail.items) } };
     });
     box.addEventListener('pointermove', function (e) {
       if (!sdrag) return;
@@ -1356,6 +1348,7 @@
       if (i !== sdrag.i) {
         sdrag.i = i;
         detail.scale = SK.SCALES[i].key;
+        detail.items = SK.rescaleAnnotations(sdrag.before.items, factorOf(detail) / factorOf(sdrag.before));
         $('scaleBig').textContent = SK.SCALES[i].label;
         $('scaleBig').hidden = false;
         redraw();
@@ -1367,9 +1360,10 @@
       sdrag = null;
       $('scaleBig').hidden = true;
       if (!d.moved) { openPanel('project'); return; }
-      if (detail.scale !== d.before) {
-        ops.push({ type: 'meta', key: 'scale', before: d.before });
+      if (detail.scale !== d.before.scale) {
+        ops.push({ type: 'scale', before: d.before, after: { scale: detail.scale, items: clone(detail.items) } });
         redos = [];
+        logEvent({ type: 'replace', items: clone(detail.items) });
         changed();
       }
     }
@@ -1377,11 +1371,16 @@
     box.addEventListener('pointercancel', up);
   })();
 
+  // Changing the scale keeps annotations the same size on paper (see SK.rescaleAnnotations). One undo step brings back the scale and the items.
   function setScale(key) {
     if (key === detail.scale) return;
-    ops.push({ type: 'meta', key: 'scale', before: detail.scale });
-    redos = [];
+    var before = { scale: detail.scale, items: clone(detail.items) };
+    var ratio = SK.scaleOf(key).factor / factorOf(detail);
     detail.scale = key;
+    detail.items = SK.rescaleAnnotations(detail.items, ratio);
+    ops.push({ type: 'scale', before: before, after: { scale: key, items: clone(detail.items) } });
+    redos = [];
+    logEvent({ type: 'replace', items: clone(detail.items) });
     changed();
   }
 
@@ -1393,9 +1392,8 @@
     if (panelKind === 'log') $('log').hidden = true;
     else $('panel').hidden = true;
     document.body.classList.remove('panel-open');   // the left bar comes back
-    if (pb && pb.playing) pausePlay();   // a replay keeps its place; the ▶ button brings its controls back
-    parkPlayer();
     panelKind = null;
+    if (pb) exitReplay(); else parkPlayer();   // closing the panel ends its replay, as Done does
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) {
       if (b.getAttribute('data-act') !== tool) b.classList.remove('on');
     });
@@ -1409,23 +1407,11 @@
   }
 
   // Playback in the right panel: the replay controls while a replay is open, otherwise the recordings' scenes to replay.
+  // Replay only: its controls go into the panel. Entered from the Log's Replay chip.
   function renderPlayback(body) {
-    if (pb) { $('player').hidden = false; body.appendChild($('player')); return; }
-    var any = false;
-    sessions.forEach(function (s) {
-      var scenes = scenesOf(s);
-      if (!scenes.length) return;
-      any = true;
-      var when = new Date(s.created);
-      body.appendChild(el('h3', { text: when.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' · ' + when.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) + ' · ' + SK.formatTime(s.duration) }));
-      body.appendChild(el('div', { class: 'pscene-list' }, scenes.map(function (m, i) {
-        return el('button', { class: 'pscene', on: { click: function () { openReplay(s, m.start); } } }, [
-          el('b', { text: (i + 1) + ' · ' + SK.formatTime(m.start) }),
-          el('span', { text: m.text ? SK.firstWords(m.text, 8) : '(no words)' })
-        ]);
-      })));
-    });
-    if (!any) body.appendChild(el('p', { class: 'muted', text: 'No scenes yet. Draw and talk; each scene is kept here.' }));
+    if (!pb) return;
+    $('player').hidden = false;
+    body.appendChild($('player'));
   }
 
   function openPanel(kind) {
@@ -2841,9 +2827,12 @@
     // Changes, newest first. Add a line here with each change a user would notice.
     var CHANGES = [
       ['31 Oct', 'v5: clean screen also hides the title card'],
-      ['31 Oct', 'Playback is in the right panel, after Info; the ▶ button opens it'],
+      ['31 Oct', 'Replay opens in the right panel from the Log; the ▶ rail button is archived'],
       ['31 Oct', 'Info: New at the top, the name is edited in place, JSON under its own fold'],
       ['31 Oct', 'Settings: shorter text; the version list links the archived v4'],
+      ['31 Oct', 'Dimension: a left-bar picker with icons for orthographic, aligned and angular; the mode chips left the hint bar'],
+      ['31 Oct', 'Scale change keeps note boxes and dimension offsets the same size on paper; one undo step'],
+      ['31 Oct', 'Graphic scale: whole increments only (1", 2", 3", 6", then feet); the bar is its true length at this zoom, so its right edge moves as you zoom'],
       ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
       ['31 Oct', 'Small screens: tools that do not fit on the left bar move to a second column behind a + button'],
       ['31 Oct', 'Left bar tools are centred on the bar\'s centre line'],
@@ -3249,7 +3238,7 @@
       ]));
     });
     document.body.classList.add('replaying');
-    openPanel('playback');   // the controls sit in the right panel, under Info
+    openPanel('playback');   // the controls sit in the right panel
     seekTo(T || 0);
   }
 
@@ -3578,6 +3567,36 @@
     if (b) { b.classList.toggle('on', settings.underlay); b.textContent = settings.underlay ? '◐' : '○'; }
   }
   renderPen();
+
+  // Dimension type: a picker like colour and weight. The dot shows the current type; the row holds the three.
+  var DIM_ICON = {
+    ortho: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4v16M21 4v16M3 12h18M3 12l3-2.5M3 12l3 2.5M21 12l-3-2.5M21 12l-3 2.5"/></svg>',
+    aligned: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20L20 4M2 15l7 7M22 9l-7-7"/><path d="M8.5 15.5l-1.5 1.5"/></svg>',
+    angular: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20H21M4 20L18 5"/><path d="M11 20a7 7 0 0 0-2.4-5.3"/></svg>'
+  };
+  var DIM_NAME = { ortho: 'Orthographic (horizontal or vertical)', aligned: 'Aligned (along the line)', angular: 'Angular (between two lines)' };
+  (function buildDimRow() {
+    var row = document.querySelector('#dimPicker .pick-row');
+    ['ortho', 'aligned', 'angular'].forEach(function (m) {
+      var b = el('button', { type: 'button', 'data-dimmode': m, title: DIM_NAME[m], 'aria-label': DIM_NAME[m] });
+      b.innerHTML = DIM_ICON[m];
+      row.appendChild(b);
+    });
+  })();
+  function renderDimPicker() {
+    var cur = $('dimCur');
+    cur.innerHTML = DIM_ICON[dimMode];
+    cur.setAttribute('data-dim', dimMode);
+    cur.classList.toggle('on', tool === 'dim');
+    document.querySelectorAll('#dimPicker [data-dimmode]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-dimmode') === dimMode); });
+  }
+  setupPicker('dimPicker', 'data-dimmode', function (m) {
+    dimMode = m;
+    if (tool === 'dim') { draft = { tool: 'dim', mode: m, pts: [] }; showDimHint(); redraw(); }
+    else setTool('dim');
+    renderDimPicker();
+  });
+  renderDimPicker();
 
   // Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the "+".
   // Each tool is put back where it was before every refit, so the bar always fills from the top.

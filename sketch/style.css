@@ -713,6 +713,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lrail .undo-item.hot { border-color: var(--ink); background: var(--chip); }
 .lrail .undo-item:disabled { opacity: 0.45; }
 
+/* Every group spans the full width of the bar, and its tools sit on the bar's centre line. Dividers run edge to edge. */
+.lrail .lgroup, .lrail .lgroup.undo-group, .lrail .lgroup.tools, .lrail .lgroup.picker, .lrail .rec-group { width: auto; align-self: stretch; }
+.lrail .lgroup, .lrail .lgroup.undo-group, .lrail .rec-group { align-items: center; justify-content: center; }
+
 /* Hidden must win over the bar's own display rules. */
 .lrail[hidden], .lrail button[hidden], .lgroup[hidden] { display: none; }
 

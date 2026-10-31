@@ -6,7 +6,7 @@
   <title>Wall Sketch</title>
   <!-- The ?v= on every local file keeps this page and its scripts a matched set when a browser or host caches files.
        Change it whenever any file in sketch/ changes. -->
-  <link rel="stylesheet" href="sketch/style.css?v=20261031h">
+  <link rel="stylesheet" href="sketch/style.css?v=20261031i">
   <script>
     // If the app fails to start (a stale cached script, say), say so at the bottom instead of leaving a blank sheet.
     window.addEventListener('error', function (e) {
@@ -130,16 +130,16 @@
 
   <section id="libPage" class="libpage" hidden aria-label="Library">
     <div class="libpage-head">
-      <div class="row">
-        <button class="link" id="libClose" aria-label="Back to the sheet">← Back</button>
+      <div class="row lib-title">
         <h2>Library</h2>
+        <button class="link" id="libClose" aria-label="Back to the sheet">← Back</button>
+      </div>
+      <div class="row">
         <div class="seg" id="libViews" role="group" aria-label="Where to look">
-          <button class="chip on" data-view="local">This browser</button>
+          <button class="chip on" data-view="local">Local</button>
           <button class="chip" data-view="cloud">Cloud</button>
         </div>
         <button class="chip" data-view="bin" id="libBin" title="Recycle bin">Recycle bin</button>
-      </div>
-      <div class="row">
         <input type="search" id="libSearch" class="lib-search" placeholder="Search" aria-label="Search the library">
         <div class="menu-wrap">
           <button class="chip icon" id="libSortBtn" aria-haspopup="true" aria-expanded="false" aria-label="Sort" title="Sort">⇅</button>
@@ -152,17 +152,17 @@
           </div>
         </div>
         <div class="menu-wrap">
-          <button class="chip icon" id="libMoreBtn" aria-haspopup="true" aria-expanded="false" aria-label="More" title="More: tags and card background">+</button>
+          <button class="chip icon" id="libMoreBtn" aria-haspopup="true" aria-expanded="false" aria-label="More" title="More: edit tags, filter by tag, card background">+</button>
           <div class="lib-menu lib-more" id="libMore" hidden>
+            <button class="btn" id="tagsOpen" title="Edit tags across the library">Edit tags</button>
+            <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
             <div class="seg" id="libBg" role="group" aria-label="Card background">
               <button class="chip" data-bg="sheet">As drawn</button>
               <button class="chip" data-bg="white">On white</button>
               <button class="chip" data-bg="mono">Black on white</button>
             </div>
-            <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
           </div>
         </div>
-        <button class="chip" id="tagsOpen" title="Edit tags across the library">Edit tags</button>
       </div>
       <select id="libSort" hidden aria-hidden="true"><option value="recent" selected>Last edited</option><option value="created">Created</option><option value="rating">Rating</option><option value="name">Name</option><option value="scenes">Most scenes</option></select>
     </div>
@@ -209,21 +209,21 @@
   <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
-  <script src="sketch/core.js?v=20261031h"></script>
-  <script src="sketch/units.js?v=20261031h"></script>
-  <script src="sketch/hatch.js?v=20261031h"></script>
-  <script src="sketch/annot.js?v=20261031h"></script>
-  <script src="sketch/blocks.js?v=20261031h"></script>
-  <script src="sketch/author.js?v=20261031h"></script>
-  <script src="sketch/parallel.js?v=20261031h"></script>
-  <script src="sketch/livefile.js?v=20261031h"></script>
-  <script src="sketch/paint.js?v=20261031h"></script>
-  <script src="sketch/store.js?v=20261031h"></script>
-  <script src="sketch/record.js?v=20261031h"></script>
-  <script src="sketch/gif.js?v=20261031h"></script>
+  <script src="sketch/core.js?v=20261031i"></script>
+  <script src="sketch/units.js?v=20261031i"></script>
+  <script src="sketch/hatch.js?v=20261031i"></script>
+  <script src="sketch/annot.js?v=20261031i"></script>
+  <script src="sketch/blocks.js?v=20261031i"></script>
+  <script src="sketch/author.js?v=20261031i"></script>
+  <script src="sketch/parallel.js?v=20261031i"></script>
+  <script src="sketch/livefile.js?v=20261031i"></script>
+  <script src="sketch/paint.js?v=20261031i"></script>
+  <script src="sketch/store.js?v=20261031i"></script>
+  <script src="sketch/record.js?v=20261031i"></script>
+  <script src="sketch/gif.js?v=20261031i"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="sketch/analyze.js?v=20261031h"></script>
-  <script src="sketch/cloud.js?v=20261031h"></script>
-  <script src="sketch/app.js?v=20261031h"></script>
+  <script src="sketch/analyze.js?v=20261031i"></script>
+  <script src="sketch/cloud.js?v=20261031i"></script>
+  <script src="sketch/app.js?v=20261031i"></script>
 </body>
 </html>

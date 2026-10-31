@@ -859,3 +859,28 @@ body.collapsed #rail > button:not(#collapseBtn) { display: none; }
 .tag-thumb canvas.tag-thumb-pic { width: 100%; height: auto; aspect-ratio: 220 / 140; border: 2px solid var(--qd-ink); border-radius: 8px; background: #fff; }
 .tag-thumb figcaption { margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 720px) { .tags-cols { grid-template-columns: 1fr; } }
+
+/* ---- library: two header rows, scrollable + menu, compact catalogue cards, card popup ---- */
+.lib-title { align-items: baseline; }
+.lib-more { max-width: min(92vw, 360px); }
+.lib-more #tagsOpen { width: 100%; justify-content: center; }
+.lib-more .lib-filters { max-height: 40vh; overflow-y: auto; margin: 0; flex-wrap: nowrap; flex-direction: column; align-items: stretch; }
+.lib-more .lib-filters .chip { text-align: left; }
+.lib-card .info-line { font-size: 12px; color: var(--qd-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.info-card { position: relative; width: min(92vw, 440px); }
+.info-card .pop-x {
+  position: absolute; top: 10px; right: 10px; z-index: 1;
+  width: 40px; height: 40px; border: var(--qd-line); border-radius: 10px;
+  background: var(--qd-panel); color: var(--qd-ink); font-size: 22px; line-height: 1;
+}
+.info-card .info-pic { width: 100%; height: auto; aspect-ratio: 220 / 140; border: 2px solid var(--qd-ink); border-radius: 10px; background: #fff; cursor: pointer; }
+.info-card .info-pic.playing { outline: 3px solid var(--qd-butter); }
+.info-card .info-title { display: block; margin-top: 10px; font-size: 18px; cursor: text; padding-right: 44px; overflow-wrap: anywhere; }
+.info-card .info-title:hover { text-decoration: underline dotted; }
+.info-card .info-name { width: 100%; font-size: 18px; font-weight: 700; margin-top: 10px; }
+.info-card .info-desc { margin: 4px 0 0; font-size: 14px; color: var(--qd-ink); }
+.info-card .tags-line { margin: 4px 0 0; font-size: 13px; }
+.info-card .info-facts { margin: 8px 0 0; gap: 2px; }
+.info-card .info-facts li { font-size: 12px; }
+.info-card .info-actions { margin-top: 12px; gap: 8px; }
+.info-card .info-actions .btn { min-height: 44px; padding: 0 12px; }

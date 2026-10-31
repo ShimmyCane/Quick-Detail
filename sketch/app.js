@@ -2020,55 +2020,50 @@
     } } });
   }
 
-  function libCard(d) {
-    var a = acFor(d);
-    var col = libColors();
+  // The catalogue card: the picture, the title, and one line that follows the sort (date, rating, tags or scene count).
+  // Holding it previews the scenes. Tapping it opens the detail's card. The × deletes it (to the bin).
+  function cardInfo(d) {
+    var sort = $('libSort').value;
     var sess = lib.sessions[d.id] || [];
-    var scenes = SK.scenesOf(sess);
-    var recorded = sess.reduce(function (n, s) { return n + (s.duration || 0); }, 0);
-    var tagged = d.items.filter(function (it) { return it.meta; }).length;
-    var users = SK.usersOf(d.id, allDetails).length;
+    if (sort === 'created') return 'Created ' + dateOf(d.created);
+    if (sort === 'rating') return starsText(ratingOf(d)) + ' ' + ratingOf(d) + '/5';
+    if (sort === 'name') return detailTags(d).join(' · ') || 'no tags yet';
+    if (sort === 'scenes' && lib.view !== 'cloud') { var n = SK.scenesOf(sess).length; return n + (n === 1 ? ' scene' : ' scenes'); }
+    return 'Edited ' + dateOf(d.modified);
+  }
+
+  function catalogueCard(d, fromCloud) {
+    var a = acFor(d), col = libColors();
     var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
     SK.whenImages(visible(d.items)).then(function () {   // an image may load after the card is drawn
       var again = cardPicture(d.items, cardBounds(d.items, a), a, col);
       if (!pic.parentNode || pic.parentNode.classList.contains('flipping')) return;
       pic.getContext('2d').drawImage(again, 0, 0);
     });
-    var last = scenes.length ? scenes[scenes.length - 1].text : '';
-    var del = el('button', { class: 'lib-del', text: '×', title: 'Delete from this browser', 'aria-label': 'Delete ' + d.name, on: { click: function (e) {
-      e.stopPropagation();
-      removeDetail(d);
-    } } });
+    var del = el('button', { class: 'lib-del', text: '×', title: fromCloud ? 'Move to the cloud recycle bin' : 'Delete from this browser',
+      'aria-label': (fromCloud ? 'Move ' + d.name + ' to the cloud recycle bin' : 'Delete ' + d.name), on: { click: function (e) {
+        e.stopPropagation();
+        if (fromCloud) deleteFromCloud(d); else removeDetail(d);
+      } } });
     var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
       del,
       pic,
       el('span', { class: 'flip-label' }),
       el('b', { text: d.name }),
-      el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.parentId ? ' · branch' : '') }),
-      el('span', { class: 'stars-line', text: starsText(ratingOf(d)), title: ratingOf(d) + ' of 5 stars' }),
-      el('span', { class: 'meta', text: scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' +
-        sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded) + ' · ' +
-        d.items.length + ' elements (' + tagged + ' tagged)' }),
-      el('span', { class: 'meta', text: editedLine(d) }),
-        users ? el('span', { class: 'meta', text: 'Used in ' + users + (users === 1 ? ' block' : ' blocks') }) : null,
-      tagsLine(detailTags(d)),
-      el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
+      el('span', { class: 'meta info-line', text: cardInfo(d) })
     ]);
-    // Hold a card to preview it: its scenes, or the drawing building up when there are no recordings.
-    bindFlip(card, pic, d);
-    // Tapping a card shows its summary. Editing is a separate button, so the detail is never opened by accident.
+    bindFlip(card, pic, d);   // hold to preview, as before
     card.addEventListener('click', function () {
-      if (Date.now() < card._quietUntil) return;
-      showDetailInfo(d);
+      if (Date.now() < card._quietUntil) return;   // the click that follows a hold must not open the card
+      showDetailInfo(d, fromCloud);
     });
-    card.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); card.click(); }
-    });
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); showDetailInfo(d, fromCloud); } });
     return card;
   }
+  function libCard(d) { return catalogueCard(d, false); }
+  function cloudCard(d) { return catalogueCard(d, true); }
 
-  // The summary a library card opens: picture, tags and facts, then three actions. Nothing here opens the editor by itself.
-  // A cloud detail becomes a local copy the first time it is duplicated or imported as a block, since both need it on this device.
+  // A cloud detail becomes a local copy the first time it is duplicated or inserted as a block, since both need it on this device.
   function localCopyOf(d) {
     return SK.DB.get('details', d.id).then(function (mine) {
       if (mine) return mine;
@@ -2077,70 +2072,142 @@
     });
   }
 
+  // The card a catalogue card opens. Picture (click to play the scenes as a GIF), title (click to rename),
+  // description (the last words recorded), compact info, and the actions. The × in the corner closes it.
   function showDetailInfo(d, fromCloud) {
     var a = acFor(d), col = libColors();
     var sess = lib.sessions[d.id] || [];
     var scenes = SK.scenesOf(sess);
     var recorded = sess.reduce(function (n, s) { return n + (s.duration || 0); }, 0);
     var users = SK.usersOf(d.id, allDetails).length;
-    var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
-    pic.className = 'info-pic';
-    var facts = [
-      scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' + sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded),
-      d.items.length + ' elements · ' + SK.scaleOf(d.scale).label,
-      'Last edited ' + dateOf(d.modified)
-    ];
-    if (d.created) facts.push('Created ' + dateOf(d.created));
-    if (users) facts.push('Used in ' + users + (users === 1 ? ' block' : ' blocks'));
-    if (isBlockDetail(d)) facts.push('A block: tick it in a detail\'s Blocks checklist to add it there.');
     var inHere = d.id === detail.id;
     var back = null;
-    function close() { if (back) back.remove(); }
-    // The × deletes, as on the card: from the cloud for a cloud detail, to the recycle bin for a local one.
-    var del = el('button', { class: 'lib-del', text: '×', title: fromCloud ? 'Move to the cloud recycle bin' : 'Delete from this browser',
-      'aria-label': 'Delete ' + d.name, on: { click: function () {
+    var gif = null;   // the GIF player for the picture, stopped when the card closes
+    function close() { if (gif) gif.stop(); if (back) back.remove(); }
+
+    var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
+    pic.className = 'info-pic';
+    pic.setAttribute('role', 'button');
+    pic.setAttribute('tabindex', '0');
+    pic.title = 'Click to play the scenes as a GIF';
+    gif = playerFor(pic, d, fromCloud);
+    pic.addEventListener('click', gif.toggle);
+    pic.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); gif.toggle(); } });
+
+    var title = el('b', { class: 'info-title', text: d.name, title: 'Click to rename', tabindex: '0' });
+    function beginRename() {
+      var input = el('input', { class: 'field info-name', value: d.name, 'aria-label': 'Name' });
+      title.replaceWith(input);
+      input.focus();
+      input.select();
+      var done = false;
+      function finish(save) {
+        if (done) return;
+        done = true;
+        var name = input.value.trim();
+        if (save && name && name !== d.name) { close(); renameDetail(d, name, fromCloud); return; }
+        input.replaceWith(title);
+      }
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') finish(true);
+        if (e.key === 'Escape') finish(false);
+      });
+      input.addEventListener('blur', function () { finish(true); });
+    }
+    title.addEventListener('click', beginRename);
+    title.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); beginRename(); } });
+
+    var last = scenes.length ? scenes[scenes.length - 1].text : '';
+    var facts = [];
+    if (!fromCloud) facts.push(scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' + sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded));
+    facts.push(d.items.length + ' elements · ' + SK.scaleOf(d.scale).label);
+    facts.push('Edited ' + dateOf(d.modified) + (d.created ? ' · Created ' + dateOf(d.created) : ''));
+    if (users) facts.push('Used in ' + users + (users === 1 ? ' block' : ' blocks'));
+    if (isBlockDetail(d)) facts.push('A block: tick it in a detail\'s Blocks checklist to add it there.');
+
+    function action(text, fn, title) { return el('button', { class: 'btn', text: text, title: title || text, on: { click: fn } }); }
+    var actions = [
+      action('Open', function () {
         close();
-        if (fromCloud) deleteFromCloud(d); else removeDetail(d);
-      } } });
+        if (fromCloud) { openCloudDetail(d); return; }
+        closeLibrary();
+        openDetail(d);
+      }),
+      action('Insert as block', function () {
+        if (inHere) { toast('This is the open detail. Open another one to insert it as a block.'); return; }
+        close();
+        closeLibrary();
+        (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(addBlock).catch(fail);
+      }),
+      action('Duplicate', function () {
+        close();
+        (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(duplicateDetail).catch(fail);
+      }),
+      action('PNG', function () { downloadPng(d); }, 'Download the drawing as a PNG'),
+      action('GIF', function () { downloadGif(d, fromCloud); }, 'Download a GIF of this detail\'s recordings')
+    ];
+    if (fromCloud) actions.push(action('Recordings', function () { close(); renderCloudDetail(d.cloud); }, 'See the recordings uploaded for this detail'));
+
+    back = el('div', { class: 'pop-back', on: { click: function (e) { if (e.target === back) close(); } } });
     var card = el('div', { class: 'pop-card info-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': d.name }, [
-      del,
+      el('button', { class: 'pop-x', text: '×', title: 'Close', 'aria-label': 'Close', on: { click: close } }),
       pic,
-      el('b', { text: d.name }),
+      title,
+      el('p', { class: 'said info-desc', text: last ? SK.firstWords(last, 24) : 'No words recorded yet.' }),
       el('p', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
       ratingRow(d, fromCloud),
       el('ul', { class: 'info-facts' }, facts.map(function (f) { return el('li', { class: 'muted', text: f }); })),
-      el('div', { class: 'row' }, [
-        el('button', { class: 'btn', text: 'Open', on: { click: function () {
-          close();
-          if (fromCloud) { openCloudDetail(d); return; }
-          closeLibrary();
-          openDetail(d);
-        } } }),
-        el('button', { class: 'btn', text: 'Insert as block', on: { click: function () {
-          if (inHere) { toast('This is the open detail. Open another one to insert it as a block.'); return; }
-          close();
-          closeLibrary();
-          (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(addBlock).catch(fail);
-        } } }),
-        el('button', { class: 'btn', text: 'Duplicate', on: { click: function () {
-          close();
-          (fromCloud ? localCopyOf(d) : Promise.resolve(d)).then(duplicateDetail).catch(fail);
-        } } }),
-        el('button', { class: 'btn', text: 'Rename', on: { click: function () {
-          var name = window.prompt('Rename', d.name);
-          if (name == null || !name.trim()) return;
-          close();
-          renameDetail(d, name.trim(), fromCloud);
-        } } }),
-        el('button', { class: 'btn', text: 'GIF', title: 'Download a GIF of this detail\'s recordings', on: { click: function () {
-          downloadGif(d, fromCloud);   // the card stays open, so a second GIF can be made
-        } } }),
-        el('button', { class: 'btn', text: 'Close', on: { click: close } })
-      ])
+      el('div', { class: 'row info-actions' }, actions)
     ]);
-    back = el('div', { class: 'pop-back', on: { click: function (e) { if (e.target === back) close(); } } }, [card]);
+    back.appendChild(card);
     document.body.appendChild(back);
-    card.querySelector('.btn').focus();
+    card.querySelector('.info-actions .btn').focus();
+  }
+
+  // Plays a detail's scenes in the picture, one after another, and stops. Returns { toggle, stop }.
+  function playerFor(pic, d, fromCloud) {
+    var still = document.createElement('canvas');
+    still.width = pic.width;
+    still.height = pic.height;
+    still.getContext('2d').drawImage(pic, 0, 0);
+    var timer = 0, frames = null, i = 0, loading = false;
+    function draw(k) {
+      var g = pic.getContext('2d');
+      g.clearRect(0, 0, pic.width, pic.height);
+      g.drawImage(frames[k].canvas, 0, 0, pic.width, pic.height);
+    }
+    function stop() {
+      clearInterval(timer);
+      timer = 0;
+      pic.classList.remove('playing');
+      var g = pic.getContext('2d');
+      g.clearRect(0, 0, pic.width, pic.height);
+      g.drawImage(still, 0, 0);
+    }
+    function toggle() {
+      if (timer) { stop(); return; }
+      if (loading) return;
+      loading = true;
+      (fromCloud ? cloudFrames(d) : framesFor(d)).then(function (fr) {
+        loading = false;
+        if (!fr.length) { toast('Nothing to play yet. Record a scene, or draw a few lines.'); return; }
+        frames = fr;
+        i = 0;
+        draw(0);
+        pic.classList.add('playing');
+        timer = setInterval(function () { i = (i + 1) % frames.length; draw(i); }, 300);
+      }).catch(function (e) { loading = false; fail(e, 'Could not play: '); });
+    }
+    return { toggle: toggle, stop: stop };
+  }
+
+  // The drawing as a PNG, at a size that reads on a screen.
+  function downloadPng(d) {
+    var a = acFor(d), col = libColors();
+    SK.whenImages(visible(d.items)).then(function () {
+      var c = SK.picture(visible(SK.printable(d.items)), cardBounds(d.items, a), 1200, 800, { ac: a, ink: col.ink, paper: col.paper, mono: col.mono, print: true });
+      c.toBlob(function (blob) { download(blob, slug(d.name) + '.png'); }, 'image/png');
+    }).catch(function (e) { fail(e, 'Could not make the PNG: '); });
   }
 
   // Rename a detail from the library. A cloud card renames the cloud copy, and the local copy too when this device has one.
@@ -2483,41 +2550,6 @@
     }).catch(function (e) { fail(e, 'Could not read the cloud bin: '); });
   }
 
-  // The same card as the local library; tapping it opens the detail here. Recordings has its own button.
-  function cloudCard(d) {
-    var a = acFor(d);
-    var col = libColors();
-    var pic = cardPicture(d.items, cardBounds(d.items, a), a, col);
-    SK.whenImages(visible(d.items)).then(function () {
-      if (pic.parentNode) pic.getContext('2d').drawImage(cardPicture(d.items, cardBounds(d.items, a), a, col), 0, 0);
-    });
-    var del = el('button', { class: 'lib-del', text: '×', title: 'Move to the cloud recycle bin', 'aria-label': 'Move ' + d.name + ' to the cloud recycle bin', on: { click: function (e) {
-      e.stopPropagation();
-      deleteFromCloud(d);
-    } } });
-    var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
-      del,
-      pic,
-      el('span', { class: 'flip-label' }),
-      el('b', { text: d.name }),
-      el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.cloud.parent_id ? ' · branch' : '') }),
-      el('span', { class: 'stars-line', text: starsText(ratingOf(d)), title: ratingOf(d) + ' of 5 stars' }),
-      el('span', { class: 'meta', text: d.items.length + ' elements' }),
-      el('span', { class: 'meta', text: editedLine(d) }),
-      tagsLine(d.tags || []),
-      el('div', { class: 'row' }, [
-        el('button', { class: 'btn small', text: 'Recordings', on: { click: function (e) { e.stopPropagation(); renderCloudDetail(d.cloud); } } })
-      ])
-    ]);
-    bindFlip(card, pic, d);   // hold to preview, as on a local card
-    card.addEventListener('click', function () {
-      if (Date.now() < card._quietUntil) return;   // the click that follows a hold must not open the summary
-      showDetailInfo(d, true);
-    });
-    card.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); showDetailInfo(d, true); } });
-    return card;
-  }
-
   // Open a cloud detail on this device. A copy already here is kept unless the cloud one is newer and you agree.
   function openCloudDetail(d) {
     SK.DB.get('details', d.id).then(function (mine) {
@@ -2786,6 +2818,8 @@
       ['31 Oct', 'Graphic scale bar keeps a fixed length; its label changes from inches to feet as you zoom'],
       ['31 Oct', 'Reference grid follows the scale: a square is one printed inch and the major lines print at 5 in. x 5 in. at any scale'],
       ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
+      ['31 Oct', 'Library cards: a compact catalogue (picture, title, one line that follows the sort). Tap a card for its info: click the picture to play the GIF, click the title to rename, × closes, and Open, Insert as block, Duplicate, PNG and GIF'],
+      ['31 Oct', 'Library header: Library and Back on the first row; Local, Cloud, Recycle bin, search, sort and + on the second. Edit tags is at the top of +, above a scrollable tag list'],
       ['31 Oct', 'Edit tags page: tags as panels with thumbnails; delete and replace a tag with a confirm; element tags as their own list; undo lasts for the page'],
       ['31 Oct', 'Ratings: 0 to 5 stars on each detail, new details start at 1, and the library sorts by rating'],
       ['31 Oct', 'Library header: sort (⇅) and + menus, recycle bin and Edit tags buttons; tags are back under + and element tags are no longer tags'],

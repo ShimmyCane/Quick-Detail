@@ -2429,6 +2429,13 @@
 
     // Changes made in v4, newest first. Add a line here with each change a user would notice.
     var CHANGES = [
+      ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
+      ['31 Oct', 'Small screens: tools that do not fit on the left bar move to a second column behind a + button'],
+      ['31 Oct', 'Left bar tools are centred on the bar\'s centre line'],
+      ['31 Oct', 'Undo: hold it to open Redo on the right, drag onto it and let go; Ctrl+Shift+Z and Ctrl+Y also redo'],
+      ['31 Oct', 'Element pop-up: Duplicate, and layer order (front, forward, back, send to back) for every drawable element'],
+      ['31 Oct', 'Colour and line weight: one dot each; tap or drag along the row to choose; the choice is remembered'],
+      ['31 Oct', 'Reference grid on the sheet, on by default, screen only and never in exports: one true inch a square, shades of the background; every fifth line is major'],
       ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
       ['31 Oct', 'Cloud library: × on each card and in its info panel deletes the cloud copy for good, after a confirmation. The local copy stays'],
       ['29 Oct', 'GIF button in a detail\'s info panel, for local and cloud details: an animated GIF of its recordings'],
@@ -3337,6 +3344,8 @@
   Promise.all([SK.DB.get('kv', 'settings'), SK.DB.get('kv', 'customTags'), SK.DB.get('kv', 'currentDetail'), SK.DB.all('details')])
     .then(function (r) {
       if (r[0]) settings = Object.assign(settings, r[0]);
+      // The grid is on by default now. Settings saved before that carry grid: false, so switch it on once.
+      if (!settings.gridOn2) { settings.grid = true; settings.gridOn2 = true; saveSettings(); }
       renderUnderlay();
       if (r[1]) customTags = r[1];
       window.__started = true;   // the page's startup-failure message stays hidden once the app is running

@@ -1,0 +1,101 @@
+/* Quick Detail styles — Over the sheet: the title block and graphic scale, the recording dot, the hint bar and the chips bar.
+   Part of the stylesheet split across sketch/css/*.css. The files load in order (see index.html), as one stylesheet would. */
+
+/* ---- detail title, lower left ---- */
+.title-block {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  max-width: calc(100% - 110px);
+}
+.tb-name {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tb-scale {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 0 2px;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.bar-wrap { display: inline-flex; align-items: center; gap: 6px; }
+/* Four equal blocks, alternating ink and paper: each block is a quarter of the labelled length. */
+.bar {
+  display: inline-block;
+  height: 8px;
+  border: 1px solid var(--ink);
+  background: repeating-linear-gradient(90deg, var(--ink) 0 25%, transparent 25% 50%);
+}
+.scale-big {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  font-weight: 700;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 22px;
+  pointer-events: none;
+}
+
+/* ---- recording indicator ---- */
+.rec-dot {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  top: max(14px, env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  pointer-events: none;
+  font-size: 13px;
+}
+.rec-dot span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: .25; } }
+
+/* ---- hint and chips, top centre ---- */
+.hint, .chips {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+}
+.hint { top: max(12px, env(safe-area-inset-top)); }
+.hint-extra { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.chips { top: max(12px, env(safe-area-inset-top)); }
+.hint:not([hidden]) ~ .chips { top: 76px; }

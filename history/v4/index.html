@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Wall Sketch</title>
+  <!-- The ?v= on every local file keeps this page and its scripts a matched set when a browser or host caches files.
+       Change it whenever any file in sketch/ changes. -->
+  <link rel="stylesheet" href="sketch/style.css?v=20261031h">
+  <script>
+    // If the app fails to start (a stale cached script, say), say so at the bottom instead of leaving a blank sheet.
+    window.addEventListener('error', function (e) {
+      if (window.__started || document.getElementById('bootError')) return;
+      var bar = document.createElement('div');
+      bar.id = 'bootError';
+      bar.setAttribute('role', 'alert');
+      bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#fff;color:#1d1d1f;border:2px solid #1d1d1f;border-radius:12px;padding:12px 14px;font:15px/1.4 system-ui,sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap';
+      var msg = document.createElement('span');
+      msg.textContent = 'The sheet did not start (' + (e.message || 'unknown error') + '). Reload to try again. Your saved details are not affected.';
+      var btn = document.createElement('button');
+      btn.textContent = 'Reload';
+      btn.style.cssText = 'min-height:48px;padding:0 18px;border:2px solid #1d1d1f;border-radius:10px;background:#f1efe9;font:inherit;cursor:pointer';
+      btn.onclick = function () { location.reload(); };
+      bar.appendChild(msg);
+      bar.appendChild(btn);
+      document.body.appendChild(bar);
+    });
+  </script>
+</head>
+<body>
+
+  <!-- The sheet: endless, in real inches. -->
+  <canvas id="sheet" aria-label="Drawing sheet"></canvas>
+
+  <!-- Detail title, lower left: tap the name for project info, drag across the scale to change it. -->
+  <div class="title-block" id="title">
+    <button class="tb-name" id="titleName">Untitled detail</button>
+    <div class="tb-scale" id="titleScale" title="Drag sideways to change the scale">
+      <span id="scaleLabel"></span>
+      <span class="bar-wrap"><span class="bar" id="scaleBar"></span><span id="barLabel"></span></span>
+    </div>
+  </div>
+  <div class="scale-big" id="scaleBig" hidden></div>
+
+  <!-- Shown only while a recording runs. Not a control. -->
+  <div id="recDot" class="rec-dot" hidden><span></span><time id="recTime">00:00</time></div>
+
+  <!-- Step hints for the text and dimension tools. -->
+  <div id="hint" class="hint" hidden>
+    <span id="hintText"></span>
+    <span id="hintExtra" class="hint-extra"></span>
+    <button class="chip" id="hintCancel">Cancel</button>
+  </div>
+
+  <!-- Options for the selected note or dimension. -->
+  <div id="chips" class="chips" hidden></div>
+
+  <!-- Left: one long bar, top to bottom: scenes and mic, undo, erase, zoom extents, select, line weight, colour, dimension, text, hatch, image, underlays.
+       The line weight and colour each show one dot. Tap it to open the row, or press, drag along the row and let go on a choice. -->
+  <nav class="lrail" id="lrail" aria-label="Pen and annotation tools">
+    <!-- Recording: the scene button and the microphone. The mic starts muted, so nothing is captured until it is unmuted. -->
+    <div class="lgroup rec-group" aria-label="Recording">
+      <button id="micBtn" class="mic" aria-pressed="false" title="Microphone muted: recordings have no sound. Tap to unmute." aria-label="Microphone muted">🔇</button>
+      <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
+    </div>
+    <!-- Undo: a tap undoes. Hold to open Redo on the right, then drag onto it and let go. -->
+    <div class="lgroup undo-group" aria-label="Undo">
+      <button id="undoCorner" class="undo" title="Undo (Ctrl+Z). Hold for Redo (Ctrl+Shift+Z)" aria-label="Undo. Hold for Redo">↶</button>
+      <div id="undoMenu" class="undo-menu" role="menu" hidden>
+        <button type="button" id="redoItem" class="undo-item" role="menuitem">Redo</button>
+      </div>
+    </div>
+    <div class="lgroup tools" aria-label="View and select">
+      <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
+      <button data-act="extents" id="extentsBtn" class="tool" title="Zoom extents: fit everything on the sheet" aria-label="Zoom to fit everything">⊡</button>
+      <button data-act="select" class="tool" title="Select: pick, move, scale and rotate. Drag empty space to pan (V)" aria-label="Select and move">↖</button>
+    </div>
+    <div class="lgroup picker" id="weightPicker" aria-label="Line weight">
+      <button type="button" id="weightCur" class="pick-cur" data-w="w2" aria-expanded="false" title="Line weight. Tap or drag to choose" aria-label="Line weight"><i></i></button>
+      <div class="pick-row" hidden>
+        <button data-weight="w1" title="Extra fine" aria-label="Extra fine line"><i></i></button>
+        <button data-weight="w2" title="Fine" aria-label="Fine line"><i></i></button>
+        <button data-weight="w3" title="Medium" aria-label="Medium line"><i></i></button>
+        <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
+      </div>
+    </div>
+    <div class="lgroup picker" id="colorPicker" aria-label="Pen colour">
+      <button type="button" id="colorCur" class="pick-cur pen-ink" aria-expanded="false" title="Pen colour. Tap or drag to choose" aria-label="Pen colour"></button>
+      <div class="pick-row" hidden>
+        <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
+        <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
+        <button data-color="blue" class="pen-blue" title="Blue" aria-label="Blue pen"></button>
+        <button data-color="yellow" class="pen-yellow" title="Yellow" aria-label="Yellow pen"></button>
+        <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
+      </div>
+    </div>
+    <div class="lgroup tools" aria-label="Annotation tools">
+      <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
+      <button data-act="text" class="tool" title="Text with arrow (T)" aria-label="Text">T</button>
+      <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
+      <button data-act="image" class="tool" title="Add an image (no-print layer)" aria-label="Add image">▣</button>
+      <button data-act="underlay" class="tool on" title="Show or hide underlays, the no-print images (U)" aria-label="Show or hide underlays">◐</button>
+      <input type="file" id="imageFile" accept="image/*" hidden>
+    </div>
+    <!-- Small screens: tools that do not fit on the bar move to the second column, opened by this button. -->
+    <div class="lgroup more-group" id="lrailMoreGroup" hidden>
+      <button type="button" id="lrailPlus" class="more-btn" aria-expanded="false" aria-controls="lrailMore" title="More tools" aria-label="More tools">+</button>
+    </div>
+  </nav>
+  <nav class="lrail lrail-more" id="lrailMore" aria-label="More tools" hidden>
+    <div class="lgroup tools" id="lrailMoreBody"></div>
+  </nav>
+
+  <!-- Lower right: the panels. The collapse button hides both toolbars, for more room on a phone or tablet. -->
+  <nav class="rail" id="rail" aria-label="Tools">
+    <button id="collapseBtn" class="collapse" title="Hide the toolbars (more room). Tap again to show them." aria-label="Hide the toolbars" aria-pressed="false">⤢</button>
+    <button data-act="settings" title="Settings" aria-label="Settings">⚙</button>
+    <button data-act="project" title="Project info" aria-label="Project info">ⓘ</button>
+    <button data-act="library" title="Library" aria-label="Library">▦</button>
+    <button data-act="log" title="Log" aria-label="Log">☰</button>
+  </nav>
+
+  <aside id="panel" class="panel" hidden>
+    <div class="panel-head">
+      <h2 id="panelTitle"></h2>
+      <button class="link" id="panelClose">Close</button>
+    </div>
+    <div id="panelBody"></div>
+  </aside>
+
+  <section id="libPage" class="libpage" hidden aria-label="Library">
+    <div class="libpage-head">
+      <div class="row">
+        <button class="link" id="libClose" aria-label="Back to the sheet">← Back</button>
+        <h2>Library</h2>
+        <div class="seg" id="libViews" role="group" aria-label="Where to look">
+          <button class="chip on" data-view="local">This browser</button>
+          <button class="chip" data-view="cloud">Cloud</button>
+        </div>
+        <button class="chip" data-view="bin" id="libBin" title="Recycle bin">Recycle bin</button>
+      </div>
+      <div class="row">
+        <input type="search" id="libSearch" class="lib-search" placeholder="Search" aria-label="Search the library">
+        <div class="menu-wrap">
+          <button class="chip icon" id="libSortBtn" aria-haspopup="true" aria-expanded="false" aria-label="Sort" title="Sort">⇅</button>
+          <div class="lib-menu" id="libSortMenu" role="menu" hidden>
+            <button role="menuitemradio" data-sort="recent">Last edited</button>
+            <button role="menuitemradio" data-sort="created">Created</button>
+            <button role="menuitemradio" data-sort="rating">Rating</button>
+            <button role="menuitemradio" data-sort="name">Name</button>
+            <button role="menuitemradio" data-sort="scenes">Most scenes</button>
+          </div>
+        </div>
+        <div class="menu-wrap">
+          <button class="chip icon" id="libMoreBtn" aria-haspopup="true" aria-expanded="false" aria-label="More" title="More: tags and card background">+</button>
+          <div class="lib-menu lib-more" id="libMore" hidden>
+            <div class="seg" id="libBg" role="group" aria-label="Card background">
+              <button class="chip" data-bg="sheet">As drawn</button>
+              <button class="chip" data-bg="white">On white</button>
+              <button class="chip" data-bg="mono">Black on white</button>
+            </div>
+            <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
+          </div>
+        </div>
+        <button class="chip" id="tagsOpen" title="Edit tags across the library">Edit tags</button>
+      </div>
+      <select id="libSort" hidden aria-hidden="true"><option value="recent" selected>Last edited</option><option value="created">Created</option><option value="rating">Rating</option><option value="name">Name</option><option value="scenes">Most scenes</option></select>
+    </div>
+    <div id="libBody" class="libbody"></div>
+  </section>
+
+  <section id="tagsPage" class="libpage tagspage" hidden aria-label="Edit tags">
+    <div class="libpage-head">
+      <div class="row">
+        <button class="link" id="tagsClose" aria-label="Back to the library">← Library</button>
+        <h2>Edit tags</h2>
+        <span class="muted" id="tagsSource"></span>
+      </div>
+      <div class="row">
+        <button class="chip" id="tagsUndo" disabled>Undo</button>
+      </div>
+    </div>
+    <p class="muted tags-help">Tags sort the files. Deleting or replacing a tag never deletes a detail. Undo lasts until this page closes.</p>
+    <div class="tags-cols">
+      <div class="tags-list" id="tagsList" aria-label="Tags"></div>
+      <div class="tags-panel" id="tagsPanel" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="log" class="log" hidden aria-label="Log">
+    <div class="log-head">
+      <h2 id="logTitle">Log</h2>
+      <button class="link" id="logClose">Close</button>
+    </div>
+    <div id="logStrip" class="strip"></div>
+  </section>
+
+  <section id="player" class="player" hidden aria-label="Replay">
+    <div class="player-bar">
+      <button class="btn" id="playBtn" aria-label="Play or pause">▶</button>
+      <input id="scrub" type="range" min="0" max="0" value="0" aria-label="Position">
+      <span id="clock" class="clock">00:00</span>
+      <button class="link" id="exitBtn">Done</button>
+    </div>
+    <div id="playerScenes" class="pscenes"></div>
+  </section>
+
+  <textarea id="editor" class="editor" hidden spellcheck="true" aria-label="Note text"></textarea>
+  <div id="flash" class="flash" hidden></div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="sketch/core.js?v=20261031h"></script>
+  <script src="sketch/units.js?v=20261031h"></script>
+  <script src="sketch/hatch.js?v=20261031h"></script>
+  <script src="sketch/annot.js?v=20261031h"></script>
+  <script src="sketch/blocks.js?v=20261031h"></script>
+  <script src="sketch/author.js?v=20261031h"></script>
+  <script src="sketch/parallel.js?v=20261031h"></script>
+  <script src="sketch/livefile.js?v=20261031h"></script>
+  <script src="sketch/paint.js?v=20261031h"></script>
+  <script src="sketch/store.js?v=20261031h"></script>
+  <script src="sketch/record.js?v=20261031h"></script>
+  <script src="sketch/gif.js?v=20261031h"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="sketch/analyze.js?v=20261031h"></script>
+  <script src="sketch/cloud.js?v=20261031h"></script>
+  <script src="sketch/app.js?v=20261031h"></script>
+</body>
+</html>

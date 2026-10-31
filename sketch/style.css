@@ -779,7 +779,30 @@ body.collapsed #lrailMore { display: none; }
 /* ---------- collapse: hides both toolbars; the collapse button stays in the lower-right rail ---------- */
 body.collapsed #lrail { display: none; }
 body.collapsed #rail > button:not(#collapseBtn) { display: none; }
+body.collapsed .title-block { display: none; }   /* the title card and its scale go too */
 #rail .collapse { font-size: 18px; }
+
+/* ---------- info panel: the name is edited in place, the heading is the name ---------- */
+.name-field { width: 100%; box-sizing: border-box; font: 700 18px/1.3 system-ui, sans-serif; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 4px 0; margin: 6px 0 0; }
+.name-field:focus { outline: none; border-bottom-color: var(--ink); }
+.panel details { margin-top: 22px; }
+.panel summary { cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 4px 0; }
+.panel details > *:not(summary) { margin-top: 8px; }
+
+/* ---------- playback: lives in the right panel, under Info ---------- */
+.panel .player { position: static; background: none; border: 0; padding: 0; z-index: auto; }
+.panel .player-bar { padding: 0 0 10px; }
+.panel .pscenes { flex-direction: column; overflow: visible; padding: 0; }
+.panel .pscene { max-width: none; }
+.panel .pscene span { white-space: normal; }
+.panel .pscene-list { display: flex; flex-direction: column; gap: 8px; }
+.panel .pscene-list .pscene { flex: none; }
+.panel .clock { white-space: nowrap; min-width: 0; }
+
+/* ---------- narrow screens: a side panel covers the left bar, so the bar steps aside while it is open ---------- */
+@media (max-width: 560px) {
+  body.panel-open #lrail, body.panel-open #lrailMore { display: none; }
+}
 
 /* ---------- recycle bin ---------- */
 .bin-head { justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }

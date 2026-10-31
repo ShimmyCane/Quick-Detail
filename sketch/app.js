@@ -1392,10 +1392,39 @@
   function closePanel() {
     if (panelKind === 'log') $('log').hidden = true;
     else $('panel').hidden = true;
+    if (pb && pb.playing) pausePlay();   // a replay keeps its place; the ▶ button brings its controls back
+    parkPlayer();
     panelKind = null;
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) {
       if (b.getAttribute('data-act') !== tool) b.classList.remove('on');
     });
+  }
+
+  // The replay controls live in the right panel. Off the panel they wait on the body, hidden, so the panel can be redrawn.
+  function parkPlayer() {
+    var pl = $('player');
+    if (pl.parentNode !== document.body) document.body.appendChild(pl);
+    pl.hidden = true;
+  }
+
+  // Playback in the right panel: the replay controls while a replay is open, otherwise the recordings' scenes to replay.
+  function renderPlayback(body) {
+    if (pb) { $('player').hidden = false; body.appendChild($('player')); return; }
+    var any = false;
+    sessions.forEach(function (s) {
+      var scenes = scenesOf(s);
+      if (!scenes.length) return;
+      any = true;
+      var when = new Date(s.created);
+      body.appendChild(el('h3', { text: when.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' · ' + when.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) + ' · ' + SK.formatTime(s.duration) }));
+      body.appendChild(el('div', { class: 'pscene-list' }, scenes.map(function (m, i) {
+        return el('button', { class: 'pscene', on: { click: function () { openReplay(s, m.start); } } }, [
+          el('b', { text: (i + 1) + ' · ' + SK.formatTime(m.start) }),
+          el('span', { text: m.text ? SK.firstWords(m.text, 8) : '(no words)' })
+        ]);
+      })));
+    });
+    if (!any) body.appendChild(el('p', { class: 'muted', text: 'No scenes yet. Draw and talk; each scene is kept here.' }));
   }
 
   function openPanel(kind) {
@@ -1406,11 +1435,12 @@
     var btn = document.querySelector('.rail [data-act="' + kind + '"]');
     if (btn) btn.classList.add('on');
     if (kind === 'log') { $('log').hidden = false; renderLog(); return; }
-    $('panelTitle').textContent = { project: 'Project info', settings: 'Settings' }[kind];
+    $('panelTitle').textContent = { project: 'Info', playback: 'Playback', settings: 'Settings' }[kind];
     var body = $('panelBody');
     body.innerHTML = '';
     $('panel').hidden = false;
     if (kind === 'project') renderProject(body);
+    else if (kind === 'playback') renderPlayback(body);
     else renderSettings(body);
   }
 
@@ -1480,7 +1510,7 @@
   // Paste a drawing as JSON and make it a new detail. Errors say which item is wrong.
   function drawBox() {
     var box = el('textarea', { class: 'field json-box', rows: '6', placeholder: '{ "name": "...", "items": [ ... ] }', 'aria-label': 'Drawing as JSON' });
-    var err = el('p', { class: 'muted', text: 'Paste a drawing description. Its positions are real inches, y down.' });
+    var err = el('p', { class: 'muted', text: 'Positions in inches, y down.' });
     return el('div', {}, [box, err, el('div', { class: 'row' }, [
       el('button', { class: 'btn', text: 'Create detail', on: { click: function () {
         if (!box.value.trim()) { err.textContent = 'Paste a JSON drawing first.'; return; }
@@ -1525,7 +1555,7 @@
   }
 
   function renderProject(body) {
-    var name = el('input', { type: 'text', value: detail.name, 'aria-label': 'Detail name', class: 'field', on: { input: function (e) {
+    var name = el('input', { type: 'text', value: detail.name, 'aria-label': 'Detail name', class: 'name-field', on: { input: function (e) {
       detail.name = e.target.value;
       detail.modified = Date.now();
       saveSoon();
@@ -1549,7 +1579,7 @@
           drawTags();
         } } }));
       });
-      var add = el('input', { type: 'text', placeholder: '+ custom tag', class: 'tag-input', 'aria-label': 'Add a custom tag', on: { keydown: function (e) {
+      var add = el('input', { type: 'text', placeholder: '+ tag', class: 'tag-input', 'aria-label': 'Add a custom tag', on: { keydown: function (e) {
         if (e.key !== 'Enter') return;
         var t = e.target.value.trim().toLowerCase();
         if (!t) return;
@@ -1568,7 +1598,7 @@
     var branch = null;
     if (detail.parentId) {
       branch = section('Branch', [
-        el('p', { class: 'muted', text: 'This detail is a branch. Merging copies its lines, notes and dimensions into the detail it came from.' }),
+        el('p', { class: 'muted', text: 'Merging copies its lines, notes and dimensions into the parent.' }),
         el('div', { class: 'row' }, [
           el('button', { class: 'btn', text: 'Merge into parent', on: { click: mergeIntoParent } }),
           el('button', { class: 'btn', text: 'Open parent', on: { click: function () {
@@ -1578,34 +1608,36 @@
       ]);
     }
 
+    body.appendChild(el('div', { class: 'row' }, [
+      el('button', { class: 'btn', text: 'New', title: 'Start a blank detail', on: { click: function () {
+        var d = newDetail();
+        SK.DB.put('details', d).then(function () { closePanel(); openDetail(d); });
+      } } })
+    ]));
+    body.appendChild(name);
+
     [
-      section('Detail name', [name]),
-      section('Scale', [scale, el('p', { class: 'muted', text: 'The drawing stays the same size. Notes and dimension text are sized for the scale.' })]),
+      section('Scale', [scale]),
       section('Tags', [tagWrap]),
-      section('Metadata', [el('div', { class: 'row' }, [
-        el('button', { class: 'btn', text: 'Tag elements from recordings', on: { click: tagElements } }),
-        el('button', { class: 'btn', text: 'Upload to cloud', on: { click: uploadToCloud } })
-      ]), el('p', { class: 'muted', text: metadataPreview() })]),
       section('Blocks', blocksSection()),
       branch,
-      section('Draw from JSON', [drawBox()]),
-      section('JSON file, kept as you draw', [liveBox()]),
-      section('File', [el('div', { class: 'row' }, [
-        el('button', { class: 'btn', text: 'Save', on: { click: function () { saveNow().then(function () { toast('Saved.'); }).catch(fail); } } }),
-        el('button', { class: 'btn', text: 'Save as…', on: { click: saveAs } }),
-        el('button', { class: 'btn', text: 'New detail', on: { click: function () {
-          var d = newDetail();
-          SK.DB.put('details', d).then(function () { closePanel(); openDetail(d); });
-        } } })
-      ])]),
+      section('Metadata', [el('div', { class: 'row' }, [
+        el('button', { class: 'btn', text: 'Tag elements', on: { click: tagElements } }),
+        el('button', { class: 'btn', text: 'Upload to cloud', on: { click: uploadToCloud } })
+      ]), el('p', { class: 'muted', text: metadataPreview() })]),
       section('Export', [el('div', { class: 'row' }, [
         el('button', { class: 'btn', text: 'JPEG', on: { click: exportJpeg } }),
-        el('button', { class: 'btn', text: 'PNG (no background)', on: { click: exportPng } }),
-        el('button', { class: 'btn', text: 'Scene series', on: { click: exportSeries } }),
-        el('button', { class: 'btn', text: 'Data (JSON)', on: { click: exportData } }),
-        el('button', { class: 'btn', text: 'Parallel JSON', on: { click: exportParallel } })
-      ]), el('p', { class: 'muted', text: 'Each JPEG carries its metadata inside the file, and a .metadata.json sits beside it. Data (JSON) holds everything, for rebuilding the library later.' })]),
-      section('Delete', [el('button', { class: 'btn danger', text: 'Delete this detail', on: { click: deleteDetail } })])
+        el('button', { class: 'btn', text: 'PNG', on: { click: exportPng } }),
+        el('button', { class: 'btn', text: 'Scenes', on: { click: exportSeries } }),
+        el('button', { class: 'btn', text: 'Data', on: { click: exportData } }),
+        el('button', { class: 'btn', text: 'Parallel', on: { click: exportParallel } })
+      ])]),
+      section('File', [el('div', { class: 'row' }, [
+        el('button', { class: 'btn', text: 'Save', on: { click: function () { saveNow().then(function () { toast('Saved.'); }).catch(fail); } } }),
+        el('button', { class: 'btn', text: 'Save as…', on: { click: saveAs } })
+      ])]),
+      el('details', {}, [el('summary', { text: 'JSON' }), drawBox(), liveBox()]),
+      el('div', { class: 'row' }, [el('button', { class: 'btn danger', text: 'Delete', on: { click: deleteDetail } })])
     ].forEach(function (s) { if (s) body.appendChild(s); });
   }
 
@@ -2747,8 +2779,7 @@
     } } });
     return section('Appearance', [
       el('div', { class: 'swatches' }, swatches.concat([el('label', { class: 'swatch custom', title: 'Custom colour' }, [custom])])),
-      el('p', { class: 'muted', text: 'Black ink turns white on a dark background. PNG export has no background.' }),
-      el('label', { class: 'check' }, [grid, ' Show the reference grid (one printed inch a square, major lines every 5 in.; on screen only, never printed or exported)'])
+      el('label', { class: 'check' }, [grid, ' Reference grid (screen only)'])
     ]);
   }
 
@@ -2766,14 +2797,19 @@
     ROUNDINGS.forEach(function (r) { round.appendChild(el('option', { value: r.v, text: r.l, selected: r.v === settings.roundTo })); });
 
     var versions = el('ul', { class: 'versions' }, [
-      el('li', {}, [el('b', { text: 'v4 · current' }), el('span', { text: 'Blocks, hatch patterns, cloud library, GIF of recordings' })]),
+      el('li', {}, [el('b', { text: 'v5 · current' }), el('span', { text: 'Playback in the right panel, compact Info, clean screen hides the title' })]),
+      el('li', {}, [el('a', { href: 'history/v4/index.html', text: 'v4 · archived' }), el('span', { text: 'The app before v5, kept as it was' })]),
       el('li', {}, [el('b', { text: 'v3' }), el('span', { text: 'Endless sheet, scenes, notes, dimensions, library' })]),
       el('li', {}, [el('a', { href: 'history/v2/index.html', text: 'v2 · Wall sketch' }), el('span', { text: 'Blank sheet with recording and replay' })]),
       el('li', {}, [el('a', { href: 'history/v1/index.html', text: 'v1 · Quick Detail' }), el('span', { text: 'Detail editor with tools, meaning and exports' })])
     ]);
 
-    // Changes made in v4, newest first. Add a line here with each change a user would notice.
+    // Changes, newest first. Add a line here with each change a user would notice.
     var CHANGES = [
+      ['31 Oct', 'v5: clean screen also hides the title card'],
+      ['31 Oct', 'Playback is in the right panel, after Info; the ▶ button opens it'],
+      ['31 Oct', 'Info: New at the top, the name is edited in place, JSON under its own fold'],
+      ['31 Oct', 'Settings: shorter text; the version list links the archived v4'],
       ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
       ['31 Oct', 'Small screens: tools that do not fit on the left bar move to a second column behind a + button'],
       ['31 Oct', 'Left bar tools are centred on the bar\'s centre line'],
@@ -2823,15 +2859,15 @@
 
     [
       appearanceSection(),
-      section('Toolbars', [
-        el('label', { class: 'check' }, [autoCollapse, ' Hide both toolbars while an object is selected (more room on a phone or iPad)']),
-        el('p', { class: 'muted small', text: 'The lower-right ⤢ button hides or shows the toolbars at any time.' })
-      ]),
-      section('Notes', [el('label', { class: 'check' }, [caps, ' Write notes in capitals'])]),
+      section('Toolbars', [el('label', { class: 'check' }, [autoCollapse, ' Hide toolbars while an object is selected'])]),
+      section('Notes', [el('label', { class: 'check' }, [caps, ' Capitals'])]),
       section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
-      section('Version log', [versions, el('p', { class: 'muted', text: 'Earlier versions keep their own saved work.' }), el('p', { class: 'muted small', text: 'Changes in v4, newest first' }), changes]),
-      section('Keys', [el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · U underlays · N new scene · F fit · Ctrl+Z undo · Delete removes the selection · Esc cancels · Space+drag or right-drag pans · Ctrl+wheel or pinch zooms' })]),
-      section('Pen and fingers', [el('p', { class: 'muted small', text: 'Once a pen is used, fingers pan and pinch and only the pen draws. Without a pen, one finger draws and two fingers pan and zoom.' })])
+      el('details', {}, [el('summary', { text: 'Version' }), versions]),
+      el('details', {}, [el('summary', { text: 'Changes' }), changes]),
+      el('details', {}, [el('summary', { text: 'Keys and touch' }),
+        el('p', { class: 'muted small', text: 'T text · D dimension · H hatch · E erase · G grid · U underlays · N new scene · F fit · Ctrl+Z undo · Delete removes · Esc cancels · Space+drag pans · Ctrl+wheel zooms' }),
+        el('p', { class: 'muted small', text: 'With a pen, fingers pan and zoom and only the pen draws.' })
+      ])
     ].forEach(function (s) { body.appendChild(s); });
   }
 
@@ -3176,8 +3212,8 @@
         el('span', { text: m.text ? SK.firstWords(m.text, 8) : '(no words)' })
       ]));
     });
-    $('player').hidden = false;
     document.body.classList.add('replaying');
+    openPanel('playback');   // the controls sit in the right panel, under Info
     seekTo(T || 0);
   }
 
@@ -3238,8 +3274,9 @@
     if (pb.url) URL.revokeObjectURL(pb.url);
     view = pb.savedView;
     pb = null;
-    $('player').hidden = true;
+    parkPlayer();
     document.body.classList.remove('replaying');
+    if (panelKind === 'playback') { var body = $('panelBody'); body.innerHTML = ''; renderPlayback(body); }
     redraw();
   }
 

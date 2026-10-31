@@ -150,6 +150,19 @@ Rules that came out of it:
 
 ---
 
+**Version 5 (31 Oct).** Decisions from the right-panel review:
+
+- The clean screen (⤢) hides the title card as well as the toolbars.
+- Playback is a right-panel item after Info (▶ in the rail). Replay runs in that panel; Log still offers Replay. Pausing or closing the panel keeps the replay; Done ends it.
+- Info is compact: New at the top, the name edited in place, Export labels short, JSON folded away, Delete last.
+- Settings text is short; Version and Changes fold away. v4 is kept at `history/v4/` and linked from Version.
+- Ratings and the GIF button are on library cards, not in Info. The checklist said "info panel"; that is corrected.
+- Screenshots of each version are in `history/screenshots/`.
+
+Open: on a 390 px phone the left tool bar draws over an open panel. Not changed in v5.
+
+---
+
 ## 9. Working lessons from the 31 Oct session
 
 The whole session, from the left-bar rework to the grid, the phone layout and this log. Each rule is what the next run should start from.

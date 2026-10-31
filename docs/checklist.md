@@ -89,13 +89,18 @@ A block is a finished detail placed inside another detail. It is a live link, so
 
 ## Library
 
-- [ ] **Edit Tags page.** A button in the upper right of the library opens a page for editing tags across the whole library, at a high level. Tags are shown as panels: tap a tag and small thumbnails of the details in it appear beside it.
-  - **Delete tag.** Removes the tag from every detail that has it. It warns first, and the warning says which details are affected. Deleting the details themselves stays a separate, manual step.
-  - **Replace tag.** Tap a second tag to replace the first with it. The first tag shows red and the chosen tag green, then a pop-up asks "Replace tag A with tag B?" with Confirm. Confirming applies it everywhere and returns to the first panel.
-  - **Undo** button at the top. Session only: it undoes the tag changes made since the page was opened and is cleared when the page closes.
-  - Open questions: tags that come from tagged elements (not typed on the detail) cannot be removed by editing the detail's own tags. Decide whether replacing them rewrites the element tags too. A replaced tag already on a detail should merge, not duplicate.
-- [ ] **Move the tag row back under More.** The tag chips were hidden under More and that was liked. Currently they are out in the open, which is wrong. The All chip stays the default.
-- [ ] **Cloud recycle bin.** Cloud delete should go to a bin, not be permanent. Needs a `deleted_at` column on `sketch_details` in the shared Architecture project, so it needs approval before the migration. Until then the cloud delete is permanent, and the change-log entry for it says so.
+Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editing a tag never deletes a detail.
+
+- [ ] **Edit Tags page.** An Edit Tags button in the upper right of the library opens a page for editing tags across the whole library. Each tag is a panel. Tap a tag and small thumbnails of the details in it appear beside it.
+  - **Delete tag.** Removes that tag from every detail that has it. The files stay. The warning lists how many details lose the tag. Deleting details is a separate, manual step.
+  - **Replace tag.** Tap a second tag, and the first shows red and the chosen tag green. A pop-up asks "Replace tag A with tag B?" with Confirm. Confirming applies it everywhere, then returns to the first panel. If a detail already has the target tag, it merges and does not duplicate.
+  - **Undo** button at the top. Session only: it reverts the tag edits made since the page was opened and clears when the page closes.
+  - **Applies to both** the cloud and this browser. The cloud is the master copy; this browser's copy is an offline sync of the active documents.
+  - **Element tags become a list, not tags.** Tags that come from tagged elements (speech and geometry) move to their own list on this page. Each entry can be edited or removed here. Removing one tells the AI the user does not care about that item, so it is ignored in the future.
+- [ ] **Sort, recycle bin and search in the header.** Sort stays under the header, and the recycle bin moves up there too. The search box gets smaller. A `+` and a sort symbol replace the wide controls. The sort menu offers Last edited, Created, Rating, Name and Most scenes.
+- [ ] **Tag row back under More.** You liked the tags hidden under More, so they go back there. The All chip stays the default. (The Sort control stays in the header.)
+- [ ] **Rating, 0 to 5 stars.** A basic star rating on every detail. New details start at 1 star. Sort by rating in the library. Higher stars mean the detail is more likely to be kept for future work.
+- [ ] **Cloud recycle bin, approved 31 Oct.** Cloud delete goes to a bin instead of being permanent. It needs a `deleted_at` column on `sketch_details` in the Architecture project. The migration has been approved but not yet run. Until it is built, cloud delete is permanent, and the change-log entry says so.
 
 ## Later
 

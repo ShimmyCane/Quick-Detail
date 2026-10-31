@@ -80,6 +80,23 @@
   // It is painted on screen only and is left out of every export.
   SK.gridStep = function () { return 1; };
 
+  // Grid colours are shades of the background, never a hue of their own. "Percent white" is the brightest channel.
+  // Minor lines sit 10 points away from the background and major lines 25 points away: darker on a light
+  // background (80% white gives 70% and 55%), lighter on a dark one so the grid still shows.
+  SK.gridShades = function (bg) {
+    var n = parseInt(String(bg).replace('#', ''), 16);
+    var rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    var v = Math.max(rgb[0], rgb[1], rgb[2]) / 255;
+    var darker = v >= 0.5;
+    function shade(d) {
+      var t = Math.min(1, Math.max(0, v + (darker ? -d : d)));
+      return 'rgb(' + rgb.map(function (c) {
+        return Math.round(darker ? c * (t / v) : c + (255 - c) * ((t - v) / (1 - v)));
+      }).join(',') + ')';
+    }
+    return { minor: shade(0.10), major: shade(0.25) };
+  };
+
   SK.formatAngle = function (deg) {
     var r = Math.round(deg * 2) / 2;
     return (r % 1 ? r.toFixed(1) : String(r)) + '°';

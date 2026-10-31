@@ -428,7 +428,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = col.paper;
     ctx.fillRect(0, 0, W(), H());
-    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), dpr);
+    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), dpr, settings.bg);
     if (settings.underlay) list.forEach(function (it) { if (it.kind === 'block') drawUnderlay(it, col); });
     SK.paint(ctx, visible(list.filter(function (it) { return it.kind !== 'block'; })), view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), hideUnderlay: !settings.underlay });
     SK.missingBlocks(list, sourceOf).forEach(function (bk) { drawPlaceholder(bk, col); });

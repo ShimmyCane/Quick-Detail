@@ -33,30 +33,26 @@
     }));
   };
 
-  // Reference grid over the sheet, in screen space: one true inch per square, in red. Its lines are half the thinnest
-  // line weight and drawn at 50%, so it sits behind the drawing as a basis of scale. Screen only; exports never include it.
-  SK.paintGrid = function (c, v, factor, w, h, ratio) {
+  // Reference grid over the sheet, in screen space: one true inch per square. Its colours are shades of the background
+  // (SK.gridShades): minor squares, and major lines every five squares. Screen only; exports never include it.
+  SK.paintGrid = function (c, v, factor, w, h, ratio, bg) {
     var step = SK.gridStep(factor);
     while (step * v.z < 5) step *= 2;
+    var shades = SK.gridShades(bg), MAJOR = 5;
     c.setTransform(ratio, 0, 0, ratio, 0, 0);
-    c.strokeStyle = SK.PENS.red;
-    c.globalAlpha = 0.5;
     c.lineWidth = Math.max(0.5, 0.5 * SK.WEIGHTS.w1 * factor * v.z);   // half the thinnest drawn line, on screen
-    // Every fifth line is a major line in green, so the grid reads in fives. Other lines stay red.
-    var MAJOR = 5;
     var i0 = Math.floor(v.x / step), i1 = Math.ceil((v.x + w / v.z) / step);
     for (var i = i0; i <= i1; i++) {
       var sx = Math.round((i * step - v.x) * v.z) + 0.5;
-      c.strokeStyle = ((i % MAJOR) + MAJOR) % MAJOR === 0 ? SK.PENS.green : SK.PENS.red;
+      c.strokeStyle = ((i % MAJOR) + MAJOR) % MAJOR === 0 ? shades.major : shades.minor;
       c.beginPath(); c.moveTo(sx, 0); c.lineTo(sx, h); c.stroke();
     }
     var j0 = Math.floor(v.y / step), j1 = Math.ceil((v.y + h / v.z) / step);
     for (var j = j0; j <= j1; j++) {
       var sy = Math.round((j * step - v.y) * v.z) + 0.5;
-      c.strokeStyle = ((j % MAJOR) + MAJOR) % MAJOR === 0 ? SK.PENS.green : SK.PENS.red;
+      c.strokeStyle = ((j % MAJOR) + MAJOR) % MAJOR === 0 ? shades.major : shades.minor;
       c.beginPath(); c.moveTo(0, sy); c.lineTo(w, sy); c.stroke();
     }
-    c.globalAlpha = 1;
   };
 
   SK.toScreen = function (v, p) { return [(p[0] - v.x) * v.z, (p[1] - v.y) * v.z]; };

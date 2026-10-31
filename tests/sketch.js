@@ -139,5 +139,9 @@ check('luma runs from black to white', near(SK.luma('#000000'), 0) && near(SK.lu
 check('four line weights, heaviest last', Object.keys(SK.WEIGHTS).length === 4 && SK.WEIGHTS.w4 > SK.WEIGHTS.w3 && SK.WEIGHTS.w3 > SK.WEIGHTS.w2 && SK.WEIGHTS.w2 > SK.WEIGHTS.w1);
 check("grid is one true inch a square: a quarter inch on paper at 3\" = 1'-0\" (four squares a paper inch)", near(SK.gridStep(4), 1) && near(SK.gridStep(4) / 4, 0.25));
 
+// Grid shades: 80% white (#cccccc) gives minor 70% (179) and major 55% (140); a dark background gets lighter lines.
+check('grid shades on 80% white: minor 70%, major 55%', SK.gridShades('#cccccc').minor === 'rgb(179,179,179)' && SK.gridShades('#cccccc').major === 'rgb(140,140,140)');
+check('grid shades stay a shade of a coloured background', SK.gridShades('#ccaa88').minor.indexOf('rgb(') === 0 && SK.gridShades('#000000').minor === 'rgb(26,26,26)');
+
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

@@ -42,14 +42,18 @@
     c.strokeStyle = SK.PENS.red;
     c.globalAlpha = 0.5;
     c.lineWidth = Math.max(0.5, 0.5 * SK.WEIGHTS.w1 * factor * v.z);   // half the thinnest drawn line, on screen
+    // Every fifth line is a major line in green, so the grid reads in fives. Other lines stay red.
+    var MAJOR = 5;
     var i0 = Math.floor(v.x / step), i1 = Math.ceil((v.x + w / v.z) / step);
     for (var i = i0; i <= i1; i++) {
       var sx = Math.round((i * step - v.x) * v.z) + 0.5;
+      c.strokeStyle = ((i % MAJOR) + MAJOR) % MAJOR === 0 ? SK.PENS.green : SK.PENS.red;
       c.beginPath(); c.moveTo(sx, 0); c.lineTo(sx, h); c.stroke();
     }
     var j0 = Math.floor(v.y / step), j1 = Math.ceil((v.y + h / v.z) / step);
     for (var j = j0; j <= j1; j++) {
       var sy = Math.round((j * step - v.y) * v.z) + 0.5;
+      c.strokeStyle = ((j % MAJOR) + MAJOR) % MAJOR === 0 ? SK.PENS.green : SK.PENS.red;
       c.beginPath(); c.moveTo(0, sy); c.lineTo(w, sy); c.stroke();
     }
     c.globalAlpha = 1;

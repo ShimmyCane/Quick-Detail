@@ -31,7 +31,12 @@
     { key: 'gravel', label: 'Gravel', dots: 0.24, r: 0.02 },
     { key: 'earth', label: 'Earth', fams: [{ a: 30, s: 0.25 }, { a: -30, s: 0.25 }] },
     { key: 'screen', label: 'Screen (light tone)', dots: 0.06, r: 0.006 },
-    { key: 'steel', label: 'Steel (solid)', solid: true }
+    { key: 'steel', label: 'Steel (solid)', solid: true },
+    // Classic (building drawing symbols sheet), drawn from the sheet's look. Paper inches.
+    { key: 'brick-classic', label: 'Brick, running bond (classic)', blocks: { h: 0.30, L: 0.60 } },
+    { key: 'stone-classic', label: 'Stone, rubble (classic)', rubble: { cell: 0.45, r: 0.22 } },
+    { key: 'concrete-classic', label: 'Concrete, dots and triangles (classic)', dots: 0.14, r: 0.012, tri: { cell: 0.5, size: 0.05 } },
+    { key: 'steel-classic', label: 'Steel, paired diagonal lines (classic)', fams: [{ a: -45, s: 0.22 }, { a: -45, s: 0.22, o: 0.05 }] }
   ];
 
   SK.hatchOf = function (key) {
@@ -89,14 +94,15 @@
 
   // Parallel lines at angle a (degrees) with spacing d (world inches), clipped to the polygon.
   // Each line stops m short of its ends.
-  function familySegments(poly, a, d, m) {
+  function familySegments(poly, a, d, m, off) {
     var rad = a * Math.PI / 180;
     var u = [Math.cos(rad), Math.sin(rad)], n = [-Math.sin(rad), Math.cos(rad)];
-    var lo = Infinity, hi = -Infinity;
+    var lo = Infinity, hi = -Infinity, sh = off || 0;
     poly.forEach(function (p) { var v = n[0] * p[0] + n[1] * p[1]; lo = Math.min(lo, v); hi = Math.max(hi, v); });
     var out = [];
-    for (var k = Math.ceil(lo / d); k * d <= hi; k++) {
-      var o = [n[0] * k * d, n[1] * k * d];
+    for (var k = Math.ceil((lo - sh) / d); k * d + sh <= hi; k++) {
+      var c = k * d + sh;
+      var o = [n[0] * c, n[1] * c];
       clipLine(poly, o, u).forEach(function (iv) {
         var t0 = iv[0] + m, t1 = iv[1] - m;
         if (t1 <= t0) return;
@@ -169,6 +175,47 @@
     return out;
   }
 
+  // Rubble: rounded seven-sided stones on a jittered grid. Some cells are left empty, so the background shows between stones.
+  // Each stone is kept only where its whole outline lies inside the region, clear of the boundary.
+  function rubbleStones(poly, cell, r, m) {
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    poly.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+    var out = [];
+    for (var i = Math.floor(minx / cell) - 1; i * cell <= maxx + cell; i++) {
+      for (var j = Math.floor(miny / cell) - 1; j * cell <= maxy + cell; j++) {
+        if (hash(i, j, 6) < 0.15) continue;
+        var c = [(i + 0.2 + 0.6 * hash(i, j, 4)) * cell, (j + 0.2 + 0.6 * hash(i, j, 5)) * cell];
+        var rr = r * (0.7 + 0.3 * hash(i, j, 7));
+        if (!SK.pointInPoly(c, poly) || edgeDist(c, poly) < rr * 1.15 + m) continue;
+        var verts = [];
+        for (var k = 0; k < 7; k++) {
+          var ang = k * 2 * Math.PI / 7 + 0.3 * (hash(i, j, 10 + k) - 0.5);
+          var rk = rr * (0.8 + 0.2 * hash(i, j, 20 + k));
+          verts.push([c[0] + rk * Math.cos(ang), c[1] + rk * Math.sin(ang)]);
+        }
+        out.push(verts.concat([verts[0]]));
+      }
+    }
+    return out;
+  }
+
+  // Open triangles scattered on a grid, about 60% of cells, each kept inside the region.
+  function triangles(poly, cell, size, m) {
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    poly.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+    var out = [];
+    for (var i = Math.floor(minx / cell); i * cell <= maxx + cell; i++) {
+      for (var j = Math.floor(miny / cell); j * cell <= maxy + cell; j++) {
+        if (hash(i, j, 3) > 0.6) continue;
+        var x = (i + 0.2 + 0.6 * hash(i, j, 8)) * cell, y = (j + 0.2 + 0.6 * hash(i, j, 9)) * cell;
+        var s = size;
+        var t = [[x, y - s], [x + s * 0.866, y + s * 0.5], [x - s * 0.866, y + s * 0.5], [x, y - s]];
+        if (t.every(function (q) { return SK.pointInPoly(q, poly) && edgeDist(q, poly) > m; })) out.push(t);
+      }
+    }
+    return out;
+  }
+
   // The drawing primitives of a hatch item (see annot.js for the primitive kinds).
   // item: { kind: 'hatch', pattern, pts: [[x, y], ...] (closed polygon, world inches), outline: bool }
   SK.hatchPrims = function (item, factor) {
@@ -183,10 +230,16 @@
       dotPoints(poly, h.dots * factor, m).forEach(function (c) { out.push({ k: 'dot', c: c, r: h.r * factor }); });
     }
     (h.fams || []).forEach(function (f) {
-      familySegments(poly, f.a, f.s * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
+      familySegments(poly, f.a, f.s * factor, m, (f.o || 0) * factor).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
     });
     if (h.blocks) {
       blockSegments(poly, h.blocks.h * factor, h.blocks.L * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
+    }
+    if (h.rubble) {
+      rubbleStones(poly, h.rubble.cell * factor, h.rubble.r * factor, m).forEach(function (pts) { out.push({ k: 'path', pts: pts }); });
+    }
+    if (h.tri) {
+      triangles(poly, h.tri.cell * factor, h.tri.size * factor, m).forEach(function (pts) { out.push({ k: 'path', pts: pts }); });
     }
     if (h.zig) {
       waveSegments(poly, h.zig.row * factor, h.zig.amp * factor, h.zig.period * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });

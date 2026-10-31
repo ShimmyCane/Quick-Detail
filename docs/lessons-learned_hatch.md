@@ -6,6 +6,15 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ## Entries
 
+### 2026-10-31: realistic classic hatches (brick, stone, concrete, steel)
+
+- **What went wrong before:** the earlier versions used existing keys, so they could not match the classic sheet. Two errors came from sizing: the symbols were drawn 8 by 4 paper inches, so the course spacing gave about 27 brick courses where the sheet shows about four. The symbol must be sized to the sheet (3.2 by 1.2 paper inches), and the spacing follows from that.
+- **Built:** four keys in `sketch/hatch.js`: `brick-classic` (running bond, 0.30 by 0.60), `stone-classic` (new rubble kind, 0.6 grid, radius 0.42 at the rubble spec), `concrete-classic` (dots plus new triangles), `steel-classic` (paired lines at -45, the agreed two-line steel). Tests added; `node tests/hatch.js` passes.
+- **Checked numerically:** the steel pair gap is 0.2 world inches (0.05 paper); the stone swatch holds seven stones after resizing.
+- **Cloud:** `ai-draft-classic-hatches-realistic`, 30 items, tags AI, draft, hatch, starting point.
+- **Lesson:** a hatch on the sheet is judged by its count per symbol, not its spacing alone. Check how many courses or stones a symbol holds against the classic before calling it realistic.
+- **Open:** the classic boxes in the draft are reference placeholders only. Compare the drawn hatches against the classic image, not against the render, before accepting them.
+
 ### 2026-10-31: classic set, versions with confidence
 
 - **Classic:** the ten-entry Building drawing symbols sheet is the starting point. The seven-entry sheet is superseded. The "5116" request was this sheet; it was found by the user, not by search.

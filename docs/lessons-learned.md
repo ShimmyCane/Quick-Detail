@@ -11,6 +11,8 @@ Sections:
 5. [Tools and environment](#5-tools-and-environment): what works in this sandbox and what does not.
 6. [Hatch](lessons-learned_hatch.md): hatch patterns. The shared reference is `hatch-reference.md`.
 7. [Practice and rating](#7-practice-and-rating): how the owner works and judges a drawing.
+8. [User interface](#8-user-interface): what to check before saying a UI change is live.
+9. [Working lessons from the 31 Oct session](#9-working-lessons-from-the-31-oct-session): how the left bar, grid and scale work went, start to finish.
 
 ---
 
@@ -124,3 +126,74 @@ How the owner works. It decides what the app should do, so read it before buildi
 - **Local is an offline copy.** The cloud holds the active documents. This browser's copy exists so the work runs without a connection. Edits made here must reach the cloud too (decided 2026-10-31).
 - **Start each drawing at one star.** The owner begins every piece with one star and something interesting in it. Stars go up only when a drawing earns them, so a higher rating means a stronger chance it is kept for later (decided 2026-10-31). The rating is 0 to 5 stars, and new details start at 1.
 - **Hide what is not needed, but keep it one tap away.** Tags are tucked under More. Only the controls used every time stay in the header.
+
+---
+
+## 8. User interface
+
+**Stale files hid the changes (31 Oct).** The owner reported that the grid and the grouped left bar were missing. Two causes, both invisible from the code:
+
+- The stylesheet link still carried an old `?v=` string, so the browser kept the old CSS. Scripts had also been bumped only once, before later edits.
+- Settings saved earlier carried `grid: false`, and saved settings are merged over the new defaults, so the new default never reached that browser.
+
+Rules that came out of it:
+
+1. Every change to a script or stylesheet bumps its `?v=` string, including the stylesheet link. Use one version string for the round and check every `src` and `href` before merging.
+2. A new default that users must see needs a one-off migration for settings already saved (the grid uses `gridOn2`). A default in code alone does not reach a browser that has saved settings.
+3. Say in the PR what the owner should see after a fresh load, and ask for a hard refresh if the old look persists.
+
+**Check the real size before calling a layout done (31 Oct).** The left bar was checked at desktop size only. Measure it at phone size (390 px wide) and at a short height (460 px), where the overflow column takes over. Measure against the title block as well, which is taller than it looks (about 97 px with its margin).
+
+**Measure, do not eyeball, alignment (31 Oct).** Centring was wrong until the groups filled the bar's width. Compare each tool's centre with its group's centre in the browser.
+
+**Keep grid colours as shades of the background (31 Oct).** The owner's rule: no hue unless the background is coloured. Minor lines are 10 points from the background and major lines 25 points.
+
+---
+
+## 9. Working lessons from the 31 Oct session
+
+The whole session, from the left-bar rework to the grid, the phone layout and this log. Each rule is what the next run should start from.
+
+**Asking and reading requests**
+
+- When an example contradicts its own wording, restate the reading with concrete numbers and ask before building. Examples: "darker" gave a lighter example; "3 inches = 1 foot" was read three ways before the owner confirmed the grid square is one true inch.
+- Check what already exists before asking. Export and print scale were already in the ⓘ panel, so no control moved. The "eye" button the owner named did not exist.
+- Say in the final message which reading was built, so the owner can redirect.
+- Stop and wait when the owner interrupts. Do not resume the interrupted action from memory.
+
+**Merging and PRs**
+
+- Merge only when the owner asks. Each merge request was explicit; other pushes were left as draft PRs.
+- After an interrupted tool call, check the PR state (open, draft, merged) before retrying. A merge may have partly run.
+- Mark a draft ready and merge only on the owner's ask; unsubscribe from PR activity once it is merged.
+- Branch from the latest `origin/main`. When switching branches with uncommitted work, stash, switch, then pop.
+- Commit and PR text carries no model identifier. The session trailer stays.
+
+**Version log and caches**
+
+- Keep the in-app version log current with each merge. It lagged PR #37 until the owner asked.
+- Bump every `?v=` string (stylesheet and every script) on each change, including the stylesheet link. Stale strings hid the grouped bar.
+- A new default does not reach a browser with saved settings. Migrate saved settings (`gridOn2`).
+
+**Testing**
+
+- Node tests cover pure logic, and that is where new maths belongs (`sketch/units.js`). Gridlines, shades and scale labels are all pure.
+- Browser checks catch what node cannot: drag-to-pick, the hold menu, redo, Duplicate, the phone bar. Run them at the sizes the owner uses.
+- Before calling a bug real, replay the exact sequence. A second tap on the open picker is meant to close it.
+- Measure alignment and clearance in the browser. Eyeballing missed the off-centre tools and the overlap with the title block.
+
+**Scale and grid**
+
+- Keep the scale rule in one place. The sheet is in real inches; `factor` is real inches per printed inch; a minor square is one printed inch; every fifth line is major (5 in. × 5 in. printed).
+- Screen-only overlays (the grid) stay out of the print and export paths.
+- The grid colour is a shade of the background, never a hue, unless the background is coloured.
+
+**Undo, redo and state**
+
+- Every new change clears the redo stack. Scale changes are undoable too.
+- Pickers and menus close on a second tap and on a tap outside. Test both.
+
+**Phone and small screens**
+
+- Check at 390 px wide and at a 460 px height. Tools stay at least 34 px and the mic and scene at 38 px.
+- Measure the title block; it is taller than it looks (about 97 px with its margin).

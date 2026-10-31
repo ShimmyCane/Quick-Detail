@@ -806,6 +806,8 @@ body.collapsed #rail > button:not(#collapseBtn) { display: none; }
 .lib-card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .lib-card .tags-line, .lib-card b { -webkit-touch-callout: none; }
 
+/* ---------- the left bar starts from the lower left corner, above the title block, and grows upwards ---------- */
+.lrail { top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 110px); }
 /* ---------- phone: a narrower left bar. Tools stay at least 34 px, the scene and mic 38 px, so they remain easy to tap. ---------- */
 @media (max-width: 500px) {
   .lrail { padding: 4px; }

@@ -55,40 +55,60 @@
   <!-- Options for the selected note or dimension. -->
   <div id="chips" class="chips" hidden></div>
 
-  <!-- Left: pen colours, line weights, and the text and dimension tools. -->
+  <!-- Left: one long bar, top to bottom: scenes and mic, undo, erase, zoom extents, select, line weight, colour, dimension, text, hatch, image, underlays.
+       The line weight and colour each show one dot. Tap it to open the row, or press, drag along the row and let go on a choice. -->
   <nav class="lrail" id="lrail" aria-label="Pen and annotation tools">
-    <div class="lgroup undo-group" aria-label="Undo">
-      <button id="undoCorner" class="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
-    </div>
     <!-- Recording: the scene button and the microphone. The mic starts muted, so nothing is captured until it is unmuted. -->
     <div class="lgroup rec-group" aria-label="Recording">
-      <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
       <button id="micBtn" class="mic" aria-pressed="false" title="Microphone muted: recordings have no sound. Tap to unmute." aria-label="Microphone muted">🔇</button>
+      <button data-act="scene" id="sceneBtn" class="scene" title="New scene (N). Hold to stop recording." aria-label="Scenes: tap for a new scene"><b id="sceneCount">0</b></button>
     </div>
-    <div class="lgroup" aria-label="Pen colour">
-      <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
-      <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
-      <button data-color="blue" class="pen-blue" title="Blue" aria-label="Blue pen"></button>
-      <button data-color="yellow" class="pen-yellow" title="Yellow" aria-label="Yellow pen"></button>
-      <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
+    <!-- Undo: a tap undoes. Hold to open Redo on the right, then drag onto it and let go. -->
+    <div class="lgroup undo-group" aria-label="Undo">
+      <button id="undoCorner" class="undo" title="Undo (Ctrl+Z). Hold for Redo (Ctrl+Shift+Z)" aria-label="Undo. Hold for Redo">↶</button>
+      <div id="undoMenu" class="undo-menu" role="menu" hidden>
+        <button type="button" id="redoItem" class="undo-item" role="menuitem">Redo</button>
+      </div>
     </div>
-    <div class="lgroup" aria-label="Line weight">
-      <button data-weight="w1" title="Extra fine" aria-label="Extra fine line"><i></i></button>
-      <button data-weight="w2" title="Fine" aria-label="Fine line"><i></i></button>
-      <button data-weight="w3" title="Medium" aria-label="Medium line"><i></i></button>
-      <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
+    <div class="lgroup tools" aria-label="View and select">
+      <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
+      <button data-act="extents" id="extentsBtn" class="tool" title="Zoom extents: fit everything on the sheet" aria-label="Zoom to fit everything">⊡</button>
+      <button data-act="select" class="tool" title="Select: pick, move, scale and rotate. Drag empty space to pan (V)" aria-label="Select and move">↖</button>
+    </div>
+    <div class="lgroup picker" id="weightPicker" aria-label="Line weight">
+      <button type="button" id="weightCur" class="pick-cur" data-w="w2" aria-expanded="false" title="Line weight. Tap or drag to choose" aria-label="Line weight"><i></i></button>
+      <div class="pick-row" hidden>
+        <button data-weight="w1" title="Extra fine" aria-label="Extra fine line"><i></i></button>
+        <button data-weight="w2" title="Fine" aria-label="Fine line"><i></i></button>
+        <button data-weight="w3" title="Medium" aria-label="Medium line"><i></i></button>
+        <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
+      </div>
+    </div>
+    <div class="lgroup picker" id="colorPicker" aria-label="Pen colour">
+      <button type="button" id="colorCur" class="pick-cur pen-ink" aria-expanded="false" title="Pen colour. Tap or drag to choose" aria-label="Pen colour"></button>
+      <div class="pick-row" hidden>
+        <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
+        <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
+        <button data-color="blue" class="pen-blue" title="Blue" aria-label="Blue pen"></button>
+        <button data-color="yellow" class="pen-yellow" title="Yellow" aria-label="Yellow pen"></button>
+        <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
+      </div>
     </div>
     <div class="lgroup tools" aria-label="Annotation tools">
-      <button data-act="select" class="tool" title="Select: pick, move, scale and rotate. Drag empty space to pan (V)" aria-label="Select and move">↖</button>
-      <button data-act="extents" id="extentsBtn" class="tool" title="Zoom extents: fit everything on the sheet" aria-label="Zoom to fit everything">⊡</button>
-      <button data-act="erase" class="tool" title="Erase whole elements (E)" aria-label="Erase">⌫</button>
-      <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
       <button data-act="text" class="tool" title="Text with arrow (T)" aria-label="Text">T</button>
+      <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="image" class="tool" title="Add an image (no-print layer)" aria-label="Add image">▣</button>
       <button data-act="underlay" class="tool on" title="Show or hide underlays, the no-print images (U)" aria-label="Show or hide underlays">◐</button>
       <input type="file" id="imageFile" accept="image/*" hidden>
     </div>
+    <!-- Small screens: tools that do not fit on the bar move to the second column, opened by this button. -->
+    <div class="lgroup more-group" id="lrailMoreGroup" hidden>
+      <button type="button" id="lrailPlus" class="more-btn" aria-expanded="false" aria-controls="lrailMore" title="More tools" aria-label="More tools">+</button>
+    </div>
+  </nav>
+  <nav class="lrail lrail-more" id="lrailMore" aria-label="More tools" hidden>
+    <div class="lgroup tools" id="lrailMoreBody"></div>
   </nav>
 
   <!-- Lower right: the panels. The collapse button hides both toolbars, for more room on a phone or tablet. -->
@@ -158,21 +178,21 @@
   <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
-  <script src="sketch/core.js?v=20261030a"></script>
-  <script src="sketch/units.js?v=20261030a"></script>
-  <script src="sketch/hatch.js?v=20261030a"></script>
-  <script src="sketch/annot.js?v=20261030a"></script>
-  <script src="sketch/blocks.js?v=20261030a"></script>
-  <script src="sketch/author.js?v=20261030a"></script>
-  <script src="sketch/parallel.js?v=20261030a"></script>
-  <script src="sketch/livefile.js?v=20261030a"></script>
-  <script src="sketch/paint.js?v=20261030a"></script>
-  <script src="sketch/store.js?v=20261030a"></script>
-  <script src="sketch/record.js?v=20261030a"></script>
-  <script src="sketch/gif.js?v=20261030a"></script>
+  <script src="sketch/core.js?v=20261031a"></script>
+  <script src="sketch/units.js?v=20261031a"></script>
+  <script src="sketch/hatch.js?v=20261031a"></script>
+  <script src="sketch/annot.js?v=20261031a"></script>
+  <script src="sketch/blocks.js?v=20261031a"></script>
+  <script src="sketch/author.js?v=20261031a"></script>
+  <script src="sketch/parallel.js?v=20261031a"></script>
+  <script src="sketch/livefile.js?v=20261031a"></script>
+  <script src="sketch/paint.js?v=20261031a"></script>
+  <script src="sketch/store.js?v=20261031a"></script>
+  <script src="sketch/record.js?v=20261031a"></script>
+  <script src="sketch/gif.js?v=20261031a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="sketch/analyze.js?v=20261030a"></script>
-  <script src="sketch/cloud.js?v=20261030a"></script>
-  <script src="sketch/app.js?v=20261030a"></script>
+  <script src="sketch/analyze.js?v=20261031a"></script>
+  <script src="sketch/cloud.js?v=20261031a"></script>
+  <script src="sketch/app.js?v=20261031a"></script>
 </body>
 </html>

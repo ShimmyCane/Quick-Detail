@@ -18,6 +18,7 @@
   var sessions = [];         // its saved recordings
   var view = { x: 0, y: 0, z: 24 };
   var ops = [];              // undo stack for the open detail
+  var redos = [];            // undone steps, for Redo. Any new change clears it.
   var tool = 'draw';         // 'draw' | 'text' | 'dim'
   var dimMode = 'ortho';
   var draft = null;          // a text, dimension or add-arrow step in progress
@@ -36,10 +37,17 @@
   var panelKind = null;
   var clip = null;           // audio element playing a scene clip
   var customTags = [];
-  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: false, underlay: true, libBg: 'sheet', autoCollapse: false };
+  var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: true, underlay: true, libBg: 'sheet', autoCollapse: false };
   var ROT_PX = 26;                                // the round turn handle sits this far above a selected item
   var recycleQuietUntil = 0;                      // "don't ask for five minutes" after a delete from the library
   var pen = { color: 'ink', weight: 'w2', hatch: 'wood1' };   // what new strokes, notes, dimensions and hatches are drawn with
+  // Colour and line weight are remembered between visits. Anything unknown falls back to the defaults above.
+  try {
+    var savedPen = JSON.parse(localStorage.getItem('qd.pen') || 'null') || {};
+    if (['ink', 'red', 'blue', 'yellow', 'green'].indexOf(savedPen.color) >= 0) pen.color = savedPen.color;
+    if (['w1', 'w2', 'w3', 'w4'].indexOf(savedPen.weight) >= 0) pen.weight = savedPen.weight;
+  } catch (err) { /* storage can be blocked; the defaults still work */ }
+  function savePen() { try { localStorage.setItem('qd.pen', JSON.stringify({ color: pen.color, weight: pen.weight })); } catch (err) { /* ignore */ } }
   var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
   var counter = 0;
   var sources = {}, allDetails = [];   // every detail on this device, by id, for blocks
@@ -202,6 +210,7 @@
     detail = d;
     originHost = from || null;
     ops = [];
+    redos = [];
     sel = null;
     endDraft();
     view = homeView(d);
@@ -253,6 +262,7 @@
   function commitPut(item, before, anim) {
     setItem(item);
     ops.push({ type: 'put', before: before || null, after: item });
+    redos = [];
     logEvent({ type: 'put', item: clone(item), anim: !!anim, t: anim ? item.t0 : null });
     changed();
   }
@@ -262,12 +272,14 @@
     if (i < 0) return;
     var before = detail.items.splice(i, 1)[0];
     ops.push({ type: 'del', before: before, index: i });
+    redos = [];
     logEvent({ type: 'del', id: id });
     changed();
   }
 
   function commitReplace(items) {
-    ops.push({ type: 'replace', before: detail.items });
+    ops.push({ type: 'replace', before: detail.items, after: items });
+    redos = [];
     detail.items = items;
     logEvent({ type: 'replace', items: clone(items) });
     changed();
@@ -288,11 +300,37 @@
       detail.items.splice(Math.min(op.index, detail.items.length), 0, op.before);
       logEvent({ type: 'put', item: clone(op.before) });
     } else if (op.type === 'replace') {
+      op.after = detail.items;
       detail.items = op.before;
       logEvent({ type: 'replace', items: clone(op.before) });
     } else if (op.type === 'meta') {
+      op.after = detail[op.key];
       detail[op.key] = op.before;
     }
+    redos.push(op);
+    changed();
+  }
+
+  // Redo puts back the step that undo took away. Works the same way for each kind of step.
+  function redo() {
+    if (pb || drawing || editing) return;
+    var op = redos.pop();
+    if (!op) { toast('Nothing to redo.'); return; }
+    if (op.type === 'put') {
+      var put = clone(op.after);
+      setItem(put);
+      logEvent({ type: 'put', item: clone(put) });
+    } else if (op.type === 'del') {
+      var i = indexOf(detail.items, op.before.id);
+      if (i >= 0) detail.items.splice(i, 1);
+      logEvent({ type: 'del', id: op.before.id });
+    } else if (op.type === 'replace') {
+      detail.items = clone(op.after);
+      logEvent({ type: 'replace', items: clone(detail.items) });
+    } else if (op.type === 'meta') {
+      detail[op.key] = op.after;
+    }
+    ops.push(op);
     changed();
   }
 
@@ -390,7 +428,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = col.paper;
     ctx.fillRect(0, 0, W(), H());
-    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), col.ink, dpr);
+    if (settings.grid && !pb) SK.paintGrid(ctx, view, factorOf(detail), W(), H(), dpr, settings.bg);
     if (settings.underlay) list.forEach(function (it) { if (it.kind === 'block') drawUnderlay(it, col); });
     SK.paint(ctx, visible(list.filter(function (it) { return it.kind !== 'block'; })), view, { ac: pb ? acFor(detail, pb.s.scale) : ac(), ink: col.ink, paper: col.paper, bg: col.paper, fill: false, ratio: dpr, w: W(), h: H(), hideUnderlay: !settings.underlay });
     SK.missingBlocks(list, sourceOf).forEach(function (bk) { drawPlaceholder(bk, col); });
@@ -1081,6 +1119,7 @@
   function setCollapsed(on) {
     document.body.classList.toggle('collapsed', on);
     $('collapseBtn').setAttribute('aria-pressed', String(on));
+    if (typeof fitLeftRail === 'function') fitLeftRail();   // the bar may need its second column again once shown
   }
   $('collapseBtn').addEventListener('click', function () { setCollapsed(!document.body.classList.contains('collapsed')); });
 
@@ -1107,6 +1146,28 @@
     var id = sel.id;
     sel = null;
     commitDel(id);
+  }
+
+  // A copy of an element, moved by (dx, dy) in drawing units. Covers every place an element keeps a position.
+  function offsetCopy(it, dx, dy) {
+    var c = clone(it);
+    function shift(p) { return [p[0] + dx, p[1] + dy].concat(p.slice(2)); }
+    if (c.pts) c.pts = c.pts.map(shift);
+    ['at', 'p1', 'p2', 'vertex'].forEach(function (k) { if (c[k]) c[k] = shift(c[k]); });
+    if (c.leaders) c.leaders.forEach(function (ld) { if (ld.tip) ld.tip = shift(ld.tip); });
+    return c;
+  }
+
+  // Duplicate puts a copy a little down and to the right, so it can be seen and moved. It is selected at once.
+  function duplicateSelected() {
+    var it = sel && byId(sel.id);
+    if (!it) return;
+    var d = SK.PAPER.text * factorOf(detail) * 2;
+    var copy = offsetCopy(it, d, d);
+    copy.id = uid(it.id.charAt(0));
+    commitPut(copy, null);
+    select(copy.id);
+    toast('Duplicated. Drag the copy where you need it.');
   }
 
   // Replace the selected item with a changed copy.
@@ -1174,7 +1235,6 @@
           edit(function (n) { n.outline = !it.outline; });
         } } })
       );
-      chips.push.apply(chips, drawOrderChips(it));
     } else if (it.kind === 'image') {
       chips.push(
         el('button', { class: 'chip' + (it.noPrint ? ' on' : ''), text: it.noPrint ? 'No print' : 'Prints', title: 'No-print images show faintly and are left out of exports', on: { click: function () {
@@ -1214,6 +1274,9 @@
         })
       );
     }
+    // Every element can be duplicated. Underlays (images and blocks) have no order of their own, so they get no order buttons.
+    chips.unshift(el('button', { class: 'chip', text: 'Duplicate', title: 'Make a copy, offset a little from this one', on: { click: duplicateSelected } }));
+    if (!SK.isUnderlay(it)) chips.push.apply(chips, drawOrderChips(it));
     chips.push(el('button', { class: 'chip danger', text: 'Delete', on: { click: deleteSelected } }));
     chips.forEach(function (c) { if (c) bar.appendChild(c); });
     bar.hidden = false;
@@ -1306,6 +1369,7 @@
       if (!d.moved) { openPanel('project'); return; }
       if (detail.scale !== d.before) {
         ops.push({ type: 'meta', key: 'scale', before: d.before });
+        redos = [];
         changed();
       }
     }
@@ -1316,6 +1380,7 @@
   function setScale(key) {
     if (key === detail.scale) return;
     ops.push({ type: 'meta', key: 'scale', before: detail.scale });
+    redos = [];
     detail.scale = key;
     changed();
   }
@@ -2338,7 +2403,7 @@
     return section('Appearance', [
       el('div', { class: 'swatches' }, swatches.concat([el('label', { class: 'swatch custom', title: 'Custom colour' }, [custom])])),
       el('p', { class: 'muted', text: 'Black ink turns white on a dark background. PNG export has no background.' }),
-      el('label', { class: 'check' }, [grid, ' Show grid (every 1/4" on paper, so it changes with the scale)'])
+      el('label', { class: 'check' }, [grid, ' Show the red grid (one true inch a square, on screen only, never printed or exported)'])
     ]);
   }
 
@@ -2995,15 +3060,62 @@
   // ===================================================================
 
   // Left rail: pen colours, line weights, and the text and dimension tools.
+  // Each picker shows its current choice as one dot. Tap the dot to open the row, or press it, drag along the row and let go
+  // on a choice. Letting go off the row closes it without a change.
   function renderPen() {
-    document.querySelectorAll('#lrail [data-color]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-color') === pen.color); });
-    document.querySelectorAll('#lrail [data-weight]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-weight') === pen.weight); });
+    document.querySelectorAll('#colorPicker [data-color]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-color') === pen.color); });
+    document.querySelectorAll('#weightPicker [data-weight]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-weight') === pen.weight); });
+    var cur = $('colorCur');
+    cur.className = 'pick-cur pen-' + pen.color;
+    var wcur = $('weightCur');
+    wcur.setAttribute('data-w', pen.weight);
   }
+  function setupPicker(boxId, attr, apply) {
+    var box = $(boxId), cur = box.querySelector('.pick-cur'), row = box.querySelector('.pick-row');
+    var pressing = false;
+    function open(on) { row.hidden = !on; cur.setAttribute('aria-expanded', on ? 'true' : 'false'); if (!on) row.querySelectorAll('.hot').forEach(function (b) { b.classList.remove('hot'); }); }
+    function swatchAt(x, y) {
+      var t = document.elementFromPoint(x, y), b = t && t.closest ? t.closest('[' + attr + ']') : null;
+      return b && row.contains(b) ? b : null;
+    }
+    function choose(b) { apply(b.getAttribute(attr)); open(false); }
+    cur.addEventListener('pointerdown', function (e) {
+      if (e.button > 0) return;
+      e.preventDefault();
+      if (!row.hidden) { open(false); return; }   // a second tap on the dot closes it
+      open(true);
+      pressing = true;
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!pressing || row.hidden) return;
+      var over = swatchAt(e.clientX, e.clientY);
+      row.querySelectorAll('[' + attr + ']').forEach(function (b) { b.classList.toggle('hot', b === over); });
+    });
+    window.addEventListener('pointerup', function (e) {
+      if (!pressing) return;
+      pressing = false;
+      var b = swatchAt(e.clientX, e.clientY);
+      if (b) { choose(b); return; }
+      var t = document.elementFromPoint(e.clientX, e.clientY);
+      if (!(t && box.contains(t))) open(false);   // let go somewhere else: close without a change
+    });
+    row.addEventListener('click', function (e) {
+      var b = e.target.closest('[' + attr + ']');
+      if (b) choose(b);
+    });
+    document.addEventListener('pointerdown', function (e) {
+      if (!row.hidden && !box.contains(e.target)) open(false);
+    });
+  }
+  setupPicker('colorPicker', 'data-color', function (v) {
+    pen.color = v; savePen(); renderPen(); if (tool === 'select') setTool('draw');
+  });
+  setupPicker('weightPicker', 'data-weight', function (v) {
+    pen.weight = v; savePen(); renderPen(); if (tool === 'select') setTool('draw');
+  });
   $('lrail').addEventListener('click', function (e) {
-    var c = e.target.closest('[data-color]'), w = e.target.closest('[data-weight]'), a = e.target.closest('[data-act]');
-    if (c) { pen.color = c.getAttribute('data-color'); renderPen(); if (tool === 'select') setTool('draw'); }
-    else if (w) { pen.weight = w.getAttribute('data-weight'); renderPen(); if (tool === 'select') setTool('draw'); }
-    else if (a && a.getAttribute('data-act') === 'image') $('imageFile').click();
+    var a = e.target.closest('[data-act]');
+    if (a && a.getAttribute('data-act') === 'image') $('imageFile').click();
     else if (a && a.getAttribute('data-act') === 'underlay') toggleUnderlay();
     else if (a && a.getAttribute('data-act') === 'extents') { if (pb) exitReplay(); fitAll(); }
     else if (a) {
@@ -3035,7 +3147,93 @@
   }
   renderPen();
 
-  $('undoCorner').addEventListener('click', undo);
+  // Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the "+".
+  // Each tool is put back where it was before every refit, so the bar always fills from the top.
+  var railMoved = [];      // { unit, slot } for each tool moved out
+  var railOpen = false;    // whether the second column is open
+  function railHome() {
+    while (railMoved.length) { var m = railMoved.pop(); m.slot.parentNode.replaceChild(m.unit, m.slot); }
+  }
+  function railTidy() {
+    document.querySelectorAll('#lrail .lgroup.tools').forEach(function (g) { g.hidden = !g.querySelector('.tool'); });
+  }
+  function railShowMore() {
+    var more = $('lrailMore'), plus = $('lrailPlus'), body = $('lrailMoreBody');
+    var on = railOpen && body.children.length > 0;
+    more.hidden = !on;
+    plus.setAttribute('aria-expanded', String(on));
+    plus.classList.toggle('on', on);
+    if (on) {
+      var r = $('lrail').getBoundingClientRect();
+      more.style.left = Math.round(r.right + 10) + 'px';
+      more.style.top = Math.round(r.top) + 'px';
+    }
+  }
+  function fitLeftRail() {
+    var rail = $('lrail'), plusGroup = $('lrailMoreGroup'), body = $('lrailMoreBody');
+    railHome();
+    plusGroup.hidden = true;
+    railTidy();
+    var limit = window.innerHeight - 96;   // keeps clear of the title block at the bottom of the sheet
+    if (rail.getBoundingClientRect().bottom > limit) {
+      plusGroup.hidden = false;
+      var units = Array.prototype.slice.call(rail.querySelectorAll('.tool, .picker'));
+      for (var i = units.length - 1; i >= 0 && rail.getBoundingClientRect().bottom > limit; i--) {
+        var unit = units[i], slot = document.createElement('span');
+        slot.hidden = true;
+        unit.parentNode.insertBefore(slot, unit);
+        railMoved.push({ unit: unit, slot: slot });
+        body.insertBefore(unit, body.firstChild);   // walking up from the bottom keeps the original order
+      }
+      railTidy();
+    }
+    if (!body.children.length) railOpen = false;
+    railShowMore();
+  }
+  $('lrailPlus').addEventListener('click', function () { railOpen = !railOpen; railShowMore(); });
+  window.addEventListener('resize', fitLeftRail);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLeftRail);
+  fitLeftRail();
+
+  // Undo: a tap undoes. Holding it opens Redo to the right. Drag onto Redo and let go to redo; let go anywhere else to cancel.
+  (function () {
+    var btn = $('undoCorner'), menu = $('undoMenu'), item = $('redoItem');
+    var timer = null, held = false, shown = false;
+    function over(x, y) { var t = document.elementFromPoint(x, y); return !!(t && (t === item || item.contains(t))); }
+    function onMove(e) { if (shown) item.classList.toggle('hot', !item.disabled && over(e.clientX, e.clientY)); }
+    function onUp(e) {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      var hit = shown && !item.disabled && over(e.clientX, e.clientY);
+      shown = false;
+      menu.hidden = true;
+      item.classList.remove('hot');
+      if (hit) redo();
+    }
+    function show() {
+      held = true;
+      item.disabled = !redos.length;
+      item.textContent = redos.length ? 'Redo' : 'Nothing to redo';
+      menu.hidden = false;
+      shown = true;
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    }
+    btn.addEventListener('pointerdown', function (e) {
+      if (e.button > 0) return;
+      held = false;
+      clearTimeout(timer);
+      timer = setTimeout(function () { timer = null; show(); }, 450);
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (type) {
+      btn.addEventListener(type, function () { if (timer && !shown) { clearTimeout(timer); timer = null; } });
+    });
+    btn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    btn.addEventListener('click', function () {
+      if (held) { held = false; return; }   // the hold already did its work
+      undo();
+    });
+  })();
 
   $('rail').addEventListener('click', function (e) {
     var b = e.target.closest('[data-act]');
@@ -3091,6 +3289,8 @@
       return;
     }
     if (typing) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && e.shiftKey) { e.preventDefault(); redo(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); return; }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); saveNow().then(function () { toast('Saved.'); }); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;

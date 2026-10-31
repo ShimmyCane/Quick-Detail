@@ -704,8 +704,50 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .lrail [data-weight] { width: 30px; height: 26px; border-radius: 8px; }
 .lrail [data-weight] i { width: 18px; }
 
-/* Undo sits at the top of the left rail, above the pen colours. */
-.lrail .undo-group { flex-direction: row; width: max-content; padding: 5px; }
+/* Undo sits under the recording buttons. Hold it to open Redo on the right. */
+.lrail .undo-group { flex-direction: row; width: max-content; padding: 5px; position: relative; }
+.lrail .undo { -webkit-touch-callout: none; user-select: none; touch-action: none; }
+.undo-menu { position: absolute; left: 100%; top: 0; margin-left: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 5px; z-index: 9; }
+.undo-menu[hidden] { display: none; }
+.lrail .undo-item { width: auto; height: 40px; padding: 0 14px; border-radius: 8px; border: 2px solid transparent; background: transparent; font: inherit; font-size: 15px; color: var(--ink); white-space: nowrap; cursor: pointer; }
+.lrail .undo-item.hot { border-color: var(--ink); background: var(--chip); }
+.lrail .undo-item:disabled { opacity: 0.45; }
+
+/* Every group spans the full width of the bar, and its tools sit on the bar's centre line. Dividers run edge to edge. */
+.lrail .lgroup, .lrail .lgroup.undo-group, .lrail .lgroup.tools, .lrail .lgroup.picker, .lrail .rec-group { width: auto; align-self: stretch; }
+.lrail .lgroup, .lrail .lgroup.undo-group, .lrail .rec-group { align-items: center; justify-content: center; }
+
+/* Hidden must win over the bar's own display rules. */
+.lrail[hidden], .lrail button[hidden], .lgroup[hidden] { display: none; }
+
+/* Recording: the microphone sits on its own row, just in front of the scene button. */
+.lrail .rec-group { flex-direction: column; align-items: center; }
+
+/* Small screens: a + at the end of the bar opens a second column with the tools that do not fit. */
+.lrail .more-group { padding: 4px; }
+.lrail .more-btn { font-size: 20px; font-weight: 600; border-color: var(--line); }
+.lrail .more-btn[aria-expanded="true"] { background: var(--ink); color: var(--paper); }
+.lrail-more { left: 0; top: 52px; margin: 0; max-height: calc(100vh - 150px); overflow-y: auto; }
+body.collapsed #lrailMore { display: none; }
+
+/* The whole left bar is one panel. Its groups sit inside it, divided by hairlines, not as separate cards. */
+.lrail { gap: 0; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
+.lrail .lgroup { background: transparent; border: 0; border-radius: 0; }
+.lrail .lgroup + .lgroup { border-top: 1px solid var(--line); }
+
+/* Colour and line-weight pickers: one dot shows the current choice. The row opens to the right of it. */
+.lrail .picker { position: relative; }
+.lrail .pick-cur { border-width: 2px; }
+.lrail #colorCur { width: 24px; height: 24px; border-radius: 12px; }
+.lrail #weightCur { width: 30px; height: 26px; border-radius: 8px; }
+.lrail #weightCur i { display: block; width: 18px; background: var(--ink); border-radius: 2px; }
+.lrail #weightCur[data-w="w1"] i { height: 1px; }
+.lrail #weightCur[data-w="w2"] i { height: 3px; }
+.lrail #weightCur[data-w="w3"] i { height: 5px; }
+.lrail #weightCur[data-w="w4"] i { height: 8px; }
+.pick-row { position: absolute; left: 100%; top: 0; margin-left: 10px; display: flex; flex-direction: row; gap: 4px; padding: 5px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; z-index: 9; }
+.pick-row[hidden] { display: none; }
+.pick-row button.hot { border-color: var(--ink); }
 
 /* ---------- block pop-up: shown when a detail that other details use is opened ---------- */
 .pop-back { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); display: grid; place-items: center; z-index: 50; padding: 16px; }

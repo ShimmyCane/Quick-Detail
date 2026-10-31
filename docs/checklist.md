@@ -82,6 +82,16 @@ A block is a finished detail placed inside another detail. It is a live link, so
 
 - [ ] On the iPad, add a block, then draw across it with the pen. It must draw and not move. Then pick the arrow and drag it.
 
+## Code (v5 compaction, 31 Oct)
+
+The app and its styles are split into smaller files, with a code map in `docs/code-map/`. Questions from the review (details in `docs/code-map/review.html`):
+
+- [ ] **Branch links through the cloud (you).** `fork` and `versionOf` are not uploaded, and a cloud detail comes back with no parent. Suggested: keep them in the row's metadata, and map the parent back on download.
+- [ ] **Lanes (you).** `sketch/lanes.js` is tested but the page does not load it. Wire in the labels now, or wait for the branch view?
+- [ ] **One name (you).** Quick Detail, Wall Sketch or Sketch v3 for the title, headers and data export. The IndexedDB name `wallsketch` must stay.
+- [ ] **Dialogs (you).** Move the browser `prompt` and `confirm` boxes to the app's own pop-ups?
+- [ ] Consolidate the stylesheet by component, checked with the screenshot comparison.
+
 ## Releasing
 
 - [ ] Every local file in `index.html` ends in `?v=...`. Change that value whenever any file in `sketch/` changes, so a browser or host that caches files cannot mix an old script with a new page (that mix gave a blank sheet and a dead library on 2026-10-29).
@@ -110,6 +120,9 @@ Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editi
 - [ ] Link the library with another repository.
 - [ ] Import v2 drawings into v3 (v2 stays readable from Settings → Version log).
 
+- [ ] **Text features** (parked 31 Oct). Not yet decided. Options: size presets; alignment on the start point; box or outline for callouts; underline and bold; leader arrow style (open, filled, dot); whether text turns with its item (see the open rule in `lessons-learned.md`, section 8).
+- [x] **Rejected (31 Oct), revisit later:** Rhino and Orca-style editing commands: true line, rectangle and circle primitives; midpoint, intersection and perpendicular snap; ortho lock and typed lengths; offset; trim, extend, fillet and chamfer; match properties; lock, hide and layers; measure; multi-detail sheets. Not wanted for now. Array and copy were dropped earlier (redraw is quicker).
+
 ## Done
 
 - [x] 2026-10-27 Cloud sync: upload a detail with its recordings, audio, scene JPEGs and metadata (`sketch/cloud.js`). Re-uploading updates the same rows.
@@ -120,8 +133,3 @@ Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editi
 - [x] 2026-10-27 Library page: sort, filter by tag, hold a card to flip through its scenes.
 - [x] 2026-10-27 JPEG exports carry their metadata in the file, with a `.metadata.json` beside them. Scene series gives each scene its own.
 - [x] 2026-10-27 Checked the Architecture Supabase project: it holds practice tables only, and they are empty. No sketch tables exist yet.
-
-## Later
-
-- [ ] **Text features** (parked 31 Oct). Not yet decided. Options: size presets; alignment on the start point; box or outline for callouts; underline and bold; leader arrow style (open, filled, dot); whether text turns with its item (see the open rule in `lessons-learned.md`, section 8).
-- [x] **Rejected (31 Oct), revisit later:** Rhino and Orca-style editing commands: true line, rectangle and circle primitives; midpoint, intersection and perpendicular snap; ortho lock and typed lengths; offset; trim, extend, fillet and chamfer; match properties; lock, hide and layers; measure; multi-detail sheets. Not wanted for now. Array and copy were dropped earlier (redraw is quicker).

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/paint.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/paint.js</code></h1>
+<p class="muted">Browser services · 175 lines · Library 9 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>painting items onto a canvas at a view, for the sheet, thumbnails and exports.<br>
+A view is { x, y, z }: the world point (inches) at the top-left corner, and CSS pixels per world inch.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">12</td><td class="name"><code>SK.measure(text, size)</code></td><td>Text width in world inches for a given text height.</td><td><a href="app-base.html">base</a></td></tr>
+<tr><td class="n">27</td><td class="name"><code>SK.whenImages(items)</code></td><td>Resolves once every image among the items has loaded (or failed), for pictures drawn once.</td><td><a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">40</td><td class="name"><code>SK.paintGrid(c, v, factor, w, h, ratio, bg)</code></td><td>Reference grid over the sheet, in screen space. A minor square is one printed inch and every fifth line is major, so the major grid prints at 5&quot; x 5&quot; whatever the scale. Colours are shades of the background (SK.gridShades). When the minor squares are too close together on screen, only the major lines are drawn (and spaced wider still if even they are too close). Screen only; exports never include the grid.</td><td><a href="app-canvas.html">canvas</a></td></tr>
+<tr><td class="n">62</td><td class="name"><code>SK.toScreen(v, p)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-editor.html">editor</a></td></tr>
+<tr><td class="n">63</td><td class="name"><code>SK.toWorld(v, s)</code></td><td><span class="muted">—</span></td><td><a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-panels.html">panels</a>, <a href="app-branches.html">branches</a></td></tr>
+<tr><td class="n">66</td><td class="name"><code>SK.fitView(b, w, h, pad, maxZ)</code></td><td>A view that fits bounds into w × h CSS pixels with a margin.</td><td><a href="app-input.html">input</a>, <a href="app-log.html">log</a></td></tr>
+<tr><td class="n">82</td><td class="name"><code>SK.paint(c, items, v, opts)</code></td><td>Paints items. c is a 2D context whose transform maps CSS pixels to device pixels by <code>ratio</code>. opts: { ac, ink, paper, fill (bool), dim (array of ids drawn faded), w, h }</td><td><a href="app-canvas.html">canvas</a>, <a href="app-export.html">export</a></td></tr>
+<tr><td class="n">164</td><td class="name"><code>SK.picture(items, b, w, h, opts)</code></td><td>A canvas of items fitted to bounds b, for thumbnails and exports.</td><td><a href="app-log.html">log</a>, <a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">7</td><td class="name"><code>SK.FONT</code></td><td><span class="muted">—</span></td><td><a href="app-export.html">export</a></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">16</td><td class="name"><code>imageOf(src)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">47</td><td class="name"><code>line(k, horizontal)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">74</td><td class="name"><code>strokeWidth(s)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">133</td><td class="name"><code>paintPrim(c, pr, v, annoW)</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

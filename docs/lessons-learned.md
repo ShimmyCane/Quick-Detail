@@ -13,6 +13,7 @@ Sections:
 7. [Practice and rating](#7-practice-and-rating): how the owner works and judges a drawing.
 8. [User interface](#8-user-interface): what to check before saying a UI change is live.
 9. [Working lessons from the 31 Oct session](#9-working-lessons-from-the-31-oct-session): how the left bar, grid and scale work went, start to finish.
+10. [Code layout](#10-code-layout-v5-compaction): the split into parts, the code map, and how to check a refactor.
 
 ---
 
@@ -213,3 +214,22 @@ The whole session, from the left-bar rework to the grid, the phone layout and th
 
 - Check at 390 px wide and at a 460 px height. Tools stay at least 34 px and the mic and scene at 38 px.
 - Measure the title block; it is taller than it looks (about 97 px with its margin).
+
+---
+
+## 10. Code layout (v5 compaction)
+
+**Split, 31 Oct.** `sketch/app.js` (3,832 lines) became 23 parts in `sketch/app/`, and `style.css` became seven files in `sketch/css/`. Decisions and why:
+
+- **Plain scripts sharing one global scope, not modules.** Every line moved as it was, with no renaming, and the page still runs from `file://`, where modules do not load. The cost is about 315 global names. `tests/app-parts.js` fails on a name declared twice or one that shadows a browser global.
+- **Load order matters only for code that runs while the page loads.** Functions can call across parts at any time. Wiring that runs at load may use only earlier parts, so `start.js` is last.
+- **CSS was cut in its original order.** Later rules refine earlier ones, so regrouping by component would change the cascade. Consolidate only with the screenshot check below.
+- **Descriptions live in the code.** Each file's header and the comment above each function feed `tools/codemap.js`, which writes `docs/code-map/`. Run it after a change; do not edit the generated pages.
+
+**How to check a refactor:**
+
+1. Compare against `origin/main`, not the local `main`, which can be stale in this sandbox (it was at PR #33 and gave a false alarm).
+2. Run `tests/browser-smoke.js` on the old page (a `git worktree` of `origin/main`) and on the new one. The results must match.
+3. Screenshot the same views on both at 1200 and 390 px and compare the bytes. Blank out dates first.
+4. Watch the code map's "not used anywhere" list: it found `jpeg()`, which a plain word search had missed because of `'image/jpeg'` strings.
+

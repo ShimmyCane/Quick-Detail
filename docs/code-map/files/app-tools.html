@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/tools.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/tools.js</code></h1>
+<p class="muted">App: the sheet · 247 lines · App part 7 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Tools: strokes, hits, handles.<br>
+toolDown / toolMove / toolUp dispatch to the active tool. Pen strokes, erase, picking, snapping,<br>
+and dragging the handles of a selected item (move, scale, turn, note width, dimension points).</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">8</td><td>Tools</td></tr>
+<tr><td class="n">64</td><td>pen strokes</td></tr>
+<tr><td class="n">97</td><td>hits and snapping</td></tr>
+<tr><td class="n">183</td><td>handle drags</td></tr>
+</table></div>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">13</td><td class="name"><code>toolDown(e, sp)</code></td><td>Pointer down on the sheet: hands it to the active tool, a handle, the step in progress or a new stroke.</td><td><a href="app-input.html">input</a></td></tr>
+<tr><td class="n">27</td><td class="name"><code>toolMove(e, sp)</code></td><td>Pointer move: erases, drags a handle, extends the stroke, or follows the step in progress.</td><td><a href="app-input.html">input</a></td></tr>
+<tr><td class="n">45</td><td class="name"><code>toolUp(e, sp, a)</code></td><td>Pointer up: ends a drag, commits a stroke (a short tap selects instead), or a tool step.</td><td><a href="app-input.html">input</a></td></tr>
+<tr><td class="n">67</td><td class="name"><code>startStroke(e, w)</code></td><td>Starts a pen stroke at the current pen colour and weight.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">77</td><td class="name"><code>addPoint(e)</code></td><td>Adds a pointer position to the stroke, skipping points closer than 1.5 px.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">89</td><td class="name"><code>abortStroke()</code></td><td>Drops the stroke in progress (a second finger came down).</td><td><a href="app-input.html">input</a></td></tr>
+<tr><td class="n">100</td><td class="name"><code>eraseAt(w)</code></td><td>Erases the top element under the point: a whole stroke, note, dimension or hatch. Undo brings it back.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">110</td><td class="name"><code>closedShapeAt(w)</code></td><td>A closed stroke under the point, for hatching by tapping inside it.</td><td><a href="app-draft.html">draft</a></td></tr>
+<tr><td class="n">119</td><td class="name"><code>hitAnnotation(w)</code></td><td>A tap with a drawing tool picks a note, dimension or hatch, top first. Underlays are left to the arrow tool.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">130</td><td class="name"><code>pickAt(w)</code></td><td>The item under the point, top first. Linework (strokes too) is picked before underlays. Used by the select tool.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">144</td><td class="name"><code>selectDown(e, sp, w)</code></td><td>Select mode: the selected item's handles first, then the item under the pen. Empty space pans the sheet.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">161</td><td class="name"><code>boxHandles(b)</code></td><td>Handles for a box: the bottom-right corner scales, and a round handle above the top edge turns.</td><td><a href="app-canvas.html">canvas</a></td></tr>
+<tr><td class="n">167</td><td class="name"><code>hitHandle(sp)</code></td><td>The handle of the selected item under a screen point, or null.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">178</td><td class="name"><code>snapAt(w, exceptId)</code></td><td>Snaps a world point to the nearest end, point or line, within 12 px.</td><td><a href="app-draft.html">draft</a></td></tr>
+<tr><td class="n">186</td><td class="name"><code>startHandleDrag(h, w)</code></td><td>Starts dragging a handle of the selected item.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">195</td><td class="name"><code>moveHandleDrag(w)</code></td><td>Moves, scales or turns the selected item, or moves one of its points, while dragging.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">231</td><td class="name"><code>scaleBlockTo(it, box, k)</code></td><td>Sets a block's scale to k, keeping its top-left corner at box (the block's bounds before the change).</td><td><a href="app-selection.html">selection</a></td></tr>
+<tr><td class="n">240</td><td class="name"><code>endHandleDrag()</code></td><td>Ends a handle drag; a real change is one undo step.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

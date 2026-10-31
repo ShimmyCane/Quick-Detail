@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/panels.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/panels.js</code></h1>
+<p class="muted">App: right panel · 256 lines · App part 11 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Right panel and Info.<br>
+Opening and closing the right panel, images, drawing a detail from a JSON spec, the live file box,<br>
+and the Info (project) panel.</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">8</td><td>Panels: project info, library, settings, log</td></tr>
+</table></div>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">13</td><td class="name"><code>closePanel()</code></td><td>Closes the right panel or the log, and ends a replay.</td><td><a href="app-input.html">input</a>, <a href="app-branches.html">branches</a>, <a href="app-log.html">log</a>, <a href="app-library.html">library</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">25</td><td class="name"><code>parkPlayer()</code></td><td>The replay controls live in the right panel. Off the panel they wait on the body, hidden, so the panel can be redrawn.</td><td><a href="app-log.html">log</a></td></tr>
+<tr><td class="n">32</td><td class="name"><code>renderPlayback(body)</code></td><td>Playback in the right panel: the replay controls, while a replay is open. Entered from the Log's Replay chip.</td><td><a href="app-log.html">log</a></td></tr>
+<tr><td class="n">39</td><td class="name"><code>openPanel(kind)</code></td><td>Opens a right panel: project (Info), playback, settings or log. The same one again closes it.</td><td><a href="app-editor.html">editor</a>, <a href="app-log.html">log</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">58</td><td class="name"><code>section(title, kids)</code></td><td>A panel section: a heading and its contents.</td><td><a href="app-settings.html">settings</a>, <a href="app-cloud-ui.html">cloud-ui</a></td></tr>
+<tr><td class="n">66</td><td class="name"><code>addImage(file)</code></td><td>Adds an image file as a no-print underlay, half the screen wide, in the middle of the view.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">95</td><td class="name"><code>acceptImage(it)</code></td><td>Keep an image as its own library detail: printable, named, at the top-left of a new sheet.</td><td><a href="app-selection.html">selection</a></td></tr>
+<tr><td class="n">108</td><td class="name"><code>drawFromSpec(spec)</code></td><td>A new detail drawn from a JSON spec (see sketch/author.js). Opens it, and returns the detail.</td><td><a href="app-start.html">start</a></td></tr>
+<tr><td class="n">123</td><td class="name"><code>drawBox()</code></td><td>Paste a drawing as JSON and make it a new detail. Errors say which item is wrong.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">139</td><td class="name"><code>liveBox()</code></td><td>Keep a JSON file on this computer in step with the drawing. Choose it once; it is rewritten as you draw.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">170</td><td class="name"><code>renderProject(body)</code></td><td>The Info panel: New, name, scale, tags, blocks, branch, metadata, exports, file, JSON and Delete.</td><td><a href="app-export.html">export</a></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">63</td><td class="name"><code>IMAGE_MAX_PX</code></td><td>Images: placed on the no-print layer, faint on screen and left out of exports. Scaled down to keep the detail light.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

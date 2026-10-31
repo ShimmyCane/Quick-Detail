@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/library-info.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/library-info.js</code></h1>
+<p class="muted">App: library · 241 lines · App part 14 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Library card popup.<br>
+The popup a catalogue card opens: picture (plays a GIF), rename, facts and actions.<br>
+Also PNG and GIF downloads, cloud scene frames, and duplicating a detail.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">10</td><td class="name"><code>showDetailInfo(d, fromCloud)</code></td><td>The card a catalogue card opens. Picture (click to play the scenes as a GIF), title (click to rename), description (the last words recorded), compact info, and the actions. The × in the corner closes it.</td><td><a href="app-library.html">library</a></td></tr>
+<tr><td class="n">101</td><td class="name"><code>playerFor(pic, d, fromCloud)</code></td><td>Plays a detail's scenes in the picture, one after another, and stops. Returns { toggle, stop }.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">138</td><td class="name"><code>downloadPng(d)</code></td><td>The drawing as a PNG, at a size that reads on a screen.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">147</td><td class="name"><code>renameDetail(d, name, fromCloud)</code></td><td>Rename a detail from the library. A cloud card renames the cloud copy, and the local copy too when this device has one.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">172</td><td class="name"><code>cloudFrames(d)</code></td><td>Cloud scenes: the scene JPEG of each uploaded recording, in recording order. A cloud card has no local sessions to replay.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">192</td><td class="name"><code>loadPicture(url)</code></td><td>Loads an image from a URL, readable by a canvas.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">205</td><td class="name"><code>downloadGif(d, fromCloud)</code></td><td>A GIF of a detail's recordings: one frame per scene, at the same pace as the hold-to-flip preview. A local detail with no recordings gets its build-up frames instead. Local frames are drawn at twice size so the file reads on a screen; cloud scene JPEGs are capped at 900 px wide, since they are full sheets.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">231</td><td class="name"><code>duplicateDetail(d)</code></td><td>A copy with the same lines, tags and scale. Its recordings stay with the original. Blocks in it still link to their sources.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

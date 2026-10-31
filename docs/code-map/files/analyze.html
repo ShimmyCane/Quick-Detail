@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/analyze.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/analyze.js</code></h1>
+<p class="muted">Pure logic · 250 lines · Library 13 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>tags and metadata for elements, scenes and recordings. Pure: runs in the page and in Node.<br>
+<br>
+Every tag records where it came from:<br>
+  drawn  — from what the element is (line, note, dimension)<br>
+  said   — from words spoken in the scene where the element was drawn<br>
+  stated — from the note text the user typed</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">27</td><td class="name"><code>SK.keywordTags(text)</code></td><td><span class="muted">—</span></td><td><span class="tag">test: analyze.js</span></td></tr>
+<tr><td class="n">39</td><td class="name"><code>SK.strokeGeometry(s)</code></td><td>A stroke's shape from its points. Lengths are real inches (the sheet is drawn at real size).</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: analyze.js</span></td></tr>
+<tr><td class="n">51</td><td class="name"><code>SK.describeItem(item, ac)</code></td><td><span class="muted">—</span></td><td><span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">81</td><td class="name"><code>SK.scenesOf(sessions)</code></td><td>Scenes across every recording of a detail, in the order they were made.</td><td><a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">94</td><td class="name"><code>SK.recordingStats(s)</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">135</td><td class="name"><code>SK.analyze(detail, sessions, ac)</code></td><td>Tag every element of a detail from what it is and from what was said while it was drawn.</td><td><a href="app-export.html">export</a>, <span class="tag">test: analyze.js</span>, <span class="tag">test: cloud.js</span></td></tr>
+<tr><td class="n">175</td><td class="name"><code>SK.itemMeta(e)</code></td><td>Element tags as stored on each item: { tags, said, why, label }.</td><td><a href="app-export.html">export</a></td></tr>
+<tr><td class="n">180</td><td class="name"><code>SK.detailMetadata(detail, analysis)</code></td><td>Everything an AI needs to read a detail: what it is, each element and why it was drawn, each scene.</td><td><a href="cloud.html">cloud</a>, <a href="app-export.html">export</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: analyze.js</span></td></tr>
+<tr><td class="n">205</td><td class="name"><code>SK.sceneMetadata(detail, analysis, scene, visibleIds)</code></td><td>A smaller record for one scene's picture: the scene, and the elements that are on the sheet by then.</td><td><a href="cloud.html">cloud</a>, <a href="app-export.html">export</a>, <span class="tag">test: analyze.js</span></td></tr>
+<tr><td class="n">218</td><td class="name"><code>SK.jpegWithComment(bytes, text)</code></td><td><span class="muted">—</span></td><td><a href="app-export.html">export</a>, <span class="tag">test: analyze.js</span></td></tr>
+<tr><td class="n">234</td><td class="name"><code>SK.jpegComment(bytes)</code></td><td><span class="muted">—</span></td><td><span class="tag">test: analyze.js</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">13</td><td class="name"><code>SK.VOCAB</code></td><td>Construction words → tag. Multi-word terms are matched as whole words, with an optional s or es.</td><td><span class="muted">this file only</span></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">36</td><td class="name"><code>dist(a, b)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">74</td><td class="name"><code>uniq(list)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">105</td><td class="name"><code>spansOf(s)</code></td><td>When each element was drawn, per recording: strokes by their span, notes and dimensions by their placement.</td></tr>
+<tr><td class="n">117</td><td class="name"><code>spokenFor(sessions)</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

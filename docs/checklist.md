@@ -91,15 +91,15 @@ A block is a finished detail placed inside another detail. It is a live link, so
 
 Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editing a tag never deletes a detail.
 
-- [ ] **Edit Tags page.** An Edit Tags button in the upper right of the library opens a page for editing tags across the whole library. Each tag is a panel. Tap a tag and small thumbnails of the details in it appear beside it.
+- [x] **Edit Tags page.** Built 31 Oct: An Edit Tags button in the upper right of the library opens a page for editing tags across the whole library. Each tag is a panel. Tap a tag and small thumbnails of the details in it appear beside it.
   - **Delete tag.** Removes that tag from every detail that has it. The files stay. The warning lists how many details lose the tag. Deleting details is a separate, manual step.
   - **Replace tag.** Tap a second tag, and the first shows red and the chosen tag green. A pop-up asks "Replace tag A with tag B?" with Confirm. Confirming applies it everywhere, then returns to the first panel. If a detail already has the target tag, it merges and does not duplicate.
   - **Undo** button at the top. Session only: it reverts the tag edits made since the page was opened and clears when the page closes.
   - **Applies to both** the cloud and this browser. The cloud is the master copy; this browser's copy is an offline sync of the active documents.
-  - **Element tags become a list, not tags.** Tags that come from tagged elements (speech and geometry) move to their own list on this page. Each entry can be edited or removed here. Removing one tells the AI the user does not care about that item, so it is ignored in the future.
-- [ ] **Sort, recycle bin and search in the header.** Sort stays under the header, and the recycle bin moves up there too. The search box gets smaller. A `+` and a sort symbol replace the wide controls. The sort menu offers Last edited, Created, Rating, Name and Most scenes.
-- [ ] **Tag row back under More.** You liked the tags hidden under More, so they go back there. The All chip stays the default. (The Sort control stays in the header.)
-- [ ] **Rating, 0 to 5 stars.** A basic star rating on every detail. New details start at 1 star. Sort by rating in the library. Higher stars mean the detail is more likely to be kept for future work.
+  - **Element tags become a list, not tags.** Built 31 Oct: library tag filters show typed tags only. Tags that come from tagged elements (speech and geometry) move to their own list on this page. Each entry can be edited or removed here. Removing one tells the AI the user does not care about that item, so it is ignored in the future.
+- [x] **Sort, recycle bin and search in the header.** Built 31 Oct: the sort (⇅) and + menus, a smaller search, the recycle bin and Edit tags buttons. Sort stays under the header, and the recycle bin moves up there too. The search box gets smaller. A `+` and a sort symbol replace the wide controls. The sort menu offers Last edited, Created, Rating, Name and Most scenes.
+- [x] **Tag row back under More.** Built 31 Oct, under the + menu. You liked the tags hidden under More, so they go back there. The All chip stays the default. (The Sort control stays in the header.)
+- [x] **Rating, 0 to 5 stars.** Built 31 Oct: tap a star in the info panel; sort by rating. Stored in the cloud row's metadata, so no column was needed. A basic star rating on every detail. New details start at 1 star. Sort by rating in the library. Higher stars mean the detail is more likely to be kept for future work.
 - [x] **Cloud recycle bin.** Approved and built 31 Oct. Cloud delete moves a detail to the bin (`sketch_details.deleted_at`, added to the Architecture project). The bin lists under Library → Recycle bin when signed in, with Restore, Delete for good and Empty cloud bin. Delete for good removes its media and recordings. The local copy is never touched.
 
 ## Later

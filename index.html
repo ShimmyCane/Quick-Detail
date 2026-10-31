@@ -130,30 +130,61 @@
 
   <section id="libPage" class="libpage" hidden aria-label="Library">
     <div class="libpage-head">
-      <h2>Library</h2>
       <div class="row">
         <button class="link" id="libClose" aria-label="Back to the sheet">← Back</button>
+        <h2>Library</h2>
         <div class="seg" id="libViews" role="group" aria-label="Where to look">
           <button class="chip on" data-view="local">This browser</button>
           <button class="chip" data-view="cloud">Cloud</button>
-          <button class="chip" data-view="bin">Recycle bin</button>
         </div>
-        <input type="search" id="libSearch" placeholder="Search name, tag or words" aria-label="Search the library">
-        <label class="chip sel">Sort <select id="libSort" aria-label="Sort details"><option value="recent" selected>Last edited</option><option value="created">Created</option><option value="name">Name</option><option value="scenes">Most scenes</option></select></label>
-        <details class="more">
-          <summary class="chip">More</summary>
-          <div class="more-panel">
+        <button class="chip" data-view="bin" id="libBin" title="Recycle bin">Recycle bin</button>
+      </div>
+      <div class="row">
+        <input type="search" id="libSearch" class="lib-search" placeholder="Search" aria-label="Search the library">
+        <div class="menu-wrap">
+          <button class="chip icon" id="libSortBtn" aria-haspopup="true" aria-expanded="false" aria-label="Sort" title="Sort">⇅</button>
+          <div class="lib-menu" id="libSortMenu" role="menu" hidden>
+            <button role="menuitemradio" data-sort="recent">Last edited</button>
+            <button role="menuitemradio" data-sort="created">Created</button>
+            <button role="menuitemradio" data-sort="rating">Rating</button>
+            <button role="menuitemradio" data-sort="name">Name</button>
+            <button role="menuitemradio" data-sort="scenes">Most scenes</button>
+          </div>
+        </div>
+        <div class="menu-wrap">
+          <button class="chip icon" id="libMoreBtn" aria-haspopup="true" aria-expanded="false" aria-label="More" title="More: tags and card background">+</button>
+          <div class="lib-menu lib-more" id="libMore" hidden>
             <div class="seg" id="libBg" role="group" aria-label="Card background">
               <button class="chip" data-bg="sheet">As drawn</button>
               <button class="chip" data-bg="white">On white</button>
               <button class="chip" data-bg="mono">Black on white</button>
             </div>
+            <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
           </div>
-        </details>
+        </div>
+        <button class="chip" id="tagsOpen" title="Edit tags across the library">Edit tags</button>
+      </div>
+      <select id="libSort" hidden aria-hidden="true"><option value="recent" selected>Last edited</option><option value="created">Created</option><option value="rating">Rating</option><option value="name">Name</option><option value="scenes">Most scenes</option></select>
+    </div>
+    <div id="libBody" class="libbody"></div>
+  </section>
+
+  <section id="tagsPage" class="libpage tagspage" hidden aria-label="Edit tags">
+    <div class="libpage-head">
+      <div class="row">
+        <button class="link" id="tagsClose" aria-label="Back to the library">← Library</button>
+        <h2>Edit tags</h2>
+        <span class="muted" id="tagsSource"></span>
+      </div>
+      <div class="row">
+        <button class="chip" id="tagsUndo" disabled>Undo</button>
       </div>
     </div>
-    <div id="libFilters" class="lib-filters" role="group" aria-label="Filter by tag"></div>
-    <div id="libBody" class="libbody"></div>
+    <p class="muted tags-help">Tags sort the files. Deleting or replacing a tag never deletes a detail. Undo lasts until this page closes.</p>
+    <div class="tags-cols">
+      <div class="tags-list" id="tagsList" aria-label="Tags"></div>
+      <div class="tags-panel" id="tagsPanel" aria-live="polite"></div>
+    </div>
   </section>
 
   <section id="log" class="log" hidden aria-label="Log">

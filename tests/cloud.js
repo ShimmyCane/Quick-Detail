@@ -41,6 +41,8 @@ check('files list metadata, audio and every snapshot', plan.files.filter(functio
 check('files list the JSON parallel beside the metadata', plan.files.filter(function (f) { return f.kind === 'parallel' && /\/parallel\.json$/.test(f.path); }).length === 1);
 check('every file path is unique', new Set(plan.files.map(function (f) { return f.path; })).size === plan.files.length);
 check('the metadata path is under the detail', plan.metadataPath === 'd-local-1/metadata.json');
+check('the rating goes up with the metadata, 1 star when none is set', plan.detail.metadata.rating === 1);
+check('a set rating is kept in the metadata', SK.cloudPlan(Object.assign({}, detail, { rating: 4 }), sessions, an).detail.metadata.rating === 4);
 
 // A recording with no scenes uploads its row and no snapshots
 var empty = SK.cloudPlan({ id: 'd2', name: 'Empty', scale: 'NTS', tags: [], items: [], parentId: 'd-local-1', modified: 1 }, [], SK.analyze({ id: 'd2', name: 'Empty', scale: 'NTS', tags: [], items: [], parentId: null }, [], ac));

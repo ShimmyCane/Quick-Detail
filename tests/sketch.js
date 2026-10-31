@@ -137,7 +137,7 @@ check('a named pen keeps its colour on any background', SK.inkFor('red', '#00000
 check('an unknown colour falls back to black', SK.inkFor('purple', '#ffffff') === '#111111');
 check('luma runs from black to white', near(SK.luma('#000000'), 0) && near(SK.luma('#ffffff'), 1, 1e-9));
 check('four line weights, heaviest last', Object.keys(SK.WEIGHTS).length === 4 && SK.WEIGHTS.w4 > SK.WEIGHTS.w3 && SK.WEIGHTS.w3 > SK.WEIGHTS.w2 && SK.WEIGHTS.w2 > SK.WEIGHTS.w1);
-check("grid is one true inch a square: a quarter inch on paper at 3\" = 1'-0\" (four squares a paper inch)", near(SK.gridStep(4), 1) && near(SK.gridStep(4) / 4, 0.25));
+check('grid follows the scale: a minor square is one printed inch, so five squares print at 5" and the grid is 5" x 5" major at any scale', near(SK.gridStep(4), 4) && near(SK.gridStep(48), 48) && near(SK.gridStep(4) * SK.GRID_MAJOR / 4, 5));
 
 // Grid shades: 80% white (#cccccc) gives minor 70% (179) and major 55% (140); a dark background gets lighter lines.
 check('grid shades on 80% white: minor 70%, major 55%', SK.gridShades('#cccccc').minor === 'rgb(179,179,179)' && SK.gridShades('#cccccc').major === 'rgb(140,140,140)');

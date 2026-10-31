@@ -2403,7 +2403,7 @@
     return section('Appearance', [
       el('div', { class: 'swatches' }, swatches.concat([el('label', { class: 'swatch custom', title: 'Custom colour' }, [custom])])),
       el('p', { class: 'muted', text: 'Black ink turns white on a dark background. PNG export has no background.' }),
-      el('label', { class: 'check' }, [grid, ' Show the red grid (one true inch a square, on screen only, never printed or exported)'])
+      el('label', { class: 'check' }, [grid, ' Show the reference grid (one printed inch a square, major lines every 5 in.; on screen only, never printed or exported)'])
     ]);
   }
 
@@ -2436,6 +2436,7 @@
       ['31 Oct', 'Element pop-up: Duplicate, and layer order (front, forward, back, send to back) for every drawable element'],
       ['31 Oct', 'Colour and line weight: one dot each; tap or drag along the row to choose; the choice is remembered'],
       ['31 Oct', 'Reference grid on the sheet, on by default, screen only and never in exports: one true inch a square, shades of the background; every fifth line is major'],
+      ['31 Oct', 'Reference grid follows the scale: a square is one printed inch and the major lines print at 5 in. x 5 in. at any scale'],
       ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
       ['31 Oct', 'Cloud library: × on each card and in its info panel deletes the cloud copy for good, after a confirmation. The local copy stays'],
       ['29 Oct', 'GIF button in a detail\'s info panel, for local and cloud details: an animated GIF of its recordings'],

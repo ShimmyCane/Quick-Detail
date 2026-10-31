@@ -33,26 +33,30 @@
     }));
   };
 
-  // Reference grid over the sheet, in screen space: one true inch per square. Its colours are shades of the background
-  // (SK.gridShades): minor squares, and major lines every five squares. Screen only; exports never include it.
+  // Reference grid over the sheet, in screen space. A minor square is one printed inch and every fifth line is major,
+  // so the major grid prints at 5" x 5" whatever the scale. Colours are shades of the background (SK.gridShades).
+  // When the minor squares are too close together on screen, only the major lines are drawn (and spaced wider still
+  // if even they are too close). Screen only; exports never include the grid.
   SK.paintGrid = function (c, v, factor, w, h, ratio, bg) {
-    var step = SK.gridStep(factor);
-    while (step * v.z < 5) step *= 2;
-    var shades = SK.gridShades(bg), MAJOR = 5;
+    var minor = SK.gridStep(factor), MAJOR = SK.GRID_MAJOR;
+    var shades = SK.gridShades(bg);
+    var base = minor * v.z >= 5 ? minor : minor * MAJOR;
+    while (base * v.z < 5) base *= 2;
     c.setTransform(ratio, 0, 0, ratio, 0, 0);
     c.lineWidth = Math.max(0.5, 0.5 * SK.WEIGHTS.w1 * factor * v.z);   // half the thinnest drawn line, on screen
-    var i0 = Math.floor(v.x / step), i1 = Math.ceil((v.x + w / v.z) / step);
-    for (var i = i0; i <= i1; i++) {
-      var sx = Math.round((i * step - v.x) * v.z) + 0.5;
-      c.strokeStyle = ((i % MAJOR) + MAJOR) % MAJOR === 0 ? shades.major : shades.minor;
-      c.beginPath(); c.moveTo(sx, 0); c.lineTo(sx, h); c.stroke();
+    function line(k, horizontal) {
+      var n = Math.round(k * base / minor);                       // which minor square this line sits on
+      var major = ((n % MAJOR) + MAJOR) % MAJOR === 0;
+      c.strokeStyle = major ? shades.major : shades.minor;
+      var p = Math.round((k * base - (horizontal ? v.y : v.x)) * v.z) + 0.5;
+      c.beginPath();
+      if (horizontal) { c.moveTo(0, p); c.lineTo(w, p); } else { c.moveTo(p, 0); c.lineTo(p, h); }
+      c.stroke();
     }
-    var j0 = Math.floor(v.y / step), j1 = Math.ceil((v.y + h / v.z) / step);
-    for (var j = j0; j <= j1; j++) {
-      var sy = Math.round((j * step - v.y) * v.z) + 0.5;
-      c.strokeStyle = ((j % MAJOR) + MAJOR) % MAJOR === 0 ? shades.major : shades.minor;
-      c.beginPath(); c.moveTo(0, sy); c.lineTo(w, sy); c.stroke();
-    }
+    var i0 = Math.floor(v.x / base), i1 = Math.ceil((v.x + w / v.z) / base);
+    for (var i = i0; i <= i1; i++) line(i, false);
+    var j0 = Math.floor(v.y / base), j1 = Math.ceil((v.y + h / v.z) / base);
+    for (var j = j0; j <= j1; j++) line(j, true);
   };
 
   SK.toScreen = function (v, p) { return [(p[0] - v.x) * v.z, (p[1] - v.y) * v.z]; };

@@ -1564,6 +1564,8 @@
     if (pb) exitReplay();
     lib.frames = {};
     lib.cloudRows = null;   // the cloud list is read once per visit; search and filters reuse it
+    lib.filters = [];       // every visit starts on All, sorted by last edited
+    $('libSort').value = 'recent';
     $('libPage').hidden = false;
     document.querySelector('.rail [data-act="library"]').classList.add('on');
     renderLibrary();
@@ -1600,11 +1602,16 @@
     }).catch(function (e) { fail(e, 'Could not read the library: '); });
   }
 
-  // Both views list details the same way: sorted, filtered by tags and search, grouped by tag. lead goes on top.
+  // Dates as the cards and the info panel show them.
+  function dateOf(t) { return new Date(t).toLocaleString([], { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+  function editedLine(d) { return 'Edited ' + dateOf(d.modified) + (d.created ? ' · Created ' + dateOf(d.created) : ''); }
+
+  // Both views list details the same way: one flat list, sorted, filtered by tags and search. lead goes on top.
   function showDetails(details, card, lead, empty) {
     var sort = $('libSort').value;
     details.sort(function (a, b) {
-      if (sort === 'recent') return b.modified - a.modified;
+      if (sort === 'recent') return b.modified - a.modified || a.name.localeCompare(b.name);
+      if (sort === 'created') return (b.created || 0) - (a.created || 0) || a.name.localeCompare(b.name);
       if (sort === 'scenes') return sceneCountOf(b) - sceneCountOf(a) || a.name.localeCompare(b.name);
       return a.name.localeCompare(b.name);
     });
@@ -1633,19 +1640,10 @@
     if (lead) body.appendChild(lead);
     if (!shown.length) { body.appendChild(el('p', { class: 'muted', text: q || lib.filters.length ? 'Nothing matches.' : empty })); return; }
 
-    var groups = {};
-    shown.forEach(function (d) {
-      (d.tags && d.tags.length ? d.tags : ['untagged']).forEach(function (t) { (groups[t] = groups[t] || []).push(d); });
-    });
-    Object.keys(groups).sort(function (a, b) {
-      if (a === 'untagged') return 1;
-      if (b === 'untagged') return -1;
-      return a.localeCompare(b);
-    }).forEach(function (t) {
-      var grid = el('div', { class: 'lib-grid' });
-      groups[t].forEach(function (d) { grid.appendChild(card(d)); });
-      body.appendChild(el('section', {}, [el('h3', { text: t + ' · ' + groups[t].length }), grid]));
-    });
+    // Not grouped by tag: a tag splits the list, so the order by last edited would no longer read down the page.
+    var grid = el('div', { class: 'lib-grid' });
+    shown.forEach(function (d) { grid.appendChild(card(d)); });
+    body.appendChild(grid);
   }
 
   // Library cards as drawn on the sheet, in colour on white, or black only on white.
@@ -1697,6 +1695,7 @@
       el('span', { class: 'meta', text: scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' +
         sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded) + ' · ' +
         d.items.length + ' elements (' + tagged + ' tagged)' }),
+      el('span', { class: 'meta', text: editedLine(d) }),
         users ? el('span', { class: 'meta', text: 'Used in ' + users + (users === 1 ? ' block' : ' blocks') }) : null,
       tagsLine(detailTags(d)),
       el('p', { class: 'said', text: last ? SK.firstWords(last, 10) : 'No words recorded yet.' })
@@ -1735,14 +1734,22 @@
     var facts = [
       scenes.length + (scenes.length === 1 ? ' scene' : ' scenes') + ' · ' + sess.length + (sess.length === 1 ? ' recording' : ' recordings') + ' · ' + SK.formatTime(recorded),
       d.items.length + ' elements · ' + SK.scaleOf(d.scale).label,
-      'Last changed ' + new Date(d.modified).toLocaleString()
+      'Last edited ' + dateOf(d.modified)
     ];
+    if (d.created) facts.push('Created ' + dateOf(d.created));
     if (users) facts.push('Used in ' + users + (users === 1 ? ' block' : ' blocks'));
     if (isBlockDetail(d)) facts.push('A block: tick it in a detail\'s Blocks checklist to add it there.');
     var inHere = d.id === detail.id;
     var back = null;
     function close() { if (back) back.remove(); }
+    // The × deletes, as on the card: from the cloud for a cloud detail, to the recycle bin for a local one.
+    var del = el('button', { class: 'lib-del', text: '×', title: fromCloud ? 'Delete from the cloud' : 'Delete from this browser',
+      'aria-label': 'Delete ' + d.name, on: { click: function () {
+        close();
+        if (fromCloud) deleteFromCloud(d); else removeDetail(d);
+      } } });
     var card = el('div', { class: 'pop-card info-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': d.name }, [
+      del,
       pic,
       el('b', { text: d.name }),
       el('p', { class: 'tags-line', text: detailTags(d).join(' · ') || 'no tags yet' }),
@@ -2038,8 +2045,33 @@
   function fromCloudRow(r) {
     return {
       id: r.local_id, name: r.name, scale: r.scale, tags: r.tags || [], items: r.items || [],
-      parentId: null, created: Date.parse(r.updated_at), modified: Date.parse(r.updated_at), cloud: r
+      parentId: null, created: Date.parse(r.created_at || r.updated_at), modified: Date.parse(r.updated_at), cloud: r
     };
+  }
+
+  // Deletes a detail from the cloud, after a confirmation. It has no recycle bin, so this cannot be undone.
+  // The copy on this device stays.
+  function deleteFromCloud(d) {
+    var back = null;
+    function close() { if (back) back.remove(); }
+    var card = el('div', { class: 'pop-card', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Delete from the cloud' }, [
+      el('b', { text: 'Delete "' + d.name + '" from the cloud?' }),
+      el('p', { class: 'muted', text: 'Its recordings and scene pictures are deleted for good. This cannot be undone. The copy in this browser stays.' }),
+      el('div', { class: 'row' }, [
+        el('button', { class: 'btn danger', text: 'Delete for good', on: { click: function () {
+          close();
+          SK.Cloud.remove(d.cloud).then(function () {
+            toast('Deleted "' + d.name + '" from the cloud.');
+            lib.cloudRows = null;
+            renderLibrary();
+          }).catch(function (e) { fail(e, 'Could not delete from the cloud: '); });
+        } } }),
+        el('button', { class: 'btn', text: 'Cancel', on: { click: close } })
+      ])
+    ]);
+    back = el('div', { class: 'pop-back' }, [card]);
+    document.body.appendChild(back);
+    card.querySelector('.row .btn:last-child').focus();   // Cancel is the safe choice, so it has focus
   }
 
   // The same card as the local library; tapping it opens the detail here. Recordings has its own button.
@@ -2050,12 +2082,18 @@
     SK.whenImages(visible(d.items)).then(function () {
       if (pic.parentNode) pic.getContext('2d').drawImage(cardPicture(d.items, cardBounds(d.items, a), a, col), 0, 0);
     });
+    var del = el('button', { class: 'lib-del', text: '×', title: 'Delete from the cloud', 'aria-label': 'Delete ' + d.name + ' from the cloud', on: { click: function (e) {
+      e.stopPropagation();
+      deleteFromCloud(d);
+    } } });
     var card = el('article', { class: 'lib-card' + (d.id === detail.id ? ' on' : ''), role: 'button', tabindex: '0' }, [
+      del,
       pic,
       el('span', { class: 'flip-label' }),
       el('b', { text: d.name }),
       el('span', { class: 'muted', text: SK.scaleOf(d.scale).label + (d.cloud.parent_id ? ' · branch' : '') }),
-      el('span', { class: 'meta', text: d.items.length + ' elements · updated ' + new Date(d.modified).toLocaleString() }),
+      el('span', { class: 'meta', text: d.items.length + ' elements' }),
+      el('span', { class: 'meta', text: editedLine(d) }),
       tagsLine(d.tags || []),
       el('div', { class: 'row' }, [
         el('button', { class: 'btn small', text: 'Recordings', on: { click: function (e) { e.stopPropagation(); renderCloudDetail(d.cloud); } } })
@@ -2326,6 +2364,8 @@
 
     // Changes made in v4, newest first. Add a line here with each change a user would notice.
     var CHANGES = [
+      ['31 Oct', 'Library: All and the sort are visible by default; one list sorted by last edited (or created); edited and created dates on every card'],
+      ['31 Oct', 'Cloud library: × on each card and in its info panel deletes the cloud copy for good, after a confirmation. The local copy stays'],
       ['29 Oct', 'GIF button in a detail\'s info panel, for local and cloud details: an animated GIF of its recordings'],
       ['29 Oct', 'Library: hold a card to preview it; Rename in the info panel; clearer buttons'],
       ['29 Oct', 'Starts with a visible message if the sheet fails to load (for example a stale cached script)'],

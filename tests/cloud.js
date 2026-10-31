@@ -47,5 +47,31 @@ var empty = SK.cloudPlan({ id: 'd2', name: 'Empty', scale: 'NTS', tags: [], item
 check('an empty detail plans no recordings or snapshots', empty.recordings.length === 0 && empty.snapshots.length === 0);
 check('a branch records its parent by local id', empty.detail.parent_local_id === 'd-local-1');
 
-console.log(failures ? failures + ' failed' : 'all passed');
-process.exit(failures ? 1 : 0);
+// Cloud delete, against a fake client: media first (folders are walked), then the row.
+var calls = [];
+var tree = {
+  'd-local-1': [{ name: 'metadata.json', id: 'f1' }, { name: 'parallel.json', id: 'f2' }, { name: 'r-1', id: null }, { name: 'r-2', id: null }],
+  'd-local-1/r-1': [{ name: 'audio.webm', id: 'f3' }, { name: 'scene-01.jpg', id: 'f4' }],
+  'd-local-1/r-2': []
+};
+SK.Cloud.client = {
+  storage: { from: function (bucket) {
+    return {
+      list: function (path) { calls.push('list ' + path); return Promise.resolve({ data: tree[path] || [], error: null }); },
+      remove: function (paths) { calls.push('remove ' + paths.join(',')); return Promise.resolve({ error: null }); }
+    };
+  } },
+  from: function (table) {
+    return { delete: function () { return { eq: function (col, val) { calls.push('delete ' + table + ' ' + col + '=' + val); return Promise.resolve({ error: null }); } }; } };
+  }
+};
+SK.Cloud.remove({ id: 'uuid-1', local_id: 'd-local-1' }).then(function () {
+  var removes = calls.filter(function (c) { return c.indexOf('remove ') === 0; });
+  var rowAt = calls.findIndex(function (c) { return c.indexOf('delete ') === 0; });
+  var lastRemove = calls.map(function (c, i) { return c.indexOf('remove ') === 0 ? i : -1; }).filter(function (i) { return i >= 0; }).pop();
+  check('cloud delete removes every file under the detail, folders walked', removes.length === 1 && removes[0] === 'remove d-local-1/metadata.json,d-local-1/parallel.json,d-local-1/r-1/audio.webm,d-local-1/r-1/scene-01.jpg', removes.join(' | '));
+  check('cloud delete removes the row by its id, after the media', rowAt > lastRemove && calls[rowAt] === 'delete sketch_details id=uuid-1', calls.join(' | '));
+  check('an empty folder under the detail is walked without error', calls.indexOf('list d-local-1/r-2') >= 0 && calls.indexOf('delete sketch_details id=uuid-1') >= 0);
+  console.log(failures ? failures + ' failed' : 'all passed');
+  process.exit(failures ? 1 : 0);
+}).catch(function (e) { console.log('FAIL cloud delete threw: ' + e.message); process.exit(1); });

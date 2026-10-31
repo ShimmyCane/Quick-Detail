@@ -722,6 +722,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .info-card { max-height: 90vh; overflow-y: auto; }
 .info-card .info-pic { width: 100%; height: auto; border-radius: 8px; background: var(--chip); }
 .info-facts { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+.info-card { position: relative; }
+.info-card > b { padding-right: 40px; }   /* the × in the corner */
 
 /* ---------- recording and microphone, on the left beside the pen ---------- */
 .rec-group { flex-direction: row; width: max-content; gap: 6px; padding: 5px; }

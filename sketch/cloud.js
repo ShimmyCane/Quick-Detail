@@ -192,9 +192,36 @@
 
     // Read side, for review.
     details: function () {
-      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, updated_at, parent_id')
+      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, created_at, updated_at, parent_id')
         .order('updated_at', { ascending: false })
         .then(function (r) { if (r.error) throw r.error; return r.data; });
+    },
+
+    // Deletes one detail from the cloud: its media in the bucket, then its row, which takes its recordings and
+    // snapshots with it (ON DELETE CASCADE). Media goes first, so a failure leaves the row listed and the delete can be retried.
+    // row: a sketch_details row (needs id and local_id). The copy on this device is not touched.
+    remove: function (row) {
+      var c = this.init();
+      var bucket = c.storage.from(SK.CLOUD.bucket);
+      // Lists every file under a folder. Folders come back without an id; files come back with one.
+      function filesUnder(path) {
+        return bucket.list(path, { limit: 1000 }).then(function (r) {
+          if (r.error) throw r.error;
+          return Promise.all(r.data.map(function (e) {
+            var p = path + '/' + e.name;
+            return e.id ? [p] : filesUnder(p);
+          }));
+        }).then(function (parts) { return [].concat.apply([], parts); });
+      }
+      return filesUnder(row.local_id)
+        .then(function (paths) {
+          if (!paths.length) return null;
+          return bucket.remove(paths).then(function (r) { if (r.error) throw r.error; });
+        })
+        .then(function () {
+          return c.from('sketch_details').delete().eq('id', row.id)
+            .then(function (r) { if (r.error) throw r.error; });
+        });
     },
 
     recordingsOf: function (detailId) {

@@ -1,0 +1,171 @@
+{
+  "name": "Classic hatches, v3, middle scale (AI draft)",
+  "scale": "3\"=1'-0\"",
+  "tags": [
+    "AI",
+    "draft",
+    "hatch",
+    "starting point"
+  ],
+  "ai_inferred": true,
+  "text_scale": 4,
+  "items": [
+    {
+      "kind": "note",
+      "text": "Classic hatches, v3: middle scale. Sharp corners, tileable patterns, finest weight for hatch lines. AI draft: verify before use.",
+      "at": [
+        0,
+        -6
+      ],
+      "width": 140,
+      "tip": [
+        6.4,
+        -0.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "brick-classic",
+      "pts": [
+        [
+          0,
+          2
+        ],
+        [
+          12.8,
+          2
+        ],
+        [
+          12.8,
+          6.8
+        ],
+        [
+          0,
+          6.8
+        ]
+      ],
+      "outline": false
+    },
+    {
+      "kind": "note",
+      "text": "1  BRICK. Running bond, about four courses in the symbol. Joints anchored to the origin, so the pattern tiles across any size. Interior lines at the finest weight.",
+      "at": [
+        18.8,
+        2.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        4.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "stone-classic",
+      "pts": [
+        [
+          0,
+          16
+        ],
+        [
+          12.8,
+          16
+        ],
+        [
+          12.8,
+          20.8
+        ],
+        [
+          0,
+          20.8
+        ]
+      ],
+      "outline": false
+    },
+    {
+      "kind": "note",
+      "text": "2  STONE. Rubble packed densely: stones are cells of one random layout, with a thin route gap between them. The layout repeats every 2.4 paper in, so it tiles seamlessly.",
+      "at": [
+        18.8,
+        16.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        18.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "concrete-classic",
+      "pts": [
+        [
+          0,
+          30
+        ],
+        [
+          12.8,
+          30
+        ],
+        [
+          12.8,
+          34.8
+        ],
+        [
+          0,
+          34.8
+        ]
+      ],
+      "outline": false
+    },
+    {
+      "kind": "note",
+      "text": "3  CONCRETE. Dots spread at random with an even minimum distance, so the tone reads as one shade. Triangles are sharp, rotated at random, and repeat every 1.6 paper in.",
+      "at": [
+        18.8,
+        30.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        32.4
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "steel-classic",
+      "pts": [
+        [
+          0,
+          44
+        ],
+        [
+          12.8,
+          44
+        ],
+        [
+          12.8,
+          48.8
+        ],
+        [
+          0,
+          48.8
+        ]
+      ],
+      "outline": false
+    },
+    {
+      "kind": "note",
+      "text": "4  STEEL. Diagonal lines rising to the right, as pairs at minus 45 degrees, spacing widened to 0.28 paper in. Confirm the pair against the sheet.",
+      "at": [
+        18.8,
+        44.5
+      ],
+      "width": 130,
+      "tip": [
+        13.200000000000001,
+        46.4
+      ]
+    }
+  ]
+}

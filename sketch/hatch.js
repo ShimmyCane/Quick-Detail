@@ -31,7 +31,12 @@
     { key: 'gravel', label: 'Gravel', dots: 0.24, r: 0.02 },
     { key: 'earth', label: 'Earth', fams: [{ a: 30, s: 0.25 }, { a: -30, s: 0.25 }] },
     { key: 'screen', label: 'Screen (light tone)', dots: 0.06, r: 0.006 },
-    { key: 'steel', label: 'Steel (solid)', solid: true }
+    { key: 'steel', label: 'Steel (solid)', solid: true },
+    // Classic (building drawing symbols sheet), drawn from the sheet's look. Paper inches.
+    { key: 'brick-classic', label: 'Brick, running bond (classic)', blocks: { h: 0.30, L: 0.60 } },
+    { key: 'stone-classic', label: 'Stone, packed (classic)', packed: { tile: 2.4, rmin: 0.09, rmax: 0.17, gap: 0.035 } },
+    { key: 'concrete-classic', label: 'Concrete, scattered dots and rotated triangles (classic)', scatter: { tile: 1.6, dmin: 0.13, dot: 0.012, tris: 10, size: 0.07, tmin: 0.1 } },
+    { key: 'steel-classic', label: 'Steel, paired diagonal lines (classic)', fams: [{ a: -45, s: 0.28 }, { a: -45, s: 0.28, o: 0.05 }] }
   ];
 
   SK.hatchOf = function (key) {
@@ -89,14 +94,15 @@
 
   // Parallel lines at angle a (degrees) with spacing d (world inches), clipped to the polygon.
   // Each line stops m short of its ends.
-  function familySegments(poly, a, d, m) {
+  function familySegments(poly, a, d, m, off) {
     var rad = a * Math.PI / 180;
     var u = [Math.cos(rad), Math.sin(rad)], n = [-Math.sin(rad), Math.cos(rad)];
-    var lo = Infinity, hi = -Infinity;
+    var lo = Infinity, hi = -Infinity, sh = off || 0;
     poly.forEach(function (p) { var v = n[0] * p[0] + n[1] * p[1]; lo = Math.min(lo, v); hi = Math.max(hi, v); });
     var out = [];
-    for (var k = Math.ceil(lo / d); k * d <= hi; k++) {
-      var o = [n[0] * k * d, n[1] * k * d];
+    for (var k = Math.ceil((lo - sh) / d); k * d + sh <= hi; k++) {
+      var c = k * d + sh;
+      var o = [n[0] * c, n[1] * c];
       clipLine(poly, o, u).forEach(function (iv) {
         var t0 = iv[0] + m, t1 = iv[1] - m;
         if (t1 <= t0) return;
@@ -169,6 +175,141 @@
     return out;
   }
 
+  // Tileable random layouts. Every random hatch is generated in a square tile of side P (world inches) and
+  // repeated, so a swatch of any size joins seamlessly. The random numbers come from a fixed seed, so the same tile
+  // always draws the same way. Distances inside a tile wrap around its edges.
+  function prng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function torusDist(a, b, P) {
+    var dx = Math.abs(a[0] - b[0]), dy = Math.abs(a[1] - b[1]);
+    dx = Math.min(dx, P - dx); dy = Math.min(dy, P - dy);
+    return Math.hypot(dx, dy);
+  }
+
+  function bounds(poly) {
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    poly.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
+    return [minx, miny, maxx, maxy];
+  }
+
+  // Packed stones, as a rubble wall: every point of the tile belongs to one stone (a Voronoi cell of a random seed).
+  // Each cell is inset by half the gap on every side, so the white between stones is a thin, even route line.
+  // Seeds are spread by dart throwing with a random radius each, so stones vary in size and location.
+  function clipHalfPlane(poly, nx, ny, c) {
+    // keep the part of the convex polygon where nx*x + ny*y <= c
+    var out = [];
+    for (var i = 0; i < poly.length; i++) {
+      var a = poly[i], b = poly[(i + 1) % poly.length];
+      var fa = nx * a[0] + ny * a[1] - c, fb = nx * b[0] + ny * b[1] - c;
+      if (fa <= 0) out.push(a);
+      if ((fa < 0 && fb > 0) || (fa > 0 && fb < 0)) {
+        var t = fa / (fa - fb);
+        out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+      }
+    }
+    return out;
+  }
+
+  function stoneCells(P, cfg) {
+    var rnd = prng(20261031);
+    var seeds = [];
+    for (var n = 0; n < 20000 && seeds.length < 240; n++) {
+      var r = cfg.rmin + (cfg.rmax - cfg.rmin) * rnd();
+      var c = [rnd() * P, rnd() * P];
+      if (seeds.every(function (q) { return torusDist(c, q.c, P) >= r + q.r; })) seeds.push({ c: c, r: r });
+    }
+    // every seed's copies in the 3 x 3 neighbouring tiles, so cells wrap across tile edges
+    var copies = [];
+    seeds.forEach(function (q) {
+      for (var i = -1; i <= 1; i++) for (var j = -1; j <= 1; j++) copies.push([q.c[0] + i * P, q.c[1] + j * P]);
+    });
+    var cells = [];
+    seeds.forEach(function (q) {
+      var s0 = q.c;
+      var cell = [[s0[0] - P, s0[1] - P], [s0[0] + P, s0[1] - P], [s0[0] + P, s0[1] + P], [s0[0] - P, s0[1] + P]];
+      copies.forEach(function (t) {
+        var dx = t[0] - s0[0], dy = t[1] - s0[1], L = Math.hypot(dx, dy);
+        if (L < 1e-9 || L > 3 * P) return;
+        var ux = dx / L, uy = dy / L;
+        // bisector moved in by half the gap: u . (x - s0) <= L/2 - gap/2
+        var c = ux * s0[0] + uy * s0[1] + (L / 2 - cfg.gap / 2);
+        cell = clipHalfPlane(cell, ux, uy, c);
+      });
+      if (cell.length >= 3) cells.push(cell.map(function (v) { return [v[0] - s0[0], v[1] - s0[1]]; }).concat([[s0[0], s0[1]]]));
+    });
+    return cells;
+  }
+
+  function packedStones(poly, factor, cfg, m) {
+    var P = cfg.tile * factor, out = [];
+    var b = bounds(poly);
+    var cells = stoneCells(P, { rmin: cfg.rmin * factor, rmax: cfg.rmax * factor, gap: cfg.gap * factor });
+    var i0 = Math.floor(b[0] / P) - 1, i1 = Math.ceil(b[2] / P) + 1;
+    var j0 = Math.floor(b[1] / P) - 1, j1 = Math.ceil(b[3] / P) + 1;
+    cells.forEach(function (cell) {
+      var rel = cell.slice(0, cell.length - 1), sc = cell[cell.length - 1];
+      for (var i = i0; i <= i1; i++) for (var j = j0; j <= j1; j++) {
+        var c = [sc[0] + i * P, sc[1] + j * P];
+        var verts = rel.map(function (q) { return [c[0] + q[0], c[1] + q[1]]; });
+        if (!verts.every(function (q) { return SK.pointInPoly(q, poly) && edgeDist(q, poly) > m; })) continue;
+        out.push(verts.concat([verts[0]]));
+      }
+    });
+    return out;
+  }
+
+  // Scattered dots (blue-noise: no two closer than dmin) and open triangles with random rotation, both tileable.
+  function scatterTile(P, cfg) {
+    var rnd = prng(20261031 + 7);
+    var dots = [], tris = [];
+    // triangles first, spaced apart and rotated at random
+    for (var t = 0, guard = 0; t < cfg.tris && guard < 4000; guard++) {
+      var q = [rnd() * P, rnd() * P];
+      if (tris.every(function (u) { return torusDist(q, u.c, P) >= cfg.size * 2.4; })) { tris.push({ c: q, th: rnd() * 2 * Math.PI }); t++; }
+    }
+    // dots fill the rest, evenly spread (no two closer than dmin), and keep clear of each triangle
+    for (var n = 0; n < 8000 && dots.length < 600; n++) {
+      var c = [rnd() * P, rnd() * P];
+      var inTri = tris.some(function (u) { return torusDist(c, u.c, P) < cfg.size + cfg.tmin; });
+      if (!inTri && dots.every(function (d) { return torusDist(c, d, P) >= cfg.dmin; })) dots.push(c);
+    }
+    return { dots: dots, tris: tris };
+  }
+
+  function scatterSegments(poly, factor, cfg, m) {
+    var P = cfg.tile * factor, dmin = cfg.dmin * factor, size = cfg.size * factor, out = [];
+    var tile = scatterTile(P, { dmin: dmin, tris: cfg.tris, size: size, tmin: cfg.tmin * factor });
+    var b = bounds(poly);
+    var r = cfg.dot * factor;
+    var i0 = Math.floor(b[0] / P) - 1, i1 = Math.ceil(b[2] / P) + 1;
+    var j0 = Math.floor(b[1] / P) - 1, j1 = Math.ceil(b[3] / P) + 1;
+    for (var i = i0; i <= i1; i++) for (var j = j0; j <= j1; j++) {
+      var ox = i * P, oy = j * P;
+      tile.dots.forEach(function (d) {
+        var c = [d[0] + ox, d[1] + oy];
+        if (SK.pointInPoly(c, poly) && edgeDist(c, poly) > m) out.push({ k: 'dot', c: c, r: r });
+      });
+      tile.tris.forEach(function (t) {
+        var cx = t.c[0] + ox, cy = t.c[1] + oy;
+        var v = [0, 1, 2].map(function (k) {
+          var a = t.th + k * 2 * Math.PI / 3;
+          return [cx + size * Math.cos(a), cy + size * Math.sin(a)];
+        });
+        var closed = v.concat([v[0]]);
+        if (closed.every(function (q) { return SK.pointInPoly(q, poly) && edgeDist(q, poly) > m; })) out.push({ k: 'path', pts: closed });
+      });
+    }
+    return out;
+  }
+
   // The drawing primitives of a hatch item (see annot.js for the primitive kinds).
   // item: { kind: 'hatch', pattern, pts: [[x, y], ...] (closed polygon, world inches), outline: bool }
   SK.hatchPrims = function (item, factor) {
@@ -183,10 +324,16 @@
       dotPoints(poly, h.dots * factor, m).forEach(function (c) { out.push({ k: 'dot', c: c, r: h.r * factor }); });
     }
     (h.fams || []).forEach(function (f) {
-      familySegments(poly, f.a, f.s * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
+      familySegments(poly, f.a, f.s * factor, m, (f.o || 0) * factor).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
     });
     if (h.blocks) {
       blockSegments(poly, h.blocks.h * factor, h.blocks.L * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });
+    }
+    if (h.packed) {
+      packedStones(poly, factor, h.packed, m).forEach(function (pts) { out.push({ k: 'path', pts: pts }); });
+    }
+    if (h.scatter) {
+      scatterSegments(poly, factor, h.scatter, m).forEach(function (p) { out.push(p); });
     }
     if (h.zig) {
       waveSegments(poly, h.zig.row * factor, h.zig.amp * factor, h.zig.period * factor, m).forEach(function (seg) { out.push({ k: 'path', pts: seg }); });

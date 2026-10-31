@@ -6,6 +6,33 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ## Entries
 
+### 2026-10-31: why the realistic detail showed no hatch line work
+
+- **Cause:** the hatch keys (`brick-classic` and the others) exist only on the feature branch. `main` has none of them. The app draws an unknown key as an outline with no fill, so the detail showed the boxes but no line work.
+- **Fix in the cloud:** a new row, `ai-draft-classic-hatches-realistic-v2`, with the line work expanded into plain stroke items. Strokes draw on any version of the app. The earlier row is left unchanged, per the skill's no-overwrite rule.
+- **Trade-off:** the v2 row is line work, not hatch items. It can't be edited as a hatch. The repeat swatches (B) are left out to keep the payload small: the full set was about 420 KB, the small swatches about 35 KB.
+- **Real fix:** merge the feature branch to `main` once the user agrees. Then the hatch-item version draws directly.
+- **Error caught:** the first v2 insert was written with only the first 52 items. It was completed by appending the rest to the same new row, and the count was checked against the local file (266). Check every paste against the local count before reporting a row as saved.
+
+### 2026-10-31: realistic classic hatches (brick, stone, concrete, steel)
+
+- **What went wrong before:** the earlier versions used existing keys, so they could not match the classic sheet. Two errors came from sizing: the symbols were drawn 8 by 4 paper inches, so the course spacing gave about 27 brick courses where the sheet shows about four. The symbol must be sized to the sheet (3.2 by 1.2 paper inches), and the spacing follows from that.
+- **Built:** four keys in `sketch/hatch.js`: `brick-classic` (running bond, 0.30 by 0.60), `stone-classic` (new rubble kind, 0.45 grid, radius 0.22, so the stones are about a third of the symbol height), `concrete-classic` (dots plus new triangles), `steel-classic` (paired lines at -45, the agreed two-line steel). Tests added; `node tests/hatch.js` passes.
+- **Checked numerically:** the steel pair gap is 0.2 world inches (0.05 paper); the stone swatch holds seven stones after resizing.
+- **Cloud:** `ai-draft-classic-hatches-realistic`, 30 items, tags AI, draft, hatch, starting point.
+- **Lesson:** a hatch on the sheet is judged by its count per symbol, not its spacing alone. Check how many courses or stones a symbol holds against the classic before calling it realistic.
+- **Open:** the classic boxes in the draft are reference placeholders only. Compare the drawn hatches against the classic image, not against the render, before accepting them.
+
+### 2026-10-31: classic set, versions with confidence
+
+- **Classic:** the ten-entry Building drawing symbols sheet is the starting point. The seven-entry sheet is superseded. The "5116" request was this sheet; it was found by the user, not by search.
+- **Feedback taken:** earlier drafts did not match the user's reading. Likely cause: too many references at once. Next draft uses one reference only.
+- **Built:** `ai-draft-classic-hatch-versions`, 90 items. Each entry has up to three versions with a confidence score. Versions use existing keys only; placeholders mark keys not built.
+- **Text:** notes at 4 times the earlier size, per the user's note that asset sheets read larger. Recorded as `text_scale` in the skill.
+- **Lesson:** a confidence score is only as good as the match check. Several scores here are my estimates from the render, not measured. The user's review is the check.
+- **Lesson:** the render script did not show text size until it applied the note size. A review copy must use the same sizes as the cloud row.
+- **Copyright:** the classic is a watermarked stock preview. Kept in the reference folder, not committed.
+
 ### 2026-10-31: ai_draft_detail skill, classical set, merge
 
 - **Created:** `.claude/skills/ai_draft_detail/SKILL.md`, adapted from `ai_collab`. It makes a new detail, not a markup. Options A and variations B are spaced on the canvas, with numbered annotations. One new cloud row per run.

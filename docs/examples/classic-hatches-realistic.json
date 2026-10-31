@@ -1,0 +1,464 @@
+{
+  "name": "Classic hatches, realistic: brick, stone, concrete, steel (AI draft)",
+  "scale": "3\"=1'-0\"",
+  "tags": [
+    "AI",
+    "draft",
+    "hatch",
+    "starting point"
+  ],
+  "ai_inferred": true,
+  "text_scale": 4,
+  "items": [
+    {
+      "kind": "note",
+      "text": "Classic hatches, drawn realistically. AI draft: verify before use. Each row: the classic box for comparison, the new hatch at two sizes, and observations.",
+      "at": [
+        0,
+        -10
+      ],
+      "width": 160,
+      "tip": [
+        16,
+        -0.4
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "1  BRICK (classic, reference only)",
+      "at": [
+        0,
+        -6
+      ],
+      "width": 60,
+      "tip": [
+        6.4,
+        -0.4
+      ]
+    },
+    {
+      "kind": "rect",
+      "x": 0,
+      "y": 0,
+      "w": 12.8,
+      "h": 4.8,
+      "weight": "w2"
+    },
+    {
+      "kind": "hatch",
+      "pattern": "brick-classic",
+      "pts": [
+        [
+          20,
+          0
+        ],
+        [
+          32.8,
+          0
+        ],
+        [
+          32.8,
+          4.8
+        ],
+        [
+          20,
+          4.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  3.2 x 1.2 paper in, brick-classic",
+      "at": [
+        20,
+        6.5
+      ],
+      "width": 30,
+      "tip": [
+        26.4,
+        4.8
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "brick-classic",
+      "pts": [
+        [
+          40,
+          0
+        ],
+        [
+          80,
+          0
+        ],
+        [
+          80,
+          20
+        ],
+        [
+          40,
+          20
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "B  10 x 5 paper in, repeat",
+      "at": [
+        40,
+        21.5
+      ],
+      "width": 36,
+      "tip": [
+        60,
+        20
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "BRICK. Classic: Running-bond courses, about four to a box. Joints thin. Each brick about twice as long as it is high. Drawn: Courses every 0.30 paper in, bricks 0.60 long (2:1), about four courses in a 1.2 in symbol, joints as single lines, alternate courses offset half a brick. Still differs: The sheet draws the joints slightly heavier than the course lines. The key draws them the same weight.",
+      "at": [
+        96,
+        1
+      ],
+      "width": 130,
+      "tip": [
+        80.4,
+        10
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "2  STONE (classic, reference only)",
+      "at": [
+        0,
+        34
+      ],
+      "width": 60,
+      "tip": [
+        6.4,
+        39.6
+      ]
+    },
+    {
+      "kind": "rect",
+      "x": 0,
+      "y": 40,
+      "w": 12.8,
+      "h": 4.8,
+      "weight": "w2"
+    },
+    {
+      "kind": "hatch",
+      "pattern": "stone-classic",
+      "pts": [
+        [
+          20,
+          40
+        ],
+        [
+          32.8,
+          40
+        ],
+        [
+          32.8,
+          44.8
+        ],
+        [
+          20,
+          44.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  3.2 x 1.2 paper in, stone-classic",
+      "at": [
+        20,
+        46.5
+      ],
+      "width": 30,
+      "tip": [
+        26.4,
+        44.8
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "stone-classic",
+      "pts": [
+        [
+          40,
+          40
+        ],
+        [
+          80,
+          40
+        ],
+        [
+          80,
+          60
+        ],
+        [
+          40,
+          60
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "B  10 x 5 paper in, repeat",
+      "at": [
+        40,
+        61.5
+      ],
+      "width": 36,
+      "tip": [
+        60,
+        60
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "STONE. Classic: Irregular rounded stones of mixed size, with thick outlines and some background showing between them. Drawn: Seven-sided rounded stones on a 0.6 paper in jittered grid, radius 0.42, sizes 70 to 100 percent. About 15 percent of cells are left empty. Still differs: The sheet packs the stones tighter and varies sizes more. Outline weight is the fine line; the sheet is heavier.",
+      "at": [
+        96,
+        41
+      ],
+      "width": 130,
+      "tip": [
+        80.4,
+        50
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "3  CONCRETE (classic, reference only)",
+      "at": [
+        0,
+        74
+      ],
+      "width": 60,
+      "tip": [
+        6.4,
+        79.6
+      ]
+    },
+    {
+      "kind": "rect",
+      "x": 0,
+      "y": 80,
+      "w": 12.8,
+      "h": 4.8,
+      "weight": "w2"
+    },
+    {
+      "kind": "hatch",
+      "pattern": "concrete-classic",
+      "pts": [
+        [
+          20,
+          80
+        ],
+        [
+          32.8,
+          80
+        ],
+        [
+          32.8,
+          84.8
+        ],
+        [
+          20,
+          84.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  3.2 x 1.2 paper in, concrete-classic",
+      "at": [
+        20,
+        86.5
+      ],
+      "width": 30,
+      "tip": [
+        26.4,
+        84.8
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "concrete-classic",
+      "pts": [
+        [
+          40,
+          80
+        ],
+        [
+          80,
+          80
+        ],
+        [
+          80,
+          100
+        ],
+        [
+          40,
+          100
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "B  10 x 5 paper in, repeat",
+      "at": [
+        40,
+        101.5
+      ],
+      "width": 36,
+      "tip": [
+        60,
+        100
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "CONCRETE. Classic: Fine dots, with small open triangles scattered between them. Not in rows. Drawn: Dots every 0.14 paper in, radius 0.012. A small open triangle in about 60 percent of 0.5 in cells. Still differs: Triangle placement is by a fixed hash, so the spacing is more even than on the sheet. Triangles are a little larger on the sheet.",
+      "at": [
+        96,
+        81
+      ],
+      "width": 130,
+      "tip": [
+        80.4,
+        90
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "4  STEEL (classic, reference only)",
+      "at": [
+        0,
+        114
+      ],
+      "width": 60,
+      "tip": [
+        6.4,
+        119.6
+      ]
+    },
+    {
+      "kind": "rect",
+      "x": 0,
+      "y": 120,
+      "w": 12.8,
+      "h": 4.8,
+      "weight": "w2"
+    },
+    {
+      "kind": "hatch",
+      "pattern": "steel-classic",
+      "pts": [
+        [
+          20,
+          120
+        ],
+        [
+          32.8,
+          120
+        ],
+        [
+          32.8,
+          124.8
+        ],
+        [
+          20,
+          124.8
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "A  3.2 x 1.2 paper in, steel-classic",
+      "at": [
+        20,
+        126.5
+      ],
+      "width": 30,
+      "tip": [
+        26.4,
+        124.8
+      ]
+    },
+    {
+      "kind": "hatch",
+      "pattern": "steel-classic",
+      "pts": [
+        [
+          40,
+          120
+        ],
+        [
+          80,
+          120
+        ],
+        [
+          80,
+          140
+        ],
+        [
+          40,
+          140
+        ]
+      ],
+      "outline": true
+    },
+    {
+      "kind": "note",
+      "text": "B  10 x 5 paper in, repeat",
+      "at": [
+        40,
+        141.5
+      ],
+      "width": 36,
+      "tip": [
+        60,
+        140
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "STEEL. Classic: Evenly spaced diagonal lines rising to the right, one line per step. Drawn: Pairs of lines at minus 45 degrees, 0.05 paper in apart, repeating every 0.22 paper in. This is the agreed two-line steel. Still differs: The sheet shows single lines. The pair is the agreed decision; confirm it against the sheet before building more.",
+      "at": [
+        96,
+        121
+      ],
+      "width": 130,
+      "tip": [
+        80.4,
+        130
+      ]
+    },
+    {
+      "kind": "note",
+      "text": "Draft: verify before use. Keys are brick-classic, stone-classic, concrete-classic and steel-classic (sketch/hatch.js).",
+      "at": [
+        0,
+        162
+      ],
+      "width": 140,
+      "tip": [
+        16,
+        154
+      ]
+    }
+  ]
+}

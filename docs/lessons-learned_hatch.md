@@ -6,6 +6,16 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ## Entries
 
+### 2026-10-31: ai_draft_detail skill, classical set, merge
+
+- **Created:** `.claude/skills/ai_draft_detail/SKILL.md`, adapted from `ai_collab`. It makes a new detail, not a markup. Options A and variations B are spaced on the canvas, with numbered annotations. One new cloud row per run.
+- **Detail:** `ai-draft-classical-hatch-set-options` in `sketch_details`, 57 items, tags AI, draft, hatch. Spec `docs/examples/classical-hatch-set-options.json`. Render `docs/hatch/review/classical-hatch-set-options.png`.
+- **Assumption:** "the 11 classical hatches" means the 11 keys that draw today. Confirm before redrawing.
+- **Dropped:** IMG_5116. Not found in the cloud, repo, history, or uploads. The user asked to ignore it.
+- **Lesson:** a multi-row layout needs the notes and tips to be checked against the row pitch. A note placed on the wrong row only shows in the render, not in the item count.
+- **Lesson:** the variation B patch is the same key at a larger size. It shows repeat, not a different design. A true alternative needs a new key, which waits on the palette decisions.
+- **Merge:** PR #34 merged after this entry. The branch carries the reference doc, palette plan, brick options, starting point, and the ai_draft_detail skill.
+
 ### 2026-10-31: review round (brick options, steel, starting point, cloud draft)
 
 - **Decided:** steel is two diagonal lines, not solid. Solid becomes its own key (P-16). The first batch is renamed the **starting point**.

@@ -104,6 +104,7 @@ Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editi
 
 ## Later
 
+- [ ] **Main and nightly pages.** When the app grows, run two versions: a stable main page, and a nightly build for trying new work. Plan (about a month out): the nightly page deploys from its own branch with its own `?v=` cache values, so the two never mix files. Test data goes to a Supabase branch, not the real library, so test deletes and tag edits never touch real details.
 - [ ] "Rebuild database" command: find untagged details, read their drawings and scenes, and write tags back. This runs on the JSON export today.
 - [ ] Tags on individual log cards (deferred on your request).
 - [ ] Link the library with another repository.

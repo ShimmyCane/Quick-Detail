@@ -6,6 +6,15 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ## Entries
 
+### 2026-10-31: review round (brick options, steel, starting point, cloud draft)
+
+- **Decided:** steel is two diagonal lines, not solid. Solid becomes its own key (P-16). The first batch is renamed the **starting point**.
+- **Open:** brick angle (B-01 to B-05 in `docs/hatch/review/brick-options.png`, B-02 recommended). Other open points are marked in `docs/hatch/palette-plan.md`.
+- **Cloud:** inserted `ai-hatch-starting-point` into `sketch_details` as a draft for review, with tags AI, draft, hatch, review. The insert was a new row only.
+- **Not found:** a sheet "ending in 5116". No file, cloud row or commit has that ending. Ask before renaming anything else.
+- **Lesson:** an insert that wraps items in an object fails at the array check. Items must be a bare JSON array. The failed insert left no row, which was checked before retrying.
+- **Rule:** the cloud draft is a review copy. It does not replace any row, and the drafting skill's "never write to the library" rule is not in play here because this was asked for directly.
+
 ### 2026-10-31: first hatch session (reference sheets and batch 1 draft)
 
 - **Done:** eight reference images saved to `docs/hatch/reference/`; `docs/hatch-reference.md` written (how hatches work, sheets, proposals, open decisions); `docs/examples/hatch-batch-1-classic.json` drawn as a reference sheet of the seven classic entries, tagged AI and draft.

@@ -1,11 +1,11 @@
 {
-  "name": "Hatch batch 1, classic: reference sheet (AI draft)",
+  "name": "Hatch starting point (AI draft)",
   "scale": "3\"=1'-0\"",
   "tags": ["hatch", "reference", "AI", "draft"],
   "ai_inferred": true,
   "items": [
     { "kind": "hatch", "pattern": "steel", "pts": [[0, 0], [8, 0], [8, 4], [0, 4]], "outline": true },
-    { "kind": "note", "text": "Solid hatch. Key: steel (solid fill). Matches the reference.", "at": [12, -0.5], "width": 44, "tip": [8.4, 2] },
+    { "kind": "note", "text": "Steel: two diagonal lines (decided). Key steel is solid today; the change is planned as P-01.", "at": [12, -0.5], "width": 44, "tip": [8.4, 2] },
 
     { "kind": "hatch", "pattern": "concrete", "pts": [[0, 8], [8, 8], [8, 12], [0, 12]], "outline": true },
     { "kind": "note", "text": "Concrete. Key: concrete (stipple dots). Reference also shows small triangles; the key draws dots only.", "at": [12, 7.5], "width": 44, "tip": [8.4, 10] },
@@ -17,7 +17,7 @@
     { "kind": "note", "text": "Block, diagonal crosshatch. No key yet, so the swatch is left empty until batch 1 adds one.", "at": [12, 23.5], "width": 44, "tip": [8.4, 26] },
 
     { "kind": "hatch", "pattern": "brick", "pts": [[0, 32], [8, 32], [8, 36], [0, 36]], "outline": true },
-    { "kind": "note", "text": "Brick, diagonal. Key: brick, 45 degree lines that run down to the right. The reference runs up to the right, so the key is mirrored.", "at": [12, 31.5], "width": 44, "tip": [8.4, 34] },
+    { "kind": "note", "text": "Brick, diagonal (B-01 today, runs down to the right). Reference runs up to the right; see review sheet B-02.", "at": [12, 31.5], "width": 44, "tip": [8.4, 34] },
 
     { "kind": "hatch", "pattern": "cmu", "pts": [[0, 40], [8, 40], [8, 44], [0, 44]], "outline": true },
     { "kind": "note", "text": "Brick, running bond. Key: cmu, which is concrete block in running bond. Brick needs its own key.", "at": [12, 39.5], "width": 44, "tip": [8.4, 42] },

@@ -64,7 +64,8 @@ The images are saved in `docs/hatch/reference/`. Read them there, not from the c
 - **Keys name the material, not the look.** A key is `concrete`, `brick`, `steel`. A new key is added only through a batch.
 - **Each key cites its reference file** in the batch entry, so the source is known.
 - **We learn from references, we do not copy them.** Every hatch is our own design, controlled and edited beyond the original. A reference sheets the look and the convention, never the exact drawing.
-- **Each new key has a test** in `tests/hatch.js`, and `SK.hatchPrims` must return a fill for it.- **Drawn examples are tagged.** A reference sheet drawn by the AI carries `AI` and `draft` and `"ai_inferred": true`, as `docs/examples/hatch-batch-1-classic.json` does.
+- **Each new key has a test** in `tests/hatch.js`, and `SK.hatchPrims` must return a fill for it.
+- **Drawn examples are tagged.** A reference sheet drawn by the AI carries `AI` and `draft` and `"ai_inferred": true`, as `docs/examples/hatch-batch-1-classic.json` does.
 
 ### 4.2 Proposed, awaiting agreement
 
@@ -92,7 +93,7 @@ The images are saved in `docs/hatch/reference/`. Read them there, not from the c
 
 | Batch | Scope | Status |
 |---|---|---|
-| 1, classic | The seven entries of `01` | **Drawn as a reference sheet** (`docs/examples/hatch-batch-1-classic.json`), using the nearest existing keys. Gaps are listed in 4.2. Keys not yet built. |
+| 1, starting point | The seven entries of `01` | **Drawn as a reference sheet** (`docs/examples/hatch-starting-point.json`, cloud draft `ai-hatch-starting-point`), using the nearest existing keys. Gaps are listed in 4.2. Keys not yet built. |
 | 2 | To be agreed. Candidates: metals and plastics from `02` A to F, insulation from `02` G to I and `06`, stone and earth from `03` and `05`, wood grain from `02` R and `08`. | Not started |
 
 A batch is done when: its keys are in `sketch/hatch.js`, each has a test, a reference sheet in `docs/examples/` draws every key (`SK.hatchPrims` returns a fill), and the sheet has been rendered and looked at.
@@ -110,9 +111,9 @@ A batch is done when: its keys are in `sketch/hatch.js`, each has a test, a refe
 
 ## 7. Questions to answer before batch 1 is built
 
-1. Brick: confirm `/` (up to the right) is the standard, and that `brick` should be changed to match.
-2. Steel: solid or lines in the classic?
-3. Is the sheet `01` the classic, as the first batch? Or is a different set meant?
+1. Brick: open. Five options are drawn for review in `docs/hatch/review/brick-options.png` (B-01 to B-05). B-02 (up to the right) is recommended.
+2. **Answered:** steel is two diagonal lines, not solid. Solid becomes its own key (P-16). See `docs/hatch/palette-plan.md`.
+3. **Answered:** the first batch is sheet `01`, renamed the **starting point**. The reply also named a sheet "ending in 5116". No file, cloud row or commit has that ending, so it is still to be identified.
 4. Settled: sheet `02` was deleted. The other reference images stay on disk, uncommitted, for study only.
 
 ---
@@ -141,4 +142,19 @@ Status: **proposed, not agreed.** Drafted from the catalogue (`docs/hatch/catalo
 
 **Counts.** Eleven keys exist and can be drawn as they are today (`steel`, `concrete`, `gravel`, `earth`, `brick`, `wood1`, `wood2`, `plywood`, `batt`, `rigid`, `gypsum`). Four are new (`sand`, `brick-bond`, `block`, `glass`). The `screen` key stays for light tone, outside the palette.
 
-**Not in the palette, for later batches:** metals other than steel (02-A, 02-C to E, 06 aluminium and zinc), cork, sound and thermal insulation, stone, parquet and tile.
+**Not in the palette, for later batches:** see section 9.
+
+The number for each hatch (P-01 to P-16) and its plan are in `docs/hatch/palette-plan.md`.
+
+---
+
+## 9. To do: future batches
+
+Not in the basic palette. Each needs an agreed reference, keys, and a test before it is drawn.
+
+- [ ] Metals other than steel: cast or malleable iron, bronze, brass and copper, white metal, zinc and lead, aluminium and magnesium, titanium. Source: catalogue `02` A, C to E, J; `06` aluminium and zinc.
+- [ ] Cork, felt, leather and fibre. Source: catalogue `02` G; `06` cork.
+- [ ] Sound insulation and thermal insulation, beyond the batt and rigid keys. Source: catalogue `02` H and I; `06` thermal insulation.
+- [ ] Stone and rock: rubble, ashlar, flagstone, riprap, limestone. Source: catalogue `03` stone; `05` Pietra and Stone; `07` and `08` stone sheets.
+- [ ] Parquet and wood panel. Source: catalogue `04` parquet; `07` and `08` hardwood, panel and endgrain.
+- [ ] Tile, terrazzo and ceramic. Source: catalogue `06` terrazzo and ceramic tile; `04` and `07` tile sheets.

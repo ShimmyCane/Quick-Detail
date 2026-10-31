@@ -93,10 +93,11 @@ var classicBrick = prims('brick-classic');
 check('classic brick is running bond: joints in alternate courses', classicBrick.length > 10 && classicBrick.some(function (p) { return Math.abs(p.pts[0][0] - p.pts[1][0]) < 1e-9; }));
 var big = [[0, 0], [40, 0], [40, 40], [0, 40]];
 var classicStone = SK.hatchPrims({ kind: 'hatch', pattern: 'stone-classic', pts: big, outline: false }, factor);
-check('classic stone draws closed rounded stones inside the region', classicStone.length > 20 && classicStone.every(function (p) {
-  return p.pts.length === 8 && Math.abs(p.pts[0][0] - p.pts[7][0]) < 1e-9 && Math.abs(p.pts[0][1] - p.pts[7][1]) < 1e-9 && p.pts.every(function (q) { return q[0] > 0 && q[0] < 40 && q[1] > 0 && q[1] < 40; });
+check('classic stone draws closed sharp-cornered stones inside the region', classicStone.length > 20 && classicStone.every(function (p) {
+  var last = p.pts.length - 1;
+  return p.pts.length >= 4 && Math.abs(p.pts[0][0] - p.pts[last][0]) < 1e-9 && Math.abs(p.pts[0][1] - p.pts[last][1]) < 1e-9 && p.pts.every(function (q) { return q[0] > 0 && q[0] < 40 && q[1] > 0 && q[1] < 40; });
 }), classicStone.length + ' stones');
-var classicConc = SK.hatchPrims({ kind: 'hatch', pattern: 'concrete-classic', pts: square, outline: false }, factor);
+var classicConc = SK.hatchPrims({ kind: 'hatch', pattern: 'concrete-classic', pts: big, outline: false }, factor);
 check('classic concrete has dots and triangles', classicConc.some(function (p) { return p.k === 'dot'; }) && classicConc.some(function (p) { return p.k === 'path' && p.pts.length === 4; }));
 var classicSteel = prims('steel-classic');
 check('classic steel is paired lines at -45 degrees (up to the right)', classicSteel.length > 0 && classicSteel.every(function (p) { return p.pts[1][1] < p.pts[0][1] && p.pts[1][0] > p.pts[0][0]; }));

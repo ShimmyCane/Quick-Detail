@@ -87,6 +87,16 @@ A block is a finished detail placed inside another detail. It is a live link, so
 - [ ] Every local file in `index.html` ends in `?v=...`. Change that value whenever any file in `sketch/` changes, so a browser or host that caches files cannot mix an old script with a new page (that mix gave a blank sheet and a dead library on 2026-10-29).
 - [ ] The Supabase library still loads from a public CDN. Bundle a copy in `sketch/` so the cloud library works when the CDN is slow or blocked. It could not be downloaded from the build sandbox, so it needs to be added from a machine with open internet.
 
+## Library
+
+- [ ] **Edit Tags page.** A button in the upper right of the library opens a page for editing tags across the whole library, at a high level. Tags are shown as panels: tap a tag and small thumbnails of the details in it appear beside it.
+  - **Delete tag.** Removes the tag from every detail that has it. It warns first, and the warning says which details are affected. Deleting the details themselves stays a separate, manual step.
+  - **Replace tag.** Tap a second tag to replace the first with it. The first tag shows red and the chosen tag green, then a pop-up asks "Replace tag A with tag B?" with Confirm. Confirming applies it everywhere and returns to the first panel.
+  - **Undo** button at the top. Session only: it undoes the tag changes made since the page was opened and is cleared when the page closes.
+  - Open questions: tags that come from tagged elements (not typed on the detail) cannot be removed by editing the detail's own tags. Decide whether replacing them rewrites the element tags too. A replaced tag already on a detail should merge, not duplicate.
+- [ ] **Move the tag row back under More.** The tag chips were hidden under More and that was liked. Currently they are out in the open, which is wrong. The All chip stays the default.
+- [ ] **Cloud recycle bin.** Cloud delete should go to a bin, not be permanent. Needs a `deleted_at` column on `sketch_details` in the shared Architecture project, so it needs approval before the migration. Until then the cloud delete is permanent, and the change-log entry for it says so.
+
 ## Later
 
 - [ ] "Rebuild database" command: find untagged details, read their drawings and scenes, and write tags back. This runs on the JSON export today.

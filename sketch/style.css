@@ -808,3 +808,16 @@ body.collapsed #rail > button:not(#collapseBtn) { display: none; }
 
 /* ---------- the left bar starts from the lower left corner, above the title block, and grows upwards ---------- */
 .lrail { top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 110px); }
+/* ---------- phone: a narrower left bar. Tools stay at least 34 px, the scene and mic 38 px, so they remain easy to tap. ---------- */
+@media (max-width: 500px) {
+  .lrail { padding: 4px; }
+  .lrail .lgroup { padding: 3px; gap: 3px; }
+  .lrail button { width: 34px; height: 34px; }
+  .lrail .rec-group .scene, .lrail .mic { min-width: 38px; min-height: 38px; }
+  .lrail #colorCur, .lrail [data-color] { width: 20px; height: 20px; border-radius: 10px; }
+  .lrail #weightCur, .lrail [data-weight] { width: 26px; height: 24px; }
+  .lrail .undo-group { padding: 3px; }
+  .pick-row { margin-left: 8px; padding: 4px; }
+  .undo-menu { margin-left: 8px; }
+  .lrail-more { max-height: calc(100vh - 140px); }
+}

@@ -1392,6 +1392,7 @@
   function closePanel() {
     if (panelKind === 'log') $('log').hidden = true;
     else $('panel').hidden = true;
+    document.body.classList.remove('panel-open');   // the left bar comes back
     if (pb && pb.playing) pausePlay();   // a replay keeps its place; the ▶ button brings its controls back
     parkPlayer();
     panelKind = null;
@@ -1435,6 +1436,7 @@
     var btn = document.querySelector('.rail [data-act="' + kind + '"]');
     if (btn) btn.classList.add('on');
     if (kind === 'log') { $('log').hidden = false; renderLog(); return; }
+    document.body.classList.add('panel-open');   // narrow screens: the left bar steps aside (CSS)
     $('panelTitle').textContent = { project: 'Info', playback: 'Playback', settings: 'Settings' }[kind];
     var body = $('panelBody');
     body.innerHTML = '';

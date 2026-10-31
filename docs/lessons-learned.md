@@ -159,7 +159,7 @@ Rules that came out of it:
 - Ratings and the GIF button are on library cards, not in Info. The checklist said "info panel"; that is corrected.
 - Screenshots of each version are in `history/screenshots/`.
 
-Open: on a 390 px phone the left tool bar draws over an open panel. Not changed in v5.
+Narrow screens (560 px and under, including iPhone): opening a side panel hides the left bar; closing the panel brings it back. The Log sheet does not hide it. Wide screens are unchanged.
 
 ---
 

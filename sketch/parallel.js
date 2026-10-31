@@ -60,7 +60,7 @@
       schema: SK.PARALLEL_SCHEMA,
       saved: new Date(now || Date.now()).toISOString(),
       detailId: detail.id,
-      detail: { name: detail.name, scale: detail.scale, tags: detail.tags || [], parentId: detail.parentId || null },
+      detail: { name: detail.name, scale: detail.scale, tags: detail.tags || [], parentId: detail.parentId || null, fork: detail.fork || null },
       spec: { name: detail.name, scale: detail.scale, tags: detail.tags || [], items: spec },
       items: detail.items,
       takes: (takes || []).map(function (t) {

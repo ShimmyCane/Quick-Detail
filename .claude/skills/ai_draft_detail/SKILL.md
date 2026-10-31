@@ -23,6 +23,14 @@ Adapted from `ai_collab`. Where `ai_collab` marks up a detail that exists, this 
 
 Numbers are tracked in `docs/hatch/palette-plan.md`. Keep them the same.
 
+## Text size
+
+- Notes are 4 times the earlier size when the detail is an asset sheet. Set the `text_scale` key in the spec, and apply it to every note's `size` after `SK.authorDetail`: `size = SK.PAPER.text * text_scale`. Record it in the row's metadata.
+
+## Confidence
+
+- When a detail offers versions, give each a confidence score from 0 to 1 for how well it matches the reference. Say in one line why. Use 0 for a placeholder where no key exists.
+
 ## Steps
 
 1. **Read the set.** Check every key in `sketch/hatch.js` (`SK.HATCHES`). A key that does not exist is not drawn. Report it and leave its row empty. Never invent a key.

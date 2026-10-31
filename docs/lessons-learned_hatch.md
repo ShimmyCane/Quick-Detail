@@ -6,6 +6,16 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ## Entries
 
+### 2026-10-31: classic set, versions with confidence
+
+- **Classic:** the ten-entry Building drawing symbols sheet is the starting point. The seven-entry sheet is superseded. The "5116" request was this sheet; it was found by the user, not by search.
+- **Feedback taken:** earlier drafts did not match the user's reading. Likely cause: too many references at once. Next draft uses one reference only.
+- **Built:** `ai-draft-classic-hatch-versions`, 90 items. Each entry has up to three versions with a confidence score. Versions use existing keys only; placeholders mark keys not built.
+- **Text:** notes at 4 times the earlier size, per the user's note that asset sheets read larger. Recorded as `text_scale` in the skill.
+- **Lesson:** a confidence score is only as good as the match check. Several scores here are my estimates from the render, not measured. The user's review is the check.
+- **Lesson:** the render script did not show text size until it applied the note size. A review copy must use the same sizes as the cloud row.
+- **Copyright:** the classic is a watermarked stock preview. Kept in the reference folder, not committed.
+
 ### 2026-10-31: ai_draft_detail skill, classical set, merge
 
 - **Created:** `.claude/skills/ai_draft_detail/SKILL.md`, adapted from `ai_collab`. It makes a new detail, not a markup. Options A and variations B are spaced on the canvas, with numbered annotations. One new cloud row per run.

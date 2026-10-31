@@ -158,3 +158,14 @@ Not in the basic palette. Each needs an agreed reference, keys, and a test befor
 - [ ] Stone and rock: rubble, ashlar, flagstone, riprap, limestone. Source: catalogue `03` stone; `05` Pietra and Stone; `07` and `08` stone sheets.
 - [ ] Parquet and wood panel. Source: catalogue `04` parquet; `07` and `08` hardwood, panel and endgrain.
 - [ ] Tile, terrazzo and ceramic. Source: catalogue `06` terrazzo and ceramic tile; `04` and `07` tile sheets.
+
+---
+
+## 10. Starting point (classic)
+
+The classic, and the starting point for hatches, is the ten-entry **Building drawing symbols** sheet: brick, sand/plaster, cement, stone, earth, concrete, concrete block, steel, glass, and R.C.C. The image is saved as `docs/hatch/reference/00-starting-point-classic.jpg`, not committed (it is a watermarked stock preview). We learn from it; we do not copy it.
+
+- The earlier seven-entry sheet (`01`) and `docs/examples/hatch-starting-point.json` are **superseded** by this sheet. The spec is kept for history and not used as the classic.
+- Each classic entry has up to three versions. Each version uses an existing key, with a confidence score (0 to 1) for how well it matches the sheet. Placeholders mark keys not built yet.
+- Draft: `docs/examples/classic-hatch-versions.json`, cloud row `ai-draft-classic-hatch-versions`, render `docs/hatch/review/classic-hatch-versions.png`.
+- Text on the draft is 4 times the earlier note size, so it reads at asset scale.

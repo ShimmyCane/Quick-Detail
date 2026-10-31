@@ -121,11 +121,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
   touch-action: none;
 }
 .bar-wrap { display: inline-flex; align-items: center; gap: 6px; }
+/* Four equal blocks, alternating ink and paper: each block is a quarter of the labelled length. */
 .bar {
   display: inline-block;
-  height: 6px;
+  height: 8px;
   border: 1px solid var(--ink);
-  background: linear-gradient(90deg, var(--ink) 50%, transparent 50%);
+  background: repeating-linear-gradient(90deg, var(--ink) 0 25%, transparent 25% 50%);
 }
 .scale-big {
   position: fixed;

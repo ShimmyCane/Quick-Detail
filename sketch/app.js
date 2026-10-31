@@ -571,12 +571,11 @@
     ctx.stroke();
   }
 
-  // A round real length for the scale bar: eighths of an inch under a foot, then whole feet.
   function updateTitle() {
     if (!detail) return;
     $('titleName').textContent = detail.name || 'Untitled detail';
     $('scaleLabel').textContent = detail.scale === 'NTS' ? 'NOT TO SCALE' : 'SCALE: ' + SK.scaleOf(detail.scale).label;
-    // Graphic scale: a whole-increment length (1", 2", 3", 6", 1'-0"…) drawn at its true length for this zoom,
+    // Graphic scale: a whole-increment length (1", 2", 3", 6", 12", 2'…) drawn at its true length for this zoom,
     // so the right edge moves as you zoom. The step is the one closest to 110 px.
     var bar = SK.scaleBarChoice(view.z, 110);
     if (bar) { $('scaleBar').style.width = bar.px.toFixed(1) + 'px'; $('barLabel').textContent = bar.label; }

@@ -57,12 +57,11 @@
 
   // Graphic scale: whole increments only (1", 2", 3", 6", then feet). The bar's on-screen length is the real length
   // it stands for at this zoom (zoom = screen pixels per sheet inch), so its right edge moves as you zoom.
-  SK.SCALE_BAR_STEPS = [1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536];   // inches: 1, 2, 3, 6, 12 in., then 2, 4, 8 … feet
-  // Words for the bar's end: inches up to 12 ("12 inches"), then feet ("2 feet", "8 feet").
+  SK.SCALE_BAR_STEPS = [1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536];   // inches: 1", 2", 3", 6", 12", then 2', 4', 8' …
+  // The bar's end label, with unit marks: inches as 12", feet as 8' (up to 12 inches in inches, then feet).
   SK.formatScaleLabel = function (inches) {
-    if (inches <= 12) return inches + (inches === 1 ? ' inch' : ' inches');
-    var ft = inches / 12;
-    return ft + (ft === 1 ? ' foot' : ' feet');
+    if (inches <= 12) return inches + '"';
+    return (inches / 12) + "'";
   };
   SK.scaleBarChoice = function (zoom, targetPx) {
     if (!(zoom > 0)) return null;

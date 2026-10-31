@@ -6,6 +6,14 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ## Entries
 
+### 2026-10-31: why the realistic detail showed no hatch line work
+
+- **Cause:** the hatch keys (`brick-classic` and the others) exist only on the feature branch. `main` has none of them. The app draws an unknown key as an outline with no fill, so the detail showed the boxes but no line work.
+- **Fix in the cloud:** a new row, `ai-draft-classic-hatches-realistic-v2`, with the line work expanded into plain stroke items. Strokes draw on any version of the app. The earlier row is left unchanged, per the skill's no-overwrite rule.
+- **Trade-off:** the v2 row is line work, not hatch items. It can't be edited as a hatch. The repeat swatches (B) are left out to keep the payload small: the full set was about 420 KB, the small swatches about 35 KB.
+- **Real fix:** merge the feature branch to `main` once the user agrees. Then the hatch-item version draws directly.
+- **Error caught:** the first v2 insert was written with only the first 52 items. It was completed by appending the rest to the same new row, and the count was checked against the local file (266). Check every paste against the local count before reporting a row as saved.
+
 ### 2026-10-31: realistic classic hatches (brick, stone, concrete, steel)
 
 - **What went wrong before:** the earlier versions used existing keys, so they could not match the classic sheet. Two errors came from sizing: the symbols were drawn 8 by 4 paper inches, so the course spacing gave about 27 brick courses where the sheet shows about four. The symbol must be sized to the sheet (3.2 by 1.2 paper inches), and the spacing follows from that.

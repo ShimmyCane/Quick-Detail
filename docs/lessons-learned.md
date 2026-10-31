@@ -12,6 +12,7 @@ Sections:
 6. [Hatch](lessons-learned_hatch.md): hatch patterns. The shared reference is `hatch-reference.md`.
 7. [Practice and rating](#7-practice-and-rating): how the owner works and judges a drawing.
 8. [User interface](#8-user-interface): what to check before saying a UI change is live.
+9. [Working lessons from the 31 Oct session](#9-working-lessons-from-the-31-oct-session): how the left bar, grid and scale work went, start to finish.
 
 ---
 
@@ -146,3 +147,53 @@ Rules that came out of it:
 **Measure, do not eyeball, alignment (31 Oct).** Centring was wrong until the groups filled the bar's width. Compare each tool's centre with its group's centre in the browser.
 
 **Keep grid colours as shades of the background (31 Oct).** The owner's rule: no hue unless the background is coloured. Minor lines are 10 points from the background and major lines 25 points.
+
+---
+
+## 9. Working lessons from the 31 Oct session
+
+The whole session, from the left-bar rework to the grid, the phone layout and this log. Each rule is what the next run should start from.
+
+**Asking and reading requests**
+
+- When an example contradicts its own wording, restate the reading with concrete numbers and ask before building. Examples: "darker" gave a lighter example; "3 inches = 1 foot" was read three ways before the owner confirmed the grid square is one true inch.
+- Check what already exists before asking. Export and print scale were already in the ⓘ panel, so no control moved. The "eye" button the owner named did not exist.
+- Say in the final message which reading was built, so the owner can redirect.
+- Stop and wait when the owner interrupts. Do not resume the interrupted action from memory.
+
+**Merging and PRs**
+
+- Merge only when the owner asks. Each merge request was explicit; other pushes were left as draft PRs.
+- After an interrupted tool call, check the PR state (open, draft, merged) before retrying. A merge may have partly run.
+- Mark a draft ready and merge only on the owner's ask; unsubscribe from PR activity once it is merged.
+- Branch from the latest `origin/main`. When switching branches with uncommitted work, stash, switch, then pop.
+- Commit and PR text carries no model identifier. The session trailer stays.
+
+**Version log and caches**
+
+- Keep the in-app version log current with each merge. It lagged PR #37 until the owner asked.
+- Bump every `?v=` string (stylesheet and every script) on each change, including the stylesheet link. Stale strings hid the grouped bar.
+- A new default does not reach a browser with saved settings. Migrate saved settings (`gridOn2`).
+
+**Testing**
+
+- Node tests cover pure logic, and that is where new maths belongs (`sketch/units.js`). Gridlines, shades and scale labels are all pure.
+- Browser checks catch what node cannot: drag-to-pick, the hold menu, redo, Duplicate, the phone bar. Run them at the sizes the owner uses.
+- Before calling a bug real, replay the exact sequence. A second tap on the open picker is meant to close it.
+- Measure alignment and clearance in the browser. Eyeballing missed the off-centre tools and the overlap with the title block.
+
+**Scale and grid**
+
+- Keep the scale rule in one place. The sheet is in real inches; `factor` is real inches per printed inch; a minor square is one printed inch; every fifth line is major (5 in. × 5 in. printed).
+- Screen-only overlays (the grid) stay out of the print and export paths.
+- The grid colour is a shade of the background, never a hue, unless the background is coloured.
+
+**Undo, redo and state**
+
+- Every new change clears the redo stack. Scale changes are undoable too.
+- Pickers and menus close on a second tap and on a tap outside. Test both.
+
+**Phone and small screens**
+
+- Check at 390 px wide and at a 460 px height. Tools stay at least 34 px and the mic and scene at 38 px.
+- Measure the title block; it is taller than it looks (about 97 px with its margin).

@@ -124,3 +124,4 @@ Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editi
 ## Later
 
 - [ ] **Text features** (parked 31 Oct). Not yet decided. Options: size presets; alignment on the start point; box or outline for callouts; underline and bold; leader arrow style (open, filled, dot); whether text turns with its item (see the open rule in `lessons-learned.md`, section 8).
+- [x] **Rejected (31 Oct), revisit later:** Rhino and Orca-style editing commands: true line, rectangle and circle primitives; midpoint, intersection and perpendicular snap; ortho lock and typed lengths; offset; trim, extend, fillet and chamfer; match properties; lock, hide and layers; measure; multi-detail sheets. Not wanted for now. Array and copy were dropped earlier (redraw is quicker).

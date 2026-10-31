@@ -159,6 +159,7 @@ Rules that came out of it:
 - Settings text is short; Version and Changes fold away. v4 is kept at `history/v4/` and linked from Version.
 - Ratings and the GIF button are on library cards, not in Info. The checklist said "info panel"; that is corrected.
 - Screenshots of each version are in `history/screenshots/`.
+- Annotations keep their paper size when the scale changes. Text, arrows, ticks, dots, gaps and line weights already multiply by the factor. The note box width and a dimension's offset from its points are real inches, so `SK.rescaleAnnotations` converts them by the ratio of the new factor to the old. Anchor points (note tips, dimension points) stay on the drawing. One undo step brings back the scale and the items.
 - Graphic scale: whole increments only (1", 2", 3", 6", then 1'-0", 2'-0", …). The bar is drawn at the true length of its label at the current zoom, so its right edge moves as you zoom and the label changes only at a step. Logic is `SK.scaleBarChoice` in `sketch/units.js`.
 
 Narrow screens (560 px and under, including iPhone): opening a side panel hides the left bar; closing the panel brings it back. The Log sheet does not hide it. Wide screens are unchanged.

@@ -306,6 +306,11 @@
     } else if (op.type === 'meta') {
       op.after = detail[op.key];
       detail[op.key] = op.before;
+    } else if (op.type === 'scale') {
+      op.after = { scale: detail.scale, items: clone(detail.items) };
+      detail.scale = op.before.scale;
+      detail.items = clone(op.before.items);
+      logEvent({ type: 'replace', items: clone(detail.items) });
     }
     redos.push(op);
     changed();
@@ -329,6 +334,10 @@
       logEvent({ type: 'replace', items: clone(detail.items) });
     } else if (op.type === 'meta') {
       detail[op.key] = op.after;
+    } else if (op.type === 'scale') {
+      detail.scale = op.after.scale;
+      detail.items = clone(op.after.items);
+      logEvent({ type: 'replace', items: clone(detail.items) });
     }
     ops.push(op);
     changed();
@@ -1329,7 +1338,7 @@
       if (pb) return;
       box.setPointerCapture(e.pointerId);
       var i0 = SK.SCALES.indexOf(SK.scaleOf(detail.scale));
-      sdrag = { x0: e.clientX, i0: i0, i: i0, moved: false, before: detail.scale };
+      sdrag = { x0: e.clientX, i0: i0, i: i0, moved: false, before: { scale: detail.scale, items: clone(detail.items) } };
     });
     box.addEventListener('pointermove', function (e) {
       if (!sdrag) return;
@@ -1339,6 +1348,7 @@
       if (i !== sdrag.i) {
         sdrag.i = i;
         detail.scale = SK.SCALES[i].key;
+        detail.items = SK.rescaleAnnotations(sdrag.before.items, factorOf(detail) / factorOf(sdrag.before));
         $('scaleBig').textContent = SK.SCALES[i].label;
         $('scaleBig').hidden = false;
         redraw();
@@ -1350,9 +1360,10 @@
       sdrag = null;
       $('scaleBig').hidden = true;
       if (!d.moved) { openPanel('project'); return; }
-      if (detail.scale !== d.before) {
-        ops.push({ type: 'meta', key: 'scale', before: d.before });
+      if (detail.scale !== d.before.scale) {
+        ops.push({ type: 'scale', before: d.before, after: { scale: detail.scale, items: clone(detail.items) } });
         redos = [];
+        logEvent({ type: 'replace', items: clone(detail.items) });
         changed();
       }
     }
@@ -1360,11 +1371,16 @@
     box.addEventListener('pointercancel', up);
   })();
 
+  // Changing the scale keeps annotations the same size on paper (see SK.rescaleAnnotations). One undo step brings back the scale and the items.
   function setScale(key) {
     if (key === detail.scale) return;
-    ops.push({ type: 'meta', key: 'scale', before: detail.scale });
-    redos = [];
+    var before = { scale: detail.scale, items: clone(detail.items) };
+    var ratio = SK.scaleOf(key).factor / factorOf(detail);
     detail.scale = key;
+    detail.items = SK.rescaleAnnotations(detail.items, ratio);
+    ops.push({ type: 'scale', before: before, after: { scale: key, items: clone(detail.items) } });
+    redos = [];
+    logEvent({ type: 'replace', items: clone(detail.items) });
     changed();
   }
 
@@ -2815,6 +2831,7 @@
       ['31 Oct', 'Info: New at the top, the name is edited in place, JSON under its own fold'],
       ['31 Oct', 'Settings: shorter text; the version list links the archived v4'],
       ['31 Oct', 'Dimension: a left-bar picker with icons for orthographic, aligned and angular; the mode chips left the hint bar'],
+      ['31 Oct', 'Scale change keeps note boxes and dimension offsets the same size on paper; one undo step'],
       ['31 Oct', 'Graphic scale: whole increments only (1", 2", 3", 6", then feet); the bar is its true length at this zoom, so its right edge moves as you zoom'],
       ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
       ['31 Oct', 'Small screens: tools that do not fit on the left bar move to a second column behind a + button'],

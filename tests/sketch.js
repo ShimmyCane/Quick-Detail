@@ -159,5 +159,23 @@ check('scale bar labels are whole numbers at every zoom', (function () {
 check('scale bar grows and shrinks with zoom while its label holds (the right edge moves)', (function () { var a = SK.scaleBarChoice(20, 110), b = SK.scaleBarChoice(22, 110); return a.inches === 6 && b.inches === 6 && b.px > a.px; })());
 check('scale bar refuses a zoom of zero', SK.scaleBarChoice(0, 110) === null);
 
+// Scale change: annotations keep their paper size. The note box and a dimension's offset follow the factor; anchors stay.
+(function () {
+  var fake = function (text, size) { return text.length * size * 0.6; };
+  var note = { kind: 'note', text: 'WOOD SILL FLASHING', at: [14, -4], width: 6, height: null, size: 3 / 32, leaders: [{ tip: [6, 0] }] };
+  var ac4 = { factor: 4, caps: false, roundTo: 1 / 16, measure: fake };
+  var ac8 = { factor: 8, caps: false, roundTo: 1 / 16, measure: fake };
+  var scaled = SK.rescaleAnnotations([note], 2)[0];
+  check('scale change doubles a note box when the factor doubles', near(scaled.width, 12) && near(scaled.at[0], 14) && near(scaled.leaders[0].tip[0], 6));
+  check('a note wraps to the same number of lines after the scale change', SK.noteLayout(note, ac4).prims.filter(function (p) { return p.k === 'text'; }).length === SK.noteLayout(scaled, ac8).prims.filter(function (p) { return p.k === 'text'; }).length);
+  var dim = { kind: 'dim', mode: 'ortho', orient: 'h', p1: [0, 0], p2: [12, 0], at: [6, 3] };
+  var dimScaled = SK.rescaleAnnotations([dim], 2)[0];
+  check('an ortho dimension offset doubles with the factor; its points stay', near(dimScaled.at[1], 6) && dimScaled.p1[0] === 0 && dimScaled.p2[0] === 12);
+  var al = { kind: 'dim', mode: 'aligned', p1: [0, 0], p2: [10, 10], at: [0, 10] };
+  var alScaled = SK.rescaleAnnotations([al], 3)[0];
+  check('an aligned dimension offset scales across its line: (0,10) at ratio 3 goes to (-10,20)', near(alScaled.at[0], -10, 1e-6) && near(alScaled.at[1], 20, 1e-6));
+  check('ratio 1 leaves items as they are', SK.rescaleAnnotations([note], 1)[0] === note);
+})();
+
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

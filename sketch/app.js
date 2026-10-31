@@ -572,24 +572,14 @@
   }
 
   // A round real length for the scale bar: eighths of an inch under a foot, then whole feet.
-  function niceLength(inches) {
-    if (inches < 12) {
-      var step = inches < 1 ? 1 / 8 : inches < 3 ? 1 / 4 : 1 / 2;
-      return Math.max(step, Math.round(inches / step) * step);
-    }
-    var ft = inches / 12;
-    var fstep = ft < 10 ? 1 : ft < 40 ? 5 : 10;
-    return Math.max(12, Math.round(ft / fstep) * fstep * 12);
-  }
   function updateTitle() {
     if (!detail) return;
     $('titleName').textContent = detail.name || 'Untitled detail';
     $('scaleLabel').textContent = detail.scale === 'NTS' ? 'NOT TO SCALE' : 'SCALE: ' + SK.scaleOf(detail.scale).label;
-    // A graphic scale of fixed length. Its label is the real length it stands for at this zoom and scale, so the
-    // label changes from inches to feet as you zoom while the bar itself stays the same length.
-    var BAR_PX = 110;
-    $('scaleBar').style.width = BAR_PX + 'px';
-    $('barLabel').textContent = SK.formatLength(niceLength(BAR_PX / view.z), 1 / 8);
+    // Graphic scale: a whole-increment length (1", 2", 3", 6", 1'-0"…) drawn at its true length for this zoom,
+    // so the right edge moves as you zoom. The step is the one closest to 110 px.
+    var bar = SK.scaleBarChoice(view.z, 110);
+    if (bar) { $('scaleBar').style.width = bar.px.toFixed(1) + 'px'; $('barLabel').textContent = bar.label; }
   }
 
   // ===================================================================
@@ -2831,6 +2821,7 @@
       ['31 Oct', 'Replay opens in the right panel from the Log; the ▶ rail button is archived'],
       ['31 Oct', 'Info: New at the top, the name is edited in place, JSON under its own fold'],
       ['31 Oct', 'Settings: shorter text; the version list links the archived v4'],
+      ['31 Oct', 'Graphic scale: whole increments only (1", 2", 3", 6", then feet); the bar is its true length at this zoom, so its right edge moves as you zoom'],
       ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
       ['31 Oct', 'Small screens: tools that do not fit on the left bar move to a second column behind a + button'],
       ['31 Oct', 'Left bar tools are centred on the bar\'s centre line'],

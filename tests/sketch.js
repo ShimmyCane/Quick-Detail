@@ -143,5 +143,19 @@ check('grid follows the scale: a minor square is one printed inch, so five squar
 check('grid shades on 80% white: minor 70%, major 55%', SK.gridShades('#cccccc').minor === 'rgb(179,179,179)' && SK.gridShades('#cccccc').major === 'rgb(140,140,140)');
 check('grid shades stay a shade of a coloured background', SK.gridShades('#ccaa88').minor.indexOf('rgb(') === 0 && SK.gridShades('#000000').minor === 'rgb(26,26,26)');
 
+// Graphic scale bar: whole increments only, drawn at its true length for the zoom.
+check('scale bar at 24 px per inch is 6" at 144 px', (function () { var b = SK.scaleBarChoice(24, 110); return b.inches === 6 && b.label === '6"' && near(b.px, 144); })());
+check('scale bar at 10 px per inch is 1\'-0" (12 in.) at 120 px', (function () { var b = SK.scaleBarChoice(10, 110); return b.inches === 12 && b.label === '1\'-0"' && near(b.px, 120); })());
+check('scale bar at 200 px per inch stays at 1" (no fractions)', (function () { var b = SK.scaleBarChoice(200, 110); return b.inches === 1 && b.label === '1"'; })());
+check('scale bar labels are whole numbers at every zoom', (function () {
+  for (var z = 1; z <= 400; z += 0.7) {
+    var b = SK.scaleBarChoice(z, 110);
+    if (!b || /\//.test(b.label) || SK.SCALE_BAR_STEPS.indexOf(b.inches) < 0) return false;
+  }
+  return true;
+})());
+check('scale bar grows and shrinks with zoom while its label holds (the right edge moves)', (function () { var a = SK.scaleBarChoice(20, 110), b = SK.scaleBarChoice(22, 110); return a.inches === 6 && b.inches === 6 && b.px > a.px; })());
+check('scale bar refuses a zoom of zero', SK.scaleBarChoice(0, 110) === null);
+
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

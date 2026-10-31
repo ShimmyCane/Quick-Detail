@@ -44,7 +44,7 @@
       scale: detail.scale,
       tags: detail.tags || [],
       items: detail.items,
-      metadata: SK.detailMetadata(detail, an),
+      metadata: Object.assign({}, SK.detailMetadata(detail, an), { rating: detail.rating == null ? 1 : detail.rating }),
       parent_local_id: detail.parentId || null,
       updated_at: new Date(detail.modified || Date.now()).toISOString()
     };
@@ -193,7 +193,7 @@
     // Read side, for review.
     // The library: details that are not in the cloud recycle bin.
     details: function () {
-      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, created_at, updated_at, parent_id')
+      return this.init().from('sketch_details').select('id, local_id, name, scale, tags, items, metadata, created_at, updated_at, parent_id')
         .is('deleted_at', null)
         .order('updated_at', { ascending: false })
         .then(function (r) { if (r.error) throw r.error; return r.data; });
@@ -205,6 +205,22 @@
         .not('deleted_at', 'is', null)
         .order('deleted_at', { ascending: false })
         .then(function (r) { if (r.error) throw r.error; return r.data; });
+    },
+
+    // Writes the tags and items of one detail (the Edit tags page). The row is the cloud copy, keyed by its row id.
+    setTagsItems: function (rowId, tags, items) {
+      return this.init().from('sketch_details').update({ tags: tags, items: items, updated_at: new Date().toISOString() }).eq('id', rowId)
+        .then(function (r) { if (r.error) throw r.error; });
+    },
+
+    // Sets the 0 to 5 star rating, kept in the row's metadata so no column is needed.
+    setRating: function (rowId, rating) {
+      var c = this.init();
+      return c.from('sketch_details').select('metadata').eq('id', rowId).single().then(function (r) {
+        if (r.error) throw r.error;
+        var meta = Object.assign({}, r.data.metadata || {}, { rating: rating });
+        return c.from('sketch_details').update({ metadata: meta }).eq('id', rowId).then(function (u) { if (u.error) throw u.error; });
+      });
     },
 
     // Moves a detail to the cloud recycle bin. Its files stay until it is deleted for good.

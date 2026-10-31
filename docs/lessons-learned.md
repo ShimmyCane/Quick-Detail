@@ -10,6 +10,7 @@ Sections:
 4. [Cloud library](#4-cloud-library): what is stored, and what the review found.
 5. [Tools and environment](#5-tools-and-environment): what works in this sandbox and what does not.
 6. [Hatch](lessons-learned_hatch.md): hatch patterns. The shared reference is `hatch-reference.md`.
+7. [Practice and rating](#7-practice-and-rating): how the owner works and judges a drawing.
 
 ---
 
@@ -112,3 +113,14 @@ Architecture Supabase project (`xabgankckrcuhcgdolrg`). Tables: `sketch_details`
 - **Supabase**: the MCP tools read the cloud library in this sandbox. The upload path from the browser is still untested live (see `docs/checklist.md`).
 - **Node tests**: run each file with `node tests/<name>.js`. All seven passed at the start of this session.
 - **Scratchpad**: it was removed mid-session. Write backups and temporary files somewhere the session can still reach, and say where they went.
+
+---
+
+## 7. Practice and rating
+
+How the owner works. It decides what the app should do, so read it before building a library feature.
+
+- **Tags sort; they do not manage.** A tag puts a file in a group. Editing a tag never deletes the file it is on (decided 2026-10-31).
+- **Local is an offline copy.** The cloud holds the active documents. This browser's copy exists so the work runs without a connection. Edits made here must reach the cloud too (decided 2026-10-31).
+- **Start each drawing at one star.** The owner begins every piece with one star and something interesting in it. Stars go up only when a drawing earns them, so a higher rating means a stronger chance it is kept for later (decided 2026-10-31). The rating is 0 to 5 stars, and new details start at 1.
+- **Hide what is not needed, but keep it one tap away.** Tags are tucked under More. Only the controls used every time stay in the header.

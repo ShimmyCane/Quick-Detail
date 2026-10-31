@@ -87,6 +87,21 @@ A block is a finished detail placed inside another detail. It is a live link, so
 - [ ] Every local file in `index.html` ends in `?v=...`. Change that value whenever any file in `sketch/` changes, so a browser or host that caches files cannot mix an old script with a new page (that mix gave a blank sheet and a dead library on 2026-10-29).
 - [ ] The Supabase library still loads from a public CDN. Bundle a copy in `sketch/` so the cloud library works when the CDN is slow or blocked. It could not be downloaded from the build sandbox, so it needs to be added from a machine with open internet.
 
+## Library
+
+Decided 31 Oct: tags are a way of sorting the files, not of managing them. Editing a tag never deletes a detail.
+
+- [ ] **Edit Tags page.** An Edit Tags button in the upper right of the library opens a page for editing tags across the whole library. Each tag is a panel. Tap a tag and small thumbnails of the details in it appear beside it.
+  - **Delete tag.** Removes that tag from every detail that has it. The files stay. The warning lists how many details lose the tag. Deleting details is a separate, manual step.
+  - **Replace tag.** Tap a second tag, and the first shows red and the chosen tag green. A pop-up asks "Replace tag A with tag B?" with Confirm. Confirming applies it everywhere, then returns to the first panel. If a detail already has the target tag, it merges and does not duplicate.
+  - **Undo** button at the top. Session only: it reverts the tag edits made since the page was opened and clears when the page closes.
+  - **Applies to both** the cloud and this browser. The cloud is the master copy; this browser's copy is an offline sync of the active documents.
+  - **Element tags become a list, not tags.** Tags that come from tagged elements (speech and geometry) move to their own list on this page. Each entry can be edited or removed here. Removing one tells the AI the user does not care about that item, so it is ignored in the future.
+- [ ] **Sort, recycle bin and search in the header.** Sort stays under the header, and the recycle bin moves up there too. The search box gets smaller. A `+` and a sort symbol replace the wide controls. The sort menu offers Last edited, Created, Rating, Name and Most scenes.
+- [ ] **Tag row back under More.** You liked the tags hidden under More, so they go back there. The All chip stays the default. (The Sort control stays in the header.)
+- [ ] **Rating, 0 to 5 stars.** A basic star rating on every detail. New details start at 1 star. Sort by rating in the library. Higher stars mean the detail is more likely to be kept for future work.
+- [ ] **Cloud recycle bin, approved 31 Oct.** Cloud delete goes to a bin instead of being permanent. It needs a `deleted_at` column on `sketch_details` in the Architecture project. The migration has been approved but not yet run. Until it is built, cloud delete is permanent, and the change-log entry says so.
+
 ## Later
 
 - [ ] "Rebuild database" command: find untagged details, read their drawings and scenes, and write tags back. This runs on the JSON export today.

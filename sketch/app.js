@@ -1393,9 +1393,8 @@
     if (panelKind === 'log') $('log').hidden = true;
     else $('panel').hidden = true;
     document.body.classList.remove('panel-open');   // the left bar comes back
-    if (pb && pb.playing) pausePlay();   // a replay keeps its place; the ▶ button brings its controls back
-    parkPlayer();
     panelKind = null;
+    if (pb) exitReplay(); else parkPlayer();   // closing the panel ends its replay, as Done does
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) {
       if (b.getAttribute('data-act') !== tool) b.classList.remove('on');
     });
@@ -1409,23 +1408,11 @@
   }
 
   // Playback in the right panel: the replay controls while a replay is open, otherwise the recordings' scenes to replay.
+  // Replay only: its controls go into the panel. Entered from the Log's Replay chip.
   function renderPlayback(body) {
-    if (pb) { $('player').hidden = false; body.appendChild($('player')); return; }
-    var any = false;
-    sessions.forEach(function (s) {
-      var scenes = scenesOf(s);
-      if (!scenes.length) return;
-      any = true;
-      var when = new Date(s.created);
-      body.appendChild(el('h3', { text: when.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' · ' + when.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) + ' · ' + SK.formatTime(s.duration) }));
-      body.appendChild(el('div', { class: 'pscene-list' }, scenes.map(function (m, i) {
-        return el('button', { class: 'pscene', on: { click: function () { openReplay(s, m.start); } } }, [
-          el('b', { text: (i + 1) + ' · ' + SK.formatTime(m.start) }),
-          el('span', { text: m.text ? SK.firstWords(m.text, 8) : '(no words)' })
-        ]);
-      })));
-    });
-    if (!any) body.appendChild(el('p', { class: 'muted', text: 'No scenes yet. Draw and talk; each scene is kept here.' }));
+    if (!pb) return;
+    $('player').hidden = false;
+    body.appendChild($('player'));
   }
 
   function openPanel(kind) {
@@ -2841,7 +2828,7 @@
     // Changes, newest first. Add a line here with each change a user would notice.
     var CHANGES = [
       ['31 Oct', 'v5: clean screen also hides the title card'],
-      ['31 Oct', 'Playback is in the right panel, after Info; the ▶ button opens it'],
+      ['31 Oct', 'Replay opens in the right panel from the Log; the ▶ rail button is archived'],
       ['31 Oct', 'Info: New at the top, the name is edited in place, JSON under its own fold'],
       ['31 Oct', 'Settings: shorter text; the version list links the archived v4'],
       ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
@@ -3249,7 +3236,7 @@
       ]));
     });
     document.body.classList.add('replaying');
-    openPanel('playback');   // the controls sit in the right panel, under Info
+    openPanel('playback');   // the controls sit in the right panel
     seekTo(T || 0);
   }
 

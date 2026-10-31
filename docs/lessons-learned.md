@@ -153,7 +153,8 @@ Rules that came out of it:
 **Version 5 (31 Oct).** Decisions from the right-panel review:
 
 - The clean screen (⤢) hides the title card as well as the toolbars.
-- Playback is a right-panel item after Info (▶ in the rail). Replay runs in that panel; Log still offers Replay. Pausing or closing the panel keeps the replay; Done ends it.
+- Replay opens in the right panel from the Log's Replay chip, with the same controls. Closing the panel or Done ends the replay. A separate ▶ rail entry was archived: it only repeated the Log's scenes, so it was dropped (the code is in PR #46).
+- Rail order, top to bottom: clean screen, library, info, settings, log.
 - Info is compact: New at the top, the name edited in place, Export labels short, JSON folded away, Delete last.
 - Settings text is short; Version and Changes fold away. v4 is kept at `history/v4/` and linked from Version.
 - Ratings and the GIF button are on library cards, not in Info. The checklist said "info panel"; that is corrected.

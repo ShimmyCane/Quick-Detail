@@ -44,7 +44,7 @@ The images are saved in `docs/hatch/reference/`. Read them there, not from the c
 | File | What it is | Used for |
 |---|---|---|
 | `01-hatch-basic-sheet.jpg` | The seven-entry "Hatch" sheet: solid, concrete, sand / cement, block, brick (diagonal), brick (running bond), timber | **The classic.** Batch 1 starts here. |
-| `02-engineering-material-hatches-A-R.png` | Lettered A to R, material by material (metals, plastics, insulation, concrete, earth, rock, sand, water, wood across and along the grain). Copyright 2011 McGraw-Hill Companies. | Metals and insulation by type; wood grain |
+| `02` (removed) | Our own notes on the lettered A to R sheet, material by material. The image was deleted at the owner's request, so the notes are the only record. | Metals and insulation by type; wood grain |
 | `03-building-drawing-symbols.jpg` | Brick, sand/plaster, cement, stone, earth, concrete, concrete block, steel, glass, R.C.C. | Building-drawing vocabulary |
 | `04-cad-hatch-library-stones-parquet.jpg` | CAD library with names (STONES, RIVERROCK, GRAVEL, SAND, CONCRETE, PARQUET, WATER, THERMAL, PLASTIC, LOG, and others) | Stone, paving, landscape |
 | `05-cad-hatch-library-scaled-stone-wood.webp` | CAD library with names and default `Scale=` values (Wood3, Ghiaia, Pietra, Legno, Tronco, Carbon) | Stone and wood, with scale notes |
@@ -52,7 +52,7 @@ The images are saved in `docs/hatch/reference/`. Read them there, not from the c
 | `07-cad-hatch-library-bond-paving.jpg` | CAD library: brick bonds, paving, tile, roofing (SPANTILE, ENGLISH, FLEMISH, STAGGER, and others) | Brick bonds, paving, roofing |
 | `08-cad-hatch-library-stone-bond-wood.gif` | CAD library: brick bonds, stone, endgrain, logend, hardwood, panel | Brick, stone, wood grain |
 
-**Source notes.** Sheets 04, 05, 07 and 08 are CAD libraries; their origin is not recorded in the repo. Sheet 02 carries a McGraw-Hill copyright notice. Decide before committing these images (see the lessons file).
+**Source notes.** Sheets 04, 05, 07 and 08 are CAD libraries; their origin is not recorded in the repo. The sheet `02` image was deleted because it carried a copyright notice. Its entries are kept as our notes.
 
 ---
 
@@ -63,6 +63,7 @@ The images are saved in `docs/hatch/reference/`. Read them there, not from the c
 - **The classic is the seven-entry sheet** (`01`). Its entries are the first batch. Other sheets are reference only until their batch is agreed.
 - **Keys name the material, not the look.** A key is `concrete`, `brick`, `steel`. A new key is added only through a batch.
 - **Each key cites its reference file** in the batch entry, so the source is known.
+- **We learn from references, we do not copy them.** Every hatch is our own design, controlled and edited beyond the original. A reference sheets the look and the convention, never the exact drawing.
 - **Each new key has a test** in `tests/hatch.js`, and `SK.hatchPrims` must return a fill for it.- **Drawn examples are tagged.** A reference sheet drawn by the AI carries `AI` and `draft` and `"ai_inferred": true`, as `docs/examples/hatch-batch-1-classic.json` does.
 
 ### 4.2 Proposed, awaiting agreement
@@ -112,7 +113,7 @@ A batch is done when: its keys are in `sketch/hatch.js`, each has a test, a refe
 1. Brick: confirm `/` (up to the right) is the standard, and that `brick` should be changed to match.
 2. Steel: solid or lines in the classic?
 3. Is the sheet `01` the classic, as the first batch? Or is a different set meant?
-4. Are the images in `docs/hatch/reference/` allowed in the repo, given the McGraw-Hill notice on `02`?
+4. Settled: sheet `02` was deleted. The other reference images stay on disk, uncommitted, for study only.
 
 ---
 

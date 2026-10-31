@@ -49,8 +49,9 @@ What the hatch work has taught us. The shared reference is `docs/hatch-reference
 
 ### Source and copyright
 
-- Sheet `02` carries a McGraw-Hill copyright notice (2011). Sheets `04`, `05`, `07` and `08` are CAD libraries with no recorded source.
-- **Decision pending:** before any of the images are committed, decide whether they may stay in the repo. They are in `docs/hatch/reference/`, uncommitted. If they cannot stay, keep the reference doc and drop the images.
+- Sheet `02` carried a McGraw-Hill copyright notice (2011). **Decided:** the image was deleted at the owner's request. Its catalogue entries are kept as our own notes.
+- Sheets `04`, `05`, `07` and `08` are CAD libraries with no recorded source. They stay on disk in `docs/hatch/reference/`, not committed, for study only.
+- **Rule:** we learn from references, we do not copy them. Every hatch is our own design, controlled and edited beyond the original drawing.
 - **Rule:** a file of unknown origin stays untagged and is reported as unknown, as in the drafting skill.
 
 ### Tagging

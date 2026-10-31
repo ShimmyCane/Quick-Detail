@@ -941,6 +941,7 @@
       showHint('Tap or drag over what to delete. Undo brings it back.');
     }
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-act') === t); });
+    renderDimPicker();
   }
 
   function endDraft() {
@@ -948,6 +949,7 @@
     tool = 'draw';
     $('hint').hidden = true;
     document.querySelectorAll('.rail [data-act], #lrail [data-act]').forEach(function (b) { b.classList.remove('on'); });
+    renderDimPicker();
     redraw();
   }
 
@@ -973,15 +975,7 @@
       ? ['Tap the corner (vertex).', 'Tap a point on the first side.', 'Tap a point on the second side.']
       : ['Tap the first point.', 'Tap the second point.'];
     var text = draft.placing ? 'Drag out the dimension line, then let go.' : labels[Math.min(draft.pts.length, need - 1)];
-    var modes = ['ortho', 'aligned', 'angular'].map(function (m) {
-      return el('button', { class: 'chip' + (draft.mode === m ? ' on' : ''), text: m[0].toUpperCase() + m.slice(1), on: { click: function () {
-        dimMode = m;
-        draft = { tool: 'dim', mode: m, pts: [] };
-        showDimHint();
-        redraw();
-      } } });
-    });
-    showHint(text, modes);
+    showHint(text);
   }
 
   function draftDown(w) {
@@ -2820,6 +2814,7 @@
       ['31 Oct', 'Replay opens in the right panel from the Log; the ▶ rail button is archived'],
       ['31 Oct', 'Info: New at the top, the name is edited in place, JSON under its own fold'],
       ['31 Oct', 'Settings: shorter text; the version list links the archived v4'],
+      ['31 Oct', 'Dimension: a left-bar picker with icons for orthographic, aligned and angular; the mode chips left the hint bar'],
       ['31 Oct', 'Graphic scale: whole increments only (1", 2", 3", 6", then feet); the bar is its true length at this zoom, so its right edge moves as you zoom'],
       ['31 Oct', 'Left bar is one panel with dividers; the microphone sits on its own row above the scene button'],
       ['31 Oct', 'Small screens: tools that do not fit on the left bar move to a second column behind a + button'],
@@ -3555,6 +3550,36 @@
     if (b) { b.classList.toggle('on', settings.underlay); b.textContent = settings.underlay ? '◐' : '○'; }
   }
   renderPen();
+
+  // Dimension type: a picker like colour and weight. The dot shows the current type; the row holds the three.
+  var DIM_ICON = {
+    ortho: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4v16M21 4v16M3 12h18M3 12l3-2.5M3 12l3 2.5M21 12l-3-2.5M21 12l-3 2.5"/></svg>',
+    aligned: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20L20 4M2 15l7 7M22 9l-7-7"/><path d="M8.5 15.5l-1.5 1.5"/></svg>',
+    angular: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20H21M4 20L18 5"/><path d="M11 20a7 7 0 0 0-2.4-5.3"/></svg>'
+  };
+  var DIM_NAME = { ortho: 'Orthographic (horizontal or vertical)', aligned: 'Aligned (along the line)', angular: 'Angular (between two lines)' };
+  (function buildDimRow() {
+    var row = document.querySelector('#dimPicker .pick-row');
+    ['ortho', 'aligned', 'angular'].forEach(function (m) {
+      var b = el('button', { type: 'button', 'data-dimmode': m, title: DIM_NAME[m], 'aria-label': DIM_NAME[m] });
+      b.innerHTML = DIM_ICON[m];
+      row.appendChild(b);
+    });
+  })();
+  function renderDimPicker() {
+    var cur = $('dimCur');
+    cur.innerHTML = DIM_ICON[dimMode];
+    cur.setAttribute('data-dim', dimMode);
+    cur.classList.toggle('on', tool === 'dim');
+    document.querySelectorAll('#dimPicker [data-dimmode]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-dimmode') === dimMode); });
+  }
+  setupPicker('dimPicker', 'data-dimmode', function (m) {
+    dimMode = m;
+    if (tool === 'dim') { draft = { tool: 'dim', mode: m, pts: [] }; showDimHint(); redraw(); }
+    else setTool('dim');
+    renderDimPicker();
+  });
+  renderDimPicker();
 
   // Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the "+".
   // Each tool is put back where it was before every refit, so the bar always fills from the top.

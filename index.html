@@ -6,7 +6,7 @@
   <title>Wall Sketch</title>
   <!-- The ?v= on every local file keeps this page and its scripts a matched set when a browser or host caches files.
        Change it whenever any file in sketch/ changes. -->
-  <link rel="stylesheet" href="sketch/style.css?v=20261031m">
+  <link rel="stylesheet" href="sketch/style.css?v=20261031n">
   <script>
     // If the app fails to start (a stale cached script, say), say so at the bottom instead of leaving a blank sheet.
     window.addEventListener('error', function (e) {
@@ -94,8 +94,11 @@
         <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
       </div>
     </div>
+    <div class="lgroup picker" id="dimPicker" aria-label="Dimension type">
+      <button type="button" id="dimCur" class="pick-cur" data-dim="ortho" aria-expanded="false" title="Dimension type (D). Tap or drag to choose" aria-label="Dimension type"></button>
+      <div class="pick-row" hidden></div>
+    </div>
     <div class="lgroup tools" aria-label="Annotation tools">
-      <button data-act="dim" class="tool" title="Dimension (D)" aria-label="Dimension">↔</button>
       <button data-act="text" class="tool" title="Text with arrow (T)" aria-label="Text">T</button>
       <button data-act="hatch" class="tool" title="Hatch a region (H)" aria-label="Hatch">▨</button>
       <button data-act="image" class="tool" title="Add an image (no-print layer)" aria-label="Add image">▣</button>
@@ -209,21 +212,21 @@
   <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
-  <script src="sketch/core.js?v=20261031m"></script>
-  <script src="sketch/units.js?v=20261031m"></script>
-  <script src="sketch/hatch.js?v=20261031m"></script>
-  <script src="sketch/annot.js?v=20261031m"></script>
-  <script src="sketch/blocks.js?v=20261031m"></script>
-  <script src="sketch/author.js?v=20261031m"></script>
-  <script src="sketch/parallel.js?v=20261031m"></script>
-  <script src="sketch/livefile.js?v=20261031m"></script>
-  <script src="sketch/paint.js?v=20261031m"></script>
-  <script src="sketch/store.js?v=20261031m"></script>
-  <script src="sketch/record.js?v=20261031m"></script>
-  <script src="sketch/gif.js?v=20261031m"></script>
+  <script src="sketch/core.js?v=20261031n"></script>
+  <script src="sketch/units.js?v=20261031n"></script>
+  <script src="sketch/hatch.js?v=20261031n"></script>
+  <script src="sketch/annot.js?v=20261031n"></script>
+  <script src="sketch/blocks.js?v=20261031n"></script>
+  <script src="sketch/author.js?v=20261031n"></script>
+  <script src="sketch/parallel.js?v=20261031n"></script>
+  <script src="sketch/livefile.js?v=20261031n"></script>
+  <script src="sketch/paint.js?v=20261031n"></script>
+  <script src="sketch/store.js?v=20261031n"></script>
+  <script src="sketch/record.js?v=20261031n"></script>
+  <script src="sketch/gif.js?v=20261031n"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="sketch/analyze.js?v=20261031m"></script>
-  <script src="sketch/cloud.js?v=20261031m"></script>
-  <script src="sketch/app.js?v=20261031m"></script>
+  <script src="sketch/analyze.js?v=20261031n"></script>
+  <script src="sketch/cloud.js?v=20261031n"></script>
+  <script src="sketch/app.js?v=20261031n"></script>
 </body>
 </html>

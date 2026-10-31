@@ -1,0 +1,1707 @@
+{
+  "schema": "quick-detail/hatch-catalogue-1",
+  "about": "Catalogue of the hatch patterns shown in the reference images in this folder. Each entry has a name as printed on the sheet and a rough description. 'basis' says how the description was made: 'seen' means the pattern is clear enough in the image to describe its look; 'from name' means the image is too small to read the pattern, so the description is inferred from the name and should be checked against the CAD library before use. Names are copied from the sheets and may contain typos. The catalogue describes; it does not decide which hatches the app uses (see docs/hatch-reference.md). Sheet 02 was removed at the owner's request. Its entries are notes written from it for study, not copies, and the image is not kept in the repo.",
+  "images": [
+    {
+      "id": "01",
+      "file": "reference/01-hatch-basic-sheet.jpg",
+      "title": "Hatch (basic sheet, seven entries)",
+      "entries": [
+        {
+          "name": "solid hatch",
+          "desc": "Plain solid grey fill with a thin outline.",
+          "basis": "seen"
+        },
+        {
+          "name": "concrete",
+          "desc": "Sparse small dots and small open triangles scattered evenly.",
+          "basis": "seen"
+        },
+        {
+          "name": "sand / cement",
+          "desc": "Very sparse tiny dots on white.",
+          "basis": "seen"
+        },
+        {
+          "name": "block",
+          "desc": "Diagonal crosshatch forming diamonds, lines at plus and minus 45 degrees.",
+          "basis": "seen"
+        },
+        {
+          "name": "brick",
+          "desc": "Single family of parallel diagonal lines, running up to the right.",
+          "basis": "seen"
+        },
+        {
+          "name": "brick (running bond)",
+          "desc": "Courses of brick-sized blocks, each course offset by half a block.",
+          "basis": "seen"
+        },
+        {
+          "name": "timber",
+          "desc": "Long vertical lines with short broken dashes, like boards.",
+          "basis": "seen"
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "file": null,
+      "title": "Engineering material notes, A to R (source image removed; entries are our own notes)",
+      "entries": [
+        {
+          "name": "A: Cast or malleable iron, general use for all materials",
+          "desc": "Evenly spaced diagonal lines. Also the default when a material is unlisted.",
+          "basis": "seen"
+        },
+        {
+          "name": "B: Steel",
+          "desc": "Diagonal lines in closer pairs, heavier than A.",
+          "basis": "seen"
+        },
+        {
+          "name": "C: Bronze, brass, copper and compositions",
+          "desc": "Diagonal lines with dashes between them.",
+          "basis": "seen"
+        },
+        {
+          "name": "D: White metal, zinc, lead, babbitt and alloys",
+          "desc": "Crosshatch of diagonal lines in both directions.",
+          "basis": "seen"
+        },
+        {
+          "name": "E: Magnesium, aluminum and aluminum alloys",
+          "desc": "Sparse X-shaped marks, short crossed strokes spaced apart.",
+          "basis": "seen"
+        },
+        {
+          "name": "F: Rubber, plastic and electrical insulation",
+          "desc": "Diagonal lines in closely spaced pairs.",
+          "basis": "seen"
+        },
+        {
+          "name": "G: Cork, felt, leather and fiber",
+          "desc": "Short wavy dashes in staggered rows.",
+          "basis": "seen"
+        },
+        {
+          "name": "H: Sound insulation",
+          "desc": "Diagonal lines with small ovals scattered along them.",
+          "basis": "seen"
+        },
+        {
+          "name": "I: Thermal insulation",
+          "desc": "Diagonal zigzag lines, like a sawtooth.",
+          "basis": "seen"
+        },
+        {
+          "name": "J: Titanium and refractory material",
+          "desc": "Diagonal lines with short dashes between them.",
+          "basis": "seen"
+        },
+        {
+          "name": "K: Electric windings, electromagnets, resistance, etc.",
+          "desc": "Square grid of fine lines.",
+          "basis": "seen"
+        },
+        {
+          "name": "L: Concrete",
+          "desc": "Dense stipple with small triangles and irregular blobs.",
+          "basis": "seen"
+        },
+        {
+          "name": "M: Marble, slate, glass, porcelain, etc.",
+          "desc": "Diagonal lines broken into short dashes.",
+          "basis": "seen"
+        },
+        {
+          "name": "N: Earth",
+          "desc": "Bands of angled hatching sitting on a stipple base.",
+          "basis": "seen"
+        },
+        {
+          "name": "O: Rock",
+          "desc": "Angular hatched blocks of irregular shape.",
+          "basis": "seen"
+        },
+        {
+          "name": "P: Sand",
+          "desc": "Stipple of small dots, denser than concrete.",
+          "basis": "seen"
+        },
+        {
+          "name": "Q: Water and other liquids",
+          "desc": "Horizontal lines, some broken into dashes.",
+          "basis": "seen"
+        },
+        {
+          "name": "R: Wood, across grain / with grain",
+          "desc": "Across grain: concentric rings and arcs at the end grain. With grain: wavy lines that follow the growth.",
+          "basis": "seen"
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "file": "reference/03-building-drawing-symbols.jpg",
+      "title": "Building drawing symbols",
+      "entries": [
+        {
+          "name": "BRICK",
+          "desc": "Running-bond brick courses with thin joints.",
+          "basis": "seen"
+        },
+        {
+          "name": "SAND/PLASTER",
+          "desc": "Dense fine stipple.",
+          "basis": "seen"
+        },
+        {
+          "name": "CEMENT",
+          "desc": "Sparse dots and small triangles.",
+          "basis": "seen"
+        },
+        {
+          "name": "STONE",
+          "desc": "Irregular rounded stone outlines packed together.",
+          "basis": "seen"
+        },
+        {
+          "name": "EARTH",
+          "desc": "Small interlocking basket-weave style blocks.",
+          "basis": "seen"
+        },
+        {
+          "name": "CONCRETE",
+          "desc": "Dots and open triangles.",
+          "basis": "seen"
+        },
+        {
+          "name": "CONCRETE BLOCK",
+          "desc": "Diagonal crosshatch, diamonds.",
+          "basis": "seen"
+        },
+        {
+          "name": "STEEL",
+          "desc": "Diagonal lines, same look as R.C.C.",
+          "basis": "seen"
+        },
+        {
+          "name": "GLASS",
+          "desc": "Short diagonal dashes inside the boundary.",
+          "basis": "seen"
+        },
+        {
+          "name": "R.C.C.",
+          "desc": "Diagonal lines, same look as STEEL. Reinforced cement concrete.",
+          "basis": "seen"
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "file": "reference/04-cad-hatch-library-stones-parquet.jpg",
+      "title": "CAD hatch library, stones, paving and landscape (100 entries)",
+      "entries": [
+        {
+          "name": "STONES",
+          "desc": "Irregular rounded stones of mixed size.",
+          "basis": "from name"
+        },
+        {
+          "name": "RIVERROCK",
+          "desc": "Smooth river stones.",
+          "basis": "from name"
+        },
+        {
+          "name": "AGGREGAT",
+          "desc": "Aggregate: stones of mixed size in a matrix.",
+          "basis": "from name"
+        },
+        {
+          "name": "GRAVEL1",
+          "desc": "Gravel, small stones.",
+          "basis": "from name"
+        },
+        {
+          "name": "GRAVEL2",
+          "desc": "Gravel, coarser variant.",
+          "basis": "from name"
+        },
+        {
+          "name": "RUBBLE",
+          "desc": "Rough broken stone.",
+          "basis": "from name"
+        },
+        {
+          "name": "SAND",
+          "desc": "Stipple of dots.",
+          "basis": "from name"
+        },
+        {
+          "name": "SAND-X",
+          "desc": "Sand, a sparser variant with crosses.",
+          "basis": "from name"
+        },
+        {
+          "name": "CONCRETE",
+          "desc": "Concrete, dots with triangles.",
+          "basis": "from name"
+        },
+        {
+          "name": "CONCRT",
+          "desc": "Concrete, dots only.",
+          "basis": "from name"
+        },
+        {
+          "name": "CONCRT-X",
+          "desc": "Concrete, a variant with marks.",
+          "basis": "from name"
+        },
+        {
+          "name": "STIPPLE",
+          "desc": "Fine stipple.",
+          "basis": "from name"
+        },
+        {
+          "name": "TEXTURE",
+          "desc": "Textured surface, irregular marks.",
+          "basis": "from name"
+        },
+        {
+          "name": "TEXTURED",
+          "desc": "Textured surface, a variant.",
+          "basis": "from name"
+        },
+        {
+          "name": "TURF",
+          "desc": "Grass turf, short strokes.",
+          "basis": "from name"
+        },
+        {
+          "name": "GRASS2",
+          "desc": "Grass tufts.",
+          "basis": "from name"
+        },
+        {
+          "name": "MARSH",
+          "desc": "Marsh, grass and water marks.",
+          "basis": "from name"
+        },
+        {
+          "name": "GNDCOVER",
+          "desc": "Ground cover, bushes or foliage clusters.",
+          "basis": "from name"
+        },
+        {
+          "name": "ORCHARD",
+          "desc": "Orchard trees in rows.",
+          "basis": "from name"
+        },
+        {
+          "name": "FOREST",
+          "desc": "Forest, tree symbols.",
+          "basis": "from name"
+        },
+        {
+          "name": "CLEARCUT",
+          "desc": "Clear-cut, tree stumps.",
+          "basis": "from name"
+        },
+        {
+          "name": "BATTING1",
+          "desc": "Batting, looped wavy rows.",
+          "basis": "from name"
+        },
+        {
+          "name": "BATTING2",
+          "desc": "Batting, a variant of the loops.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUETA",
+          "desc": "Parquet, block pattern.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUETB",
+          "desc": "Parquet, block pattern, variant B.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET",
+          "desc": "Parquet floor, interlocking strips.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET1",
+          "desc": "Parquet floor, variant 1.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET2",
+          "desc": "Parquet floor, variant 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET3",
+          "desc": "Parquet floor, variant 3.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET4",
+          "desc": "Parquet floor, variant 4.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET5",
+          "desc": "Parquet floor, variant 5.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET6",
+          "desc": "Parquet floor, variant 6.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET7",
+          "desc": "Parquet floor, variant 7.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARQUET8",
+          "desc": "Parquet floor, variant 8.",
+          "basis": "from name"
+        },
+        {
+          "name": "BASKETWV",
+          "desc": "Basket weave.",
+          "basis": "from name"
+        },
+        {
+          "name": "MELBURY",
+          "desc": "Melbury, a geometric tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "MONCELLO",
+          "desc": "Geometric tile, square and diamond.",
+          "basis": "from name"
+        },
+        {
+          "name": "CONCOURS",
+          "desc": "Geometric tile, a repeat of octagons and squares.",
+          "basis": "from name"
+        },
+        {
+          "name": "FLORTILE",
+          "desc": "Floor tile, square tiles.",
+          "basis": "from name"
+        },
+        {
+          "name": "BUTTEDHB",
+          "desc": "Butted herringbone.",
+          "basis": "from name"
+        },
+        {
+          "name": "CLUSTHB",
+          "desc": "Clustered herringbone.",
+          "basis": "from name"
+        },
+        {
+          "name": "PLANKBX1",
+          "desc": "Plank pattern, boxed.",
+          "basis": "from name"
+        },
+        {
+          "name": "MEDBRICK",
+          "desc": "Medium brick bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "C-MADERA",
+          "desc": "Madera, wood block pattern.",
+          "basis": "from name"
+        },
+        {
+          "name": "BOURCONE",
+          "desc": "Cone pattern, circles and arcs.",
+          "basis": "from name"
+        },
+        {
+          "name": "OCTA-DOT",
+          "desc": "Octagons with a dot in each.",
+          "basis": "from name"
+        },
+        {
+          "name": "DIJON",
+          "desc": "Tile, squares with a diagonal.",
+          "basis": "from name"
+        },
+        {
+          "name": "FQ-TILE",
+          "desc": "Tile, square with a cut corner.",
+          "basis": "from name"
+        },
+        {
+          "name": "WHITNEY",
+          "desc": "Tile, a geometric repeat.",
+          "basis": "from name"
+        },
+        {
+          "name": "WINDMILL",
+          "desc": "Windmill, four-arm tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "PARA-HEX",
+          "desc": "Parallel hexagons.",
+          "basis": "from name"
+        },
+        {
+          "name": "RATTAN",
+          "desc": "Rattan, woven strips.",
+          "basis": "from name"
+        },
+        {
+          "name": "RANDTILE",
+          "desc": "Random tile, irregular.",
+          "basis": "from name"
+        },
+        {
+          "name": "DECOTILE",
+          "desc": "Decorative tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "OCTASQR",
+          "desc": "Octagons and squares.",
+          "basis": "from name"
+        },
+        {
+          "name": "OCTAGONS",
+          "desc": "Octagons.",
+          "basis": "from name"
+        },
+        {
+          "name": "WEAVE",
+          "desc": "Weave, over-under strips.",
+          "basis": "from name"
+        },
+        {
+          "name": "GLASSBLOC",
+          "desc": "Glass block, grid of blocks.",
+          "basis": "from name"
+        },
+        {
+          "name": "GLASS",
+          "desc": "Glass, short diagonal dashes.",
+          "basis": "from name"
+        },
+        {
+          "name": "GLASS2",
+          "desc": "Glass, variant with diagonal dashes.",
+          "basis": "from name"
+        },
+        {
+          "name": "GRECODEK",
+          "desc": "Greek key, a meander pattern.",
+          "basis": "from name"
+        },
+        {
+          "name": "BACKGND",
+          "desc": "Background, a plain repeat.",
+          "basis": "from name"
+        },
+        {
+          "name": "HEXPERF",
+          "desc": "Perforated hexagons.",
+          "basis": "from name"
+        },
+        {
+          "name": "SLOTPERF",
+          "desc": "Slotted perforations.",
+          "basis": "from name"
+        },
+        {
+          "name": "WIREMESH",
+          "desc": "Wire mesh, a fine grid.",
+          "basis": "from name"
+        },
+        {
+          "name": "LATH",
+          "desc": "Lath, parallel strips with gaps.",
+          "basis": "from name"
+        },
+        {
+          "name": "SIDING",
+          "desc": "Horizontal siding boards.",
+          "basis": "from name"
+        },
+        {
+          "name": "SKIRTING",
+          "desc": "Skirting, a horizontal band.",
+          "basis": "from name"
+        },
+        {
+          "name": "TREADPLT",
+          "desc": "Tread plate, raised diamonds.",
+          "basis": "from name"
+        },
+        {
+          "name": "CIRC",
+          "desc": "Circles.",
+          "basis": "from name"
+        },
+        {
+          "name": "PIPE",
+          "desc": "Pipe, round sections.",
+          "basis": "from name"
+        },
+        {
+          "name": "GROUND",
+          "desc": "Ground, a stippled earth.",
+          "basis": "from name"
+        },
+        {
+          "name": "WATER",
+          "desc": "Water, wavy horizontal lines.",
+          "basis": "from name"
+        },
+        {
+          "name": "RIGIDINS",
+          "desc": "Rigid insulation, crosshatch.",
+          "basis": "from name"
+        },
+        {
+          "name": "SOUND",
+          "desc": "Sound insulation, marks.",
+          "basis": "from name"
+        },
+        {
+          "name": "THERMAL",
+          "desc": "Thermal insulation, zigzag.",
+          "basis": "from name"
+        },
+        {
+          "name": "PLASTIC",
+          "desc": "Plastic, bold diagonal stripes.",
+          "basis": "from name"
+        },
+        {
+          "name": "GRIDDOT",
+          "desc": "Grid of dots.",
+          "basis": "from name"
+        },
+        {
+          "name": "ICE",
+          "desc": "Ice, diamond shapes.",
+          "basis": "from name"
+        },
+        {
+          "name": "RAIN",
+          "desc": "Rain, diagonal strokes.",
+          "basis": "from name"
+        },
+        {
+          "name": "SNOW",
+          "desc": "Snow, dots and stars.",
+          "basis": "from name"
+        },
+        {
+          "name": "T-STORM",
+          "desc": "Thunderstorm, diagonal bands with a bolt.",
+          "basis": "from name"
+        },
+        {
+          "name": "24X24",
+          "desc": "Grid, 24 by 24 units.",
+          "basis": "from name"
+        },
+        {
+          "name": "24X48",
+          "desc": "Grid, 24 by 48 units.",
+          "basis": "from name"
+        },
+        {
+          "name": "LOG",
+          "desc": "Log-scale grid.",
+          "basis": "from name"
+        },
+        {
+          "name": "SEMI-LOG",
+          "desc": "Semi-log grid.",
+          "basis": "from name"
+        },
+        {
+          "name": "LOG-LOG",
+          "desc": "Log-log grid.",
+          "basis": "from name"
+        },
+        {
+          "name": "PHANTSQR",
+          "desc": "Phantom squares, dashed.",
+          "basis": "from name"
+        },
+        {
+          "name": "BOXES",
+          "desc": "Boxes, square outlines.",
+          "basis": "from name"
+        },
+        {
+          "name": "CIRCLE32",
+          "desc": "Circle, a single outlined circle.",
+          "basis": "from name"
+        },
+        {
+          "name": "ONE",
+          "desc": "Digit 1 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "TWO",
+          "desc": "Digit 2 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "THREE",
+          "desc": "Digit 3 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "FOUR",
+          "desc": "Digit 4 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "FIVE",
+          "desc": "Digit 5 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "SIX",
+          "desc": "Digit 6 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "SEVEN",
+          "desc": "Digit 7 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "EIGHT",
+          "desc": "Digit 8 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "NINE",
+          "desc": "Digit 9 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        },
+        {
+          "name": "ZERO",
+          "desc": "Digit 0 in a box. A numeric label tile, not a material.",
+          "basis": "seen"
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "file": "reference/05-cad-hatch-library-scaled-stone-wood.webp",
+      "title": "CAD hatch library, stone, wood and gravel, with default scales",
+      "entries": [
+        {
+          "name": "Wood3",
+          "desc": "Wood grain, wavy long lines.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Wood4",
+          "desc": "Wood grain, wavy lines in bands.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Wood5",
+          "desc": "Wood grain, zigzag lines.",
+          "basis": "seen",
+          "source_scale": 0.5
+        },
+        {
+          "name": "Wood6",
+          "desc": "Wood grain, diagonal lines with knots.",
+          "basis": "seen",
+          "source_scale": 2
+        },
+        {
+          "name": "Wood7",
+          "desc": "Wood grain, horizontal bands with knots.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Woodface",
+          "desc": "Wood face, flowing grain with an eye.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Zero",
+          "desc": "Four small rounded slots on white. A rounded marker, not a material.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Ghiaia1",
+          "desc": "Gravel (ghiaia), large rounded stones with small ones between.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Ghiaia3",
+          "desc": "Gravel, rounded stones of mixed size.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Ghiaia4",
+          "desc": "Gravel, rounded stones, a dense variant.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Pietra",
+          "desc": "Stone (pietra), irregular rectangles.",
+          "basis": "seen",
+          "source_scale": 10
+        },
+        {
+          "name": "Pietra1",
+          "desc": "Stone, rectangular blocks in courses.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Pietra3",
+          "desc": "Stone, irregular polygon blocks.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Pietra4",
+          "desc": "Stone, rounded irregular blocks.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Pietra5",
+          "desc": "Stone, rounded blocks, a variant.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Pietra6",
+          "desc": "Stone, a mix of blocks and rectangles.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Vespaio1",
+          "desc": "Large open circles in a field, a cavity or void pattern.",
+          "basis": "seen",
+          "source_scale": 0.5
+        },
+        {
+          "name": "Legno1",
+          "desc": "Wood (legno), wavy horizontal lines.",
+          "basis": "seen",
+          "source_scale": 10
+        },
+        {
+          "name": "Legno2",
+          "desc": "Wood, flowing grain with eyes.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Legno3",
+          "desc": "Wood, wavy grain.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Legno4",
+          "desc": "Wood, parallel diagonal grain.",
+          "basis": "seen",
+          "source_scale": 2
+        },
+        {
+          "name": "Tronco",
+          "desc": "Log (tronco), growth rings with radial lines.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Spanish3",
+          "desc": "Spanish tile, arched rows.",
+          "basis": "seen",
+          "source_scale": 0.2
+        },
+        {
+          "name": "Wood1",
+          "desc": "Wood, parallel diagonal lines.",
+          "basis": "seen",
+          "source_scale": 2
+        },
+        {
+          "name": "Carbon",
+          "desc": "Carbon, woven basket pattern.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Ch",
+          "desc": "Diagonal lines with short bars, brick-like.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Cl",
+          "desc": "Fine diagonal lines.",
+          "basis": "seen",
+          "source_scale": 3
+        },
+        {
+          "name": "Ell",
+          "desc": "Herringbone or brick bond, interlocking.",
+          "basis": "seen",
+          "source_scale": 1
+        },
+        {
+          "name": "Gc",
+          "desc": "Diagonal lines with stipple between.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Gm",
+          "desc": "Vertical bands with stipple.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Gp",
+          "desc": "Dense stipple, gravel or sand.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Gw",
+          "desc": "Dense stipple, a grainy field.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "H49",
+          "desc": "Stipple with small triangles.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "H50",
+          "desc": "Short horizontal dashes in rows.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Mh",
+          "desc": "Vertical lines with diagonal dashes between.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Ml",
+          "desc": "Vertical parallel lines.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Oh",
+          "desc": "Horizontal lines, parallel diagonal hatch.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Ol",
+          "desc": "Square grid.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Pi",
+          "desc": "Parallel lines with diagonal hatch inside bands.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Rooftile",
+          "desc": "Roof tile, scalloped rows.",
+          "basis": "seen",
+          "source_scale": 0.2
+        },
+        {
+          "name": "Sc",
+          "desc": "Diagonal lines with stipple.",
+          "basis": "seen",
+          "source_scale": 5
+        },
+        {
+          "name": "Sm",
+          "desc": "Vertical bands, stipple between.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Sp",
+          "desc": "Fine stipple.",
+          "basis": "seen",
+          "source_scale": 4
+        },
+        {
+          "name": "Stone",
+          "desc": "Stone, bond of irregular blocks.",
+          "basis": "seen",
+          "source_scale": 0.2
+        },
+        {
+          "name": "Sw",
+          "desc": "Very fine stipple, a light tone.",
+          "basis": "seen",
+          "source_scale": 6
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "file": "reference/06-architectural-materials-symbolic.webp",
+      "title": "Architectural materials, symbolic hatch patterns (25 entries)",
+      "entries": [
+        {
+          "name": "CAST IRON",
+          "desc": "Evenly spaced diagonal lines.",
+          "basis": "seen"
+        },
+        {
+          "name": "STEEL",
+          "desc": "Diagonal lines in closer pairs.",
+          "basis": "seen"
+        },
+        {
+          "name": "TITANIUM",
+          "desc": "Diagonal lines with a dash between each pair.",
+          "basis": "seen"
+        },
+        {
+          "name": "ALUMINIUM",
+          "desc": "Crosshatch, fine lines both ways.",
+          "basis": "seen"
+        },
+        {
+          "name": "ZINC",
+          "desc": "Crosshatch, slightly wider spacing.",
+          "basis": "seen"
+        },
+        {
+          "name": "RUBBER",
+          "desc": "Diagonal lines in closer pairs.",
+          "basis": "seen"
+        },
+        {
+          "name": "SAND",
+          "desc": "Stipple of dots.",
+          "basis": "seen"
+        },
+        {
+          "name": "CONCRETE",
+          "desc": "Dots with small triangles.",
+          "basis": "seen"
+        },
+        {
+          "name": "EARTH",
+          "desc": "Vertical bands with a diagonal filling inside.",
+          "basis": "seen"
+        },
+        {
+          "name": "ELECTRIC WELDING",
+          "desc": "Square grid.",
+          "basis": "seen"
+        },
+        {
+          "name": "PLYWOOD",
+          "desc": "Chevron or herringbone bands.",
+          "basis": "seen"
+        },
+        {
+          "name": "INSULATION",
+          "desc": "Overlapping loops or scallops in rows.",
+          "basis": "seen"
+        },
+        {
+          "name": "GLASS",
+          "desc": "Fine diagonal crosshatch.",
+          "basis": "seen"
+        },
+        {
+          "name": "TERRAZZO",
+          "desc": "Light random speckle.",
+          "basis": "seen"
+        },
+        {
+          "name": "CORK",
+          "desc": "Short wavy strokes in rows.",
+          "basis": "seen"
+        },
+        {
+          "name": "CHAINLINK",
+          "desc": "Diamond mesh, interlinked diamonds.",
+          "basis": "seen"
+        },
+        {
+          "name": "LAVA",
+          "desc": "Vertical lines with wavy bands.",
+          "basis": "seen"
+        },
+        {
+          "name": "GRANITE",
+          "desc": "Small crosses, a speckled field.",
+          "basis": "seen"
+        },
+        {
+          "name": "ACID",
+          "desc": "Plus signs in a grid.",
+          "basis": "seen"
+        },
+        {
+          "name": "FOSSIL",
+          "desc": "Scalloped arcs in rows.",
+          "basis": "seen"
+        },
+        {
+          "name": "THERMAL INSULATION",
+          "desc": "Diagonal stepped or zigzag bands.",
+          "basis": "seen"
+        },
+        {
+          "name": "FINEWOOD",
+          "desc": "Fine wavy wood grain.",
+          "basis": "seen"
+        },
+        {
+          "name": "HARDWOOD",
+          "desc": "Wavy wood grain bands.",
+          "basis": "seen"
+        },
+        {
+          "name": "CERAMIC TILE",
+          "desc": "Diagonal crosshatch, diamonds.",
+          "basis": "seen"
+        },
+        {
+          "name": "BASALT",
+          "desc": "Short brick-like blocks in a running bond.",
+          "basis": "seen"
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "file": "reference/07-cad-hatch-library-bond-paving.jpg",
+      "title": "CAD hatch library, brick bonds, paving, tile and roofing (90 entries)",
+      "entries": [
+        {
+          "name": "SPANTILE",
+          "desc": "Spanish roof tile, scalloped rows.",
+          "basis": "from name"
+        },
+        {
+          "name": "SPANISH",
+          "desc": "Spanish roof tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "SPANISH1",
+          "desc": "Spanish roof tile, variant 1.",
+          "basis": "from name"
+        },
+        {
+          "name": "SPANISH2",
+          "desc": "Spanish roof tile, variant 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "ENDSHAKE",
+          "desc": "End-shake shingles.",
+          "basis": "from name"
+        },
+        {
+          "name": "ENDCEDAR",
+          "desc": "End cedar shingles.",
+          "basis": "from name"
+        },
+        {
+          "name": "SOSHNGLE",
+          "desc": "Shingles, staggered.",
+          "basis": "from name"
+        },
+        {
+          "name": "SHINGLES",
+          "desc": "Shingles.",
+          "basis": "from name"
+        },
+        {
+          "name": "ROOFING",
+          "desc": "Roofing, a generic tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "ASPHALTS",
+          "desc": "Asphalt shingles.",
+          "basis": "from name"
+        },
+        {
+          "name": "STAB",
+          "desc": "Stab, a block pattern.",
+          "basis": "from name"
+        },
+        {
+          "name": "FLATTILE",
+          "desc": "Flat tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "S-TILE",
+          "desc": "S-tile, a wavy tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "CMT-TILE",
+          "desc": "Cement tile.",
+          "basis": "from name"
+        },
+        {
+          "name": "SCALLOP1",
+          "desc": "Scallop, arcs in rows.",
+          "basis": "from name"
+        },
+        {
+          "name": "SCALLOP2",
+          "desc": "Scallop, variant.",
+          "basis": "from name"
+        },
+        {
+          "name": "SCALLOPS",
+          "desc": "Scallops.",
+          "basis": "from name"
+        },
+        {
+          "name": "SIDEWALL",
+          "desc": "Sidewall, shingled courses.",
+          "basis": "from name"
+        },
+        {
+          "name": "RANBRICK",
+          "desc": "Random brick, irregular bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "BRICKS",
+          "desc": "Brick, running bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "BLOCWALL",
+          "desc": "Block wall, running bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "VBRICKS",
+          "desc": "Vertical brick bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "12INRUN2",
+          "desc": "Twelve-inch running bond, variant 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "12INRUN3",
+          "desc": "Twelve-inch running bond, variant 3.",
+          "basis": "from name"
+        },
+        {
+          "name": "ENGLISH",
+          "desc": "English bond: alternate courses of headers and stretchers.",
+          "basis": "from name"
+        },
+        {
+          "name": "GARDEN",
+          "desc": "Garden wall bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "2X2BRICK",
+          "desc": "Two-by-two brick, paired blocks.",
+          "basis": "from name"
+        },
+        {
+          "name": "STAGGER",
+          "desc": "Stagger bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "PAVINGBR",
+          "desc": "Paving brick.",
+          "basis": "from name"
+        },
+        {
+          "name": "ELLPAVER",
+          "desc": "L-shaped paver.",
+          "basis": "from name"
+        },
+        {
+          "name": "FLEMISH",
+          "desc": "Flemish bond: headers and stretchers in each course.",
+          "basis": "from name"
+        },
+        {
+          "name": "FLEMISHX",
+          "desc": "Flemish cross bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "WEAVE-2",
+          "desc": "Weave, over-under bricks.",
+          "basis": "from name"
+        },
+        {
+          "name": "3XBRICK",
+          "desc": "Three-brick bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "BEVBRICK",
+          "desc": "Bevelled brick.",
+          "basis": "from name"
+        },
+        {
+          "name": "FANPAVER",
+          "desc": "Fan paver, arcs.",
+          "basis": "from name"
+        },
+        {
+          "name": "ARCPAVER",
+          "desc": "Arc paver.",
+          "basis": "from name"
+        },
+        {
+          "name": "PAVERSHB",
+          "desc": "Paver herringbone.",
+          "basis": "from name"
+        },
+        {
+          "name": "REVPAVER",
+          "desc": "Reverse paver.",
+          "basis": "from name"
+        },
+        {
+          "name": "PAVING1",
+          "desc": "Paving, variant 1.",
+          "basis": "from name"
+        },
+        {
+          "name": "PAVING2",
+          "desc": "Paving, variant 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "PAVING3",
+          "desc": "Paving, variant 3.",
+          "basis": "from name"
+        },
+        {
+          "name": "PAVER2X3",
+          "desc": "Paver, two by three units.",
+          "basis": "from name"
+        },
+        {
+          "name": "INTRLOCK",
+          "desc": "Interlocking paver.",
+          "basis": "from name"
+        },
+        {
+          "name": "PATHWAY",
+          "desc": "Pathway, a paver path.",
+          "basis": "from name"
+        },
+        {
+          "name": "COBBLEST",
+          "desc": "Cobblestone.",
+          "basis": "from name"
+        },
+        {
+          "name": "FISHSCAL",
+          "desc": "Fish-scale pattern.",
+          "basis": "from name"
+        },
+        {
+          "name": "METRO",
+          "desc": "Metro tile, subway bond.",
+          "basis": "from name"
+        },
+        {
+          "name": "TILE1",
+          "desc": "Tile, variant 1.",
+          "basis": "from name"
+        },
+        {
+          "name": "OFFSET-T",
+          "desc": "Offset T-shapes.",
+          "basis": "from name"
+        },
+        {
+          "name": "INSET1X4",
+          "desc": "Inset one-by-four.",
+          "basis": "from name"
+        },
+        {
+          "name": "ARCHES",
+          "desc": "Arches.",
+          "basis": "from name"
+        },
+        {
+          "name": "CMU-SCRN",
+          "desc": "CMU screen block.",
+          "basis": "from name"
+        },
+        {
+          "name": "CMUSHADE",
+          "desc": "CMU shaded block.",
+          "basis": "from name"
+        },
+        {
+          "name": "SCRNBLOC",
+          "desc": "Screen block.",
+          "basis": "from name"
+        },
+        {
+          "name": "SHADEBLK",
+          "desc": "Shaded block.",
+          "basis": "from name"
+        },
+        {
+          "name": "DIORAMA",
+          "desc": "Diorama, a framed motif.",
+          "basis": "from name"
+        },
+        {
+          "name": "MAZEBLOC",
+          "desc": "Maze block.",
+          "basis": "from name"
+        },
+        {
+          "name": "LATTICE1",
+          "desc": "Lattice, variant 1.",
+          "basis": "from name"
+        },
+        {
+          "name": "LATTICE2",
+          "desc": "Lattice, variant 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "EGGCRATE",
+          "desc": "Eggcrate grid.",
+          "basis": "from name"
+        },
+        {
+          "name": "SEGGRILL",
+          "desc": "Grill.",
+          "basis": "from name"
+        },
+        {
+          "name": "CHAINLNK",
+          "desc": "Chainlink fence mesh.",
+          "basis": "from name"
+        },
+        {
+          "name": "HARDWOOD",
+          "desc": "Hardwood, grain bands.",
+          "basis": "from name"
+        },
+        {
+          "name": "FINEWOOD",
+          "desc": "Fine wood grain.",
+          "basis": "from name"
+        },
+        {
+          "name": "PANEL",
+          "desc": "Panel, wood panel with grain.",
+          "basis": "from name"
+        },
+        {
+          "name": "WOODFACE",
+          "desc": "Wood face, flowing grain.",
+          "basis": "from name"
+        },
+        {
+          "name": "ENDGRAIN",
+          "desc": "End grain, rings.",
+          "basis": "from name"
+        },
+        {
+          "name": "LOGEND",
+          "desc": "Log end, concentric rings.",
+          "basis": "from name"
+        },
+        {
+          "name": "PLYWOOD",
+          "desc": "Plywood, layered sheet.",
+          "basis": "from name"
+        },
+        {
+          "name": "OSB-WOOD",
+          "desc": "OSB, strand board.",
+          "basis": "from name"
+        },
+        {
+          "name": "CUTSTONE",
+          "desc": "Cut stone, regular blocks.",
+          "basis": "from name"
+        },
+        {
+          "name": "GRTSTONE",
+          "desc": "Great stone, large blocks.",
+          "basis": "from name"
+        },
+        {
+          "name": "R-ASHLER",
+          "desc": "Random ashlar, irregular rectangles.",
+          "basis": "from name"
+        },
+        {
+          "name": "1H-STONE",
+          "desc": "Stone, course type 1.",
+          "basis": "from name"
+        },
+        {
+          "name": "2H-STONE",
+          "desc": "Stone, course type 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "3H-STONE",
+          "desc": "Stone, course type 3.",
+          "basis": "from name"
+        },
+        {
+          "name": "4H-STONE",
+          "desc": "Stone, course type 4.",
+          "basis": "from name"
+        },
+        {
+          "name": "C-STONES",
+          "desc": "Cut stones.",
+          "basis": "from name"
+        },
+        {
+          "name": "C-RUBBLE",
+          "desc": "Coursed rubble.",
+          "basis": "from name"
+        },
+        {
+          "name": "LIMESTN",
+          "desc": "Limestone, blocks.",
+          "basis": "from name"
+        },
+        {
+          "name": "ROUGH-SQ",
+          "desc": "Rough square stone.",
+          "basis": "from name"
+        },
+        {
+          "name": "RANDWALL",
+          "desc": "Random rubble wall.",
+          "basis": "from name"
+        },
+        {
+          "name": "ROCKWALL",
+          "desc": "Rock wall, irregular stones.",
+          "basis": "from name"
+        },
+        {
+          "name": "RIPRAP",
+          "desc": "Riprap, loose rounded stone.",
+          "basis": "from name"
+        },
+        {
+          "name": "MOSAIC",
+          "desc": "Mosaic, irregular tile pieces.",
+          "basis": "from name"
+        },
+        {
+          "name": "FLGSTONE",
+          "desc": "Flagstone.",
+          "basis": "from name"
+        },
+        {
+          "name": "FLAGST-2",
+          "desc": "Flagstone, variant 2.",
+          "basis": "from name"
+        },
+        {
+          "name": "RANHORIZ",
+          "desc": "Random horizontal stone.",
+          "basis": "from name"
+        },
+        {
+          "name": "SQRSTONE",
+          "desc": "Square stone.",
+          "basis": "from name"
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "file": "reference/08-cad-hatch-library-stone-bond-wood.gif",
+      "title": "CAD hatch library, bonds, stone, wood and paving (25 entries)",
+      "entries": [
+        {
+          "name": "SPANISH",
+          "desc": "Spanish roof tile.",
+          "basis": "seen"
+        },
+        {
+          "name": "SPANISH1",
+          "desc": "Spanish roof tile, variant 1.",
+          "basis": "seen"
+        },
+        {
+          "name": "ENDSHAKE",
+          "desc": "End-shake shingles.",
+          "basis": "seen"
+        },
+        {
+          "name": "ENGLISH",
+          "desc": "English bond: headers and stretchers in alternate courses.",
+          "basis": "seen"
+        },
+        {
+          "name": "FLEMISHX",
+          "desc": "Flemish cross bond.",
+          "basis": "seen"
+        },
+        {
+          "name": "HARDWOOD",
+          "desc": "Hardwood grain bands.",
+          "basis": "seen"
+        },
+        {
+          "name": "PANEL",
+          "desc": "Wood panel grain.",
+          "basis": "seen"
+        },
+        {
+          "name": "WOODFACE",
+          "desc": "Wood face, flowing grain.",
+          "basis": "seen"
+        },
+        {
+          "name": "ENDGRAIN",
+          "desc": "End grain, rings.",
+          "basis": "seen"
+        },
+        {
+          "name": "LOGEND",
+          "desc": "Log end, concentric rings.",
+          "basis": "seen"
+        },
+        {
+          "name": "R-ASHLER",
+          "desc": "Random ashlar, irregular rectangles.",
+          "basis": "seen"
+        },
+        {
+          "name": "3H-STONE",
+          "desc": "Stone, coursed blocks.",
+          "basis": "seen"
+        },
+        {
+          "name": "ROUGH-SQ",
+          "desc": "Rough square stone.",
+          "basis": "seen"
+        },
+        {
+          "name": "RANDWALL",
+          "desc": "Random rubble wall.",
+          "basis": "seen"
+        },
+        {
+          "name": "RIPRAP",
+          "desc": "Riprap, loose rounded stone.",
+          "basis": "seen"
+        },
+        {
+          "name": "MOSAIC",
+          "desc": "Mosaic, irregular tile pieces.",
+          "basis": "seen"
+        },
+        {
+          "name": "FLGSTONE",
+          "desc": "Flagstone.",
+          "basis": "seen"
+        },
+        {
+          "name": "STONES",
+          "desc": "Rounded stones of mixed size.",
+          "basis": "seen"
+        },
+        {
+          "name": "AGGREGAT",
+          "desc": "Aggregate, stones in a matrix.",
+          "basis": "seen"
+        },
+        {
+          "name": "GRAVEL",
+          "desc": "Gravel.",
+          "basis": "seen"
+        },
+        {
+          "name": "INTRLOCK",
+          "desc": "Interlocking paver.",
+          "basis": "seen"
+        },
+        {
+          "name": "PARQUET6",
+          "desc": "Parquet, triangular block pattern.",
+          "basis": "seen"
+        },
+        {
+          "name": "PARQUET7",
+          "desc": "Parquet, triangular block pattern, variant 7.",
+          "basis": "seen"
+        },
+        {
+          "name": "CONGLOM6",
+          "desc": "Conglomerate, stones in a matrix.",
+          "basis": "seen"
+        },
+        {
+          "name": "LIMEST13",
+          "desc": "Limestone, coursed blocks.",
+          "basis": "seen"
+        }
+      ]
+    }
+  ]
+}

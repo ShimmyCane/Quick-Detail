@@ -9,6 +9,7 @@ Sections:
 3. [AI markup](#3-ai-markup-ai_collab): the `ai_collab` skill and its rules.
 4. [Cloud library](#4-cloud-library): what is stored, and what the review found.
 5. [Tools and environment](#5-tools-and-environment): what works in this sandbox and what does not.
+6. [Hatch](lessons-learned_hatch.md): hatch patterns. The shared reference is `hatch-reference.md`.
 
 ---
 

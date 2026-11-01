@@ -16,14 +16,22 @@ The log is the history of one detail as a branch tree. It is not a list of audio
 
 ## Addresses
 
-Labels are computed from the tree. They are never stored, so they stay correct after a delete.
+Labels are computed from the tree. They are never stored, so they stay correct after a delete. They read as a path from the main line.
 
-- The first branch off a step has no letter: `4`.
-- Later branches off the same step take B, C, … in creation order: `4B`, `4C`.
-- A branch off step 6 of lane `4B` is `4B.6`. A second one there is `4B.6B`.
+- The main line is `0`.
+- A branch off scene 3 of the main line is `0.3`. A branch off scene 2 of that is `0.3.2`.
+- A second branch off the same scene takes a letter: `0.3B`, then `0.3C`, in creation order.
 - Steps are counted **per lane**, from 1, across all of that lane's recordings. A branch does not inherit the parent's count.
-- A path reads as a walk. `4B.6.2.4` means: main line steps 1–4, then lane B steps 1–6, then the sub-branch steps 1–2, then the next lane steps 1–4. The sequence is those ranges joined in order.
 - A branch made before fork points were recorded shows `?`. It is not guessed.
+
+Addresses are the only labels on the tracks. Names, "branch from" text, and scene counts are not shown on the headers. The recording length and each scene's words are shown on the track before it is opened.
+
+## Time axis and fork lines
+
+- Time runs left to right, one column per scene. A scene's column is its lane's offset plus its step minus one.
+- The main line starts at column 1. A branch's offset is its parent's offset plus the step it forked from, so a branch of a branch sits at the scene count along the whole line.
+- A branch's first scene is in the column after its fork scene. A line runs down from the fork scene to that first scene.
+- The whole tree scrolls sideways together, so every line stays attached to its scenes. Vertical scrolling moves between lanes.
 
 ## The step row
 

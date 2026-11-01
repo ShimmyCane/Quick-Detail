@@ -22,10 +22,10 @@
   // Sibling letters: the first branch off a step has no letter, the next ones take B, C, ... in creation order.
   function letter(i) { return i === 0 ? '' : String.fromCharCode(65 + i); }
 
-  // Address of every lane in one family.
+  // Address of every lane in one family. Read as a path from the main line: 0 is the main line, 0.3 is a branch off
+  // its scene 3, 0.3.2 is a branch off scene 2 of 0.3, and a second branch off the same scene takes a letter: 0.3B.
   // lanes: [{ id, parentId, fork: { step } | null, created }]. The main line has no parentId and is labelled "0".
-  // A branch is its parent's address and its fork step: "4", "4B" (second branch off step 4), "4B.6" (branch off
-  // step 6 of 4B), "4B.6B", and so on. A branch off the main line drops the "0.". Returns { [id]: label }.
+  // A branch is its parent's address and its fork step, so every address starts "0.". Returns { [id]: label }.
   SK.laneLabels = function (lanes) {
     var byId = {};
     lanes.forEach(function (l) { byId[l.id] = l; });
@@ -46,7 +46,8 @@
       steps.forEach(function (step) {
         byStep[step].forEach(function (l, i) {
           var own = step + letter(i);
-          labels[l.id] = parentLabel ? parentLabel + '.' + own : own;
+          // A branch of a lane with no recorded fork cannot be placed, so it reads "?".
+          labels[l.id] = step === '?' ? '?' : parentLabel + '.' + own;
           place(labels[l.id], kids[l.id] || []);
         });
       });
@@ -55,7 +56,7 @@
     lanes.forEach(function (l) {
       if (!l.parentId || !byId[l.parentId]) {
         labels[l.id] = '0';
-        place('', kids[l.id] || []);
+        place('0', kids[l.id] || []);
       }
     });
     return labels;
@@ -97,6 +98,22 @@
       }).forEach(walk);
     }
     lanes.forEach(function (l) { if (!l.parentId || !byId[l.parentId]) walk(l); });
+    return out;
+  };
+
+  // The column of each lane's fork on one shared time axis, where a scene's column is its lane's offset plus its step
+  // minus one. The main line is 0. A branch is its parent's offset plus the step it forked from, so a branch of a branch
+  // sits at the scene count along the whole line. Returns { [id]: offset }.
+  SK.laneOffsets = function (lanes) {
+    var byId = {}, out = {};
+    lanes.forEach(function (l) { byId[l.id] = l; });
+    SK.laneOrder(lanes).forEach(function (id) {
+      var l = byId[id];
+      var hasParent = !!(l.parentId && byId[l.parentId]);
+      var base = hasParent ? out[l.parentId] : 0;
+      var step = hasParent && l.fork && l.fork.step != null ? l.fork.step : 0;
+      out[id] = base + step;
+    });
     return out;
   };
 

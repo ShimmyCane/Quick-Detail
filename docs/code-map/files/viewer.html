@@ -43,7 +43,7 @@ The pure logic is in sketch/lanes.js and sketch/history.js. Runs only in the vie
 <h2>Sections</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
 <tr><td class="n">31</td><td>small helpers</td></tr>
-<tr><td class="n">104</td><td>drawing</td></tr>
+<tr><td class="n">98</td><td>drawing</td></tr>
 <tr><td class="n">225</td><td>edits: each one records what it changed, so undo can put it back</td></tr>
 <tr><td class="n">295</td><td>export: one file with the page and this history inside</td></tr>
 <tr><td class="n">345</td><td>start: an exported file, the live database, or a picker when no detail is named</td></tr>
@@ -60,11 +60,10 @@ The pure logic is in sketch/lanes.js and sketch/history.js. Runs only in the vie
 <tr><td class="n">72</td><td class="name"><code>sessionsOf(id)</code></td><td><span class="muted">—</span></td></tr>
 <tr><td class="n">78</td><td class="name"><code>stepsOf(id)</code></td><td>Every scene of a lane, in order, with the recording it is in.</td></tr>
 <tr><td class="n">87</td><td class="name"><code>boundsOf(s, d)</code></td><td>The bounds of everything a recording ever drew, for its thumbnails and playback.</td></tr>
-<tr><td class="n">98</td><td class="name"><code>forkText(d, labels)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">106</td><td class="name"><code>render()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">125</td><td class="name"><code>laneSection(d, labels)</code></td><td>One lane: a header with its address, name, fork and first words, then its scenes.</td></tr>
-<tr><td class="n">155</td><td class="name"><code>rootId()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">161</td><td class="name"><code>stepCard(d, st, n)</code></td><td>One scene: its still, its words, notes, and its actions.</td></tr>
+<tr><td class="n">100</td><td class="name"><code>render()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">122</td><td class="name"><code>laneSection(d, labels, offsets)</code></td><td>One lane: a header with its address, name, fork and first words, then its scenes.</td></tr>
+<tr><td class="n">154</td><td class="name"><code>rootId()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">160</td><td class="name"><code>stepCard(d, st, n)</code></td><td>One scene: its still, its words, notes, and its actions.</td></tr>
 <tr><td class="n">199</td><td class="name"><code>playScene(d, s, m)</code></td><td><span class="muted">—</span></td></tr>
 <tr><td class="n">204</td><td class="name"><code>draw(T)</code></td><td><span class="muted">—</span></td></tr>
 <tr><td class="n">208</td><td class="name"><code>frame()</code></td><td><span class="muted">—</span></td></tr>

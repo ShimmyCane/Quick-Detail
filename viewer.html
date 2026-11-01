@@ -38,8 +38,11 @@
   <div class="v-tools">
     <button class="chip" id="vUndo" type="button">Undo</button>
     <button class="chip" id="vExport" type="button" title="Save this history as one HTML file you can open anywhere">Export HTML</button>
+    <button class="chip" id="vSave" type="button" title="Save this history to the cloud as a new version">Save version</button>
+    <button class="chip" id="vVersions" type="button" title="Saved versions in the cloud">Versions</button>
   </div>
 </header>
+<section class="v-pick" id="vVersionsBox" style="margin:10px 20px" hidden></section>
 <main class="v-main" id="vMain"></main>
 <div class="v-play" id="vPlay" hidden>
   <div class="v-play-box">
@@ -62,6 +65,9 @@
 <script src="sketch/blocks.js"></script>
 <script src="sketch/paint.js"></script>
 <script src="sketch/store.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="sketch/cloud.js"></script>
+<script src="sketch/versions.js"></script>
 <script src="sketch/lanes.js"></script>
 <script src="sketch/history.js"></script>
 <script src="sketch/tracks.js"></script>

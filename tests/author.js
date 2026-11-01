@@ -49,7 +49,7 @@ check('scale factor changes the stroke weight', SK.authorDetail({ scale: '1"=1\'
 
 check('refuses no items', throws(function () { SK.authorDetail({ items: [] }); }, 'non-empty'));
 check('refuses an unknown kind', throws(function () { SK.authorDetail({ items: [{ kind: 'circle' }] }); }, 'unknown kind "circle"'));
-check('refuses an unknown pen', throws(function () { SK.authorDetail({ items: [{ kind: 'line', pts: [[0, 0], [1, 0]], pen: 'purple' }] }); }, 'unknown pen'));
+check('refuses an unknown pen', throws(function () { SK.authorDetail({ items: [{ kind: 'line', pts: [[0, 0], [1, 0]], pen: 'chartreuse' }] }); }, 'unknown pen'));
 check('refuses an unknown hatch', throws(function () { SK.authorDetail({ items: [{ kind: 'hatch', pattern: 'marble', pts: [[0, 0], [1, 0], [1, 1]] }] }); }, 'unknown hatch pattern'));
 check('refuses a note with no tip', throws(function () { SK.authorDetail({ items: [{ kind: 'note', text: 'x', at: [0, 0], width: 4 }] }); }, 'needs a tip'));
 check('refuses a rect with no size', throws(function () { SK.authorDetail({ items: [{ kind: 'rect', x: 0, y: 0, w: 0, h: 2 }] }); }, 'positive w and h'));

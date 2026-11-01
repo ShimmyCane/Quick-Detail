@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/app/rail.js</code></h1>
-<p class="muted">App: bars and start · 332 lines · App part 22 of 23 in the load order.</p>
+<p class="muted">App: bars and start · 487 lines · App part 22 of 23 in the load order.</p>
 <h2>What it does</h2>
 <p>Left bar, right rail and keys.<br>
 Colour, weight and dimension pickers, the left-bar tools, the overflow column on small screens,<br>
@@ -45,25 +45,28 @@ hold-for-redo, the scene button, library header wiring, and keyboard shortcuts.<
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
 <tr><td class="n">15</td><td class="name"><code>renderPen()</code></td><td>Left rail: pen colours, line weights, and the text and dimension tools. Each picker shows its current choice as one dot. Tap the dot to open the row, or press it, drag along the row and let go on a choice. Letting go off the row closes it without a change.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">24</td><td class="name"><code>setupPicker(boxId, attr, apply)</code></td><td>Wires a dot picker (colour, weight, dimension type): tap to open, or press, drag along the row and let go.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">86</td><td class="name"><code>toggleUnderlay()</code></td><td>Underlays (no-print images) can be hidden by hand. They stay in the detail, its exports and the cloud upload.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">96</td><td class="name"><code>renderUnderlay()</code></td><td>Shows whether underlays are on, on the left bar.</td><td><a href="app-start.html">start</a></td></tr>
-<tr><td class="n">118</td><td class="name"><code>renderDimPicker()</code></td><td>Shows the current dimension type on the left bar.</td><td><a href="app-draft.html">draft</a></td></tr>
-<tr><td class="n">139</td><td class="name"><code>railHome()</code></td><td>Puts every tool moved to the overflow column back on the left bar.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">143</td><td class="name"><code>railTidy()</code></td><td>Hides tool groups that are left empty.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">147</td><td class="name"><code>railShowMore()</code></td><td>Opens or closes the overflow column, beside the bar's bottom edge.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">162</td><td class="name"><code>fitLeftRail()</code></td><td>Moves the tools that do not fit on the left bar into the overflow column, from the bottom up.</td><td><a href="app-selection.html">selection</a></td></tr>
+<tr><td class="n">30</td><td class="name"><code>setupPicker(boxId, attr, apply, onOpen)</code></td><td>Wires a dot picker (colour, weight, dimension type): tap to open, or press, drag along the row and let go.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">82</td><td class="name"><code>isExtraColor(c)</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">84</td><td class="name"><code>colorExpand(on)</code></td><td>Shows or hides the two extra colour rows under black, red, blue and +.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">241</td><td class="name"><code>toggleUnderlay()</code></td><td>Underlays (no-print images) can be hidden by hand. They stay in the detail, its exports and the cloud upload.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">251</td><td class="name"><code>renderUnderlay()</code></td><td>Shows whether underlays are on, on the left bar.</td><td><a href="app-start.html">start</a></td></tr>
+<tr><td class="n">273</td><td class="name"><code>renderDimPicker()</code></td><td>Shows the current dimension type on the left bar.</td><td><a href="app-draft.html">draft</a></td></tr>
+<tr><td class="n">294</td><td class="name"><code>railHome()</code></td><td>Puts every tool moved to the overflow column back on the left bar.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">298</td><td class="name"><code>railTidy()</code></td><td>Hides tool groups that are left empty.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">302</td><td class="name"><code>railShowMore()</code></td><td>Opens or closes the overflow column, beside the bar's bottom edge.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">317</td><td class="name"><code>fitLeftRail()</code></td><td>Moves the tools that do not fit on the left bar into the overflow column, from the bottom up.</td><td><a href="app-selection.html">selection</a></td></tr>
 </table></div>
 <h2>Values</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
-<tr><td class="n">103</td><td class="name"><code>DIM_ICON</code></td><td>Dimension type: a picker like colour and weight. The dot shows the current type; the row holds the three.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">108</td><td class="name"><code>DIM_NAME</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">135</td><td class="name"><code>LEFT_BAR_TOP</code></td><td>Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the &quot;+&quot;. Each tool is put back where it was before every refit, so the bar always fills from the top.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">136</td><td class="name"><code>railMoved</code><span class="tag">state</span></td><td>{ unit, slot } for each tool moved out</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">137</td><td class="name"><code>railOpen</code><span class="tag">state</span></td><td>whether the second column is open</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">81</td><td class="name"><code>colorExpanded</code><span class="tag">state</span></td><td>the + rows stay open between uses until + is tapped again</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">258</td><td class="name"><code>DIM_ICON</code></td><td>Dimension type: a picker like colour and weight. The dot shows the current type; the row holds the three.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">263</td><td class="name"><code>DIM_NAME</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">290</td><td class="name"><code>LEFT_BAR_TOP</code></td><td>Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the &quot;+&quot;. Each tool is put back where it was before every refit, so the bar always fills from the top.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">291</td><td class="name"><code>railMoved</code><span class="tag">state</span></td><td>{ unit, slot } for each tool moved out</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">292</td><td class="name"><code>railOpen</code><span class="tag">state</span></td><td>whether the second column is open</td><td><span class="muted">this file only</span></td></tr>
 </table></div>
 
-<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
 </main>
 </body>
 </html>

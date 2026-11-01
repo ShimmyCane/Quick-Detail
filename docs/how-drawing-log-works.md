@@ -89,6 +89,14 @@ Each step shows:
 - Notes added to a scene, kept apart from the speech.
 - Edit history in the log header, and the viewer page with live and exported modes.
 
+## Saving a version to the cloud
+
+- **Save version** (in the viewer) writes one ZIP to the cloud, and adds a row to `sketch_versions`. The first save is `v2`; the cloud card starts at `v1`.
+- The ZIP holds `state.json` (each lane's editable drawing at its fork points and its end, and copies of the sources its blocks use), `manifest.json` (the tree, addresses, the words said, and the notes), and one transparent PNG per restore point.
+- A block or underlay's source is copied into the version once per source. If the source is deleted, the copy still draws. If it has changed since, the block is flagged. Nothing changes until you choose: restore a missing copy as a local detail, or keep the drawing as it was.
+- **Versions** lists the saved versions. **Open** shows each lane's restore points from the ZIP. **Open as a new detail** saves a restore point as a local detail to continue drawing from.
+- Animation is not in a version. Recording events stay on the device.
+
 ## Open
 
 - **Stills at forks and lane ends.** The export keeps the recording events instead, so it can animate. A still-only file for the cloud is not built.

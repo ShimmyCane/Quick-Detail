@@ -451,6 +451,219 @@
     }).catch(function (e) { toast('Could not read the database: ' + (e && e.message ? e.message : e)); });
   }
 
+  // ---- cloud versions: a save is one ZIP with the editable state, a transparent PNG per restore point, and the copies
+  // of the sources its blocks use. The database keeps one row per version; the ZIP is in the bucket. ----
+
+  function rootDetail() { return data.details.filter(function (d) { return !d.parentId; })[0] || null; }
+
+  // A transparent PNG of one drawing: no paper fill, so the background shows through.
+  function pngOf(items, scale) {
+    var vis = visible(items);
+    var b = SK.itemsBounds(vis, acFor(scale));
+    var cv = document.createElement('canvas');
+    cv.width = 1200;
+    cv.height = 800;
+    var g = cv.getContext('2d');
+    var v = SK.fitView(b, cv.width, cv.height, 40) || { x: 0, y: 0, z: 1 };
+    SK.paint(g, vis, v, { ac: acFor(scale), ink: ink(), paper: BG, w: cv.width, h: cv.height, fill: false });
+    return new Promise(function (resolve, reject) {
+      cv.toBlob(function (bl) {
+        if (!bl) { reject(new Error('a picture could not be made')); return; }
+        bl.arrayBuffer().then(function (ab) { resolve(new Uint8Array(ab)); }, reject);
+      }, 'image/png');
+    });
+  }
+
+  // Every restore point of every lane, with its items and its picture.
+  function buildPoints() {
+    var labels = SK.laneLabels(data.details);
+    var offsets = SK.laneOffsets(data.details);
+    var out = [];
+    SK.laneOrder(data.details).forEach(function (id) {
+      var d = byDetail[id];
+      var sess = sessionsOf(id);
+      var steps = stepsOf(id);
+      var forks = data.details.filter(function (x) { return x.parentId === id && x.fork && x.fork.step != null; })
+        .map(function (x) { return x.fork.step; });
+      var plan = SK.pointPlan(steps.map(function (st) { return { sessionId: st.s.id, end: st.m.end }; }), forks);
+      var notes = steps.map(function (st, i) { return { step: i + 1, said: st.m.text || '', notes: noteTexts(st) }; });
+      out.push({
+        id: id, label: labels[id] || '?', parentId: d.parentId || null, fork: d.fork || null, name: d.name,
+        offset: offsets[id] || 0, stepNotes: notes,
+        points: plan.map(function (p) {
+          var s = sess.filter(function (x) { return x.id === p.sessionId; })[0];
+          return { step: p.step, kind: p.kind, items: SK.stateAt(s, p.T), scale: d.scale };
+        })
+      });
+    });
+    return out;
+  }
+
+  function noteTexts(st) {
+    var key = SK.sceneKey(st.s.id, st.m.start);
+    return (st.s.notes || []).filter(function (n) { return n.key === key; }).map(function (n) { return n.text; });
+  }
+
+  function saveVersion() {
+    if (mode !== 'live') { toast('Open the live history to save it to the cloud.'); return; }
+    var root = rootDetail();
+    if (!root) return;
+    working('Saving to the cloud…', function () {
+      var rowId = null, next = 2;
+      SK.Cloud.session().then(function (sess) {
+        if (!sess) throw new Error('Sign in to the cloud from the app first (Library).');
+        return SK.Cloud.init().from('sketch_details').select('id, version').eq('local_id', root.id).maybeSingle();
+      }).then(function (r) {
+        if (r.error) throw r.error;
+        if (!r.data) throw new Error('Upload this detail to the cloud first, from the library.');
+        rowId = r.data.id;
+        next = (r.data.version || 1) + 1;
+        return buildPoints();
+      }).then(function (lanes) {
+        var pics = [];
+        var chain = Promise.resolve();
+        lanes.forEach(function (lane) {
+          lane.points.forEach(function (p) {
+            chain = chain.then(function () {
+              return pngOf(p.items, p.scale).then(function (png) {
+                p.file = SK.pointName(lane.label, p.step);
+                p.png = png;
+              });
+            });
+          });
+        });
+        return chain.then(function () { return lanes; });
+      }).then(function (lanes) {
+        return SK.DB.all('details').then(function (all) {
+          var byAll = {};
+          all.forEach(function (d) { byAll[d.id] = d; });
+          var used = [];
+          lanes.forEach(function (l) { l.points.forEach(function (p) { used = used.concat(p.items); }); });
+          var embeds = SK.embedsOf(used, function (id) { return byAll[id] || null; });
+          var files = SK.versionFiles({ version: next, rootId: root.id, lanes: lanes, embeds: embeds });
+          return { files: files, lanes: lanes, embeds: embeds };
+        });
+      }).then(function (made) {
+        var zipFiles = [{ name: 'state.json', data: made.files['state.json'] }, { name: 'manifest.json', data: made.files['manifest.json'] }];
+        made.lanes.forEach(function (l) { l.points.forEach(function (p) { zipFiles.push({ name: p.file, data: p.png }); }); });
+        var zip = SK.makeZip(zipFiles);
+        var path = root.id + '/versions/v' + next + '.zip';
+        var c = SK.Cloud.init();
+        return c.storage.from(SK.CLOUD.bucket).upload(path, new Blob([zip], { type: 'application/zip' }), { contentType: 'application/zip', upsert: true })
+          .then(function (u) { if (u.error) throw u.error; return c.from('sketch_versions').upsert({ detail_id: rowId, version: next, file_path: path, label: 'v' + next }, { onConflict: 'detail_id,version' }); })
+          .then(function (r) { if (r.error) throw r.error; return c.from('sketch_details').update({ version: next }).eq('id', rowId); })
+          .then(function (r) { if (r.error) throw r.error; return next; });
+      }).then(function (n) {
+        toast('Saved to the cloud as v' + n + '.');
+      }).catch(function (e) {
+        toast('Could not save: ' + (e && e.message ? e.message : e));
+      });
+    });
+  }
+
+  // The saved versions of the open tree, newest first, with Open for each.
+  function openVersions() {
+    var box = $('vVersionsBox');
+    box.hidden = false;
+    box.innerHTML = '';
+    box.appendChild(el('p', { class: 'muted', text: 'Loading the saved versions…' }));
+    var root = rootDetail();
+    if (!root) return;
+    SK.Cloud.init().from('sketch_details').select('id').eq('local_id', root.id).maybeSingle().then(function (r) {
+      if (r.error) throw r.error;
+      if (!r.data) { box.innerHTML = ''; box.appendChild(el('p', { class: 'muted', text: 'This detail is not in the cloud yet.' })); return null; }
+      return SK.Cloud.init().from('sketch_versions').select('id, version, file_path, created_at').eq('detail_id', r.data.id).order('version', { ascending: false });
+    }).then(function (rows) {
+      if (!rows) return;
+      if (rows.error) throw rows.error;
+      box.innerHTML = '';
+      box.appendChild(el('button', { class: 'chip', type: 'button', text: 'Close', on: { click: function () { box.hidden = true; } } }));
+      if (!rows.data.length) box.appendChild(el('p', { class: 'muted', text: 'No saved versions yet.' }));
+      rows.data.forEach(function (v) {
+        box.appendChild(el('div', { class: 'row' }, [
+          el('b', { text: 'v' + v.version }),
+          el('span', { class: 'muted', text: new Date(v.created_at).toLocaleString() }),
+          el('button', { class: 'chip', type: 'button', text: 'Open', on: { click: function () { openVersion(v); } } })
+        ]));
+      });
+    }).catch(function (e) { toast('Could not list the versions: ' + (e && e.message ? e.message : e)); });
+  }
+
+  // A saved version, shown from its ZIP: each lane's restore points as pictures, and the copies of its sources.
+  function openVersion(v) {
+    toast('Opening v' + v.version + '…');
+    SK.Cloud.init().storage.from(SK.CLOUD.bucket).download(v.file_path).then(function (r) {
+      if (r.error) throw r.error;
+      return r.data.arrayBuffer();
+    }).then(function (ab) {
+      var files = SK.readZip(new Uint8Array(ab));
+      var state = JSON.parse(new TextDecoder().decode(files['state.json']));
+      var manifest = JSON.parse(new TextDecoder().decode(files['manifest.json']));
+      renderVersion(v, state, manifest, files);
+    }).catch(function (e) { toast('Could not open the version: ' + (e && e.message ? e.message : e)); });
+  }
+
+  function renderVersion(v, state, manifest, files) {
+    $('vTitle').textContent = (rootDetail() || {}).name + ' · v' + v.version;
+    $('vSub').textContent = 'saved ' + new Date(manifest.saved).toLocaleString() + ' · pictures, from the cloud';
+    var main = $('vMain');
+    main.innerHTML = '';
+    main.appendChild(el('p', { class: 'muted' }, [el('button', { class: 'chip', type: 'button', text: 'Back to live', on: { click: function () { $('vTitle').textContent = (rootDetail() || {}).name + ' · edit history'; render(); } } })]));
+    manifest.lanes.forEach(function (lane) {
+      var row = el('div', { class: 'track-row' }, [SK.leadFor(lane.offset || 0)]);
+      lane.points.forEach(function (p) {
+        var url = URL.createObjectURL(new Blob([files[p.file]], { type: 'image/png' }));
+        row.appendChild(el('div', { class: 'card' }, [
+          el('img', { src: url, alt: 'step ' + p.step, style: 'width:200px;height:130px;object-fit:contain;background:transparent' }),
+          el('b', { text: 'step ' + p.step + (p.kind === 'fork' ? ' · fork' : ' · end') }),
+          el('div', { class: 'row' }, [el('button', { class: 'chip', type: 'button', text: 'Open as a new detail', on: { click: function () { openPointAsDetail(lane, p, state); } } })])
+        ]));
+      });
+      main.appendChild(el('section', { class: 'track' }, [
+        el('header', { class: 'track-head' }, [el('b', { class: 'addr', text: lane.label })]),
+        el('div', { class: 'track-body' }, [row])
+      ]));
+    });
+    var embeds = state.embeds || {};
+    var ids = Object.keys(embeds);
+    if (ids.length) {
+      var list = el('div', { class: 'v-pick' }, [el('h3', { text: 'Copies of sources used by this version' })]);
+      ids.forEach(function (id) {
+        var e = embeds[id];
+        var here = byDetail[id];
+        var status = here ? 'on this device' : 'not on this device';
+        var kids = [el('span', { text: e.name + ' · ' + status })];
+        if (!here) kids.push(el('button', { class: 'chip', type: 'button', text: 'Restore the copy here', on: { click: function () { restoreCopy(id, e); } } }));
+        list.appendChild(el('div', { class: 'row' }, kids));
+      });
+      main.appendChild(list);
+    }
+  }
+
+  function openPointAsDetail(lane, p, state) {
+    var now = Date.now();
+    var root = rootDetail();
+    var d = {
+      id: 'd' + now.toString(36) + Math.random().toString(36).slice(2, 6),
+      name: (root ? root.name : lane.name) + ' · ' + lane.label + ' step ' + p.step,
+      scale: p.scale || (root && root.scale) || SK.DEFAULT_SCALE, tags: [], items: p.items || [], parentId: null,
+      created: now, modified: now, rating: 1
+    };
+    SK.DB.put('details', d).then(function () { toast('Saved as a new detail: ' + d.name + '. Open it from the library.'); })
+      .catch(function (e) { toast('Could not save: ' + (e && e.message ? e.message : e)); });
+  }
+
+  // A copy a version holds for a source that is not on this device: it comes back under the source's own id, so the
+  // blocks that point at it draw again.
+  function restoreCopy(id, e) {
+    var now = Date.now();
+    var d = { id: id, name: e.name, scale: e.scale || SK.DEFAULT_SCALE, tags: [], items: e.items || [], parentId: null, created: now, modified: e.version || now, rating: 1 };
+    SK.DB.put('details', d).then(function () { toast('Restored "' + e.name + '" here.'); openVersions(); })
+      .catch(function (err) { toast('Could not restore: ' + (err && err.message ? err.message : err)); });
+  }
+
+  $('vSave').addEventListener('click', saveVersion);
+  $('vVersions').addEventListener('click', openVersions);
   $('vUndo').addEventListener('click', undo);
   $('vExport').addEventListener('click', exportHtml);
   $('vClose').addEventListener('click', stopPlay);

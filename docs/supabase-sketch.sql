@@ -111,3 +111,24 @@ insert into public.table_index (table_name, project, purpose) values
   ('sketch_snapshots', 'Quick Detail (wall sketch)', 'One picture and its metadata per scene'),
   ('table_index', 'Shared', 'This table: which project claims each table')
 on conflict (table_name) do update set project = excluded.project, purpose = excluded.purpose;
+
+-- Versions (added with the cloud versions work). Additive: existing rows keep working.
+-- Applied to the Architecture project as migration "sketch_versions_fork_and_version".
+alter table public.sketch_details add column if not exists fork_step integer;
+alter table public.sketch_details add column if not exists version integer not null default 1;
+
+create table if not exists public.sketch_versions (
+  id uuid primary key default gen_random_uuid(),
+  detail_id uuid not null references public.sketch_details(id) on delete cascade,
+  version integer not null,
+  file_path text not null,
+  label text,
+  created_at timestamptz not null default now(),
+  unique (detail_id, version)
+);
+create index if not exists sketch_versions_detail_idx on public.sketch_versions (detail_id);
+
+alter table public.sketch_versions enable row level security;
+create policy "owner full access" on public.sketch_versions for all to authenticated
+  using ((auth.jwt() ->> 'email') = 'splusystudio@gmail.com')
+  with check ((auth.jwt() ->> 'email') = 'splusystudio@gmail.com');

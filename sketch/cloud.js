@@ -46,6 +46,7 @@
       items: detail.items,
       metadata: Object.assign({}, SK.detailMetadata(detail, an), { rating: detail.rating == null ? 1 : detail.rating }),
       parent_local_id: detail.parentId || null,
+      fork_step: detail.fork && detail.fork.step != null ? detail.fork.step : null,
       updated_at: new Date(detail.modified || Date.now()).toISOString()
     };
 

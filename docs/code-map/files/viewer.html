@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/viewer.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/viewer.js</code></h1>
+<p class="muted">397 lines · Not loaded by index.html. Used by the Node tests only.</p>
+<p class="warn">This file is not in the page's &lt;script&gt; list, so the app does not use it yet.</p>
+<h2>What it does</h2>
+<p>the viewer: the edit history of a detail's tree, as its own page (viewer.html).<br>
+It opens live from this browser's database, or as an exported file with the recordings inside. The same tracks,<br>
+notes, deletes and undo work in both. Export writes one HTML file that opens anywhere, with the page code inside.<br>
+The pure logic is in sketch/lanes.js and sketch/history.js. Runs only in the viewer page.</p>
+<h2>Sections</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">31</td><td>small helpers</td></tr>
+<tr><td class="n">104</td><td>drawing</td></tr>
+<tr><td class="n">225</td><td>edits: each one records what it changed, so undo can put it back</td></tr>
+<tr><td class="n">295</td><td>export: one file with the page and this history inside</td></tr>
+<tr><td class="n">345</td><td>start: an exported file, the live database, or a picker when no detail is named</td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">33</td><td class="name"><code>el(tag, attrs, kids)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">45</td><td class="name"><code>toast(msg)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">53</td><td class="name"><code>slug(s)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">55</td><td class="name"><code>acFor(scale)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">59</td><td class="name"><code>ink()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">61</td><td class="name"><code>reindex()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">68</td><td class="name"><code>visible(items)</code></td><td>The drawable items of a list, with blocks replaced by their sources' lines.</td></tr>
+<tr><td class="n">72</td><td class="name"><code>sessionsOf(id)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">78</td><td class="name"><code>stepsOf(id)</code></td><td>Every scene of a lane, in order, with the recording it is in.</td></tr>
+<tr><td class="n">87</td><td class="name"><code>boundsOf(s, d)</code></td><td>The bounds of everything a recording ever drew, for its thumbnails and playback.</td></tr>
+<tr><td class="n">98</td><td class="name"><code>forkText(d, labels)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">106</td><td class="name"><code>render()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">125</td><td class="name"><code>laneSection(d, labels)</code></td><td>One lane: a header with its address, name, fork and first words, then its scenes.</td></tr>
+<tr><td class="n">155</td><td class="name"><code>rootId()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">161</td><td class="name"><code>stepCard(d, st, n)</code></td><td>One scene: its still, its words, notes, and its actions.</td></tr>
+<tr><td class="n">199</td><td class="name"><code>playScene(d, s, m)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">204</td><td class="name"><code>draw(T)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">208</td><td class="name"><code>frame()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">219</td><td class="name"><code>stopPlay()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">228</td><td class="name"><code>apply(writes)</code></td><td>Writes changes to memory, redraws, and (live only) to the database.</td></tr>
+<tr><td class="n">240</td><td class="name"><code>commit(entry, writes)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">245</td><td class="name"><code>addNote(s, m, text)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">252</td><td class="name"><code>deleteScene(d, s, m, n)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">267</td><td class="name"><code>deleteLane(id)</code></td><td>Deletes a branch and its scenes. Its own branches move up to where it forked from its parent.</td></tr>
+<tr><td class="n">288</td><td class="name"><code>undo()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">298</td><td class="name"><code>bundle()</code></td><td>The history as data. Sound is left out to keep the file small; the drawing, words, notes and playback stay.</td></tr>
+<tr><td class="n">313</td><td class="name"><code>exportHtml()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">347</td><td class="name"><code>pick()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">366</td><td class="name"><code>start()</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

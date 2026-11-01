@@ -61,28 +61,40 @@ Each step shows:
 - Each genealogical edit saved to the cloud is a new version of the card: `v1`, `v2`, `v3`. An earlier version is never overwritten.
 - If the cloud has moved on since the file was exported, the save asks before it replaces anything.
 
-## Detailed history
+## Edit history
 
-- A **Detailed History** button sits in the upper-right corner of the right panel.
-- It opens the **viewer**, a separate tab. The viewer is one template page that loads any detail's bundle, the way the library opens a detail.
-- The viewer shows the lane tree, the stills, and the descriptions. It has its own **undo** for edits made there.
-- The viewer can be taken offline as one HTML file, with the bundle embedded.
-  - Opened from the local browser: the file has the events, so steps can replay line by line.
-  - Opened from the cloud: the file has only the stills, so each step shows its still.
+- **Edit history** is a button in the upper-right of the log's header, next to Undo.
+- It opens `viewer.html` in a new tab for the open detail's whole tree. The viewer is one template page. It opens live from this browser's database, or as an exported file.
+- The viewer shows the lane tree with each lane's scenes. It can add notes, play a scene, delete a scene, and delete a branch. It has its own undo, which lasts until the page is closed.
+- **Export HTML** writes one self-contained file: the page, its stylesheets and scripts, and the history as data. It opens in any browser with no server.
+  - The file keeps every recording event, so each scene replays line by line.
+  - Sound is left out to keep the file small. Words, drawings and notes are kept.
 
 ## Off the canvas
 
 - The genealogy is shown in the viewer, not on the sheet. It is never saved into the detail's items and never prints.
 
+## Built
+
+- Lane tree in the log, one track per lane, stacked top to bottom, with the lane's address, name, fork and first words.
+- Frame delete with promotion and relabelling, and undo in the log and the viewer.
+- Notes added to a scene, kept apart from the speech.
+- Edit history in the log header, and the viewer page with live and exported modes.
+
 ## Open
 
-- **Canvas overlay.** Showing the genealogy on the infinite canvas as a toggle that never prints was discussed and is not decided. The viewer covers the same need now.
+- **Stills at forks and lane ends.** The export keeps the recording events instead, so it can animate. A still-only file for the cloud is not built.
+- **Save back to cloud and versions.** Writing an edited lane back to the library as `v2`, `v3` is not built. It needs the cloud table changes below first.
 - **Cloud fork column.** The fork point is not stored in Supabase yet. It needs a column before a cloud round trip keeps it.
+- **Canvas overlay.** Showing the genealogy on the infinite canvas as a toggle that never prints was discussed and is not decided. The viewer covers the same need now.
 - **Orphaned lanes.** A lane whose parent is missing currently labels as `0`. Promotion on delete should prevent this.
+- **Live updates across tabs.** The viewer and the app each hold their own copy. Changes in one are not shown in the other until it is reopened.
 - **Letters after delete.** Relabelling on delete is decided. Whether an open viewer should re-label live while you're in it is not.
 
 ## Where the code is
 
-- `sketch/lanes.js`: steps, addresses, version labels. Pure, with tests in `tests/lanes.js`.
-- `sketch/app.js`: the log, branch and restore actions, the right panel.
+- `sketch/lanes.js`: steps, addresses, families, promotion, scene removal. Pure, with tests in `tests/lanes.js`.
+- `sketch/history.js`: undo entries and the writes that restore them. Pure, tested in `tests/lanes.js`.
+- `sketch/app/log.js`: the track log, scene delete, notes, undo, and the Edit history button.
+- `sketch/viewer.js` and `viewer.html`: the viewer page, its live and exported modes, and export.
 - `sketch/core.js`: replay and scene splitting.

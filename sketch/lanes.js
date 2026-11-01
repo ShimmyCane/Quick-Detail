@@ -7,8 +7,6 @@
 
   var SK = root.SK || {};
 
-  SK.LANE_SCHEMA = 'quick-detail/lanes-1';
-
   // The steps of one lane: every scene of its recordings, in recording order, numbered from 1 across all of them.
   // sessions: the recordings as stored ({ id, events, speech, voice }).
   SK.laneSteps = function (sessions) {
@@ -61,6 +59,93 @@
       }
     });
     return labels;
+  };
+
+  // The tree a detail belongs to: its main line (the root) and every branch below it, root first.
+  // details: every detail on the device. Returns [] if id is not one of them.
+  SK.familyOf = function (details, id) {
+    var byId = {};
+    details.forEach(function (d) { byId[d.id] = d; });
+    if (!byId[id]) return [];
+    var root = byId[id], guard = 0;
+    while (root.parentId && byId[root.parentId] && guard++ < 1000) root = byId[root.parentId];
+    var out = [root], seen = {};
+    seen[root.id] = true;
+    for (var i = 0; i < out.length; i++) {
+      details.forEach(function (d) {
+        if (d.parentId === out[i].id && !seen[d.id]) { seen[d.id] = true; out.push(d); }
+      });
+    }
+    return out;
+  };
+
+  // Lane ids in reading order: the main line, then each branch straight after the lane it forks from,
+  // siblings by the step they fork from and then by creation. This is the order the log stacks its tracks.
+  SK.laneOrder = function (lanes) {
+    var byId = {}, kids = {}, out = [], seen = {};
+    lanes.forEach(function (l) { byId[l.id] = l; });
+    lanes.forEach(function (l) {
+      if (l.parentId && byId[l.parentId]) (kids[l.parentId] = kids[l.parentId] || []).push(l);
+    });
+    function stepOf(l) { return l.fork && l.fork.step != null ? l.fork.step : Infinity; }
+    function walk(l) {
+      if (seen[l.id]) return;
+      seen[l.id] = true;
+      out.push(l.id);
+      (kids[l.id] || []).slice().sort(function (a, b) {
+        return stepOf(a) - stepOf(b) || (a.created || 0) - (b.created || 0);
+      }).forEach(walk);
+    }
+    lanes.forEach(function (l) { if (!l.parentId || !byId[l.parentId]) walk(l); });
+    return out;
+  };
+
+  // The key that ties a note to its scene: the recording and the scene's start. Stable while other scenes are removed.
+  SK.sceneKey = function (sessionId, start) { return sessionId + ':' + Math.round(start); };
+
+  // A recording with one scene taken out: its events, speech and voice spans that begin inside the scene, and the
+  // notes on it. Times of everything else stay as they were, so the scenes after it keep their starts and notes.
+  // Returns a new record; the one passed in is not changed.
+  SK.removeScene = function (s, m) {
+    var key = SK.sceneKey(s.id, m.start);
+    function inside(t) { return t >= m.start && t <= m.end; }
+    var out = Object.assign({}, s);
+    delete out._scenes;
+    out.events = (s.events || []).filter(function (ev) {
+      return !inside(ev.type === 'put' && ev.anim ? ev.item.t0 : ev.t);
+    });
+    out.speech = (s.speech || []).filter(function (sp) { return !inside(sp.t); });
+    out.voice = (s.voice || []).filter(function (v) { return !inside(v[0]); });
+    out.notes = (s.notes || []).filter(function (n) { return n.key !== key; });
+    return out;
+  };
+
+  // The fork changes that follow from taking step n out of a lane. A branch that forked after step n is promoted to
+  // fork from the step before it; a branch after a later step moves up by one, since the steps after n renumber.
+  // Returns [{ id, fork }] for the branches that change.
+  SK.stepDeleteUpdates = function (details, laneId, n) {
+    var out = [];
+    details.forEach(function (d) {
+      if (d.parentId !== laneId || !d.fork || d.fork.step == null) return;
+      var step = d.fork.step;
+      var next = step >= n ? step - 1 : step;
+      if (next !== step) out.push({ id: d.id, fork: { step: next } });
+    });
+    return out;
+  };
+
+  // The changes when a branch is deleted: its own branches are promoted to fork from where it forked from its parent.
+  // The main line cannot be deleted this way. Returns [{ id, parentId, fork }] for each branch that moves.
+  SK.promoteUpdates = function (details, id) {
+    var lane = null;
+    details.forEach(function (d) { if (d.id === id) lane = d; });
+    if (!lane || !lane.parentId) return [];
+    var out = [];
+    details.forEach(function (d) {
+      if (d.parentId !== id) return;
+      out.push({ id: d.id, parentId: lane.parentId, fork: lane.fork ? { step: lane.fork.step } : null });
+    });
+    return out;
   };
 
   // A version of a lane's card: v1 is the first save, and each later save of a genealogical edit adds one.

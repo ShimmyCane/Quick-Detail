@@ -97,6 +97,7 @@ function openDetail(d, from) {
   originHost = from || null;
   ops = [];
   redos = [];
+  logHistory.clear();   // the log's undo covers changes since this lane was opened
   sel = null;
   endDraft();
   view = homeView(d);

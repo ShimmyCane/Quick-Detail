@@ -33,27 +33,45 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/app/log.js</code></h1>
-<p class="muted">App: right panel · 200 lines · App part 20 of 23 in the load order.</p>
+<p class="muted">App: right panel · 352 lines · App part 20 of 23 in the load order.</p>
 <h2>What it does</h2>
 <p>Log and replay.<br>
-The film strip of every scene, clip playback, and the replay player in the right panel.</p>
+The log as tracks of lanes, edits to scenes (delete, notes, undo), clip playback, and the replay player in the right panel.</p>
 <h2>Sections</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
 <tr><td class="n">7</td><td>log: a film strip of every scene</td></tr>
-<tr><td class="n">98</td><td>replay</td></tr>
+<tr><td class="n">28</td><td>the log: one track per lane of the detail's tree, stacked like tracks in an editor</td></tr>
+<tr><td class="n">250</td><td>replay</td></tr>
 </table></div>
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
 <tr><td class="n">10</td><td class="name"><code>sessionBounds(s)</code></td><td>The bounds of everything a recording ever drew.</td><td><a href="app-export.html">export</a></td></tr>
-<tr><td class="n">29</td><td class="name"><code>renderLog()</code></td><td>The Log: a film strip of every scene, with Clip, Replay, Restore and Branch.</td><td><a href="app-details.html">details</a>, <a href="app-recording.html">recording</a>, <a href="app-panels.html">panels</a></td></tr>
-<tr><td class="n">86</td><td class="name"><code>playClip(s, m)</code></td><td>Plays the sound of one scene.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">101</td><td class="name"><code>openReplay(s, T)</code></td><td>Opens the replay of a recording at time T, in the right panel.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">129</td><td class="name"><code>setT(T)</code></td><td>Shows the replay at time T: sheet, scrubber, clock and current scene.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">147</td><td class="name"><code>seekTo(T)</code></td><td>Jumps the replay, and its sound, to time T.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">155</td><td class="name"><code>startPlay()</code></td><td>Plays the replay from where it is.</td><td><a href="app-rail.html">rail</a></td></tr>
-<tr><td class="n">167</td><td class="name"><code>pausePlay()</code></td><td>Pauses the replay.</td><td><a href="app-rail.html">rail</a></td></tr>
-<tr><td class="n">176</td><td class="name"><code>frame()</code></td><td>One animation frame of the replay.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">185</td><td class="name"><code>exitReplay()</code></td><td>Ends the replay and puts the view back.</td><td><a href="app-details.html">details</a>, <a href="app-panels.html">panels</a>, <a href="app-library.html">library</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">35</td><td class="name"><code>readFamily()</code></td><td>Reads the tree: every lane of the open detail, and each lane's recordings in order.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">51</td><td class="name"><code>renderLog()</code></td><td>The Log: a track for each lane. The open lane shows its scenes; the others show their scene words and open on a click.</td><td><a href="app-details.html">details</a>, <a href="app-recording.html">recording</a>, <a href="app-panels.html">panels</a></td></tr>
+<tr><td class="n">62</td><td class="name"><code>drawTracks(strip, fam)</code></td><td>Draws every track of the tree from what is in memory.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">78</td><td class="name"><code>trackFor(d, list, labels, fam)</code></td><td>One lane's track: a header with its address, name, where it forks, and what was said first; then its scenes.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">115</td><td class="name"><code>fillCurrentTrack(body, list)</code></td><td>The open lane's scenes: a film strip of cards, with a divider for each recording.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">137</td><td class="name"><code>sceneCard(s, m, num, b, col)</code></td><td>One scene: its still, its words, the notes added to it, and its actions.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">183</td><td class="name"><code>commitLog(entry, writes)</code></td><td>Applies an action to the tree: remembers what it changed for undo, writes it, and redraws.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">189</td><td class="name"><code>applyLogWrites(writes)</code></td><td>Puts the writes into memory and the database, then redraws the tree.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">201</td><td class="name"><code>addNote(s, m, text)</code></td><td>Adds a note to a scene. Notes are kept apart from what was said.</td><td><a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">209</td><td class="name"><code>deleteScene(s, m, num)</code></td><td>Deletes one scene, by frame. Branches that forked after it move up one step, and a branch on it is promoted.</td><td><a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">222</td><td class="name"><code>logUndo()</code></td><td>Undoes the last delete or note in this lane.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">230</td><td class="name"><code>openHistory()</code></td><td>Opens the viewer for this detail's tree, in a new tab.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">238</td><td class="name"><code>playClip(s, m)</code></td><td>Plays the sound of one scene.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">253</td><td class="name"><code>openReplay(s, T)</code></td><td>Opens the replay of a recording at time T, in the right panel.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">281</td><td class="name"><code>setT(T)</code></td><td>Shows the replay at time T: sheet, scrubber, clock and current scene.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">299</td><td class="name"><code>seekTo(T)</code></td><td>Jumps the replay, and its sound, to time T.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">307</td><td class="name"><code>startPlay()</code></td><td>Plays the replay from where it is.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">319</td><td class="name"><code>pausePlay()</code></td><td>Pauses the replay.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">328</td><td class="name"><code>frame()</code></td><td>One animation frame of the replay.</td><td><a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">337</td><td class="name"><code>exitReplay()</code></td><td>Ends the replay and puts the view back.</td><td><a href="app-details.html">details</a>, <a href="app-panels.html">panels</a>, <a href="app-library.html">library</a>, <a href="app-rail.html">rail</a></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">29</td><td class="name"><code>logFamily</code><span class="tag">state</span></td><td>{ details, sessions }: the open detail's tree as last read</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">30</td><td class="name"><code>logCollapsed</code><span class="tag">state</span></td><td>lane id -&gt; true when its track is folded</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">31</td><td class="name"><code>logHistory</code><span class="tag">state</span></td><td>undo for scene deletes and notes, since this lane was opened</td><td><a href="app-details.html">details</a></td></tr>
 </table></div>
 
 <p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>

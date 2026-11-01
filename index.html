@@ -6,13 +6,13 @@
   <title>Wall Sketch</title>
   <!-- The ?v= on every local file keeps this page and its scripts a matched set when a browser or host caches files.
        Change it whenever any file in sketch/ changes. -->
-  <link rel="stylesheet" href="sketch/css/base.css?v=20261101a">
-  <link rel="stylesheet" href="sketch/css/sheet.css?v=20261101a">
-  <link rel="stylesheet" href="sketch/css/panels.css?v=20261101a">
-  <link rel="stylesheet" href="sketch/css/library.css?v=20261101a">
-  <link rel="stylesheet" href="sketch/css/left-bar.css?v=20261101a">
-  <link rel="stylesheet" href="sketch/css/later.css?v=20261101a">
-  <link rel="stylesheet" href="sketch/css/library-late.css?v=20261101a">
+  <link rel="stylesheet" href="sketch/css/base.css?v=20261101b">
+  <link rel="stylesheet" href="sketch/css/sheet.css?v=20261101b">
+  <link rel="stylesheet" href="sketch/css/panels.css?v=20261101b">
+  <link rel="stylesheet" href="sketch/css/library.css?v=20261101b">
+  <link rel="stylesheet" href="sketch/css/left-bar.css?v=20261101b">
+  <link rel="stylesheet" href="sketch/css/later.css?v=20261101b">
+  <link rel="stylesheet" href="sketch/css/library-late.css?v=20261101b">
   <script>
     // If the app fails to start (a stale cached script, say), say so at the bottom instead of leaving a blank sheet.
     window.addEventListener('error', function (e) {
@@ -90,14 +90,37 @@
         <button data-weight="w4" title="Heavy" aria-label="Heavy line"><i></i></button>
       </div>
     </div>
+    <!-- Colour: one row of black, red, blue and +. The + opens two more rows: yellow, green, magenta, 50% grey,
+         orange, purple, the custom colour (the last one mixed) and the mixer, which picks any hex on an HSL or CMYK grid. -->
     <div class="lgroup picker" id="colorPicker" aria-label="Pen colour">
       <button type="button" id="colorCur" class="pick-cur pen-ink" aria-expanded="false" title="Pen colour. Tap or drag to choose" aria-label="Pen colour"></button>
-      <div class="pick-row" hidden>
+      <div class="pick-row color-grid" hidden>
         <button data-color="ink" class="pen-ink" title="Black (white on a dark background)" aria-label="Black pen"></button>
         <button data-color="red" class="pen-red" title="Red" aria-label="Red pen"></button>
         <button data-color="blue" class="pen-blue" title="Blue" aria-label="Blue pen"></button>
-        <button data-color="yellow" class="pen-yellow" title="Yellow" aria-label="Yellow pen"></button>
-        <button data-color="green" class="pen-green" title="Green" aria-label="Green pen"></button>
+        <button type="button" id="colorMore" class="color-more" data-pick-act="more" aria-expanded="false" title="More colours" aria-label="More colours">+</button>
+        <button data-color="yellow" class="pen-yellow color-extra" title="Yellow" aria-label="Yellow pen"></button>
+        <button data-color="green" class="pen-green color-extra" title="Green" aria-label="Green pen"></button>
+        <button data-color="magenta" class="pen-magenta color-extra" title="Magenta" aria-label="Magenta pen"></button>
+        <button data-color="grey" class="pen-grey color-extra" title="50% grey" aria-label="Grey pen"></button>
+        <button data-color="orange" class="pen-orange color-extra" title="Orange" aria-label="Orange pen"></button>
+        <button data-color="purple" class="pen-purple color-extra" title="Purple" aria-label="Purple pen"></button>
+        <button data-color="custom" id="colorCustom" class="color-extra color-custom" title="Custom: the last colour you mixed" aria-label="Custom colour pen"></button>
+        <button type="button" id="colorMixBtn" class="color-extra color-mix-btn" data-pick-act="mix" aria-expanded="false" title="Mix a colour (HSL or CMYK)" aria-label="Mix a colour"></button>
+      </div>
+      <div class="color-mix" id="colorMix" role="dialog" aria-label="Mix a colour" hidden>
+        <div class="mix-tabs" role="tablist">
+          <button type="button" data-mix-mode="hsl" class="on" role="tab">HSL</button>
+          <button type="button" data-mix-mode="cmyk" role="tab">CMYK</button>
+        </div>
+        <canvas id="mixGrid" width="192" height="128" aria-label="Colour grid"></canvas>
+        <label class="mix-slider"><span id="mixS1Label">S</span><input type="range" id="mixS1" min="0" max="100" value="80"><b id="mixS1Val">80</b></label>
+        <label class="mix-slider" id="mixS2Row" hidden><span id="mixS2Label">K</span><input type="range" id="mixS2" min="0" max="100" value="0"><b id="mixS2Val">0</b></label>
+        <div class="mix-foot">
+          <i id="mixSwatch"></i>
+          <input type="text" id="mixHex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="Hex colour" value="#2a9d8f">
+          <button type="button" id="mixUse" class="mix-use">Use</button>
+        </div>
       </div>
     </div>
     <div class="lgroup picker" id="dimPicker" aria-label="Dimension type">
@@ -222,46 +245,46 @@
   <div id="flash" class="flash" hidden></div>
   <div id="toast" class="toast" hidden></div>
 
-  <script src="sketch/core.js?v=20261101a"></script>
-  <script src="sketch/lanes.js?v=20261101a"></script>
-  <script src="sketch/history.js?v=20261101a"></script>
-  <script src="sketch/units.js?v=20261101a"></script>
-  <script src="sketch/hatch.js?v=20261101a"></script>
-  <script src="sketch/annot.js?v=20261101a"></script>
-  <script src="sketch/blocks.js?v=20261101a"></script>
-  <script src="sketch/author.js?v=20261101a"></script>
-  <script src="sketch/parallel.js?v=20261101a"></script>
-  <script src="sketch/livefile.js?v=20261101a"></script>
-  <script src="sketch/paint.js?v=20261101a"></script>
-  <script src="sketch/store.js?v=20261101a"></script>
-  <script src="sketch/record.js?v=20261101a"></script>
-  <script src="sketch/gif.js?v=20261101a"></script>
+  <script src="sketch/core.js?v=20261101b"></script>
+  <script src="sketch/lanes.js?v=20261101b"></script>
+  <script src="sketch/history.js?v=20261101b"></script>
+  <script src="sketch/units.js?v=20261101b"></script>
+  <script src="sketch/hatch.js?v=20261101b"></script>
+  <script src="sketch/annot.js?v=20261101b"></script>
+  <script src="sketch/blocks.js?v=20261101b"></script>
+  <script src="sketch/author.js?v=20261101b"></script>
+  <script src="sketch/parallel.js?v=20261101b"></script>
+  <script src="sketch/livefile.js?v=20261101b"></script>
+  <script src="sketch/paint.js?v=20261101b"></script>
+  <script src="sketch/store.js?v=20261101b"></script>
+  <script src="sketch/record.js?v=20261101b"></script>
+  <script src="sketch/gif.js?v=20261101b"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-  <script src="sketch/analyze.js?v=20261101a"></script>
-  <script src="sketch/cloud.js?v=20261101a"></script>
+  <script src="sketch/analyze.js?v=20261101b"></script>
+  <script src="sketch/cloud.js?v=20261101b"></script>
   <!-- The app, in parts that share one global scope. Keep this order: start.js runs last. -->
-  <script src="sketch/app/base.js?v=20261101a"></script>
-  <script src="sketch/app/details.js?v=20261101a"></script>
-  <script src="sketch/app/changes.js?v=20261101a"></script>
-  <script src="sketch/app/recording.js?v=20261101a"></script>
-  <script src="sketch/app/canvas.js?v=20261101a"></script>
-  <script src="sketch/app/input.js?v=20261101a"></script>
-  <script src="sketch/app/tools.js?v=20261101a"></script>
-  <script src="sketch/app/draft.js?v=20261101a"></script>
-  <script src="sketch/app/selection.js?v=20261101a"></script>
-  <script src="sketch/app/editor.js?v=20261101a"></script>
-  <script src="sketch/app/panels.js?v=20261101a"></script>
-  <script src="sketch/app/library.js?v=20261101a"></script>
-  <script src="sketch/app/tags.js?v=20261101a"></script>
-  <script src="sketch/app/library-info.js?v=20261101a"></script>
-  <script src="sketch/app/bin.js?v=20261101a"></script>
-  <script src="sketch/app/cloud-ui.js?v=20261101a"></script>
-  <script src="sketch/app/changelog.js?v=20261101a"></script>
-  <script src="sketch/app/settings.js?v=20261101a"></script>
-  <script src="sketch/app/branches.js?v=20261101a"></script>
-  <script src="sketch/app/log.js?v=20261101a"></script>
-  <script src="sketch/app/export.js?v=20261101a"></script>
-  <script src="sketch/app/rail.js?v=20261101a"></script>
-  <script src="sketch/app/start.js?v=20261101a"></script>
+  <script src="sketch/app/base.js?v=20261101b"></script>
+  <script src="sketch/app/details.js?v=20261101b"></script>
+  <script src="sketch/app/changes.js?v=20261101b"></script>
+  <script src="sketch/app/recording.js?v=20261101b"></script>
+  <script src="sketch/app/canvas.js?v=20261101b"></script>
+  <script src="sketch/app/input.js?v=20261101b"></script>
+  <script src="sketch/app/tools.js?v=20261101b"></script>
+  <script src="sketch/app/draft.js?v=20261101b"></script>
+  <script src="sketch/app/selection.js?v=20261101b"></script>
+  <script src="sketch/app/editor.js?v=20261101b"></script>
+  <script src="sketch/app/panels.js?v=20261101b"></script>
+  <script src="sketch/app/library.js?v=20261101b"></script>
+  <script src="sketch/app/tags.js?v=20261101b"></script>
+  <script src="sketch/app/library-info.js?v=20261101b"></script>
+  <script src="sketch/app/bin.js?v=20261101b"></script>
+  <script src="sketch/app/cloud-ui.js?v=20261101b"></script>
+  <script src="sketch/app/changelog.js?v=20261101b"></script>
+  <script src="sketch/app/settings.js?v=20261101b"></script>
+  <script src="sketch/app/branches.js?v=20261101b"></script>
+  <script src="sketch/app/log.js?v=20261101b"></script>
+  <script src="sketch/app/export.js?v=20261101b"></script>
+  <script src="sketch/app/rail.js?v=20261101b"></script>
+  <script src="sketch/app/start.js?v=20261101b"></script>
 </body>
 </html>

@@ -38,7 +38,7 @@
 
   function penOf(name, where) {
     var key = name || 'ink';
-    if (key !== 'ink' && !SK.PENS[key]) fail(where + ' has an unknown pen "' + key + '" (use ink, red, blue, yellow or green)');
+    if (key !== 'ink' && !SK.PENS[key] && !SK.isHex(key)) fail(where + ' has an unknown pen "' + key + '" (use ink, ' + Object.keys(SK.PENS).join(', ') + ', or #rrggbb)');
     return key;
   }
 

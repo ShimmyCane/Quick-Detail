@@ -130,3 +130,33 @@ body.collapsed #lrailMore { display: none; }
 .pick-row { position: absolute; left: 100%; top: 0; margin-left: 10px; display: flex; flex-direction: row; gap: 4px; padding: 5px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; z-index: 9; }
 .pick-row[hidden] { display: none; }
 .pick-row button.hot { border-color: var(--ink); }
+
+/* ---- colour grid: black, red, blue and + in one row of four. The + opens two more rows (4 x 3 in all). ---- */
+.lrail .pen-magenta { background: #c81e8c; }
+.lrail .pen-grey { background: #808080; }
+.lrail .pen-orange { background: #e8741c; }
+.lrail .pen-purple { background: #6a3bb5; }
+.pick-row.color-grid { display: grid; grid-template-columns: repeat(4, auto); gap: 4px; }
+.pick-row.color-grid[hidden] { display: none; }
+.pick-row.color-grid .color-extra { display: none; }
+.pick-row.color-grid.expanded .color-extra { display: flex; }
+.lrail .color-grid .color-more, .lrail .color-grid .color-mix-btn { width: 24px; height: 24px; border-radius: 12px; border: 2px solid var(--line); font-size: 16px; font-weight: 600; }
+.lrail .color-grid .color-more { background: var(--panel); color: var(--ink); }
+.lrail .color-grid .color-mix-btn { background: conic-gradient(#f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+.lrail .color-grid .color-mix-btn.on { border-color: var(--ink); }
+.lrail .color-grid .color-custom { background: #2a9d8f; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .6); }
+
+/* ---- the colour mixer: HSL or CMYK grid, sliders, hex box ---- */
+.color-mix { position: fixed; z-index: 10; width: 212px; padding: 8px; display: flex; flex-direction: column; gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); font-size: 13px; color: var(--ink); }
+.color-mix[hidden] { display: none; }
+.lrail .color-mix button { width: auto; height: 26px; border-radius: 8px; padding: 0 10px; font-size: 13px; border: 1px solid var(--line); background: var(--panel); }
+.lrail .color-mix button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.color-mix .mix-tabs { display: flex; gap: 4px; }
+.color-mix canvas { width: 196px; height: 130px; border-radius: 8px; border: 1px solid var(--line); touch-action: none; cursor: crosshair; display: block; }
+.color-mix .mix-slider { display: grid; grid-template-columns: 14px 1fr 26px; align-items: center; gap: 6px; }
+.color-mix .mix-slider[hidden] { display: none; }
+.color-mix .mix-slider input { width: 100%; margin: 0; }
+.color-mix .mix-slider b { font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.color-mix .mix-foot { display: flex; align-items: center; gap: 6px; }
+.color-mix #mixSwatch { width: 26px; height: 26px; border-radius: 13px; border: 1px solid var(--line); flex: none; }
+.color-mix #mixHex { flex: 1; min-width: 0; height: 26px; box-sizing: border-box; padding: 0 6px; border: 1px solid var(--line); border-radius: 8px; font: 13px ui-monospace, Menlo, Consolas, monospace; background: var(--paper, #fff); color: var(--ink); }

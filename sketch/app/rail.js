@@ -13,18 +13,28 @@
 // Each picker shows its current choice as one dot. Tap the dot to open the row, or press it, drag along the row and let go
 // on a choice. Letting go off the row closes it without a change.
 function renderPen() {
-  document.querySelectorAll('#colorPicker [data-color]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-color') === pen.color); });
+  var hex = SK.isHex(pen.color);
+  document.querySelectorAll('#colorPicker [data-color]').forEach(function (b) {
+    var v = b.getAttribute('data-color');
+    b.classList.toggle('on', v === 'custom' ? hex && pen.color.toLowerCase() === pen.custom.toLowerCase() : v === pen.color);
+  });
   document.querySelectorAll('#weightPicker [data-weight]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-weight') === pen.weight); });
   var cur = $('colorCur');
-  cur.className = 'pick-cur pen-' + pen.color;
+  cur.className = 'pick-cur' + (hex ? '' : ' pen-' + pen.color);
+  cur.style.background = hex ? pen.color : '';
+  $('colorCustom').style.background = pen.custom;
   var wcur = $('weightCur');
   wcur.setAttribute('data-w', pen.weight);
 }
 // Wires a dot picker (colour, weight, dimension type): tap to open, or press, drag along the row and let go.
-function setupPicker(boxId, attr, apply) {
+function setupPicker(boxId, attr, apply, onOpen) {
   var box = $(boxId), cur = box.querySelector('.pick-cur'), row = box.querySelector('.pick-row');
   var pressing = false;
-  function open(on) { row.hidden = !on; cur.setAttribute('aria-expanded', on ? 'true' : 'false'); if (!on) row.querySelectorAll('.hot').forEach(function (b) { b.classList.remove('hot'); }); }
+  function open(on) {
+    row.hidden = !on; cur.setAttribute('aria-expanded', on ? 'true' : 'false');
+    if (!on) row.querySelectorAll('.hot').forEach(function (b) { b.classList.remove('hot'); });
+    if (onOpen) onOpen(on);
+  }
   function swatchAt(x, y) {
     var t = document.elementFromPoint(x, y), b = t && t.closest ? t.closest('[' + attr + ']') : null;
     return b && row.contains(b) ? b : null;
@@ -48,6 +58,8 @@ function setupPicker(boxId, attr, apply) {
     var b = swatchAt(e.clientX, e.clientY);
     if (b) { choose(b); return; }
     var t = document.elementFromPoint(e.clientX, e.clientY);
+    var act = t && t.closest ? t.closest('[data-pick-act]') : null;
+    if (act && row.contains(act)) { act.click(); return; }   // let go on + or the mixer: press it, keep the row open
     if (!(t && box.contains(t))) open(false);   // let go somewhere else: close without a change
   });
   row.addEventListener('click', function (e) {
@@ -57,10 +69,153 @@ function setupPicker(boxId, attr, apply) {
   document.addEventListener('pointerdown', function (e) {
     if (!row.hidden && !box.contains(e.target)) open(false);
   });
+  return { open: open };
 }
-setupPicker('colorPicker', 'data-color', function (v) {
-  pen.color = v; savePen(); renderPen(); if (tool === 'select') setTool('draw');
+var colorPicker = setupPicker('colorPicker', 'data-color', function (v) {
+  pen.color = v === 'custom' ? pen.custom : v; savePen(); renderPen(); if (tool === 'select') setTool('draw');
+}, function (on) {
+  // Opening: show the extra rows when the current colour lives there. Closing: close the mixer too.
+  if (on) colorExpand(colorExpanded || isExtraColor(pen.color));
+  else colorMix.show(false);
 });
+var colorExpanded = false;   // the + rows stay open between uses until + is tapped again
+function isExtraColor(c) { return SK.isHex(c) || ['yellow', 'green', 'magenta', 'grey', 'orange', 'purple'].indexOf(c) >= 0; }
+// Shows or hides the two extra colour rows under black, red, blue and +.
+function colorExpand(on) {
+  colorExpanded = on;
+  var row = document.querySelector('#colorPicker .pick-row');
+  row.classList.toggle('expanded', on);
+  $('colorMore').textContent = on ? '−' : '+';
+  $('colorMore').setAttribute('aria-expanded', on ? 'true' : 'false');
+  $('colorMore').setAttribute('title', on ? 'Fewer colours' : 'More colours');
+  if (!on) colorMix.show(false);
+}
+$('colorMore').addEventListener('click', function () { colorExpand(!colorExpanded); });
+$('colorMixBtn').addEventListener('click', function () { colorMix.show($('colorMix').hidden); });
+
+// The colour mixer: an HSL grid (hue across, lightness down, saturation on the slider) or a CMYK grid
+// (cyan across, magenta down, yellow and black on the sliders). Pick on the grid or type a hex, then Use.
+// The colour used becomes the custom swatch and the pen colour.
+var colorMix = (function () {
+  var box = $('colorMix'), grid = $('mixGrid'), g = grid.getContext('2d');
+  var s1 = $('mixS1'), s2 = $('mixS2'), hexIn = $('mixHex');
+  var mode = 'hsl';
+  var hsl = [0, 80, 50], cmyk = [0, 0, 0, 0];   // h 0-360, s and l 0-100; c, m, y, k 0-100
+  var hex = pen.custom;
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function toHex(rgb) { return '#' + rgb.map(function (v) { return ('0' + Math.round(clamp(v, 0, 255)).toString(16)).slice(-2); }).join(''); }
+  function fromHex(h) { var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  function hslRgb(h, s, l) {
+    s /= 100; l /= 100;
+    var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l);
+    var f = function (n) { return 255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))); };
+    return [f(0), f(8), f(4)];
+  }
+  function rgbHsl(rgb) {
+    var r = rgb[0] / 255, gg = rgb[1] / 255, b = rgb[2] / 255;
+    var max = Math.max(r, gg, b), min = Math.min(r, gg, b), d = max - min, l = (max + min) / 2, h = 0, s = 0;
+    if (d) {
+      s = d / (1 - Math.abs(2 * l - 1));
+      h = max === r ? ((gg - b) / d) % 6 : max === gg ? (b - r) / d + 2 : (r - gg) / d + 4;
+      h = (h * 60 + 360) % 360;
+    }
+    return [h, s * 100, l * 100];
+  }
+  function cmykRgb(c, m, y, k) { k = 1 - k / 100; return [255 * (1 - c / 100) * k, 255 * (1 - m / 100) * k, 255 * (1 - y / 100) * k]; }
+  function rgbCmyk(rgb) {
+    var r = rgb[0] / 255, gg = rgb[1] / 255, b = rgb[2] / 255, k = 1 - Math.max(r, gg, b);
+    if (k >= 1) return [0, 0, 0, 100];
+    return [(1 - r - k) / (1 - k) * 100, (1 - gg - k) / (1 - k) * 100, (1 - b - k) / (1 - k) * 100, k * 100];
+  }
+  // The colour at grid position (u, v), both 0-1, with the sliders as they are.
+  function at(u, v) {
+    return mode === 'hsl' ? hslRgb(u * 360, hsl[1], 100 - v * 100) : cmykRgb(u * 100, v * 100, cmyk[2], cmyk[3]);
+  }
+  function draw() {
+    var w = grid.width, h = grid.height, img = g.createImageData(w, h), d = img.data;
+    for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
+      var rgb = at(x / (w - 1), y / (h - 1)), i = (y * w + x) * 4;
+      d[i] = rgb[0]; d[i + 1] = rgb[1]; d[i + 2] = rgb[2]; d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+    var u = mode === 'hsl' ? hsl[0] / 360 : cmyk[0] / 100, v = mode === 'hsl' ? 1 - hsl[2] / 100 : cmyk[1] / 100;
+    g.lineWidth = 2;
+    g.strokeStyle = '#000'; g.beginPath(); g.arc(u * (w - 1), v * (h - 1), 6, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = '#fff'; g.beginPath(); g.arc(u * (w - 1), v * (h - 1), 4, 0, Math.PI * 2); g.stroke();
+  }
+  function sliders() {
+    var cm = mode === 'cmyk';
+    $('mixS1Label').textContent = cm ? 'Y' : 'S';
+    s1.value = Math.round(cm ? cmyk[2] : hsl[1]); $('mixS1Val').textContent = s1.value;
+    $('mixS2Row').hidden = !cm;
+    s2.value = Math.round(cmyk[3]); $('mixS2Val').textContent = s2.value;
+    box.querySelectorAll('[data-mix-mode]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-mix-mode') === mode); });
+  }
+  // Recomputes the hex from the grid and sliders, or (from = 'hex' or 'typing') the grid and sliders from the hex.
+  // While typing, the hex box is left as typed.
+  function update(from) {
+    var fromHexValue = from === 'hex' || from === 'typing';
+    if (fromHexValue) { var rgb = fromHex(hex); var h = rgbHsl(rgb); if (h[1] > 0.5) hsl[0] = h[0]; hsl[1] = h[1]; hsl[2] = h[2]; cmyk = rgbCmyk(rgb); }
+    else hex = toHex(mode === 'hsl' ? hslRgb(hsl[0], hsl[1], hsl[2]) : cmykRgb(cmyk[0], cmyk[1], cmyk[2], cmyk[3]));
+    if (!fromHexValue) {   // keep the other model in step, so switching tabs shows the same colour
+      var rgb2 = fromHex(hex);
+      if (mode === 'hsl') cmyk = rgbCmyk(rgb2); else { var h2 = rgbHsl(rgb2); if (h2[1] > 0.5) hsl[0] = h2[0]; hsl[1] = h2[1]; hsl[2] = h2[2]; }
+    }
+    if (from !== 'typing') hexIn.value = hex;
+    $('mixSwatch').style.background = hex;
+    sliders();
+    draw();
+  }
+  function pickAt(e) {
+    var r = grid.getBoundingClientRect();
+    var u = clamp((e.clientX - r.left) / r.width, 0, 1), v = clamp((e.clientY - r.top) / r.height, 0, 1);
+    if (mode === 'hsl') { hsl[0] = u * 360; hsl[2] = 100 - v * 100; } else { cmyk[0] = u * 100; cmyk[1] = v * 100; }
+    update();
+  }
+  var dragging = false;
+  grid.addEventListener('pointerdown', function (e) { e.preventDefault(); dragging = true; try { grid.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } pickAt(e); });
+  grid.addEventListener('pointermove', function (e) { if (dragging) pickAt(e); });
+  grid.addEventListener('pointerup', function () { dragging = false; });
+  grid.addEventListener('pointercancel', function () { dragging = false; });
+  s1.addEventListener('input', function () { if (mode === 'hsl') hsl[1] = +s1.value; else cmyk[2] = +s1.value; update(); });
+  s2.addEventListener('input', function () { cmyk[3] = +s2.value; update(); });
+  box.querySelectorAll('[data-mix-mode]').forEach(function (b) {
+    b.addEventListener('click', function () { mode = b.getAttribute('data-mix-mode'); update(); });
+  });
+  hexIn.addEventListener('input', function () {
+    var v = hexIn.value.trim(); if (v[0] !== '#') v = '#' + v;
+    if (/^#[0-9a-f]{3}$/i.test(v)) v = '#' + v[1] + v[1] + v[2] + v[2] + v[3] + v[3];
+    if (SK.isHex(v)) { hex = v.toLowerCase(); update('typing'); }
+  });
+  hexIn.addEventListener('keydown', function (e) {
+    e.stopPropagation();   // typing a hex must not trigger the sheet's shortcut keys
+    if (e.key === 'Enter') { e.preventDefault(); use(); }
+    if (e.key === 'Escape') show(false);
+  });
+  function use() {
+    pen.custom = hex;
+    colorPicker.open(false);
+    pen.color = hex; savePen(); renderPen(); if (tool === 'select') setTool('draw');
+  }
+  $('mixUse').addEventListener('click', use);
+  // Opens beside the colour rows, kept on screen.
+  function show(on) {
+    box.hidden = !on;
+    $('colorMixBtn').setAttribute('aria-expanded', on ? 'true' : 'false');
+    $('colorMixBtn').classList.toggle('on', on);
+    if (!on) return;
+    hex = pen.custom; update('hex');
+    var row = document.querySelector('#colorPicker .pick-row').getBoundingClientRect();
+    var bw = box.offsetWidth, bh = box.offsetHeight;
+    var left = row.right + 8, top = row.top;
+    if (left + bw > window.innerWidth - 8) left = Math.max(8, row.left);
+    if (left !== row.right + 8) top = row.bottom + 8;
+    top = clamp(top, 8, Math.max(8, window.innerHeight - bh - 8));
+    box.style.left = left + 'px'; box.style.top = top + 'px';
+  }
+  return { show: show, hslRgb: hslRgb, cmykRgb: cmykRgb, toHex: toHex };
+})();
 setupPicker('weightPicker', 'data-weight', function (v) {
   pen.weight = v; savePen(); renderPen(); if (tool === 'select') setTool('draw');
 });

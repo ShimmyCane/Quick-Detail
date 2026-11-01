@@ -43,15 +43,17 @@ var customTags = [];
 var settings = { caps: true, roundTo: 1 / 16, bg: '#bdbdbd', grid: true, underlay: true, libBg: 'sheet', autoCollapse: false };
 var ROT_PX = 26;                                // the round turn handle sits this far above a selected item
 var recycleQuietUntil = 0;                      // "don't ask for five minutes" after a delete from the library
-var pen = { color: 'ink', weight: 'w2', hatch: 'wood1' };   // what new strokes, notes, dimensions and hatches are drawn with
+var pen = { color: 'ink', weight: 'w2', hatch: 'wood1', custom: '#2a9d8f' };   // what new strokes, notes, dimensions and hatches are drawn with
+// custom: the last colour chosen in the colour picker (HSL or CMYK). The custom swatch keeps it.
 // Colour and line weight are remembered between visits. Anything unknown falls back to the defaults above.
 try {
   var savedPen = JSON.parse(localStorage.getItem('qd.pen') || 'null') || {};
-  if (['ink', 'red', 'blue', 'yellow', 'green'].indexOf(savedPen.color) >= 0) pen.color = savedPen.color;
+  if (savedPen.color === 'ink' || SK.PENS[savedPen.color] || SK.isHex(savedPen.color)) pen.color = savedPen.color;
+  if (SK.isHex(savedPen.custom)) pen.custom = savedPen.custom;
   if (['w1', 'w2', 'w3', 'w4'].indexOf(savedPen.weight) >= 0) pen.weight = savedPen.weight;
 } catch (err) { /* storage can be blocked; the defaults still work */ }
 // Remembers the pen colour and weight between visits.
-function savePen() { try { localStorage.setItem('qd.pen', JSON.stringify({ color: pen.color, weight: pen.weight })); } catch (err) { /* ignore */ } }
+function savePen() { try { localStorage.setItem('qd.pen', JSON.stringify({ color: pen.color, weight: pen.weight, custom: pen.custom })); } catch (err) { /* ignore */ } }
 var DETAIL_PX_PER_PAPER_IN = 140;               // default zoom: bigger than the sheet's old 96
 var counter = 0;
 var sources = {}, allDetails = [];   // every detail on this device, by id, for blocks

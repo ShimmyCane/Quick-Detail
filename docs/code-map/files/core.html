@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/core.js</code></h1>
-<p class="muted">Pure logic · 111 lines · Library 1 of 14 in the load order.</p>
+<p class="muted">Pure logic · 111 lines · Library 1 of 16 in the load order.</p>
 <h2>What it does</h2>
 <p>pure logic for recordings: replay of the sheet at any moment, and splitting a recording into scenes.<br>
 No DOM here, so the same file runs in the page and in Node tests.</p>
@@ -41,10 +41,10 @@ No DOM here, so the same file runs in the page and in Node tests.</p>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
 <tr><td class="n">21</td><td class="name"><code>SK.strokeEnd(s)</code></td><td><span class="muted">—</span></td><td><a href="analyze.html">analyze</a></td></tr>
 <tr><td class="n">26</td><td class="name"><code>SK.apply(items, ev)</code></td><td>Apply one event to a sheet (an array of items). Returns the sheet (a new array for 'replace').</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">52</td><td class="name"><code>SK.stateAt(session, T)</code></td><td>The sheet as it looked T ms into a recording: the base items, then every event up to T.</td><td><a href="cloud.html">cloud</a>, <a href="app-log.html">log</a>, <a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: sketch.js</span></td></tr>
-<tr><td class="n">80</td><td class="name"><code>SK.segment(session)</code></td><td>Split a recording into scenes: runs of activity (pen, edits, voice, speech) with no quiet gap of IDLE_MS or more. A mark from the scene button always starts a new scene, even mid-sentence. Each scene: { id, start, end, ids, text, marked }. Times are ms from the start of the recording.</td><td><a href="parallel.html">parallel</a>, <a href="analyze.html">analyze</a>, <a href="lanes.html">lanes</a>, <a href="app-recording.html">recording</a>, <a href="app-export.html">export</a>, <span class="tag">test: sketch.js</span></td></tr>
-<tr><td class="n">96</td><td class="name"><code>SK.firstWords(text, n)</code></td><td><span class="muted">—</span></td><td><a href="analyze.html">analyze</a>, <a href="app-log.html">log</a>, <a href="app-library-info.html">library-info</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: sketch.js</span></td></tr>
-<tr><td class="n">102</td><td class="name"><code>SK.formatTime(ms)</code></td><td><span class="muted">—</span></td><td><a href="app-recording.html">recording</a>, <a href="app-log.html">log</a>, <a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">52</td><td class="name"><code>SK.stateAt(session, T)</code></td><td>The sheet as it looked T ms into a recording: the base items, then every event up to T.</td><td><a href="cloud.html">cloud</a>, <a href="app-log.html">log</a>, <a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">80</td><td class="name"><code>SK.segment(session)</code></td><td>Split a recording into scenes: runs of activity (pen, edits, voice, speech) with no quiet gap of IDLE_MS or more. A mark from the scene button always starts a new scene, even mid-sentence. Each scene: { id, start, end, ids, text, marked }. Times are ms from the start of the recording.</td><td><a href="parallel.html">parallel</a>, <a href="analyze.html">analyze</a>, <a href="lanes.html">lanes</a>, <a href="app-recording.html">recording</a>, <a href="app-export.html">export</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">96</td><td class="name"><code>SK.firstWords(text, n)</code></td><td><span class="muted">—</span></td><td><a href="analyze.html">analyze</a>, <a href="app-log.html">log</a>, <a href="app-library-info.html">library-info</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">102</td><td class="name"><code>SK.formatTime(ms)</code></td><td><span class="muted">—</span></td><td><a href="app-recording.html">recording</a>, <a href="app-log.html">log</a>, <a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: sketch.js</span></td></tr>
 </table></div>
 <h2>Values</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
@@ -56,7 +56,7 @@ No DOM here, so the same file runs in the page and in Node tests.</p>
 <tr><td class="n">63</td><td class="name"><code>spans(session)</code></td><td>Every activity span in a recording, sorted by start.</td></tr>
 </table></div>
 
-<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
 </main>
 </body>
 </html>

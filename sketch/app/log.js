@@ -1,5 +1,5 @@
 // Quick Detail app — Log and replay.
-// The film strip of every scene, clip playback, and the replay player in the right panel.
+// The log as tracks of lanes, edits to scenes (delete, notes, undo), clip playback, and the replay player in the right panel.
 // Part of the app split across sketch/app/*.js. The parts share the page's global scope, so load order matters:
 // see the <script> list in index.html and docs/code-map/index.html.
 'use strict';
@@ -25,20 +25,100 @@ var thumbObserver = 'IntersectionObserver' in window ? new IntersectionObserver(
   });
 }, { root: null, rootMargin: '200px' }) : null;
 
-// The Log: a film strip of every scene, with Clip, Replay, Restore and Branch.
+// ---- the log: one track per lane of the detail's tree, stacked like tracks in an editor ----
+var logFamily = null;            // { details, sessions }: the open detail's tree as last read
+var logCollapsed = {};           // lane id -> true when its track is folded
+var logHistory = SK.History();   // undo for scene deletes and notes, since this lane was opened
+var logToken = 0;
+
+// Reads the tree: every lane of the open detail, and each lane's recordings in order.
+function readFamily() {
+  return SK.DB.all('details').then(function (all) {
+    setDetails(all);
+    var fam = SK.familyOf(all, detail.id);
+    return Promise.all(fam.map(function (d) {
+      return d.id === detail.id ? Promise.resolve(sessions.slice()) : SK.DB.sessionsOf(d.id);
+    })).then(function (lists) {
+      var recs = [];
+      lists.forEach(function (list) { list.forEach(function (s) { recs.push(s); }); });
+      recs.sort(function (a, b) { return (a.created || 0) - (b.created || 0); });
+      return { details: fam, sessions: recs };
+    });
+  });
+}
+
+// The Log: a track for each lane. The open lane shows its scenes; the others show their scene words and open on a click.
 function renderLog() {
   var strip = $('logStrip');
+  var token = ++logToken;
+  readFamily().then(function (fam) {
+    if (token !== logToken) return;
+    logFamily = fam;
+    drawTracks(strip, fam);
+  }).catch(function (e) { fail(e, 'Could not read the history: '); });
+}
+
+// Draws every track of the tree from what is in memory.
+function drawTracks(strip, fam) {
   strip.innerHTML = '';
+  var labels = SK.laneLabels(fam.details);
+  var byId = {};
+  fam.details.forEach(function (d) { byId[d.id] = d; });
+  var recsOf = {};
+  fam.sessions.forEach(function (s) { (recsOf[s.detailId] = recsOf[s.detailId] || []).push(s); });
   var total = 0;
-  sessions.forEach(function (s) { total += scenesOf(s).length; });
+  (recsOf[detail.id] || []).forEach(function (s) { total += scenesOf(s).length; });
   $('logTitle').textContent = detail.name + ' · ' + total + (total === 1 ? ' scene' : ' scenes');
-  if (!sessions.length) {
-    strip.appendChild(el('p', { class: 'muted empty', text: 'No scenes yet. Start drawing: recording starts with the pen and stops 5 seconds after you lift it. Tap the scene button to start a new scene while you talk.' }));
-    return;
+  SK.laneOrder(fam.details).forEach(function (id) {
+    strip.appendChild(trackFor(byId[id], recsOf[id] || [], labels, fam));
+  });
+}
+
+// One lane's track: a header with its address, name, where it forks, and what was said first; then its scenes.
+function trackFor(d, list, labels, fam) {
+  var current = d.id === detail.id;
+  var collapsed = !!logCollapsed[d.id];
+  var steps = [];
+  list.forEach(function (s) { scenesOf(s).forEach(function (m) { steps.push({ s: s, m: m }); }); });
+  var firstSaid = '';
+  for (var i = 0; i < steps.length && !firstSaid; i++) firstSaid = steps[i].m.text || '';
+  var forkText = !d.parentId ? 'Main line'
+    : 'Branch of ' + (labels[d.parentId] || '?') + (d.fork && d.fork.step != null ? ' · from step ' + d.fork.step : ' · fork not recorded');
+  var head = el('header', { class: 'track-head', on: { click: function () {
+    if (current) { logCollapsed[d.id] = !collapsed; drawTracks($('logStrip'), logFamily); }
+    else openDetail(d);
+  } } }, [
+    el('b', { class: 'addr', text: labels[d.id] || '?' }),
+    el('div', { class: 'track-title' }, [
+      el('span', { class: 'track-name', text: d.name }),
+      el('span', { class: 'track-fork', text: forkText }),
+      el('span', { class: 'track-count', text: steps.length + (steps.length === 1 ? ' scene' : ' scenes') })
+    ]),
+    firstSaid ? el('p', { class: 'track-desc', text: SK.firstWords(firstSaid, 14) }) : null,
+    current ? el('span', { class: 'track-tag', text: 'open' })
+      : el('button', { class: 'chip', text: 'Open lane', on: { click: function (e) { e.stopPropagation(); openDetail(d); } } })
+  ]);
+  var body = el('div', { class: 'track-body' });
+  if (!collapsed) {
+    if (current) fillCurrentTrack(body, list);
+    else steps.forEach(function (st, i) {
+      body.appendChild(el('div', { class: 'track-word' }, [
+        el('b', { text: (i + 1) + ' · ' + SK.formatTime(st.m.start) }),
+        el('span', { text: st.m.text ? SK.firstWords(st.m.text, 16) : '(no words)' })
+      ]));
+    });
   }
+  return el('section', { class: 'track' + (current ? ' current' : '') + (collapsed ? ' folded' : ''), 'data-lane': d.id }, [head, body]);
+}
+
+// The open lane's scenes: a film strip of cards, with a divider for each recording.
+function fillCurrentTrack(body, list) {
+  var strip = el('div', { class: 'strip' });
+  body.appendChild(strip);
+  if (!list.length) { strip.appendChild(el('p', { class: 'muted empty', text: 'No scenes yet. Start drawing: recording starts with the pen and stops 5 seconds after you lift it. Tap the scene button to start a new scene while you talk.' })); return; }
   var col = colors();
   var n = 0;
-  sessions.forEach(function (s) {
+  list.forEach(function (s) {
     var when = new Date(s.created);
     strip.appendChild(el('div', { class: 'divider' }, [
       el('b', { text: when.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) }),
@@ -47,40 +127,112 @@ function renderLog() {
     var b = sessionBounds(s);
     scenesOf(s).forEach(function (m) {
       n++;
-      var thumb = el('div', { class: 'thumb' });
-      var full = el('div', { class: 'more' }, [
-        el('p', { text: m.text || 'Nothing was said in this scene.' }),
-        el('div', { class: 'row' }, [
-          el('button', { class: 'chip', text: '▶ Clip', on: { click: function (e) { e.stopPropagation(); playClip(s, m); } } }),
-          el('button', { class: 'chip', text: 'Replay', on: { click: function (e) { e.stopPropagation(); openReplay(s, m.start); } } }),
-          el('button', { class: 'chip', text: 'Restore', on: { click: function (e) {
-            e.stopPropagation();
-            if (!window.confirm('Put the sheet back the way it was at the end of this scene? Undo brings it back.')) return;
-            commitReplace(clone(SK.stateAt(s, m.end)));
-            toast('Restored. Undo to go back.');
-          } } }),
-          el('button', { class: 'chip', text: 'Branch', on: { click: function (e) {
-            e.stopPropagation();
-            branchFrom(SK.stateAt(s, m.end), 'branch from scene ' + num, { step: num });
-          } } })
-        ])
-      ]);
-      var num = n;
-      var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), on: { click: function () { card.classList.toggle('open'); } } }, [
-        thumb,
-        el('b', { text: 'Scene ' + num + ' · ' + SK.formatTime(m.start) }),
-        el('p', { class: 'words', text: m.text ? SK.firstWords(m.text, 8) : '(no words)' }),
-        full
-      ]);
-      card._paint = function () {
-        thumb.appendChild(SK.picture(visible(SK.stateAt(s, m.end)), b, 200, 130, { ac: acFor(detail, s.scale), ink: col.ink, paper: col.paper }));
-      };
-      strip.appendChild(card);
-      if (thumbObserver) thumbObserver.observe(card); else card._paint();
+      strip.appendChild(sceneCard(s, m, n, b, col));
     });
   });
   strip.scrollLeft = strip.scrollWidth;
 }
+
+// One scene: its still, its words, the notes added to it, and its actions.
+function sceneCard(s, m, num, b, col) {
+  var key = SK.sceneKey(s.id, m.start);
+  var thumb = el('div', { class: 'thumb' });
+  var noteInput = el('textarea', { class: 'note-input', rows: '2', placeholder: 'Add a note to this scene', on: { click: function (e) { e.stopPropagation(); } } });
+  var noted = (s.notes || []).filter(function (x) { return x.key === key; });
+  var full = el('div', { class: 'more' }, [
+    el('p', { text: m.text || 'Nothing was said in this scene.' }),
+    noted.length ? el('div', { class: 'notes' }, noted.map(function (x) { return el('p', { class: 'note', text: x.text }); })) : null,
+    el('div', { class: 'row' }, [
+      noteInput,
+      el('button', { class: 'chip', text: 'Add note', on: { click: function (e) {
+        e.stopPropagation();
+        var t = noteInput.value.trim();
+        if (t) addNote(s, m, t);
+      } } })
+    ]),
+    el('div', { class: 'row' }, [
+      el('button', { class: 'chip', text: '▶ Clip', on: { click: function (e) { e.stopPropagation(); playClip(s, m); } } }),
+      el('button', { class: 'chip', text: 'Replay', on: { click: function (e) { e.stopPropagation(); openReplay(s, m.start); } } }),
+      el('button', { class: 'chip', text: 'Restore', on: { click: function (e) {
+        e.stopPropagation();
+        if (!window.confirm('Put the sheet back the way it was at the end of this scene? Undo brings it back.')) return;
+        commitReplace(clone(SK.stateAt(s, m.end)));
+        toast('Restored. Undo to go back.');
+      } } }),
+      el('button', { class: 'chip', text: 'Branch', on: { click: function (e) {
+        e.stopPropagation();
+        branchFrom(SK.stateAt(s, m.end), 'branch from scene ' + num, { step: num });
+      } } }),
+      el('button', { class: 'chip', text: 'Delete', on: { click: function (e) { e.stopPropagation(); deleteScene(s, m, num); } } })
+    ])
+  ]);
+  var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), on: { click: function () { card.classList.toggle('open'); } } }, [
+    thumb,
+    el('b', { text: 'Scene ' + num + ' · ' + SK.formatTime(m.start) }),
+    el('p', { class: 'words', text: m.text ? SK.firstWords(m.text, 8) : '(no words)' }),
+    full
+  ]);
+  card._paint = function () {
+    thumb.appendChild(SK.picture(visible(SK.stateAt(s, m.end)), b, 200, 130, { ac: acFor(detail, s.scale), ink: col.ink, paper: col.paper }));
+  };
+  if (thumbObserver) thumbObserver.observe(card); else card._paint();
+  return card;
+}
+
+// Applies an action to the tree: remembers what it changed for undo, writes it, and redraws.
+function commitLog(entry, writes) {
+  logHistory.push(entry);
+  return applyLogWrites(writes);
+}
+
+// Puts the writes into memory and the database, then redraws the tree.
+function applyLogWrites(writes) {
+  var dw = writes.filter(function (w) { return w.store === 'details'; });
+  var sw = writes.filter(function (w) { return w.store === 'sessions'; });
+  logFamily = { details: SK.mergeRecords(logFamily.details, dw), sessions: SK.mergeRecords(logFamily.sessions, sw) };
+  dw.forEach(function (w) { if (w.value) cacheDetail(w.value); });
+  sessions = logFamily.sessions.filter(function (s) { return s.detailId === detail.id; });
+  updateScenes();
+  drawTracks($('logStrip'), logFamily);
+  return SK.applyWrites(SK.DB, writes).catch(function (e) { fail(e, 'Could not save: '); });
+}
+
+// Adds a note to a scene. Notes are kept apart from what was said.
+function addNote(s, m, text) {
+  var next = Object.assign({}, s, { notes: (s.notes || []).concat([{ key: SK.sceneKey(s.id, m.start), text: text, at: Date.now() }]) });
+  delete next._scenes;
+  commitLog({ details: [], sessions: SK.befores(logFamily.sessions, [s.id]) }, [{ store: 'sessions', id: s.id, value: next }]);
+  toast('Note added.');
+}
+
+// Deletes one scene, by frame. Branches that forked after it move up one step, and a branch on it is promoted.
+function deleteScene(s, m, num) {
+  if (!window.confirm('Delete scene ' + num + '? Its drawing, words and notes go. Branches that came after it move up one step. Undo brings it back.')) return;
+  var updates = SK.stepDeleteUpdates(logFamily.details, detail.id, num);
+  var writes = [{ store: 'sessions', id: s.id, value: SK.removeScene(s, m) }];
+  updates.forEach(function (u) {
+    var cur = logFamily.details.filter(function (d) { return d.id === u.id; })[0];
+    writes.push({ store: 'details', id: u.id, value: Object.assign({}, cur, { fork: u.fork }) });
+  });
+  commitLog({ details: SK.befores(logFamily.details, updates.map(function (u) { return u.id; })), sessions: SK.befores(logFamily.sessions, [s.id]) }, writes);
+  toast('Scene ' + num + ' deleted. Undo brings it back.');
+}
+
+// Undoes the last delete or note in this lane.
+function logUndo() {
+  var entry = logHistory.pop();
+  if (!entry) { toast('Nothing to undo since this lane was opened.'); return; }
+  applyLogWrites(SK.undoWrites(entry));
+  toast('Undone.');
+}
+
+// Opens the viewer for this detail's tree, in a new tab.
+function openHistory() {
+  window.open('viewer.html#' + encodeURIComponent(detail.id), '_blank');
+}
+
+$('logUndo').addEventListener('click', logUndo);
+$('logHistory').addEventListener('click', openHistory);
 
 // Plays the sound of one scene.
 function playClip(s, m) {

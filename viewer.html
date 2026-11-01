@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit history · Quick Detail</title>
+<link rel="stylesheet" href="sketch/css/base.css">
+<link rel="stylesheet" href="sketch/css/panels.css">
+<style>
+  body.viewer { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.4 system-ui, -apple-system, sans-serif; }
+  .v-head { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 14px 20px; background: var(--paper); border-bottom: 1px solid var(--line, #e3e1dc); }
+  .v-head h1 { font-size: 20px; margin: 0; }
+  .v-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  .v-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .v-main { padding: 8px 20px 60px; }
+  .v-main .track { padding: 10px 0 14px; }
+  .v-main .strip { overflow-x: auto; padding: 8px 0; display: flex; gap: 12px; align-items: flex-start; }
+  .v-main .card { flex: 0 0 auto; }
+  .v-pick { display: grid; gap: 10px; max-width: 520px; }
+  .v-pick button { text-align: left; }
+  .v-play { position: fixed; inset: 0; background: rgba(0, 0, 0, .6); display: flex; align-items: center; justify-content: center; z-index: 5; }
+  .v-play[hidden] { display: none; }
+  .v-play-box { background: var(--paper); padding: 14px; border-radius: 10px; max-width: 94vw; }
+  .v-play-box canvas { display: block; max-width: 90vw; height: auto; background: var(--paper); border-radius: 6px; }
+  .v-toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 6; }
+  .v-toast[hidden] { display: none; }
+  .v-lane-actions { display: flex; gap: 8px; margin-left: auto; }
+</style>
+</head>
+<body class="viewer">
+<header class="v-head">
+  <div>
+    <h1 id="vTitle">Edit history</h1>
+    <p id="vSub"></p>
+  </div>
+  <div class="v-tools">
+    <button class="chip" id="vUndo" type="button">Undo</button>
+    <button class="chip" id="vExport" type="button" title="Save this history as one HTML file you can open anywhere">Export HTML</button>
+  </div>
+</header>
+<main class="v-main" id="vMain"></main>
+<div class="v-play" id="vPlay" hidden>
+  <div class="v-play-box">
+    <canvas id="vCanvas" width="1000" height="620"></canvas>
+    <div class="row" style="margin-top:10px;justify-content:space-between">
+      <span id="vClock" class="muted"></span>
+      <button class="chip" id="vClose" type="button">Close</button>
+    </div>
+  </div>
+</div>
+<div class="v-toast" id="vToast" hidden></div>
+
+<!-- The data for an exported file goes here. Stays null in the live viewer, which reads the database. -->
+<script type="application/json" id="bundle">null</script>
+
+<script src="sketch/core.js"></script>
+<script src="sketch/units.js"></script>
+<script src="sketch/hatch.js"></script>
+<script src="sketch/annot.js"></script>
+<script src="sketch/blocks.js"></script>
+<script src="sketch/paint.js"></script>
+<script src="sketch/store.js"></script>
+<script src="sketch/lanes.js"></script>
+<script src="sketch/history.js"></script>
+<script src="sketch/viewer.js"></script>
+</body>
+</html>

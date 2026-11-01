@@ -33,8 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/lanes.js</code></h1>
-<p class="muted">Pure logic · 72 lines · Not loaded by index.html. Used by the Node tests only.</p>
-<p class="warn">This file is not in the page's &lt;script&gt; list, so the app does not use it yet.</p>
+<p class="muted">Pure logic · 157 lines · Library 2 of 16 in the load order.</p>
 <h2>What it does</h2>
 <p>lanes: the branch genealogy of a detail. A lane is the main line (0) or a branch of it.<br>
 A branch records its fork: { step } is the number of the scene in its parent lane that it branched from.<br>
@@ -42,21 +41,26 @@ Labels are computed from the tree, never stored, so they stay right after a bran
 Pure: runs in the page and in Node tests.</p>
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
-<tr><td class="n">14</td><td class="name"><code>SK.laneSteps(sessions)</code></td><td>The steps of one lane: every scene of its recordings, in recording order, numbered from 1 across all of them. sessions: the recordings as stored ({ id, events, speech, voice }).</td><td><span class="tag">test: lanes.js</span></td></tr>
-<tr><td class="n">31</td><td class="name"><code>SK.laneLabels(lanes)</code></td><td>Address of every lane in one family. lanes: [{ id, parentId, fork: { step } | null, created }]. The main line has no parentId and is labelled &quot;0&quot;. A branch is its parent's address and its fork step: &quot;4&quot;, &quot;4B&quot; (second branch off step 4), &quot;4B.6&quot; (branch off step 6 of 4B), &quot;4B.6B&quot;, and so on. A branch off the main line drops the &quot;0.&quot;. Returns { [id]: label }.</td><td><span class="tag">test: lanes.js</span></td></tr>
-<tr><td class="n">67</td><td class="name"><code>SK.versionLabel(n)</code></td><td>A version of a lane's card: v1 is the first save, and each later save of a genealogical edit adds one.</td><td><span class="tag">test: lanes.js</span></td></tr>
-</table></div>
-<h2>Values</h2>
-<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
-<tr><td class="n">10</td><td class="name"><code>SK.LANE_SCHEMA</code></td><td><span class="muted">—</span></td><td><span class="tag">not used anywhere</span></td></tr>
+<tr><td class="n">12</td><td class="name"><code>SK.laneSteps(sessions)</code></td><td>The steps of one lane: every scene of its recordings, in recording order, numbered from 1 across all of them. sessions: the recordings as stored ({ id, events, speech, voice }).</td><td><span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">29</td><td class="name"><code>SK.laneLabels(lanes)</code></td><td>Address of every lane in one family. lanes: [{ id, parentId, fork: { step } | null, created }]. The main line has no parentId and is labelled &quot;0&quot;. A branch is its parent's address and its fork step: &quot;4&quot;, &quot;4B&quot; (second branch off step 4), &quot;4B.6&quot; (branch off step 6 of 4B), &quot;4B.6B&quot;, and so on. A branch off the main line drops the &quot;0.&quot;. Returns { [id]: label }.</td><td><a href="app-log.html">log</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">66</td><td class="name"><code>SK.familyOf(details, id)</code></td><td>The tree a detail belongs to: its main line (the root) and every branch below it, root first. details: every detail on the device. Returns [] if id is not one of them.</td><td><a href="app-log.html">log</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">84</td><td class="name"><code>SK.laneOrder(lanes)</code></td><td>Lane ids in reading order: the main line, then each branch straight after the lane it forks from, siblings by the step they fork from and then by creation. This is the order the log stacks its tracks.</td><td><a href="app-log.html">log</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">104</td><td class="name"><code>SK.sceneKey(sessionId, start)</code></td><td>The key that ties a note to its scene: the recording and the scene's start. Stable while other scenes are removed.</td><td><a href="app-log.html">log</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">109</td><td class="name"><code>SK.removeScene(s, m)</code></td><td>A recording with one scene taken out: its events, speech and voice spans that begin inside the scene, and the notes on it. Times of everything else stay as they were, so the scenes after it keep their starts and notes. Returns a new record; the one passed in is not changed.</td><td><a href="app-log.html">log</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">126</td><td class="name"><code>SK.stepDeleteUpdates(details, laneId, n)</code></td><td>The fork changes that follow from taking step n out of a lane. A branch that forked after step n is promoted to fork from the step before it; a branch after a later step moves up by one, since the steps after n renumber. Returns [{ id, fork }] for the branches that change.</td><td><a href="app-log.html">log</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">139</td><td class="name"><code>SK.promoteUpdates(details, id)</code></td><td>The changes when a branch is deleted: its own branches are promoted to fork from where it forked from its parent. The main line cannot be deleted this way. Returns [{ id, parentId, fork }] for each branch that moves.</td><td><a href="viewer.html">viewer</a>, <span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">152</td><td class="name"><code>SK.versionLabel(n)</code></td><td>A version of a lane's card: v1 is the first save, and each later save of a genealogical edit adds one.</td><td><span class="tag">test: lanes.js</span></td></tr>
 </table></div>
 <h2>Private helpers</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
-<tr><td class="n">25</td><td class="name"><code>letter(i)</code></td><td>Sibling letters: the first branch off a step has no letter, the next ones take B, C, ... in creation order.</td></tr>
-<tr><td class="n">40</td><td class="name"><code>place(parentLabel, list)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">23</td><td class="name"><code>letter(i)</code></td><td>Sibling letters: the first branch off a step has no letter, the next ones take B, C, ... in creation order.</td></tr>
+<tr><td class="n">38</td><td class="name"><code>place(parentLabel, list)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">90</td><td class="name"><code>stepOf(l)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">91</td><td class="name"><code>walk(l)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">111</td><td class="name"><code>inside(t)</code></td><td><span class="muted">—</span></td></tr>
 </table></div>
 
-<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
 </main>
 </body>
 </html>

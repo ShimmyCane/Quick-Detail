@@ -134,7 +134,8 @@ check('black ink turns white on black', SK.inkFor('ink', '#000000') === '#f4f4f2
 check('black ink turns white on slate', SK.inkFor('ink', '#2b3a4a') === '#f4f4f2');
 check('black ink stays black on white and cream', SK.inkFor('ink', '#ffffff') === '#111111' && SK.inkFor('ink', '#f3ead7') === '#111111');
 check('a named pen keeps its colour on any background', SK.inkFor('red', '#000000') === SK.PENS.red && SK.inkFor('blue', '#ffffff') === SK.PENS.blue);
-check('an unknown colour falls back to black', SK.inkFor('purple', '#ffffff') === '#111111');
+check('an unknown colour falls back to black', SK.inkFor('chartreuse', '#ffffff') === '#111111');
+check('a custom #rrggbb pen is drawn as itself', SK.inkFor('#12AB34', '#000000') === '#12ab34' && SK.inkFor('#12ab3', '#fff') === '#111111');
 check('luma runs from black to white', near(SK.luma('#000000'), 0) && near(SK.luma('#ffffff'), 1, 1e-9));
 check('four line weights, heaviest last', Object.keys(SK.WEIGHTS).length === 4 && SK.WEIGHTS.w4 > SK.WEIGHTS.w3 && SK.WEIGHTS.w3 > SK.WEIGHTS.w2 && SK.WEIGHTS.w2 > SK.WEIGHTS.w1);
 check('grid follows the scale: a minor square is one printed inch, so five squares print at 5" and the grid is 5" x 5" major at any scale', near(SK.gridStep(4), 4) && near(SK.gridStep(48), 48) && near(SK.gridStep(4) * SK.GRID_MAJOR / 4, 5));

@@ -72,7 +72,10 @@
   };
 
   // Pen colours. 'ink' is black on light backgrounds and turns white on dark ones.
-  SK.PENS = { yellow: '#e8b400', red: '#d1342b', blue: '#2456c7', green: '#1f8a4c' };
+  SK.PENS = { yellow: '#e8b400', red: '#d1342b', blue: '#2456c7', green: '#1f8a4c',
+    magenta: '#c81e8c', grey: '#808080', orange: '#e8741c', purple: '#6a3bb5' };
+  // A pen can also be any custom colour, written as #rrggbb.
+  SK.isHex = function (v) { return /^#[0-9a-f]{6}$/i.test(String(v)); };
 
   // Line weights on paper, in inches. Real width = paper width × scale factor.
   SK.WEIGHTS = { w1: 0.01, w2: 0.02, w3: 0.035, w4: 0.06 };
@@ -88,6 +91,7 @@
   // The colour an item is drawn in on a given background.
   SK.inkFor = function (key, bg) {
     if (!key || key === 'ink') return SK.luma(bg) < 0.3 ? '#f4f4f2' : '#111111';
+    if (SK.isHex(key)) return key.toLowerCase();
     return SK.PENS[key] || '#111111';
   };
 

@@ -78,7 +78,7 @@ body.collapsed .title-block { display: none; }   /* the title card and its scale
   .lrail .lgroup { padding: 3px; gap: 3px; }
   .lrail button { width: 34px; height: 34px; }
   .lrail .rec-group .scene, .lrail .mic { min-width: 38px; min-height: 38px; }
-  .lrail #colorCur, .lrail [data-color] { width: 20px; height: 20px; border-radius: 10px; }
+  .lrail #colorCur, .lrail [data-color], .lrail .color-grid .color-more, .lrail .color-grid .color-mix-btn { width: 20px; height: 20px; border-radius: 10px; }
   .lrail #weightCur, .lrail [data-weight] { width: 26px; height: 24px; }
   .lrail .undo-group { padding: 3px; }
   .pick-row { margin-left: 8px; padding: 4px; }

@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/gif.js</code></h1>
-<p class="muted">Pure logic · 163 lines · Library 15 of 17 in the load order.</p>
+<p class="muted">Pure logic · 163 lines · Library 16 of 18 in the load order.</p>
 <h2>What it does</h2>
 <p>GIF encoder. Turns frames of RGBA pixels into an animated GIF (GIF89a, looping, LZW). Pure: runs in the page and in Node.<br>
 <br>
@@ -41,7 +41,7 @@ Colours: when the frames use 256 colours or fewer (line drawings nearly always d
 pixel is rounded to a 3-3-2 bit colour cube. Transparent pixels are laid on white, so the GIF has no transparency.</p>
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
-<tr><td class="n">13</td><td class="name"><code>SK.encodeGif(frames, delayMs)</code></td><td>frames: [{ width, height, data }] where data is RGBA bytes (a Uint8ClampedArray or Uint8Array), all frames the same size. delayMs: time each frame shows, in milliseconds (GIF stores hundredths, so it rounds to 10 ms). Resolves nothing and returns a Uint8Array of the whole file.</td><td><a href="app-library-info.html">library-info</a>, <span class="tag">test: gif.js</span></td></tr>
+<tr><td class="n">13</td><td class="name"><code>SK.encodeGif(frames, delayMs)</code></td><td>frames: [{ width, height, data }] where data is RGBA bytes (a Uint8ClampedArray or Uint8Array), all frames the same size. delayMs: time each frame shows, in milliseconds (GIF stores hundredths, so it rounds to 10 ms). Resolves nothing and returns a Uint8Array of the whole file.</td><td><a href="app-library-info.html">library-info</a>, <a href="gifs.html">gifs</a>, <span class="tag">test: gif.js</span></td></tr>
 </table></div>
 <h2>Private helpers</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>

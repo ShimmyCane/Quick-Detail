@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/viewer.js</code></h1>
-<p class="muted">397 lines · Not loaded by index.html. Used by the Node tests only.</p>
+<p class="muted">459 lines · Not loaded by index.html. Used by the Node tests only.</p>
 <p class="warn">This file is not in the page's &lt;script&gt; list, so the app does not use it yet.</p>
 <h2>What it does</h2>
 <p>the viewer: the edit history of a detail's tree, as its own page (viewer.html).<br>
@@ -42,42 +42,47 @@ notes, deletes and undo work in both. Export writes one HTML file that opens any
 The pure logic is in sketch/lanes.js and sketch/history.js. Runs only in the viewer page.</p>
 <h2>Sections</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
-<tr><td class="n">31</td><td>small helpers</td></tr>
-<tr><td class="n">98</td><td>drawing</td></tr>
-<tr><td class="n">225</td><td>edits: each one records what it changed, so undo can put it back</td></tr>
-<tr><td class="n">295</td><td>export: one file with the page and this history inside</td></tr>
-<tr><td class="n">345</td><td>start: an exported file, the live database, or a picker when no detail is named</td></tr>
+<tr><td class="n">38</td><td>small helpers</td></tr>
+<tr><td class="n">158</td><td>drawing</td></tr>
+<tr><td class="n">287</td><td>edits: each one records what it changed, so undo can put it back</td></tr>
+<tr><td class="n">357</td><td>export: one file with the page and this history inside</td></tr>
+<tr><td class="n">407</td><td>start: an exported file, the live database, or a picker when no detail is named</td></tr>
 </table></div>
 <h2>Private helpers</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
-<tr><td class="n">33</td><td class="name"><code>el(tag, attrs, kids)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">45</td><td class="name"><code>toast(msg)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">53</td><td class="name"><code>slug(s)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">55</td><td class="name"><code>acFor(scale)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">59</td><td class="name"><code>ink()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">61</td><td class="name"><code>reindex()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">68</td><td class="name"><code>visible(items)</code></td><td>The drawable items of a list, with blocks replaced by their sources' lines.</td></tr>
-<tr><td class="n">72</td><td class="name"><code>sessionsOf(id)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">78</td><td class="name"><code>stepsOf(id)</code></td><td>Every scene of a lane, in order, with the recording it is in.</td></tr>
-<tr><td class="n">87</td><td class="name"><code>boundsOf(s, d)</code></td><td>The bounds of everything a recording ever drew, for its thumbnails and playback.</td></tr>
-<tr><td class="n">100</td><td class="name"><code>render()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">122</td><td class="name"><code>laneSection(d, labels, offsets)</code></td><td>One lane: a header with its address, name, fork and first words, then its scenes.</td></tr>
-<tr><td class="n">154</td><td class="name"><code>rootId()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">160</td><td class="name"><code>stepCard(d, st, n)</code></td><td>One scene: its still, its words, notes, and its actions.</td></tr>
-<tr><td class="n">199</td><td class="name"><code>playScene(d, s, m)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">204</td><td class="name"><code>draw(T)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">208</td><td class="name"><code>frame()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">219</td><td class="name"><code>stopPlay()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">228</td><td class="name"><code>apply(writes)</code></td><td>Writes changes to memory, redraws, and (live only) to the database.</td></tr>
-<tr><td class="n">240</td><td class="name"><code>commit(entry, writes)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">245</td><td class="name"><code>addNote(s, m, text)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">252</td><td class="name"><code>deleteScene(d, s, m, n)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">267</td><td class="name"><code>deleteLane(id)</code></td><td>Deletes a branch and its scenes. Its own branches move up to where it forked from its parent.</td></tr>
-<tr><td class="n">288</td><td class="name"><code>undo()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">298</td><td class="name"><code>bundle()</code></td><td>The history as data. Sound is left out to keep the file small; the drawing, words, notes and playback stay.</td></tr>
-<tr><td class="n">313</td><td class="name"><code>exportHtml()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">347</td><td class="name"><code>pick()</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">366</td><td class="name"><code>start()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">40</td><td class="name"><code>el(tag, attrs, kids)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">52</td><td class="name"><code>toast(msg)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">60</td><td class="name"><code>slug(s)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">62</td><td class="name"><code>download(bytes, type, name)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">73</td><td class="name"><code>working(msg, job)</code></td><td>Runs a slow job after the page has shown a message: encoding a GIF takes a moment.</td></tr>
+<tr><td class="n">80</td><td class="name"><code>pathSteps(id)</code></td><td>The scenes from the main line down to a lane, in the order they were drawn: each lane up to the step the next one forked from, then the lane's own scenes.</td></tr>
+<tr><td class="n">93</td><td class="name"><code>gifCard(d, st, n)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">102</td><td class="name"><code>gifLane(d, label)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">115</td><td class="name"><code>acFor(scale)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">119</td><td class="name"><code>ink()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">121</td><td class="name"><code>reindex()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">128</td><td class="name"><code>visible(items)</code></td><td>The drawable items of a list, with blocks replaced by their sources' lines.</td></tr>
+<tr><td class="n">132</td><td class="name"><code>sessionsOf(id)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">138</td><td class="name"><code>stepsOf(id)</code></td><td>Every scene of a lane, in order, with the recording it is in.</td></tr>
+<tr><td class="n">147</td><td class="name"><code>boundsOf(s, d)</code></td><td>The bounds of everything a recording ever drew, for its thumbnails and playback.</td></tr>
+<tr><td class="n">160</td><td class="name"><code>render()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">182</td><td class="name"><code>laneSection(d, labels, offsets)</code></td><td>One lane: a header with its address, name, fork and first words, then its scenes.</td></tr>
+<tr><td class="n">215</td><td class="name"><code>rootId()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">221</td><td class="name"><code>stepCard(d, st, n)</code></td><td>One scene: its still, its words, notes, and its actions.</td></tr>
+<tr><td class="n">261</td><td class="name"><code>playScene(d, s, m)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">266</td><td class="name"><code>draw(T)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">270</td><td class="name"><code>frame()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">281</td><td class="name"><code>stopPlay()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">290</td><td class="name"><code>apply(writes)</code></td><td>Writes changes to memory, redraws, and (live only) to the database.</td></tr>
+<tr><td class="n">302</td><td class="name"><code>commit(entry, writes)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">307</td><td class="name"><code>addNote(s, m, text)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">314</td><td class="name"><code>deleteScene(d, s, m, n)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">329</td><td class="name"><code>deleteLane(id)</code></td><td>Deletes a branch and its scenes. Its own branches move up to where it forked from its parent.</td></tr>
+<tr><td class="n">350</td><td class="name"><code>undo()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">360</td><td class="name"><code>bundle()</code></td><td>The history as data. Sound is left out to keep the file small; the drawing, words, notes and playback stay.</td></tr>
+<tr><td class="n">375</td><td class="name"><code>exportHtml()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">409</td><td class="name"><code>pick()</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">428</td><td class="name"><code>start()</code></td><td><span class="muted">—</span></td></tr>
 </table></div>
 
 <p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>

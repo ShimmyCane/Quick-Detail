@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/app/log.js</code></h1>
-<p class="muted">App: right panel · 358 lines · App part 20 of 23 in the load order.</p>
+<p class="muted">App: right panel · 371 lines · App part 20 of 23 in the load order.</p>
 <h2>What it does</h2>
 <p>Log and replay.<br>
 The log as tracks of lanes, edits to scenes (delete, notes, undo), clip playback, and the replay player in the right panel.</p>
@@ -41,7 +41,7 @@ The log as tracks of lanes, edits to scenes (delete, notes, undo), clip playback
 <div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
 <tr><td class="n">7</td><td>log: a film strip of every scene</td></tr>
 <tr><td class="n">28</td><td>the log: one track per lane of the detail's tree, stacked like tracks in an editor</td></tr>
-<tr><td class="n">256</td><td>replay</td></tr>
+<tr><td class="n">269</td><td>replay</td></tr>
 </table></div>
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
@@ -52,20 +52,21 @@ The log as tracks of lanes, edits to scenes (delete, notes, undo), clip playback
 <tr><td class="n">80</td><td class="name"><code>trackFor(d, list, labels, fam, offsets)</code></td><td>One lane's track: a header with its address, name, where it forks, and what was said first; then its scenes.</td><td><span class="muted">this file only</span></td></tr>
 <tr><td class="n">120</td><td class="name"><code>fillCurrentTrack(row, list)</code></td><td>The open lane's scenes: a film strip of cards, with a divider for each recording.</td><td><span class="muted">this file only</span></td></tr>
 <tr><td class="n">142</td><td class="name"><code>sceneCard(s, m, num, b, col)</code></td><td>One scene: its still, its words, the notes added to it, and its actions.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">189</td><td class="name"><code>commitLog(entry, writes)</code></td><td>Applies an action to the tree: remembers what it changed for undo, writes it, and redraws.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">195</td><td class="name"><code>applyLogWrites(writes)</code></td><td>Puts the writes into memory and the database, then redraws the tree.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">207</td><td class="name"><code>addNote(s, m, text)</code></td><td>Adds a note to a scene. Notes are kept apart from what was said.</td><td><a href="viewer.html">viewer</a></td></tr>
-<tr><td class="n">215</td><td class="name"><code>deleteScene(s, m, num)</code></td><td>Deletes one scene, by frame. Branches that forked after it move up one step, and a branch on it is promoted.</td><td><a href="viewer.html">viewer</a></td></tr>
-<tr><td class="n">228</td><td class="name"><code>logUndo()</code></td><td>Undoes the last delete or note in this lane.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">236</td><td class="name"><code>openHistory()</code></td><td>Opens the viewer for this detail's tree, in a new tab.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">244</td><td class="name"><code>playClip(s, m)</code></td><td>Plays the sound of one scene.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">259</td><td class="name"><code>openReplay(s, T)</code></td><td>Opens the replay of a recording at time T, in the right panel.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">287</td><td class="name"><code>setT(T)</code></td><td>Shows the replay at time T: sheet, scrubber, clock and current scene.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">305</td><td class="name"><code>seekTo(T)</code></td><td>Jumps the replay, and its sound, to time T.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">313</td><td class="name"><code>startPlay()</code></td><td>Plays the replay from where it is.</td><td><a href="app-rail.html">rail</a></td></tr>
-<tr><td class="n">325</td><td class="name"><code>pausePlay()</code></td><td>Pauses the replay.</td><td><a href="app-rail.html">rail</a></td></tr>
-<tr><td class="n">334</td><td class="name"><code>frame()</code></td><td>One animation frame of the replay.</td><td><a href="viewer.html">viewer</a></td></tr>
-<tr><td class="n">343</td><td class="name"><code>exitReplay()</code></td><td>Ends the replay and puts the view back.</td><td><a href="app-details.html">details</a>, <a href="app-panels.html">panels</a>, <a href="app-library.html">library</a>, <a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">190</td><td class="name"><code>commitLog(entry, writes)</code></td><td>Applies an action to the tree: remembers what it changed for undo, writes it, and redraws.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">196</td><td class="name"><code>applyLogWrites(writes)</code></td><td>Puts the writes into memory and the database, then redraws the tree.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">208</td><td class="name"><code>addNote(s, m, text)</code></td><td>Adds a note to a scene. Notes are kept apart from what was said.</td><td><a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">216</td><td class="name"><code>deleteScene(s, m, num)</code></td><td>Deletes one scene, by frame. Branches that forked after it move up one step, and a branch on it is promoted.</td><td><a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">229</td><td class="name"><code>downloadCardGif(s, m, num)</code></td><td>A GIF of one scene, animated from its start to its end.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">241</td><td class="name"><code>logUndo()</code></td><td>Undoes the last delete or note in this lane.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">249</td><td class="name"><code>openHistory()</code></td><td>Opens the viewer for this detail's tree, in a new tab.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">257</td><td class="name"><code>playClip(s, m)</code></td><td>Plays the sound of one scene.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">272</td><td class="name"><code>openReplay(s, T)</code></td><td>Opens the replay of a recording at time T, in the right panel.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">300</td><td class="name"><code>setT(T)</code></td><td>Shows the replay at time T: sheet, scrubber, clock and current scene.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">318</td><td class="name"><code>seekTo(T)</code></td><td>Jumps the replay, and its sound, to time T.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">326</td><td class="name"><code>startPlay()</code></td><td>Plays the replay from where it is.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">338</td><td class="name"><code>pausePlay()</code></td><td>Pauses the replay.</td><td><a href="app-rail.html">rail</a></td></tr>
+<tr><td class="n">347</td><td class="name"><code>frame()</code></td><td>One animation frame of the replay.</td><td><a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">356</td><td class="name"><code>exitReplay()</code></td><td>Ends the replay and puts the view back.</td><td><a href="app-details.html">details</a>, <a href="app-panels.html">panels</a>, <a href="app-library.html">library</a>, <a href="app-rail.html">rail</a></td></tr>
 </table></div>
 <h2>Values</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>

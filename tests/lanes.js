@@ -32,27 +32,27 @@ var one = SK.laneLabels([lane('main', null, null, 0)]);
 check('main line is 0', one.main === '0', one.main);
 
 var fourOnly = SK.laneLabels([lane('main', null, null, 0), lane('a', 'main', 4, 1)]);
-check('first branch off step 4 is "4" (no letter)', fourOnly.a === '4', fourOnly.a);
+check('first branch off step 4 is "0.4" (no letter)', fourOnly.a === '0.4', fourOnly.a);
 
 var sameStep = SK.laneLabels([
   lane('main', null, null, 0), lane('a', 'main', 4, 1), lane('b', 'main', 4, 2), lane('c', 'main', 4, 3)
 ]);
-check('later branches off the same step take B, C', sameStep.a === '4' && sameStep.b === '4B' && sameStep.c === '4C',
+check('later branches off the same step take B, C', sameStep.a === '0.4' && sameStep.b === '0.4B' && sameStep.c === '0.4C',
   [sameStep.a, sameStep.b, sameStep.c].join(' '));
 
 var order = SK.laneLabels([
   lane('main', null, null, 0), lane('late', 'main', 4, 9), lane('early', 'main', 4, 2)
 ]);
-check('letters follow creation order, not list order', order.early === '4' && order.late === '4B', order.early + ' ' + order.late);
+check('letters follow creation order, not list order', order.early === '0.4' && order.late === '0.4B', order.early + ' ' + order.late);
 
 var nested = SK.laneLabels([
   lane('main', null, null, 0), lane('a', 'main', 4, 1), lane('b', 'main', 4, 2), lane('sub', 'b', 6, 3),
   lane('sub2', 'b', 6, 4), lane('deep', 'sub', 2, 5), lane('step8', 'main', 8, 6)
 ]);
-check('a branch off step 6 of 4B is 4B.6', nested.sub === '4B.6', nested.sub);
-check('two branches off the same step inside 4B', nested.sub === '4B.6' && nested.sub2 === '4B.6B', nested.sub2);
-check('a deeper branch joins the path: 4B.6.2', nested.deep === '4B.6.2', nested.deep);
-check('a branch off step 8 of the main line is "8"', nested.step8 === '8', nested.step8);
+check('a branch off step 6 of 4B is 0.4B.6', nested.sub === '0.4B.6', nested.sub);
+check('two branches off the same step inside 4B', nested.sub === '0.4B.6' && nested.sub2 === '0.4B.6B', nested.sub2);
+check('a deeper branch joins the path: 0.4B.6.2', nested.deep === '0.4B.6.2', nested.deep);
+check('a branch off step 8 of the main line is "0.8"', nested.step8 === '0.8', nested.step8);
 
 var noFork = SK.laneLabels([lane('main', null, null, 0), { id: 'old', parentId: 'main', fork: null, created: 1 }]);
 check('a branch without a recorded fork is "?", not guessed', noFork.old === '?', noFork.old);
@@ -108,7 +108,7 @@ check('a branch before the deleted step is left alone', byUpd.e === undefined);
 check('steps renumber so labels follow', (function () {
   var moved = forks.map(function (x) { var u = upd.filter(function (q) { return q.id === x.id; })[0]; return u ? Object.assign({}, x, { fork: u.fork }) : x; });
   var labels = SK.laneLabels(moved);
-  return labels.a === '3' && labels.b === '3B' && labels.c === '7' && labels.e === '2';
+  return labels.a === '0.3' && labels.b === '0.3B' && labels.c === '0.7' && labels.e === '0.2';
 })());
 
 // ---- promotion when a branch is deleted ----

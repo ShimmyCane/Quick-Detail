@@ -95,12 +95,6 @@
     return boundsCache[s.id];
   }
 
-  function forkText(d, labels) {
-    if (!d.parentId) return 'Main line';
-    var from = d.fork && d.fork.step != null ? ' · from step ' + d.fork.step : ' · fork not recorded';
-    return 'Branch of ' + (labels[d.parentId] || '?') + from;
-  }
-
   // ---- drawing ----
 
   function render() {
@@ -116,8 +110,7 @@
     var total = 0;
     data.sessions.forEach(function (s) { total += SK.segment(s).length; });
     $('vTitle').textContent = root.name + ' · edit history';
-    $('vSub').textContent = order.length + (order.length === 1 ? ' lane' : ' lanes') + ' · ' + total + (total === 1 ? ' scene' : ' scenes')
-      + ' · ' + (mode === 'file' ? 'exported copy, saved ' + new Date(data.exported || Date.now()).toLocaleString() : 'live from this browser');
+    $('vSub').textContent = mode === 'file' ? 'exported ' + new Date(data.exported || Date.now()).toLocaleDateString() : 'live';
     var offsets = SK.laneOffsets(data.details);
     order.forEach(function (id) { main.appendChild(laneSection(byDetail[id], labels, offsets)); });
     SK.drawForks(main);
@@ -137,13 +130,12 @@
     } } }, [
       el('b', { class: 'addr', text: labels[d.id] || '?' }),
       el('div', { class: 'track-title' }, [
-        el('span', { class: 'track-name', text: d.name }),
-        el('span', { class: 'track-fork', text: forkText(d, labels) }),
-        el('span', { class: 'track-count', text: steps.length + (steps.length === 1 ? ' scene' : ' scenes') })
+        // Only the main line carries its name; a branch is read from its address and the fork lines.
+        d.parentId ? null : el('span', { class: 'track-name', text: d.name })
       ]),
       first ? el('p', { class: 'track-desc', text: SK.firstWords(first.m.text, 14) }) : null,
       d.parentId ? el('div', { class: 'v-lane-actions' }, [
-        el('button', { class: 'chip', type: 'button', text: 'Delete branch', on: { click: function () { deleteLane(d.id); } } })
+        el('button', { class: 'chip', type: 'button', text: 'Delete', title: 'Delete this branch', on: { click: function (e) { e.stopPropagation(); deleteLane(d.id); } } })
       ]) : null
     ]);
     var row = el('div', { class: 'track-row' }, [SK.leadFor(offsets[d.id])]);
@@ -173,7 +165,6 @@
     var noted = (s.notes || []).filter(function (x) { return x.key === key; });
     var more = el('div', { class: 'more' }, [
       el('p', { text: m.text || 'Nothing was said in this scene.' }),
-      noted.length ? el('div', { class: 'notes' }, noted.map(function (x) { return el('p', { class: 'note', text: x.text }); })) : null,
       el('div', { class: 'row' }, [
         noteInput,
         el('button', { class: 'chip', type: 'button', text: 'Add note', on: { click: function (e) {
@@ -187,10 +178,12 @@
         el('button', { class: 'chip', type: 'button', text: 'Delete scene', on: { click: function (e) { e.stopPropagation(); deleteScene(d, s, m, n); } } })
       ])
     ]);
+    // Notes sit on the face of the card, so they show without opening it.
     var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), 'data-step': n, on: { click: function () { card.classList.toggle('open'); } } }, [
       thumb,
       el('b', { text: 'Scene ' + n + ' · ' + SK.formatTime(m.start) }),
       el('p', { class: 'words', text: m.text ? SK.firstWords(m.text, 8) : '(no words)' }),
+      noted.length ? el('div', { class: 'notes' }, noted.map(function (x) { return el('p', { class: 'note', text: x.text }); })) : null,
       more
     ]);
     card._paint = function () {

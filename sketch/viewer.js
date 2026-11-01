@@ -118,11 +118,15 @@
     $('vTitle').textContent = root.name + ' · edit history';
     $('vSub').textContent = order.length + (order.length === 1 ? ' lane' : ' lanes') + ' · ' + total + (total === 1 ? ' scene' : ' scenes')
       + ' · ' + (mode === 'file' ? 'exported copy, saved ' + new Date(data.exported || Date.now()).toLocaleString() : 'live from this browser');
-    order.forEach(function (id) { main.appendChild(laneSection(byDetail[id], labels)); });
+    var offsets = SK.laneOffsets(data.details);
+    order.forEach(function (id) { main.appendChild(laneSection(byDetail[id], labels, offsets)); });
+    SK.drawForks(main);
   }
 
+  window.addEventListener('resize', function () { SK.drawForks($('vMain')); });
+
   // One lane: a header with its address, name, fork and first words, then its scenes.
-  function laneSection(d, labels) {
+  function laneSection(d, labels, offsets) {
     var steps = stepsOf(d.id);
     var first = steps.filter(function (st) { return st.m.text; })[0];
     var collapsed = !!folded[d.id];
@@ -142,14 +146,17 @@
         el('button', { class: 'chip', type: 'button', text: 'Delete branch', on: { click: function () { deleteLane(d.id); } } })
       ]) : null
     ]);
-    var body = el('div', { class: 'track-body' });
+    var row = el('div', { class: 'track-row' }, [SK.leadFor(offsets[d.id])]);
     if (!collapsed) {
       var strip = el('div', { class: 'strip' });
       if (!steps.length) strip.appendChild(el('p', { class: 'muted', text: 'No scenes in this lane.' }));
       steps.forEach(function (st, i) { strip.appendChild(stepCard(d, st, i + 1)); });
-      body.appendChild(strip);
+      row.appendChild(strip);
     }
-    return el('section', { class: 'track' + (collapsed ? ' folded' : '') + (d.id === rootId() ? ' current' : ''), 'data-lane': d.id }, [head, body]);
+    var body = el('div', { class: 'track-body' }, [row]);
+    var attrs = { class: 'track' + (collapsed ? ' folded' : '') + (d.id === rootId() ? ' current' : ''), 'data-lane': d.id };
+    if (d.parentId) { attrs['data-parent'] = d.parentId; attrs['data-fork'] = d.fork && d.fork.step != null ? d.fork.step : 0; }
+    return el('section', attrs, [head, body]);
   }
 
   function rootId() {
@@ -180,7 +187,7 @@
         el('button', { class: 'chip', type: 'button', text: 'Delete scene', on: { click: function (e) { e.stopPropagation(); deleteScene(d, s, m, n); } } })
       ])
     ]);
-    var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), on: { click: function () { card.classList.toggle('open'); } } }, [
+    var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), 'data-step': n, on: { click: function () { card.classList.toggle('open'); } } }, [
       thumb,
       el('b', { text: 'Scene ' + n + ' · ' + SK.formatTime(m.start) }),
       el('p', { class: 'words', text: m.text ? SK.firstWords(m.text, 8) : '(no words)' }),

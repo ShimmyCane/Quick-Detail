@@ -7,14 +7,16 @@
 <link rel="stylesheet" href="sketch/css/base.css">
 <link rel="stylesheet" href="sketch/css/panels.css">
 <style>
+  /* The shared shell fixes html and body to the screen with overflow hidden. The history is a page, so it scrolls. */
+  html, body.viewer { height: auto; overflow: visible; }
   body.viewer { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.4 system-ui, -apple-system, sans-serif; }
   .v-head { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 14px 20px; background: var(--paper); border-bottom: 1px solid var(--line, #e3e1dc); }
   .v-head h1 { font-size: 20px; margin: 0; }
   .v-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
   .v-tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .v-main { padding: 8px 20px 60px; }
+  .v-main { padding: 8px 20px 60px; position: relative; overflow-x: auto; }
   .v-main .track { padding: 10px 0 14px; }
-  .v-main .strip { overflow-x: auto; padding: 8px 0; display: flex; gap: 12px; align-items: flex-start; }
+  .v-main .strip { overflow: visible; padding: 8px 0; display: flex; gap: 12px; align-items: flex-start; }
   .v-main .card { flex: 0 0 auto; }
   .v-pick { display: grid; gap: 10px; max-width: 520px; }
   .v-pick button { text-align: left; }
@@ -62,6 +64,7 @@
 <script src="sketch/store.js"></script>
 <script src="sketch/lanes.js"></script>
 <script src="sketch/history.js"></script>
+<script src="sketch/tracks.js"></script>
 <script src="sketch/viewer.js"></script>
 </body>
 </html>

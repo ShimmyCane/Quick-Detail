@@ -291,13 +291,25 @@
 .notes { margin-top: 6px; }
 .note { margin: 4px 0; font-size: 13px; padding-left: 8px; border-left: 2px solid var(--accent); }
 .note-input { flex: 1; min-width: 200px; font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line, #d8d6d0); border-radius: 6px; background: var(--paper); color: var(--ink); }
-/* The log's tracks stack top to bottom; each track's scenes scroll sideways inside it. */
-#logStrip { flex: 1; display: block; overflow-y: auto; overflow-x: hidden; padding: 0; }
-#logStrip .track .strip { display: flex; overflow-x: auto; overflow-y: hidden; padding: 8px 76px 10px 16px; }
-#logStrip .track-body { padding: 0; }
-#logStrip .track-head { padding-right: 76px; }
-#logStrip .track-word { padding: 3px 76px 3px 16px; }
-/* Keep the log's text clear of the left tool bar, which sits over the sheet's left edge. */
+/* Tracks: each lane is a row. Its lead is as wide as the scenes before its fork, so the scene number sets the
+   horizontal place: one column is a 200px card and its 12px gap. The fork lines are drawn over this (sketch/tracks.js). */
+.track { border-bottom: 1px solid var(--line, #e3e1dc); padding: 8px 0 12px; position: relative; }
+.track-body { padding: 8px 0 0; }
+/* The whole tree scrolls sideways together, on one time axis, so a row is as wide as its scenes. */
+.track-row { display: flex; align-items: flex-start; width: max-content; min-width: 100%; }
+.track-lead { flex: 0 0 auto; }
+.track-row > .strip { flex: 0 0 auto; overflow: visible; }
+.track-row > .track-words { flex: 1 1 auto; min-width: 0; }
+.track-words { display: flex; flex-direction: column; gap: 2px; }
+.track .card { width: 200px; flex: 0 0 auto; }
+.track-word { display: flex; gap: 12px; font-size: 13px; padding: 3px 0; }
+.track.folded .track-body { display: none; }
+.fork-line { fill: none; stroke: var(--ink); stroke-opacity: .45; stroke-width: 1.5; }
+.fork-dot { fill: var(--ink); fill-opacity: .6; }
+/* The log's tracks stack top to bottom, each scrolling sideways inside itself. The tool bar sits over the left edge. */
+#logStrip { flex: 1; min-height: 0; display: block; overflow: auto; padding: 0; position: relative; }
+#logStrip .track-body { padding: 8px 0 0 96px; }
+#logStrip .track-head { padding-left: 96px; padding-right: 76px; }
+#logStrip .track .strip { padding: 8px 76px 10px 0; overflow: visible; }
+.log { overflow: hidden; }
 .log .log-head { padding-left: 96px; }
-#logStrip .track-head, #logStrip .track-body, #logStrip .track .strip { padding-left: 96px; }
-#logStrip .track-desc { padding-left: 0; }

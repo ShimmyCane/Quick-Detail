@@ -100,6 +100,22 @@
     return out;
   };
 
+  // The column of each lane's fork on one shared time axis, where a scene's column is its lane's offset plus its step
+  // minus one. The main line is 0. A branch is its parent's offset plus the step it forked from, so a branch of a branch
+  // sits at the scene count along the whole line. Returns { [id]: offset }.
+  SK.laneOffsets = function (lanes) {
+    var byId = {}, out = {};
+    lanes.forEach(function (l) { byId[l.id] = l; });
+    SK.laneOrder(lanes).forEach(function (id) {
+      var l = byId[id];
+      var hasParent = !!(l.parentId && byId[l.parentId]);
+      var base = hasParent ? out[l.parentId] : 0;
+      var step = hasParent && l.fork && l.fork.step != null ? l.fork.step : 0;
+      out[id] = base + step;
+    });
+    return out;
+  };
+
   // The key that ties a note to its scene: the recording and the scene's start. Stable while other scenes are removed.
   SK.sceneKey = function (sessionId, start) { return sessionId + ':' + Math.round(start); };
 

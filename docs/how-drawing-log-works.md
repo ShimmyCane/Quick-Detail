@@ -25,6 +25,13 @@ Labels are computed from the tree. They are never stored, so they stay correct a
 - A path reads as a walk. `4B.6.2.4` means: main line steps 1–4, then lane B steps 1–6, then the sub-branch steps 1–2, then the next lane steps 1–4. The sequence is those ranges joined in order.
 - A branch made before fork points were recorded shows `?`. It is not guessed.
 
+## Time axis and fork lines
+
+- Time runs left to right, one column per scene. A scene's column is its lane's offset plus its step minus one.
+- The main line starts at column 1. A branch's offset is its parent's offset plus the step it forked from, so a branch of a branch sits at the scene count along the whole line.
+- A branch's first scene is in the column after its fork scene. A line runs down from the fork scene to that first scene.
+- The whole tree scrolls sideways together, so every line stays attached to its scenes. Vertical scrolling moves between lanes.
+
 ## The step row
 
 Each step shows:

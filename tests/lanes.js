@@ -74,6 +74,12 @@ check('a detail outside the family has no family', SK.familyOf(tree, 'nope').len
 check('order: main, then each branch straight after its fork',
   SK.laneOrder(tree.filter(function (x) { return x.id !== 'other'; })).join() === 'm,a,b,sub,late', SK.laneOrder(tree).join());
 
+// ---- time axis: a branch of a branch sits at the scene count along the whole line ----
+var axis = SK.laneOffsets([d('m'), d('a', 'm', 4, 1), d('b', 'm', 4, 2), d('sub', 'b', 2, 3), d('deep', 'sub', 1, 4)]);
+check('a branch sits at its fork step', axis.a === 4 && axis.b === 4, JSON.stringify(axis));
+check('a branch of a branch adds its step to its parent\'s offset', axis.sub === 6, String(axis.sub));
+check('the main line is at 0, and a branch of that is its fork step', axis.m === 0 && axis.deep === 7, String(axis.deep));
+
 // ---- removing a scene ----
 var rec = {
   id: 'r9', events: [

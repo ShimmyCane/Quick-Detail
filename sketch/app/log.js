@@ -69,13 +69,15 @@ function drawTracks(strip, fam) {
   var total = 0;
   (recsOf[detail.id] || []).forEach(function (s) { total += scenesOf(s).length; });
   $('logTitle').textContent = detail.name + ' · ' + total + (total === 1 ? ' scene' : ' scenes');
+  var offsets = SK.laneOffsets(fam.details);
   SK.laneOrder(fam.details).forEach(function (id) {
-    strip.appendChild(trackFor(byId[id], recsOf[id] || [], labels, fam));
+    strip.appendChild(trackFor(byId[id], recsOf[id] || [], labels, fam, offsets));
   });
+  SK.drawForks(strip);
 }
 
 // One lane's track: a header with its address, name, where it forks, and what was said first; then its scenes.
-function trackFor(d, list, labels, fam) {
+function trackFor(d, list, labels, fam, offsets) {
   var current = d.id === detail.id;
   var collapsed = !!logCollapsed[d.id];
   var steps = [];
@@ -98,23 +100,31 @@ function trackFor(d, list, labels, fam) {
     current ? el('span', { class: 'track-tag', text: 'open' })
       : el('button', { class: 'chip', text: 'Open lane', on: { click: function (e) { e.stopPropagation(); openDetail(d); } } })
   ]);
-  var body = el('div', { class: 'track-body' });
+  // The row: the lead (as wide as the scenes before the fork), then the scenes or, for other lanes, their words.
+  var row = el('div', { class: 'track-row' }, [SK.leadFor(offsets[d.id])]);
+  var body = el('div', { class: 'track-body' }, [row]);
   if (!collapsed) {
-    if (current) fillCurrentTrack(body, list);
-    else steps.forEach(function (st, i) {
-      body.appendChild(el('div', { class: 'track-word' }, [
-        el('b', { text: (i + 1) + ' · ' + SK.formatTime(st.m.start) }),
-        el('span', { text: st.m.text ? SK.firstWords(st.m.text, 16) : '(no words)' })
-      ]));
-    });
+    if (current) fillCurrentTrack(row, list);
+    else {
+      var words = el('div', { class: 'track-words' });
+      steps.forEach(function (st, i) {
+        words.appendChild(el('div', { class: 'track-word', 'data-step': i + 1 }, [
+          el('b', { text: (i + 1) + ' · ' + SK.formatTime(st.m.start) }),
+          el('span', { text: st.m.text ? SK.firstWords(st.m.text, 16) : '(no words)' })
+        ]));
+      });
+      row.appendChild(words);
+    }
   }
-  return el('section', { class: 'track' + (current ? ' current' : '') + (collapsed ? ' folded' : ''), 'data-lane': d.id }, [head, body]);
+  var attrs = { class: 'track' + (current ? ' current' : '') + (collapsed ? ' folded' : ''), 'data-lane': d.id };
+  if (d.parentId) { attrs['data-parent'] = d.parentId; attrs['data-fork'] = d.fork && d.fork.step != null ? d.fork.step : 0; }
+  return el('section', attrs, [head, body]);
 }
 
 // The open lane's scenes: a film strip of cards, with a divider for each recording.
-function fillCurrentTrack(body, list) {
+function fillCurrentTrack(row, list) {
   var strip = el('div', { class: 'strip' });
-  body.appendChild(strip);
+  row.appendChild(strip);
   if (!list.length) { strip.appendChild(el('p', { class: 'muted empty', text: 'No scenes yet. Start drawing: recording starts with the pen and stops 5 seconds after you lift it. Tap the scene button to start a new scene while you talk.' })); return; }
   var col = colors();
   var n = 0;
@@ -166,7 +176,7 @@ function sceneCard(s, m, num, b, col) {
       el('button', { class: 'chip', text: 'Delete', on: { click: function (e) { e.stopPropagation(); deleteScene(s, m, num); } } })
     ])
   ]);
-  var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), on: { click: function () { card.classList.toggle('open'); } } }, [
+  var card = el('article', { class: 'card' + (m.marked ? ' marked' : ''), 'data-step': num, on: { click: function () { card.classList.toggle('open'); } } }, [
     thumb,
     el('b', { text: 'Scene ' + num + ' · ' + SK.formatTime(m.start) }),
     el('p', { class: 'words', text: m.text ? SK.firstWords(m.text, 8) : '(no words)' }),

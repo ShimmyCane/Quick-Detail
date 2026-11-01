@@ -55,6 +55,7 @@ Hatch pattern keys come from `sketch/hatch.js` (`SK.HATCHES`): `wood1`, `wood2`,
    returning name, tags, jsonb_array_length(items) as n_items;
    ```
 7. **Verify.** Re-read the row and confirm the item count went up by the number written, the name ends in ` N`, and the tags include `ai collab`.
+   **Large save check.** If the items written are 256 KB of JSON or more (the app's `SK.CLOUD.largeBytes`), say "Large file (<size>, <count> items). Reviewing save…" before the check, then compare against the local JSON: the item count, the count of each `kind` (`select it->>'kind', count(*) from jsonb_array_elements(items) it group by 1`), and the first and last item written. Report "Save reviewed and confirmed: <count> items, <size>" only when all of them match. On any difference, report it and do not call the row saved. Write large payloads in batches of about 40 KB (`items = items || '[...]'::jsonb`), since one long SQL call can be cut off (see `docs/lessons-learned_hatch.md`).
 7. **Report.** Give the user the item count, what was added and where, the review notes from step 1, and the backup path. Say that a copy of the detail already open on this device will be replaced only when the user agrees in the app.
 
 ## Rules

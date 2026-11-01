@@ -44,6 +44,29 @@ check('the metadata path is under the detail', plan.metadataPath === 'd-local-1/
 check('the rating goes up with the metadata, 1 star when none is set', plan.detail.metadata.rating === 1);
 check('a set rating is kept in the metadata', SK.cloudPlan(Object.assign({}, detail, { rating: 4 }), sessions, an).detail.metadata.rating === 4);
 
+// Large saves: size, fingerprint, and the read-back review.
+function reorder(v) {   // what the database does to JSON: same values, its own key order
+  if (Array.isArray(v)) return v.map(reorder);
+  if (v && typeof v === 'object') { var o = {}; Object.keys(v).reverse().forEach(function (k) { o[k] = reorder(v[k]); }); return o; }
+  return v;
+}
+var small = SK.saveSize(plan);
+check('a small detail is not flagged large', !small.large && small.count === 2 && small.total === small.items + small.recordings, JSON.stringify(small));
+var many = [];
+for (var n = 0; n < 3000; n++) many.push({ id: 'h' + n, kind: 'stroke', w: 0.05, pts: [[n * 0.1, 0, 0.5, 0], [n * 0.1 + 0.07, 1.333333333, 0.5, 40]] });
+var bigPlan = SK.cloudPlan(Object.assign({}, detail, { items: many }), sessions, an);
+var big = SK.saveSize(bigPlan);
+check('a 3,000-item detail is flagged large', big.large && big.count === 3000, SK.formatBytes(big.total));
+check('bytes read in KB and MB', SK.formatBytes(500) === '500 bytes' && SK.formatBytes(420 * 1024) === '420 KB' && SK.formatBytes(1.5 * 1024 * 1024) === '1.5 MB');
+check('the fingerprint ignores key order', SK.fingerprint(many).hash === SK.fingerprint(reorder(many)).hash);
+check('the fingerprint sees a changed number', SK.fingerprint(many).hash !== SK.fingerprint(many.map(function (it, i) { return i === 900 ? Object.assign({}, it, { w: 0.06 }) : it; })).hash);
+var echo = { items: reorder(bigPlan.detail.items), recordings: bigPlan.recordings.map(function (r) { return reorder({ local_id: r.local_id, base: r.base, events: r.events, speech: r.speech, voice: r.voice }); }) };
+check('a faithful save reviews as confirmed', SK.reviewSave(bigPlan, echo).ok, SK.reviewSave(bigPlan, echo).problems.join('; '));
+var cut = SK.reviewSave(bigPlan, Object.assign({}, echo, { items: echo.items.slice(0, 52) }));
+check('a cut-off save is caught with the counts', !cut.ok && cut.problems[0] === 'the cloud has 52 items, this device sent 3000', cut.problems.join('; '));
+var lost = SK.reviewSave(bigPlan, Object.assign({}, echo, { recordings: echo.recordings.slice(1) }));
+check('a missing recording is caught', !lost.ok && lost.problems[0].indexOf('r-1 is missing') >= 0, lost.problems.join('; '));
+
 // A recording with no scenes uploads its row and no snapshots
 var empty = SK.cloudPlan({ id: 'd2', name: 'Empty', scale: 'NTS', tags: [], items: [], parentId: 'd-local-1', modified: 1 }, [], SK.analyze({ id: 'd2', name: 'Empty', scale: 'NTS', tags: [], items: [], parentId: null }, [], ac));
 check('an empty detail plans no recordings or snapshots', empty.recordings.length === 0 && empty.snapshots.length === 0);

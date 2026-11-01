@@ -77,7 +77,12 @@ Things to decide and review before the drafts are trusted. Nothing here is built
 
 ## Infrastructure (added)
 
-- [ ] Extend what a detail can hold in Supabase. Some hatch detail rows now carry 250 to 270 items, and a save has failed in the app for a large detail. Find the real limit (row size, payload, or the app's save path). Store large details as files, for example in Supabase Storage, with the row holding a pointer, so a detail can carry many more objects without a large row.
+- [ ] Extend what a detail can hold in Supabase. Tracking, not urgent. Checked 1 Nov:
+  - The database is not the limit. The largest row is `Hatch Collab 10`: 1,603 items, 272 KB of JSON, saved and read without trouble. Postgres holds hundreds of MB in one value.
+  - The failed save was the AI skill's write: one long SQL call was cut off at 52 of 266 items (about 420 KB, `docs/lessons-learned_hatch.md`). Not the app.
+  - Where growth will hurt first: the library list downloads every detail's items on open (`SK.Cloud.details`); an upload sends every recording in one request (`1 HR Wall` is about 1 MB across 13 recordings); requests time out after 8 s.
+  - Done: a large save flag. At 256 KB of drawing data or more (`SK.CLOUD.largeBytes`), the app says "Large file", saves, reads the save back, and says "Save reviewed and confirmed" only when the cloud copy matches what was sent (`SK.reviewSave`). The AI skills do the same check for their writes.
+  - Next, when it is needed: load the library list without items; upload one recording per request; above about 512 KB, keep the items as a file in `sketch-media` with the row holding a pointer.
 
 ## Notes for review
 

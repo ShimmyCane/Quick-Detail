@@ -237,7 +237,20 @@ function writeTagEntries(entries, key) {
   return entries.reduce(function (p, e) {
     return p.then(function () {
       var v = e[key];
-      if (e.store === 'cloud') return SK.Cloud.setTagsItems(e.cloudId, v.tags, clone(v.items));
+      if (e.store === 'cloud') {
+        var items = clone(v.items);
+        return SK.Cloud.setTagsItems(e.cloudId, v.tags, items).then(function () {
+          // A large detail is read back and checked, as an upload is (SK.reviewSave).
+          var plan = { detail: { items: items }, recordings: [] };
+          var size = SK.saveSize(plan);
+          if (!size.large) return;
+          toast('Reviewing save of a large detail (' + SK.formatBytes(size.total) + ')…', 4000);
+          return SK.Cloud.review(plan, e.cloudId).then(function (rv) {
+            if (!rv.ok) throw new Error('the save review found a difference: ' + rv.problems.join('; ') + '.');
+            toast('Save reviewed and confirmed: ' + size.count.toLocaleString('en-US') + ' items, ' + SK.formatBytes(size.total) + '.', 5000);
+          });
+        });
+      }
       if (detail && detail.id === e.id) {   // the open detail is saved through the editor's own path
         detail.tags = v.tags.slice();
         detail.items = clone(v.items);

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/app/bin.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/app/bin.js</code></h1>
+<p class="muted">App: library · 106 lines · App part 15 of 23 in the load order.</p>
+<h2>What it does</h2>
+<p>Recycle bin (this browser).<br>
+Moving a detail to the bin, restoring it, deleting it for good, and the bin view.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">8</td><td class="name"><code>removeDetail(d)</code></td><td>Delete from the library. The detail goes to the recycle bin, where it can be restored until the bin is emptied.</td><td><a href="app-library.html">library</a></td></tr>
+<tr><td class="n">14</td><td class="name"><code>confirmDelete(d, go)</code></td><td>Asks before a detail goes to the bin. &quot;Don't ask for 5 minutes&quot; skips the question until the time is up.</td><td><a href="app-branches.html">branches</a></td></tr>
+<tr><td class="n">20</td><td class="name"><code>confirmBin(where, body, d, go)</code></td><td>The move-to-bin question, for this browser's bin and the cloud bin. The 5-minute quiet time is shared by both. Cancel is the safe choice, so it has focus.</td><td><a href="app-cloud-ui.html">cloud-ui</a></td></tr>
+<tr><td class="n">43</td><td class="name"><code>moveToBin(d)</code></td><td>Marks a detail deleted (deletedAt), so it shows in the recycle bin only.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">53</td><td class="name"><code>restoreDetail(d)</code></td><td>Takes a detail out of the recycle bin.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">63</td><td class="name"><code>purgeDetail(d)</code></td><td>Deletes a detail and its recordings for good. Used by the recycle bin only.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">71</td><td class="name"><code>emptyBin(gone)</code></td><td>Deletes every detail in the bin for good, after a confirm.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">79</td><td class="name"><code>renderBin()</code></td><td>The recycle bin: deleted details wait here. Nothing in it shows in the library.</td><td><a href="app-library.html">library</a>, <a href="app-cloud-ui.html">cloud-ui</a></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Styles · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1>Styles: <code>sketch/css/</code></h1>
+<p class="muted">Seven files that load in order, as one stylesheet would. Later files refine rules in earlier ones, so keep the order.</p>
+<h2>1. <code>sketch/css/base.css</code></h2>
+<p>Colours (CSS variables), dark mode, page basics, buttons and chips. <span class="muted">(92 lines)</span></p>
+<h2>2. <code>sketch/css/sheet.css</code></h2>
+<p>Over the sheet: the title block and graphic scale, the recording dot, the hint bar and the chips bar. <span class="muted">(102 lines)</span></p>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">4</td><td>detail title, lower left</td></tr>
+<tr><td class="n">59</td><td>recording indicator</td></tr>
+<tr><td class="n">81</td><td>hint and chips, top centre</td></tr>
+</table></div>
+<h2>3. <code>sketch/css/panels.css</code></h2>
+<p>The lower-right rail, the right side panel, the log film strip, the replay bar and the note editor. <span class="muted">(276 lines)</span></p>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">4</td><td>rail, lower right</td></tr>
+<tr><td class="n">40</td><td>side panel</td></tr>
+<tr><td class="n">139</td><td>log: horizontal film strip</td></tr>
+<tr><td class="n">198</td><td>replay</td></tr>
+<tr><td class="n">228</td><td>note editor</td></tr>
+</table></div>
+<h2>4. <code>sketch/css/library.css</code></h2>
+<p>The library page in the Quick Detail look: header, cards, cloud views and scene pictures. <span class="muted">(167 lines)</span></p>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">4</td><td>Library, in the Quick Detail look: vanilla ground, ink outlines, pastel tags, hard shadows.</td></tr>
+</table></div>
+<h2>5. <code>sketch/css/left-bar.css</code></h2>
+<p>The left bar: colour, weight and dimension pickers, tools, undo and redo, the overflow column. <span class="muted">(133 lines)</span></p>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">4</td><td>left rail: pen colours, line weights, text and dimension tools</td></tr>
+<tr><td class="n">58</td><td>settings: background swatches</td></tr>
+</table></div>
+<h2>6. <code>sketch/css/later.css</code></h2>
+<p>Rules added since v4, in the order they were added: pop-ups, blocks checklist, collapse, info panel, playback, narrow screens, recycle bin, library header, phone sizes. Several refine rules in the files above, so this file loads after them. <span class="muted">(88 lines)</span></p>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">5</td><td>block pop-up: shown when a detail that other details use is opened</td></tr>
+<tr><td class="n">11</td><td>block checklist in Project info: scrolls, each row is a large touch target</td></tr>
+<tr><td class="n">16</td><td>library card summary</td></tr>
+<tr><td class="n">23</td><td>recording and microphone, on the left beside the pen</td></tr>
+<tr><td class="n">29</td><td>select tool: the arrow turns on while selecting</td></tr>
+<tr><td class="n">32</td><td>collapse: hides both toolbars; the collapse button stays in the lower-right rail</td></tr>
+<tr><td class="n">38</td><td>info panel: the name is edited in place, the heading is the name</td></tr>
+<tr><td class="n">45</td><td>playback: lives in the right panel, under Info</td></tr>
+<tr><td class="n">53</td><td>narrow screens: a side panel covers the left bar, so the bar steps aside while it is open</td></tr>
+<tr><td class="n">58</td><td>recycle bin</td></tr>
+<tr><td class="n">64</td><td>library header: the less-used controls sit under More</td></tr>
+<tr><td class="n">73</td><td>the left bar starts from the lower left corner, above the title block, and grows upwards</td></tr>
+<tr><td class="n">75</td><td>phone: a narrower left bar. Tools stay at least 34 px, the scene and mic 38 px, so they remain easy to tap.</td></tr>
+</table></div>
+<h2>7. <code>sketch/css/library-late.css</code></h2>
+<p>The newest library rules: header search, sort and + menus, the Edit tags page, catalogue cards and the card popup. <span class="muted">(65 lines)</span></p>
+<div class="wrap"><table><tr><th>Line</th><th>Section</th></tr>
+<tr><td class="n">4</td><td>library header: search, sort (⇅) and + menus, Edit tags</td></tr>
+<tr><td class="n">24</td><td>Edit tags page</td></tr>
+<tr><td class="n">41</td><td>library: two header rows, scrollable + menu, compact catalogue cards, card popup</td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

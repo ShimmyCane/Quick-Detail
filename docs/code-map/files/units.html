@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/units.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/units.js</code></h1>
+<p class="muted">Pure logic · 125 lines · Library 2 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>scales and units. The sheet is drawn in real inches; the scale only sets how big notes,<br>
+arrows and ticks are (they keep a fixed size on paper), and how big the sheet starts on screen.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">22</td><td class="name"><code>SK.scaleOf(key)</code></td><td><span class="muted">—</span></td><td><a href="author.html">author</a>, <a href="parallel.html">parallel</a>, <a href="app-base.html">base</a>, <a href="app-canvas.html">canvas</a>, <a href="app-editor.html">editor</a>, <a href="app-export.html">export</a>, <a href="app-library-info.html">library-info</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">41</td><td class="name"><code>SK.formatLength(inches, roundTo)</code></td><td>Architectural length: 1'-3 1/2&quot;. roundTo is a fraction of an inch (1/16 by default).</td><td><a href="annot.html">annot</a>, <a href="analyze.html">analyze</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">59</td><td class="name"><code>SK.formatScaleLabel(inches)</code></td><td>The bar's end label, with unit marks: inches as 12&quot;, feet as 8' (up to 12 inches in inches, then feet).</td><td><span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">63</td><td class="name"><code>SK.scaleBarChoice(zoom, targetPx)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">81</td><td class="name"><code>SK.luma(hex)</code></td><td>Relative luminance of a #rrggbb colour, 0 (black) to 1 (white).</td><td><a href="app-base.html">base</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">89</td><td class="name"><code>SK.inkFor(key, bg)</code></td><td>The colour an item is drawn in on a given background.</td><td><a href="paint.html">paint</a>, <a href="app-base.html">base</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">97</td><td class="name"><code>SK.gridStep(factor)</code></td><td>The grid follows the scale, which is the printed sheet. A minor square is one printed inch, and the sheet is in real inches, so a square is factor real inches (at 3&quot; = 1'-0&quot;, factor 4). Every fifth line is a major line, so the major grid prints at 5&quot; x 5&quot; at any scale. It is painted on screen only and is left out of every export.</td><td><a href="paint.html">paint</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">103</td><td class="name"><code>SK.gridShades(bg)</code></td><td>Grid colours are shades of the background, never a hue of their own. &quot;Percent white&quot; is the brightest channel. Minor lines sit 10 points away from the background and major lines 25 points away: darker on a light background (80% white gives 70% and 55%), lighter on a dark one so the grid still shows.</td><td><a href="paint.html">paint</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">117</td><td class="name"><code>SK.formatAngle(deg)</code></td><td><span class="muted">—</span></td><td><a href="annot.html">annot</a>, <span class="tag">test: sketch.js</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">9</td><td class="name"><code>SK.SCALES</code></td><td>factor = real inches per paper inch.</td><td><a href="author.html">author</a>, <a href="app-editor.html">editor</a>, <a href="app-panels.html">panels</a></td></tr>
+<tr><td class="n">20</td><td class="name"><code>SK.DEFAULT_SCALE</code></td><td><span class="muted">—</span></td><td><a href="author.html">author</a>, <a href="app-details.html">details</a>, <span class="tag">test: author.js</span></td></tr>
+<tr><td class="n">28</td><td class="name"><code>SK.PAPER</code></td><td>Sizes on paper, in inches. Multiply by the scale factor for world inches.</td><td><a href="annot.html">annot</a>, <a href="author.html">author</a>, <a href="paint.html">paint</a>, <a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-draft.html">draft</a>, <a href="app-selection.html">selection</a>, <a href="app-editor.html">editor</a>, <span class="tag">test: author.js</span></td></tr>
+<tr><td class="n">57</td><td class="name"><code>SK.SCALE_BAR_STEPS</code></td><td>Graphic scale: whole increments only (1&quot;, 2&quot;, 3&quot;, 6&quot;, then feet). The bar's on-screen length is the real length it stands for at this zoom (zoom = screen pixels per sheet inch), so its right edge moves as you zoom.</td><td><span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">75</td><td class="name"><code>SK.PENS</code></td><td>Pen colours. 'ink' is black on light backgrounds and turns white on dark ones.</td><td><a href="author.html">author</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">78</td><td class="name"><code>SK.WEIGHTS</code></td><td>Line weights on paper, in inches. Real width = paper width × scale factor.</td><td><a href="author.html">author</a>, <a href="parallel.html">parallel</a>, <a href="paint.html">paint</a>, <a href="app-base.html">base</a>, <span class="tag">test: author.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">98</td><td class="name"><code>SK.GRID_MAJOR</code></td><td><span class="muted">—</span></td><td><a href="paint.html">paint</a>, <span class="tag">test: sketch.js</span></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">38</td><td class="name"><code>gcd(a, b)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">108</td><td class="name"><code>shade(d)</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

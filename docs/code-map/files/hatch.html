@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/hatch.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/hatch.js</code></h1>
+<p class="muted">Pure logic · 347 lines · Library 3 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>hatch patterns. A hatch fills a closed region with a material pattern. Pure: runs in the page and in Node.<br>
+<br>
+Spacing is in paper inches, so a pattern looks the same at any scale; the real spacing is spacing × scale factor.<br>
+The error margin keeps the fill off the boundary: every line stops a little short of the edge, and dots keep clear of it.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">42</td><td class="name"><code>SK.hatchOf(key)</code></td><td><span class="muted">—</span></td><td><a href="author.html">author</a>, <a href="analyze.html">analyze</a>, <span class="tag">test: hatch.js</span></td></tr>
+<tr><td class="n">48</td><td class="name"><code>SK.pointInPoly(p, poly)</code></td><td>Even-odd point in polygon test.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: hatch.js</span></td></tr>
+<tr><td class="n">315</td><td class="name"><code>SK.hatchPrims(item, factor)</code></td><td>The drawing primitives of a hatch item (see annot.js for the primitive kinds). item: { kind: 'hatch', pattern, pts: [[x, y], ...] (closed polygon, world inches), outline: bool }</td><td><a href="annot.html">annot</a>, <span class="tag">test: hatch.js</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">10</td><td class="name"><code>SK.HATCH_MARGIN_PAPER</code></td><td><span class="muted">—</span></td><td><span class="tag">test: hatch.js</span></td></tr>
+<tr><td class="n">19</td><td class="name"><code>SK.HATCHES</code></td><td>Material hatches for section drawings, following the common conventions in architectural symbol references: concrete is stippled; brick is a diagonal fill; wood and plywood are lines; batt insulation is a wavy line; rigid insulation is a fine crosshatch; concrete block is a running bond; steel is solid. fams: parallel line families (angle in degrees, spacing in paper inches). zig: a wavy line in rows (row spacing, wave amplitude, wave period, all paper inches). blocks: running bond (course height and block length in paper inches). dots: stipple (spacing and radius in paper inches). solid: a filled region.</td><td><a href="app-draft.html">draft</a>, <a href="app-selection.html">selection</a></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">57</td><td class="name"><code>segDist(p, a, b)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">64</td><td class="name"><code>edgeDist(p, poly)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">71</td><td class="name"><code>clipLine(poly, o, u)</code></td><td>The stretches of the line through o with unit direction u that lie inside the polygon, as [t0, t1] along u.</td></tr>
+<tr><td class="n">90</td><td class="name"><code>keep(s0, s1, poly)</code></td><td>A segment is kept unless it lies along the boundary (a line on an edge is not hatch).</td></tr>
+<tr><td class="n">97</td><td class="name"><code>familySegments(poly, a, d, m, off)</code></td><td>Parallel lines at angle a (degrees) with spacing d (world inches), clipped to the polygon. Each line stops m short of its ends.</td></tr>
+<tr><td class="n">118</td><td class="name"><code>blockSegments(poly, h, L, m)</code></td><td>Running bond: course lines every h, and block joints every L, offset by half a block on alternate courses.</td></tr>
+<tr><td class="n">140</td><td class="name"><code>waveSegments(poly, row, amp, period, m)</code></td><td>Batt insulation: a wavy line in rows. Each little piece of wave is kept only where it is inside the region.</td></tr>
+<tr><td class="n">159</td><td class="name"><code>hash(i, j, salt)</code></td><td>Stipple: one dot per cell, placed by a fixed hash so the same region always draws the same dots.</td></tr>
+<tr><td class="n">164</td><td class="name"><code>dotPoints(poly, d, m)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">181</td><td class="name"><code>prng(seed)</code></td><td>Tileable random layouts. Every random hatch is generated in a square tile of side P (world inches) and repeated, so a swatch of any size joins seamlessly. The random numbers come from a fixed seed, so the same tile always draws the same way. Distances inside a tile wrap around its edges.</td></tr>
+<tr><td class="n">191</td><td class="name"><code>torusDist(a, b, P)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">197</td><td class="name"><code>bounds(poly)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">206</td><td class="name"><code>clipHalfPlane(poly, nx, ny, c)</code></td><td>Packed stones, as a rubble wall: every point of the tile belongs to one stone (a Voronoi cell of a random seed). Each cell is inset by half the gap on every side, so the white between stones is a thin, even route line. Seeds are spread by dart throwing with a random radius each, so stones vary in size and location.</td></tr>
+<tr><td class="n">221</td><td class="name"><code>stoneCells(P, cfg)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">251</td><td class="name"><code>packedStones(poly, factor, cfg, m)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">270</td><td class="name"><code>scatterTile(P, cfg)</code></td><td>Scattered dots (blue-noise: no two closer than dmin) and open triangles with random rotation, both tileable.</td></tr>
+<tr><td class="n">287</td><td class="name"><code>scatterSegments(poly, factor, cfg, m)</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

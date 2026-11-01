@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review notes · Quick Detail v5 compaction</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); }
+nav { font-size: 14px; margin-bottom: 12px; } nav a { margin-right: 10px; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+.wrap { overflow-x: auto; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box b { font-size: 26px; display: block; }
+.q { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 14px; margin: 12px 0; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.q h3 { margin: 0 0 6px; font-size: 16px; } .q p { margin: 4px 0; }
+.q.high { background: var(--rose); } .q.mid { background: var(--butter); } .q.low { background: var(--sky); }
+.pill { display: inline-block; font-size: 12px; padding: 0 8px; border: 1.5px solid var(--ink); border-radius: 8px; background: #fff; margin-right: 6px; }
+</style>
+</head>
+<body>
+<main>
+<nav><a href="index.html">← Code map</a><a href="../../index.html">Open the app</a></nav>
+<h1>Review notes: v5 compaction</h1>
+<p class="muted">31 Oct 2026. A read of every file for orphans, needless complexity and errors, the split of the two large files, and the conflicts that need a decision. Written by hand; the code map beside it is generated.</p>
+
+<h2>1. Before and after</h2>
+<div class="flow">
+  <div class="box"><b>3,832 → 23</b>lines in <code>sketch/app.js</code> → parts in <code>sketch/app/</code>. The largest is now 336 lines (<code>library.js</code>).</div>
+  <div class="box"><b>917 → 7</b>lines in <code>style.css</code> → ordered files in <code>sketch/css/</code>. The largest is 275 lines.</div>
+  <div class="box"><b>0 → 247</b>app functions with a comment: 88 had one, 159 were added.</div>
+  <div class="box"><b>10 → 12</b>test files: <code>app-parts.js</code> guards the split, <code>browser-smoke.js</code> drives the real page.</div>
+</div>
+<p>The screen is unchanged. Screenshots of the sheet, Info, Settings, the library, the card popup and the log are pixel-identical before and after, at 1200 px and 390 px wide. The browser smoke test gives the same results on the old and the new page.</p>
+
+<h2>2. What was changed</h2>
+<div class="wrap"><table>
+<tr><th>Kind</th><th>Change</th><th>Where</th></tr>
+<tr><td>Split</td><td>The app is 23 plain scripts that share the page's global scope. No names changed, and it still runs from <code>file://</code>. <code>start.js</code> loads last.</td><td><code>sketch/app/*.js</code>, <code>index.html</code></td></tr>
+<tr><td>Split</td><td>The stylesheet is seven slices in the original order, so the cascade is the same.</td><td><code>sketch/css/*.css</code></td></tr>
+<tr><td>Split</td><td>The version list and change log are now data in their own file, since they change with every release.</td><td><code>sketch/app/changelog.js</code></td></tr>
+<tr><td>Orphan</td><td>Removed <code>tagsLine()</code> (old card design), <code>refreshTagSources()</code> (an alias), <code>jpeg()</code> (unused since v3), <code>SK.SCREEN_PX_PER_PAPER_IN</code>, the undo and redo <code>meta</code> branches (no meta steps since scale changes became <code>scale</code> steps), and the right rail's <code>scene</code> and <code>undo</code> branches (those buttons moved to the left bar).</td><td>library, tags, export, units, changes, rail</td></tr>
+<tr><td>Orphan</td><td>Removed CSS for classes nothing uses: <code>.pscene-list</code>, <code>.more-panel</code>, <code>.stars-line</code>, <code>.tags-line.clamp</code>, <code>.lib-card .tags-line</code>, <code>.lib-card .said</code>.</td><td><code>sketch/css/</code></td></tr>
+<tr><td>Duplicate</td><td><code>uncache()</code> and <code>editedLine()</code> existed but their bodies were copied inline instead. The copies now call them.</td><td>bin, library-info</td></tr>
+<tr><td>Duplicate</td><td>The local and cloud "Move to the recycle bin?" dialogs were two 25-line copies. They are now one, <code>confirmBin()</code>.</td><td><code>bin.js</code>, <code>cloud-ui.js</code></td></tr>
+<tr><td>Fix</td><td>The local bin dialog put the focus on <b>Move to bin</b>, so Enter deleted. Both dialogs now focus <b>Cancel</b>, as the app's own rule says.</td><td><code>confirmBin()</code></td></tr>
+<tr><td>Fix</td><td>A cloud detail opened, duplicated or inserted here lost its star rating in the local copy (it showed 1 star). The copy now keeps it.</td><td><code>openCloudDetail()</code>, <code>localCopyOf()</code></td></tr>
+<tr><td>Hazard</td><td>Local variables that hid global helpers are renamed: the <code>byId</code> maps in <code>framesFor</code>, <code>tagElements</code> and <code>exportSeries</code>, and <code>W</code>, <code>H</code> in <code>downloadGif</code>. Calling <code>byId()</code> or <code>W()</code> inside those would have failed.</td><td>library, export, library-info</td></tr>
+<tr><td>Tidy</td><td>Settings are saved through <code>saveSettings()</code> everywhere. Stale comments corrected. The <code>draft_AI_detail</code> skill points at <code>sheetCanvas</code> in <code>sketch/app/export.js</code>.</td><td>settings, panels, library, skill</td></tr>
+</table></div>
+
+<h2>3. Conflicts and questions for you</h2>
+<p class="muted">None of these were changed. Each needs your decision, or a schema change.</p>
+
+<div class="q high"><h3>3.1 Branch and version links are lost through the cloud</h3>
+<p><span class="pill">data</span>The cloud is the master copy, but three links do not survive it:</p>
+<p>• <code>fork</code> (which scene a branch came from) and <code>versionOf</code> (Branch as new version) are never uploaded. <code>SK.cloudPlan</code> sends name, scale, tags, items, metadata and the parent only.</p>
+<p>• The parent link goes up as <code>parent_local_id</code>, but <code>fromCloudRow()</code> brings every cloud detail back with <code>parentId: null</code>. A branch opened from the cloud on another device no longer knows its parent, so Merge into parent is gone there.</p>
+<p><b>Suggestion:</b> carry <code>fork</code> and <code>versionOf</code> in the row's <code>metadata</code>, as the rating already is (no new column), and map <code>parent_id</code> back to the parent's <code>local_id</code> on download.</p></div>
+
+<div class="q high"><h3>3.2 The lane model is built but not loaded</h3>
+<p><span class="pill">feature</span><code>sketch/lanes.js</code> (labels such as 4B.6, versions) has tests, and branches already record <code>fork</code>, but the page does not load the file. Nothing on screen uses it yet. The code map flags it on its page and in the load order.</p>
+<p><b>Question:</b> wire it in now (labels in the Log and on library cards), or leave it as a model until the branch view is designed?</p></div>
+
+<div class="q mid"><h3>3.3 The app parts are globals</h3>
+<p><span class="pill">structure</span>Splitting a closure into plain scripts puts about 315 names on <code>window</code>. That keeps every line as it was and works from <code>file://</code>, which modules do not. But a later library, or a new part, that declares the same top-level name would silently replace one.</p>
+<p><b>Guard in place:</b> <code>tests/app-parts.js</code> fails on a name declared twice or one that shadows a browser global. <b>Later option:</b> move the shared state into one <code>App</code> object, part by part, now that the browser smoke test can check each step.</p></div>
+
+<div class="q mid"><h3>3.4 One name or three</h3>
+<p><span class="pill">naming</span>The product is Quick Detail, the page title is "Wall Sketch", several file headers say "Sketch v3", the data export says <code>app: 'wall-sketch', version: 3</code>, and the database is <code>wallsketch</code>.</p>
+<p><b>Suggestion:</b> rename the title, headers and export label to Quick Detail. <b>Never rename the IndexedDB database</b>: every saved detail on every device lives under that name.</p></div>
+
+<div class="q mid"><h3>3.5 Two kinds of dialogs</h3>
+<p><span class="pill">ui</span>Deletes and tag edits use the app's own pop-ups. Save as, Accept image, dimension text, Merge, Empty bin, Delete for good and the cloud-copy question still use the browser's <code>prompt</code> and <code>confirm</code>. Those look different, cannot be styled for the iPad, and some browsers block them in embedded views.</p>
+<p><b>Question:</b> move them all to the app's pop-ups?</p></div>
+
+<div class="q low"><h3>3.6 Stylesheet layers</h3>
+<p><span class="pill">css</span>Rules were appended over time, so a component's look is spread across files. The left bar, for example, is set in <code>left-bar.css</code> and refined again in <code>later.css</code>. The split keeps that order on purpose. Consolidating by component is now safe to try, since the screenshot comparison can prove nothing moved.</p></div>
+
+<div class="q low"><h3>3.7 Smaller notes</h3>
+<p>• The Supabase client still loads from a public CDN (already on the checklist).</p>
+<p>• <code>docs/checklist.md</code> had two "Later" sections; they are merged now.</p>
+<p>• <code>history/v1/index_summary.html</code> and <code>history/v1/schematic.md</code> describe v1 and stay with the archive. The current map is <code>docs/code-map/index.html</code>.</p>
+<p>• <code>docs/conversation-002.md</code> mentions <code>sketch/app.js</code>. It is a record of a past conversation, so it was left as it was.</p>
+<p>• The Keys and touch list in Settings does not mention Ctrl+Shift+Z or Ctrl+Y for redo.</p>
+<p>• In this checkout the local <code>main</code> branch was far behind <code>origin/main</code> (it stopped at PR #33). The work was branched from <code>origin/main</code>. Compare against <code>origin/main</code>, not <code>main</code>, in this environment.</p></div>
+
+<h2>4. How it was checked</h2>
+<ul>
+  <li>The splitter checked that each of the 3,827 body lines of <code>app.js</code> landed in exactly one part. The CSS slices were compared line for line with the original.</li>
+  <li>All twelve test files pass: <code>for f in tests/*.js; do node $f; done</code>.</li>
+  <li><code>tests/browser-smoke.js</code> draws, undoes, redoes, uses text, dimension, hatch, select, duplicate, delete and erase, zooms, changes the scale and undoes it, and opens Info, Settings, the Log, the library, the card popup, Edit tags and the bin, with no page errors. It gave the same results on the page before the split.</li>
+  <li>Screenshots of six views at two widths were compared byte for byte with the page before the work. All were identical.</li>
+  <li>The bin dialog's focus and the rating fix were checked in the browser.</li>
+</ul>
+</main>
+</body>
+</html>

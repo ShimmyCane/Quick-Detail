@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/annot.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/annot.js</code></h1>
+<p class="muted">Pure logic · 422 lines · Library 4 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>geometry for notes and dimensions, as drawing primitives in world inches.<br>
+Pure: the page passes a context { factor, measure(text, size) -&gt; width, caps, roundTo }.<br>
+<br>
+Primitives:<br>
+  { k: 'path', pts, closed, fill }       lines (annotation weight) or a filled polygon<br>
+  { k: 'dot', c, r }                     filled circle<br>
+  { k: 'text', at, text, size, rot, align }   align: 'left' | 'center' | 'right'; at is on the baseline</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">32</td><td class="name"><code>SK.distToSeg(p, a, b)</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">37</td><td class="name"><code>SK.nearestOnSeg(p, a, b)</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">56</td><td class="name"><code>SK.arrowPrims(tip, from, style, f)</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">97</td><td class="name"><code>SK.rescaleAnnotations(items, ratio)</code></td><td>A scale change keeps annotations the same size on paper. Text, arrows, ticks and gaps already follow the factor; the note's box and a dimension's offset from its points are real inches, so they grow or shrink by ratio (new factor / old factor). Anchor points stay on the drawing.</td><td><a href="app-editor.html">editor</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">122</td><td class="name"><code>SK.noteLayout(note, ac)</code></td><td>Layout of a note: its box, its text lines and its leaders. note: { id, kind: 'note', text, at: [x, y] top-left of the box, width, height (null = auto), size, justify, leaders: [{ id, tip, bends, arrow }] }</td><td><a href="app-canvas.html">canvas</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">166</td><td class="name"><code>SK.orthoOrient(p1, p2, at)</code></td><td>Which way an ortho dimension runs, from where its line was dragged to (AutoCAD DIMLINEAR rule).</td><td><a href="author.html">author</a>, <a href="app-tools.html">tools</a>, <a href="app-draft.html">draft</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">176</td><td class="name"><code>SK.dimMeasure(d)</code></td><td>Measured value of a dimension: inches for linear, degrees for angular.</td><td><span class="tag">test: author.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">183</td><td class="name"><code>SK.dimText(d, ac)</code></td><td>The text a dimension shows: measured and formatted, or the override with &lt;&gt; standing for the measured value.</td><td><a href="analyze.html">analyze</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: author.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">212</td><td class="name"><code>SK.dimLayout(d, ac)</code></td><td>dim: { id, kind: 'dim', mode: 'ortho' | 'aligned' | 'angular', p1, p2, vertex, at, orient, text, size, end, roundTo }</td><td><a href="app-canvas.html">canvas</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">279</td><td class="name"><code>SK.itemPrims(item, ac)</code></td><td><span class="muted">—</span></td><td><a href="paint.html">paint</a></td></tr>
+<tr><td class="n">304</td><td class="name"><code>SK.boundsOf(pts)</code></td><td><span class="muted">—</span></td><td><a href="app-export.html">export</a></td></tr>
+<tr><td class="n">319</td><td class="name"><code>SK.printable(items)</code></td><td>image: { id, kind: 'image', src (a JPEG data URL), at: [x, y] top-left, w, h (world inches), noPrint, name } A no-print image is a reference on screen only; exports and prints leave it out. A block is an underlay like an image: left out of prints unless its print flag is set.</td><td><a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: blocks.js</span>, <span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">327</td><td class="name"><code>SK.itemBounds(item, ac)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <span class="tag">test: image.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">338</td><td class="name"><code>SK.itemsBounds(items, ac)</code></td><td><span class="muted">—</span></td><td><a href="blocks.html">blocks</a>, <a href="app-details.html">details</a>, <a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-branches.html">branches</a>, <a href="app-log.html">log</a>, <a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">363</td><td class="name"><code>SK.hitItem(item, p, tol, ac)</code></td><td>Is world point p on the item, within tol world inches?</td><td><a href="blocks.html">blocks</a>, <a href="app-base.html">base</a>, <span class="tag">test: image.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">382</td><td class="name"><code>SK.snapPoints(items)</code></td><td>Points worth snapping to: stroke ends, leader tips, dimension points.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">400</td><td class="name"><code>SK.snap(items, p, tol)</code></td><td>Snap p to a nearby point: first a snap point within tol, then the nearest point on a stroke within tol.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: sketch.js</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">47</td><td class="name"><code>SK.ARROWS</code></td><td><span class="muted">—</span></td><td><a href="app-selection.html">selection</a></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">14</td><td class="name"><code>sub(a, b)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">15</td><td class="name"><code>add(a, b)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">16</td><td class="name"><code>mul(a, s)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">17</td><td class="name"><code>len(a)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">18</td><td class="name"><code>unit(a)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">19</td><td class="name"><code>dot(a, b)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">20</td><td class="name"><code>rot(a, ang)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">24</td><td class="name"><code>mod(a, m)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">26</td><td class="name"><code>readable(ang)</code></td><td>Reading angle for text along a direction: never upside down.</td></tr>
+<tr><td class="n">78</td><td class="name"><code>wrap(text, width, size, measure)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">190</td><td class="name"><code>angularArc(d)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">204</td><td class="name"><code>extLine(P0, A, gap, over)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">287</td><td class="name"><code>textCorners(p, ac)</code></td><td>Corners of a text primitive's box, in world inches.</td></tr>
+<tr><td class="n">294</td><td class="name"><code>primsPoints(prims, ac)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">347</td><td class="name"><code>pointInPoly(p, poly)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">356</td><td class="name"><code>nearPath(p, pts, tol)</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

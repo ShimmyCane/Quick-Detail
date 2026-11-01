@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/blocks.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/blocks.js</code></h1>
+<p class="muted">Pure logic · 217 lines · Library 5 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>blocks: a finished detail placed inside another detail, as an underlay.<br>
+A block is { id, kind: 'block', sourceId, at: [x, y], k, opacity, print }. The source's items are drawn with their<br>
+origin at <code>at</code>, scaled by k. Edits to the source show in every block that uses it. Pure: runs in the page and in Node tests.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">12</td><td class="name"><code>SK.blockScale(bk)</code></td><td>A block's scale. Blocks saved before scaling existed have no k, which means 1.</td><td><a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">53</td><td class="name"><code>SK.transformItem(it, f, sc, angle)</code></td><td>Moves, scales or rotates an item. f maps each point; sc scales sizes and widths; angle turns a block (in radians). Used by the select tool. Note and dimension text stays upright: only their geometry turns.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">91</td><td class="name"><code>SK.flattenItems(items, sourceOf)</code></td><td>sourceOf(id) returns the detail with that id, or null when it is not on this device.</td><td><a href="app-base.html">base</a>, <a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">96</td><td class="name"><code>SK.isUnderlay(it)</code></td><td>An underlay is an image or a block. It paints under all the linework, so it never takes a pen stroke.</td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">101</td><td class="name"><code>SK.drawOrderMove(items, id, how)</code></td><td>Draw order. Items paint in list order, later ones on top, but underlays always paint first. So a move only reorders the other items. how: 'front', 'forward', 'backward' or 'back'. Returns the new list, or null when the item is already where it asked to go, or when it is an underlay (which has no order of its own).</td><td><a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">137</td><td class="name"><code>SK.missingBlocks(items, sourceOf)</code></td><td>Blocks in a list whose source is not on this device.</td><td><a href="app-canvas.html">canvas</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">141</td><td class="name"><code>SK.blockBounds(block, sourceOf, ac)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">147</td><td class="name"><code>SK.blockHit(block, p, tol, sourceOf, ac)</code></td><td>Is world point p on the block? A block counts as hit anywhere on its lines or notes.</td><td><a href="app-base.html">base</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">156</td><td class="name"><code>SK.usersOf(sourceId, details)</code></td><td>Every detail that shows the source, directly or through a block in another block.</td><td><a href="app-details.html">details</a>, <a href="app-library-info.html">library-info</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">172</td><td class="name"><code>SK.nestingOf(items, sourceOf, stack)</code></td><td>How many block levels deep a list goes. Missing sources count as empty.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">196</td><td class="name"><code>SK.blockRefusal(hostId, hostItems, sourceId, sourceOf)</code></td><td>Why a block of sourceId cannot go into the host's list, or null when it can.</td><td><a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">206</td><td class="name"><code>SK.copyInBlock(block, sourceOf, newId)</code></td><td>Plain copies of a block's lines, notes and dimensions, with new ids, placed and scaled. This is the duplicate route.</td><td><a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">9</td><td class="name"><code>SK.MAX_BLOCK_DEPTH</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">134</td><td class="name"><code>SK.blockPlaceholder</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">16</td><td class="name"><code>place(p, t)</code></td><td>Moves and scales a source point: t = { x, y, k, rot } maps p to t + k * R(rot) * p, where R turns by rot radians. A copy of the item under t, or the item itself when t does nothing.</td></tr>
+<tr><td class="n">20</td><td class="name"><code>moved(it, t)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">23</td><td class="name"><code>pt(p)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">54</td><td class="name"><code>P(p)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">78</td><td class="name"><code>expand(items, t, depth, stack, sourceOf, out)</code></td><td>The drawable items of a list, with each block replaced by its source's items, placed and scaled. Ids are the source's own, so a flattened list is for drawing and measuring only, never for editing.</td></tr>
+<tr><td class="n">129</td><td class="name"><code>placeholderBox(block, ac)</code></td><td>The box a block with a missing source is drawn in, so it can be seen and selected.</td></tr>
+<tr><td class="n">185</td><td class="name"><code>reaches(from, target, sourceOf, seen)</code></td><td>Does the detail with id <code>from</code> reach the detail with id <code>target</code> through its blocks?</td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

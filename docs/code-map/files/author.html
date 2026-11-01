@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/author.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/author.js</code></h1>
+<p class="muted">Pure logic · 134 lines · Library 6 of 14 in the load order.</p>
+<h2>What it does</h2>
+<p>drawing from JSON. A plain description of a detail (lines, rectangles, hatches, notes, dimensions)<br>
+becomes the same items the drawing tools make, so it can be opened, edited, undone and exported like any other detail.<br>
+Pure: runs in the page and in Node tests.<br>
+<br>
+Spec (all positions are real inches, x to the right, y down; see docs/examples/window-sill-concrete-12in.json):<br>
+{<br>
+  &quot;name&quot;: &quot;Interior window sill, 12in concrete wall&quot;,<br>
+  &quot;scale&quot;: &quot;3\&quot;=1'-0\&quot;&quot;,            optional, default 3&quot;=1'-0&quot;<br>
+  &quot;tags&quot;: [&quot;window&quot;, &quot;wall&quot;],       optional, chips shown on the detail<br>
+  &quot;items&quot;: [<br>
+    { &quot;kind&quot;: &quot;line&quot;, &quot;pts&quot;: [[x, y], ...], &quot;weight&quot;: &quot;w3&quot;, &quot;pen&quot;: &quot;ink&quot; },<br>
+    { &quot;kind&quot;: &quot;rect&quot;, &quot;x&quot;: 0, &quot;y&quot;: 0, &quot;w&quot;: 12, &quot;h&quot;: 30, &quot;weight&quot;: &quot;w2&quot; },<br>
+    { &quot;kind&quot;: &quot;hatch&quot;, &quot;pattern&quot;: &quot;concrete&quot;, &quot;pts&quot;: [[x, y], ...], &quot;outline&quot;: true },<br>
+    { &quot;kind&quot;: &quot;note&quot;, &quot;text&quot;: &quot;WOOD SILL&quot;, &quot;at&quot;: [x, y], &quot;width&quot;: 12, &quot;tip&quot;: [x, y], &quot;arrow&quot;: &quot;filled&quot; },<br>
+    { &quot;kind&quot;: &quot;dim&quot;, &quot;mode&quot;: &quot;ortho&quot;, &quot;p1&quot;: [x, y], &quot;p2&quot;: [x, y], &quot;at&quot;: [x, y] }<br>
+  ]<br>
+}<br>
+weight: w1 extra fine, w2 fine (default), w3 medium, w4 heavy. pen: ink (default), red, blue, yellow, green.<br>
+hatch pattern: any key in SK.HATCHES (concrete, wood1, insulation, cmu, steel, ...).<br>
+note: text is wrapped to width; the box top-left is at; tip is where the arrow points. Optional &quot;tips&quot;: [[x, y], ...] for more arrows.<br>
+dim: mode ortho (horizontal or vertical, read from the drag) or aligned. at is a point on the dimension line's offset side.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">112</td><td class="name"><code>SK.authorDetail(spec)</code></td><td>A complete detail from a spec. Throws an Error that says what is wrong, so the caller can correct the spec. A parallel (see sketch/parallel.js) works too: its spec is used.</td><td><a href="app-panels.html">panels</a>, <span class="tag">test: author.js</span>, <span class="tag">test: parallel.js</span></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">27</td><td class="name"><code>fail(msg)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">29</td><td class="name"><code>point(p, where)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">34</td><td class="name"><code>pointList(pts, where, min)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">39</td><td class="name"><code>penOf(name, where)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">45</td><td class="name"><code>weightOf(name, where)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">53</td><td class="name"><code>stroke(id, pts, weight, pen, f)</code></td><td>A stroke: the same shape the pen makes, with no pressure or timing. The page smooths strokes through their points, so each interior corner is listed twice: the smoothing then keeps the corner sharp.</td></tr>
+<tr><td class="n">63</td><td class="name"><code>buildItem(src, n, f, where)</code></td><td>Builds the sheet items for one spec entry. n is a running count, so every id in the detail is unique.</td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

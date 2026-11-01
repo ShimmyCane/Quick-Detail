@@ -35,9 +35,6 @@
     line: 0.01         // annotation line weight
   };
 
-  // On screen, one paper inch starts at this many CSS pixels.
-  SK.SCREEN_PX_PER_PAPER_IN = 96;
-
   function gcd(a, b) { return b ? gcd(b, a % b) : a; }
 
   // Architectural length: 1'-3 1/2". roundTo is a fraction of an inch (1/16 by default).

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch/lanes.js · Quick Detail code map</title>
+<style>
+:root { --bg:#fbf6ea; --ink:#2d2a26; --muted:#6f685f; --mint:#d9f1ea; --peach:#fde3cf; --sky:#dbe7f6; --butter:#fff1b8; --sage:#dfeadf; --lilac:#ece3f6; --rose:#f8dfe4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { margin: 0 0 4px; } h1 code { font: inherit; background: none; padding: 0; } h3 { margin: 18px 0 6px; }
+h2 { margin: 32px 0 10px; padding: 6px 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--sage); box-shadow: 0 4px 0 var(--ink); display: inline-block; }
+a { color: inherit; } .muted { color: var(--muted); } .small { font-size: 13px; }
+nav.crumbs { font-size: 14px; margin-bottom: 12px; } nav.crumbs a { margin-right: 10px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; align-items: stretch; }
+.box { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: #fff; box-shadow: 0 4px 0 var(--ink); }
+.box h3 { margin: 0 0 4px; font-size: 15px; } .box p { margin: 0 0 6px; font-size: 13.5px; } .box ul { margin: 4px 0 0; padding-left: 18px; font-size: 13.5px; }
+.b1 { background: var(--butter); } .b2 { background: var(--peach); } .b3 { background: var(--mint); } .b4 { background: var(--sky); } .b5 { background: var(--lilac); } .b6 { background: var(--rose); }
+.arrow { text-align: center; font-size: 22px; font-weight: 800; margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1.5px solid #e6dccb; vertical-align: top; font-size: 14px; }
+th { background: var(--mint); position: sticky; top: 0; }
+code { font: 13px ui-monospace, Menlo, Consolas, monospace; background: #f4efe3; padding: 1px 4px; border-radius: 5px; }
+td.n { white-space: nowrap; font: 13px ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+td.name { white-space: nowrap; } .tag { display: inline-block; font-size: 11.5px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 8px; margin-left: 4px; background: #fff; }
+.wrap { overflow-x: auto; } pre { background: #fff; border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px; overflow-x: auto; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; }
+input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; border: 2.5px solid var(--ink); border-radius: 10px; margin: 6px 0 10px; }
+.warn { border: 2.5px solid var(--ink); border-radius: 12px; padding: 10px 14px; background: var(--rose); box-shadow: 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
+<h1><code>sketch/lanes.js</code></h1>
+<p class="muted">Pure logic · 72 lines · Not loaded by index.html. Used by the Node tests only.</p>
+<p class="warn">This file is not in the page's &lt;script&gt; list, so the app does not use it yet.</p>
+<h2>What it does</h2>
+<p>lanes: the branch genealogy of a detail. A lane is the main line (0) or a branch of it.<br>
+A branch records its fork: { step } is the number of the scene in its parent lane that it branched from.<br>
+Labels are computed from the tree, never stored, so they stay right after a branch is deleted.<br>
+Pure: runs in the page and in Node tests.</p>
+<h2>Functions</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">14</td><td class="name"><code>SK.laneSteps(sessions)</code></td><td>The steps of one lane: every scene of its recordings, in recording order, numbered from 1 across all of them. sessions: the recordings as stored ({ id, events, speech, voice }).</td><td><span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">31</td><td class="name"><code>SK.laneLabels(lanes)</code></td><td>Address of every lane in one family. lanes: [{ id, parentId, fork: { step } | null, created }]. The main line has no parentId and is labelled &quot;0&quot;. A branch is its parent's address and its fork step: &quot;4&quot;, &quot;4B&quot; (second branch off step 4), &quot;4B.6&quot; (branch off step 6 of 4B), &quot;4B.6B&quot;, and so on. A branch off the main line drops the &quot;0.&quot;. Returns { [id]: label }.</td><td><span class="tag">test: lanes.js</span></td></tr>
+<tr><td class="n">67</td><td class="name"><code>SK.versionLabel(n)</code></td><td>A version of a lane's card: v1 is the first save, and each later save of a genealogical edit adds one.</td><td><span class="tag">test: lanes.js</span></td></tr>
+</table></div>
+<h2>Values</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
+<tr><td class="n">10</td><td class="name"><code>SK.LANE_SCHEMA</code></td><td><span class="muted">—</span></td><td><span class="tag">not used anywhere</span></td></tr>
+</table></div>
+<h2>Private helpers</h2>
+<div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
+<tr><td class="n">25</td><td class="name"><code>letter(i)</code></td><td>Sibling letters: the first branch off a step has no letter, the next ones take B, C, ... in creation order.</td></tr>
+<tr><td class="n">40</td><td class="name"><code>place(parentLabel, list)</code></td><td><span class="muted">—</span></td></tr>
+</table></div>
+
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-10-31. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+</main>
+</body>
+</html>

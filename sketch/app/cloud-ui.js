@@ -231,9 +231,20 @@ function uploadToCloud() {
     }
     toast('Preparing the upload…');
     return buildUpload().then(function (u) {
-      return SK.Cloud.upload(u.plan, u.media, toast).then(function (res) {
-        toast('Uploaded "' + detail.name + '": ' + res.recordings + (res.recordings === 1 ? ' recording.' : ' recordings.'));
+      // A large save is read back and checked before it is reported as saved (docs/details-todo.md, Infrastructure).
+      var size = SK.saveSize(u.plan);
+      var big = SK.formatBytes(size.total) + ', ' + size.count.toLocaleString('en-US') + ' items';
+      if (size.large) toast('Large file (' + big + '). Saving, then reviewing the save…', 4000);
+      var progress = size.large ? function (m) { toast('Large file (' + big + ') · ' + m, 4000); } : toast;
+      return SK.Cloud.upload(u.plan, u.media, progress).then(function (res) {
+        var done = 'Uploaded "' + detail.name + '": ' + res.recordings + (res.recordings === 1 ? ' recording.' : ' recordings.');
+        if (!size.large) { toast(done); return; }
+        toast('Reviewing save of "' + detail.name + '" (' + big + ')…', 8000);
+        return SK.Cloud.review(u.plan, res.detailId).then(function (rv) {
+          if (!rv.ok) throw new Error('the save review found a difference: ' + rv.problems.join('; ') + '. The copy on this device is unchanged. Upload again.');
+          toast('Save reviewed and confirmed: "' + detail.name + '", ' + big + ', ' + res.recordings + (res.recordings === 1 ? ' recording' : ' recordings') + '. The cloud copy matches this device.', 7000);
+        });
       });
     });
-  }).catch(function (e) { fail(e, 'Upload failed: '); });
+  }).catch(function (e) { fail(e, 'Upload failed: ', 9000); });
 }

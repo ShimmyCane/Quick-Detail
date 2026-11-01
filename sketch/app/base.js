@@ -133,16 +133,16 @@ function el(tag, attrs, kids) {
   (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
   return e;
 }
-// A short message at the bottom of the screen.
-function toast(msg) {
+// A short message at the bottom of the screen. ms: how long it stays (default 2.6 s).
+function toast(msg, ms) {
   var t = $('toast');
   t.textContent = msg;
   t.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  toastTimer = setTimeout(function () { t.hidden = true; }, ms || 2600);
 }
 // Shows an error as a toast.
-function fail(err, prefix) { toast((prefix || '') + (err && err.message ? err.message : err)); }
+function fail(err, prefix, ms) { toast((prefix || '') + (err && err.message ? err.message : err), ms); }
 // A file-safe name.
 function slug(s) { return String(s || 'detail').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'detail'; }
 // Saves a blob as a file.

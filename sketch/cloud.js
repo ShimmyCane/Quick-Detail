@@ -91,6 +91,78 @@
   };
 
   // ---------------------------------------------------------------
+  // Large saves. The database holds far more than a detail needs, so size is tracked, not blocked
+  // (docs/details-todo.md, Infrastructure). Above this many bytes of drawing data, a save is read back and
+  // checked against what was sent before it is reported as saved.
+  // ---------------------------------------------------------------
+
+  SK.CLOUD.largeBytes = 256 * 1024;
+
+  function byteLength(v) {
+    var s = JSON.stringify(v == null ? null : v);
+    return typeof TextEncoder !== 'undefined' ? new TextEncoder().encode(s).length : s.length;
+  }
+
+  // The size of the drawing data one upload sends: the detail's items and every recording's strokes and words.
+  SK.saveSize = function (plan) {
+    var items = byteLength(plan.detail.items || []);
+    var recordings = plan.recordings.reduce(function (n, r) {
+      return n + byteLength(r.base) + byteLength(r.events) + byteLength(r.speech) + byteLength(r.voice);
+    }, 0);
+    var total = items + recordings;
+    return { items: items, recordings: recordings, total: total, count: (plan.detail.items || []).length, large: total >= SK.CLOUD.largeBytes };
+  };
+
+  // "412 KB", "1.3 MB".
+  SK.formatBytes = function (n) {
+    if (n < 1024) return n + ' bytes';
+    if (n < 1024 * 1024) return Math.round(n / 1024) + ' KB';
+    return (n / 1024 / 1024).toFixed(1) + ' MB';
+  };
+
+  // JSON with object keys sorted. The database stores JSON with its own key order, so a copy read back is
+  // compared in this form; the numbers and strings come back exactly as sent.
+  function canonical(v) {
+    if (Array.isArray(v)) return '[' + v.map(canonical).join(',') + ']';
+    if (v && typeof v === 'object') {
+      return '{' + Object.keys(v).sort().filter(function (k) { return v[k] !== undefined; })
+        .map(function (k) { return JSON.stringify(k) + ':' + canonical(v[k]); }).join(',') + '}';
+    }
+    return JSON.stringify(v === undefined ? null : v);
+  }
+
+  // A short fingerprint of any JSON value: its count (for arrays) and a 32-bit FNV-1a hash of its canonical form.
+  SK.fingerprint = function (v) {
+    var s = canonical(v), h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return { count: Array.isArray(v) ? v.length : null, length: s.length, hash: ('0000000' + h.toString(16)).slice(-8) };
+  };
+
+  function sameFingerprint(a, b) { return a.count === b.count && a.length === b.length && a.hash === b.hash; }
+
+  // Compares what was sent with what the cloud holds now. sent: the plan. found: { items, recordings: [{ local_id, base, events, speech, voice }] }.
+  // Returns { ok, problems: [text] }. Each problem says what differs, in words the user can act on.
+  SK.reviewSave = function (plan, found) {
+    var problems = [];
+    var want = SK.fingerprint(plan.detail.items || []), got = SK.fingerprint(found.items || []);
+    if (!sameFingerprint(want, got)) {
+      problems.push(want.count !== got.count
+        ? 'the cloud has ' + got.count + ' items, this device sent ' + want.count
+        : 'the items in the cloud differ from the ones sent');
+    }
+    var byId = {};
+    (found.recordings || []).forEach(function (r) { byId[r.local_id] = r; });
+    plan.recordings.forEach(function (r) {
+      var f = byId[r.local_id];
+      if (!f) { problems.push('recording ' + r.local_id + ' is missing from the cloud'); return; }
+      ['base', 'events', 'speech', 'voice'].forEach(function (k) {
+        if (!sameFingerprint(SK.fingerprint(r[k] || []), SK.fingerprint(f[k] || []))) problems.push('recording ' + r.local_id + ' has different ' + k);
+      });
+    });
+    return { ok: !problems.length, problems: problems };
+  };
+
+  // ---------------------------------------------------------------
   // Client. Browser only: needs window.supabase (supabase-js) and a signed-in owner.
   // ---------------------------------------------------------------
 
@@ -189,6 +261,21 @@
           return c.from('sketch_snapshots').upsert(rows, { onConflict: 'local_id' }).then(function (r) { if (r.error) throw r.error; });
         })
         .then(function () { note('Uploaded.'); return { detailId: detailId, recordings: Object.keys(recMap).length }; });
+    },
+
+    // Reads back what an upload wrote and checks it against the plan (SK.reviewSave). Used for large saves.
+    // Resolves to { ok, problems }; a read that fails rejects, so a save is never confirmed without the check.
+    review: function (plan, detailId) {
+      var c = this.init();
+      var ids = plan.recordings.map(function (r) { return r.local_id; });
+      return Promise.all([
+        c.from('sketch_details').select('items').eq('id', detailId).single(),
+        ids.length ? c.from('sketch_recordings').select('local_id, base, events, speech, voice').in('local_id', ids) : Promise.resolve({ data: [] })
+      ]).then(function (r) {
+        if (r[0].error) throw r[0].error;
+        if (r[1].error) throw r[1].error;
+        return SK.reviewSave(plan, { items: r[0].data.items, recordings: r[1].data });
+      });
     },
 
     // Read side, for review.

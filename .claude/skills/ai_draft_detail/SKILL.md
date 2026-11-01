@@ -47,6 +47,7 @@ Numbers are tracked in `docs/hatch/palette-plan.md`. Keep them the same.
    - `metadata`: `{"ai_inferred": true, "source": "<spec path>", "skill": "ai_draft_detail"}`.
    Insert, never update. Do not touch any other row.
 7. **Verify.** Re-read the new row. Confirm the item count matches the spec, the tags include `AI` and `draft`, and the name is as given.
+   **Large save check.** If the items written are 256 KB of JSON or more (the app's `SK.CLOUD.largeBytes`), say "Large file (<size>, <count> items). Reviewing save…" before the check, then compare against the local JSON: the item count, the count of each `kind` (`select it->>'kind', count(*) from jsonb_array_elements(items) it group by 1`), and the first and last item written. Report "Save reviewed and confirmed: <count> items, <size>" only when all of them match. On any difference, report it and do not call the row saved. Write large payloads in batches of about 40 KB (`items = items || '[...]'::jsonb`), since one long SQL call can be cut off (see `docs/lessons-learned_hatch.md`).
 8. **Report.** Give the row's `local_id`, the item count, the spec path, the render path, and what each row shows. List what is still open for review.
 
 ## Rules

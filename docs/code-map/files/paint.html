@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/paint.js</code></h1>
-<p class="muted">Browser services · 175 lines · Library 12 of 17 in the load order.</p>
+<p class="muted">Browser services · 175 lines · Library 13 of 18 in the load order.</p>
 <h2>What it does</h2>
 <p>painting items onto a canvas at a view, for the sheet, thumbnails and exports.<br>
 A view is { x, y, z }: the world point (inches) at the top-left corner, and CSS pixels per world inch.</p>
@@ -44,8 +44,8 @@ A view is { x, y, z }: the world point (inches) at the top-left corner, and CSS 
 <tr><td class="n">40</td><td class="name"><code>SK.paintGrid(c, v, factor, w, h, ratio, bg)</code></td><td>Reference grid over the sheet, in screen space. A minor square is one printed inch and every fifth line is major, so the major grid prints at 5&quot; x 5&quot; whatever the scale. Colours are shades of the background (SK.gridShades). When the minor squares are too close together on screen, only the major lines are drawn (and spaced wider still if even they are too close). Screen only; exports never include the grid.</td><td><a href="app-canvas.html">canvas</a></td></tr>
 <tr><td class="n">62</td><td class="name"><code>SK.toScreen(v, p)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-editor.html">editor</a></td></tr>
 <tr><td class="n">63</td><td class="name"><code>SK.toWorld(v, s)</code></td><td><span class="muted">—</span></td><td><a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-panels.html">panels</a>, <a href="app-branches.html">branches</a></td></tr>
-<tr><td class="n">66</td><td class="name"><code>SK.fitView(b, w, h, pad, maxZ)</code></td><td>A view that fits bounds into w × h CSS pixels with a margin.</td><td><a href="app-input.html">input</a>, <a href="app-log.html">log</a>, <a href="viewer.html">viewer</a></td></tr>
-<tr><td class="n">82</td><td class="name"><code>SK.paint(c, items, v, opts)</code></td><td>Paints items. c is a 2D context whose transform maps CSS pixels to device pixels by <code>ratio</code>. opts: { ac, ink, paper, fill (bool), dim (array of ids drawn faded), w, h }</td><td><a href="app-canvas.html">canvas</a>, <a href="app-export.html">export</a>, <a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">66</td><td class="name"><code>SK.fitView(b, w, h, pad, maxZ)</code></td><td>A view that fits bounds into w × h CSS pixels with a margin.</td><td><a href="app-input.html">input</a>, <a href="app-log.html">log</a>, <a href="gifs.html">gifs</a>, <a href="viewer.html">viewer</a></td></tr>
+<tr><td class="n">82</td><td class="name"><code>SK.paint(c, items, v, opts)</code></td><td>Paints items. c is a 2D context whose transform maps CSS pixels to device pixels by <code>ratio</code>. opts: { ac, ink, paper, fill (bool), dim (array of ids drawn faded), w, h }</td><td><a href="app-canvas.html">canvas</a>, <a href="app-export.html">export</a>, <a href="gifs.html">gifs</a>, <a href="viewer.html">viewer</a></td></tr>
 <tr><td class="n">164</td><td class="name"><code>SK.picture(items, b, w, h, opts)</code></td><td>A canvas of items fitted to bounds b, for thumbnails and exports.</td><td><a href="app-log.html">log</a>, <a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a>, <a href="viewer.html">viewer</a></td></tr>
 </table></div>
 <h2>Values</h2>

@@ -167,6 +167,7 @@ function sceneCard(s, m, num, b, col) {
         e.stopPropagation();
         branchFrom(SK.stateAt(s, m.end), 'branch from scene ' + num, { step: num });
       } } }),
+      el('button', { class: 'chip', text: 'GIF', title: 'A GIF of this scene', on: { click: function (e) { e.stopPropagation(); downloadCardGif(s, m, num); } } }),
       el('button', { class: 'chip', text: 'Delete', on: { click: function (e) { e.stopPropagation(); deleteScene(s, m, num); } } })
     ])
   ]);
@@ -222,6 +223,18 @@ function deleteScene(s, m, num) {
   });
   commitLog({ details: SK.befores(logFamily.details, updates.map(function (u) { return u.id; })), sessions: SK.befores(logFamily.sessions, [s.id]) }, writes);
   toast('Scene ' + num + ' deleted. Undo brings it back.');
+}
+
+// A GIF of one scene, animated from its start to its end.
+function downloadCardGif(s, m, num) {
+  toast('Making the GIF…');
+  setTimeout(function () {
+    try {
+      var env = { visible: visible, ac: function (sc) { return acFor(detail, sc); }, ink: colors().ink, paper: colors().paper };
+      download(new Blob([SK.sceneGif(s, m, env)], { type: 'image/gif' }), slug(detail.name) + '-scene-' + num + '.gif');
+      toast('Saved the scene GIF.');
+    } catch (e) { fail(e, 'Could not make the GIF: '); }
+  }, 40);
 }
 
 // Undoes the last delete or note in this lane.

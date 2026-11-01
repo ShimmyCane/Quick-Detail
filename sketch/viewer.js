@@ -27,6 +27,13 @@
     });
   }, { rootMargin: '200px' }) : null;
   var boundsCache = {};
+  // What the GIF helpers need to draw a sheet on this page.
+  var gifEnv = {
+    visible: function (items) { return visible(items); },
+    ac: function (scale) { return acFor(scale); },
+    get ink() { return ink(); },
+    paper: BG
+  };
 
   // ---- small helpers ----
 
@@ -51,6 +58,59 @@
   }
 
   function slug(s) { return String(s || 'detail').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'detail'; }
+
+  function download(bytes, type, name) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([bytes], { type: type }));
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  // Runs a slow job after the page has shown a message: encoding a GIF takes a moment.
+  function working(msg, job) {
+    toast(msg);
+    setTimeout(job, 40);
+  }
+
+  // The scenes from the main line down to a lane, in the order they were drawn: each lane up to the step the next one
+  // forked from, then the lane's own scenes.
+  function pathSteps(id) {
+    var chain = [];
+    var cur = byDetail[id];
+    while (cur) { chain.unshift(cur); cur = cur.parentId ? byDetail[cur.parentId] : null; }
+    var out = [];
+    chain.forEach(function (lane, i) {
+      var steps = stepsOf(lane.id);
+      var upto = i + 1 < chain.length && chain[i + 1].fork && chain[i + 1].fork.step != null ? chain[i + 1].fork.step : steps.length;
+      steps.slice(0, upto).forEach(function (st) { out.push(st); });
+    });
+    return out;
+  }
+
+  function gifCard(d, st, n) {
+    working('Making the GIF…', function () {
+      try {
+        download(SK.sceneGif(st.s, st.m, gifEnv), 'image/gif', slug(d.name) + '-scene-' + n + '.gif');
+        toast('Saved the scene GIF.');
+      } catch (e) { toast('Could not make the GIF: ' + (e && e.message ? e.message : e)); }
+    });
+  }
+
+  function gifLane(d, label) {
+    var steps = pathSteps(d.id);
+    if (!steps.length) { toast('Nothing to animate yet.'); return; }
+    working('Making the GIF…', function () {
+      try {
+        var rootName = (data.details.filter(function (x) { return !x.parentId; })[0] || d).name;
+        download(SK.lineGif(steps, gifEnv), 'image/gif', slug(rootName) + '-' + String(label).replace(/\./g, '-') + '.gif');
+        toast('Saved the GIF to ' + label + '.');
+      } catch (e) { toast('Could not make the GIF: ' + (e && e.message ? e.message : e)); }
+    });
+  }
+
 
   function acFor(scale) {
     return { factor: SK.scaleOf(scale).factor, caps: true, roundTo: 1 / 16, measure: SK.measure };
@@ -134,9 +194,10 @@
         d.parentId ? null : el('span', { class: 'track-name', text: d.name })
       ]),
       first ? el('p', { class: 'track-desc', text: SK.firstWords(first.m.text, 14) }) : null,
-      d.parentId ? el('div', { class: 'v-lane-actions' }, [
-        el('button', { class: 'chip', type: 'button', text: 'Delete', title: 'Delete this branch', on: { click: function (e) { e.stopPropagation(); deleteLane(d.id); } } })
-      ]) : null
+      el('div', { class: 'v-lane-actions' }, [
+        el('button', { class: 'chip', type: 'button', text: 'GIF', title: 'A GIF of everything from the start to the end of this line', on: { click: function (e) { e.stopPropagation(); gifLane(d, labels[d.id] || '0'); } } }),
+        d.parentId ? el('button', { class: 'chip', type: 'button', text: 'Delete', title: 'Delete this branch', on: { click: function (e) { e.stopPropagation(); deleteLane(d.id); } } }) : null
+      ])
     ]);
     var row = el('div', { class: 'track-row' }, [SK.leadFor(offsets[d.id])]);
     if (!collapsed) {
@@ -175,6 +236,7 @@
       ]),
       el('div', { class: 'row' }, [
         el('button', { class: 'chip', type: 'button', text: '▶ Play', on: { click: function (e) { e.stopPropagation(); playScene(d, s, m); } } }),
+        el('button', { class: 'chip', type: 'button', text: 'GIF', on: { click: function (e) { e.stopPropagation(); gifCard(d, st, n); } } }),
         el('button', { class: 'chip', type: 'button', text: 'Delete scene', on: { click: function (e) { e.stopPropagation(); deleteScene(d, s, m, n); } } })
       ])
     ]);

@@ -89,3 +89,15 @@ What each phase must contain, before it is marked done:
 - For `collab`, what format is the programmatic diagram in: a canvas detail, an image, or a file?
 - Should the program estimate use a default SF per room type, and where does that table live?
 - Is the default scale `1/8"=1'-0"` right for a whole level?
+
+## Cloud library upload
+
+After the increments are drawn and checked, upload the draft to the cloud library as one detail with its increments as a linear history:
+
+```bash
+SUPABASE_URL=<Architecture project URL> SUPABASE_SERVICE_KEY=<service role key> \
+node tools/library/upload-draft-history.js --specs <docs/examples/<name>> --local-id <ai-name> \
+  --name "<Name> (AI draft)" --scale '<scale>' [--renders <render dir>] [--tags "<tags>"] --upload
+```
+
+Run it without `--upload` first to check the plan. The tool writes only to `sketch_details` and `sketch_versions`. See `tools/library/upload-draft-history.js`.

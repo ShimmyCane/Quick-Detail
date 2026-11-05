@@ -60,3 +60,15 @@ Restate the subject, view, and the drawings it sits with. Confirm each of those 
 
 - Should the control block be a separate spec, so the other drawings can reuse it?
 - Who writes the hidden-line pass, and is it in scope for this stub?
+
+## Cloud library upload
+
+After the increments are drawn and checked, upload the draft to the cloud library as one detail with its increments as a linear history:
+
+```bash
+SUPABASE_URL=<Architecture project URL> SUPABASE_SERVICE_KEY=<service role key> \
+node tools/library/upload-draft-history.js --specs <docs/examples/<name>> --local-id <ai-name> \
+  --name "<Name> (AI draft)" --scale '<scale>' [--renders <render dir>] [--tags "<tags>"] --upload
+```
+
+Run it without `--upload` first to check the plan. The tool writes only to `sketch_details` and `sketch_versions`. See `tools/library/upload-draft-history.js`.

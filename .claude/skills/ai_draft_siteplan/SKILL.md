@@ -1,9 +1,9 @@
 ---
-name: siteplan
-description: Draft a site plan from an address: extract the address and boundaries, validate them against a map snippet, research and save references, draw the site at scale into the Quick Detail canvas in increments, QC it, and export a CAD/Revit-ready file with an optional map underlay (hidden by default). Use when the user says "siteplan [address or subject] [tier] [increments] [name] [flags]".
+name: ai_draft_siteplan
+description: Draft a site plan from an address: extract the address and boundaries, validate them against a map snippet, research and save references, draw the site at scale into the Quick Detail canvas in increments, QC it, and export a CAD/Revit-ready file with an optional map underlay (hidden by default). Use when the user says "ai_draft_siteplan [address or subject] [tier] [increments] [name] [flags]".
 ---
 
-# siteplan
+# ai_draft_siteplan
 
 Status: **best-guess draft, for review.** The generator `tools/generator/siteplan.js` exists as the Torrance draft. The export step does not exist yet.
 
@@ -11,7 +11,7 @@ Shape follows `ai_draft_detail`: understand input, validate the database, plan, 
 
 ## Input
 
-`siteplan [address or subject] [tier] [increments] [name] [flags]`
+`ai_draft_siteplan [address or subject] [tier] [increments] [name] [flags]`
 
 - **Address or subject**: a street address, APN, or a named site. The skill extracts the address, the parcel boundary, and the adjacent streets from it.
 - **Tier**: how much information to extract and draw. Default `[tier 1]`.

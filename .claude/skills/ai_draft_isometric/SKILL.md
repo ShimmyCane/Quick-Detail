@@ -1,9 +1,9 @@
 ---
-name: isometric
-description: Draft an isometric (axonometric) overlay on the canvas with the AI, always alongside siteplans, plans, and elevations. Builds a separate block of grid lines and control points, then overlays the isometric on the other drawings. Stub: rough, to be refined. Use when the user says "isometric [subject] [increments] [name] [flags]".
+name: ai_draft_isometric
+description: Draft an isometric (axonometric) overlay on the canvas with the AI, always alongside siteplans, plans, and elevations. Builds a separate block of grid lines and control points, then overlays the isometric on the other drawings. Stub: rough, to be refined. Use when the user says "ai_draft_isometric [subject] [increments] [name] [flags]".
 ---
 
-# isometric
+# ai_draft_isometric
 
 Status: **stub.** This skill is a first attempt: overlay and try your best. Expect rough output. No generator exists yet.
 
@@ -11,7 +11,7 @@ Scope: isometric massing that sits over the site plan, floor plans, and elevatio
 
 ## Input
 
-`isometric [subject] [increments] [name] [flags]`
+`ai_draft_isometric [subject] [increments] [name] [flags]`
 
 - **Subject**: the building or massing, in words, and the drawings it sits with (site plan, plans, elevations). Required: at least one of these must already exist, or be drafted first.
 - **View**: the corner the view looks from, such as `NE`. Default `NE`.
@@ -20,7 +20,7 @@ Scope: isometric massing that sits over the site plan, floor plans, and elevatio
 
 ## Validation
 
-Restate the subject, view, and the drawings it sits with. Confirm each of those drawings exists. If one is missing, ask whether to draft it first (with `siteplan`, `floor_plan`, or `elevation`). Check database access to `viewer_sets` and `viewer_scenes`.
+Restate the subject, view, and the drawings it sits with. Confirm each of those drawings exists. If one is missing, ask whether to draft it first (with `ai_draft_siteplan`, `ai_draft_floor_plan`, or `ai_draft_elevation`). Check database access to `viewer_sets` and `viewer_scenes`.
 
 ## Scale and text
 

@@ -1,9 +1,9 @@
 ---
-name: floor_plan
-description: Draft a floor plan on the canvas with the AI, either as a new plan (estimate area, develop program, schematic layout) or as a collaboration on an existing programmatic diagram, through design development. No grids, simple linework, drawn at scale in increments. Use when the user says "floor_plan [subject] [mode] [phase] [increments] [name] [flags]".
+name: ai_draft_floor_plan
+description: Draft a floor plan on the canvas with the AI, either as a new plan (estimate area, develop program, schematic layout) or as a collaboration on an existing programmatic diagram, through design development. No grids, simple linework, drawn at scale in increments. Use when the user says "ai_draft_floor_plan [subject] [mode] [phase] [increments] [name] [flags]".
 ---
 
-# floor_plan
+# ai_draft_floor_plan
 
 Status: **best-guess draft, for review.** No generator exists yet. Shape follows `ai_draft_detail`.
 
@@ -11,7 +11,7 @@ Scope: floor plans through design development. Construction documents are out of
 
 ## Input
 
-`floor_plan [subject] [mode] [phase] [increments] [name] [flags]`
+`ai_draft_floor_plan [subject] [mode] [phase] [increments] [name] [flags]`
 
 - **Subject**: the building or level, in words, for example "two-storey clinic, 12,000 SF, ground floor".
 - **Mode**: asked at the start, if not given.

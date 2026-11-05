@@ -1,0 +1,182 @@
+{
+ "schema": "quick-detail/steps-1",
+ "name": "LA Lucas Museum, Exposition Park: 10 increments, site plan",
+ "subtitle": "Site plan in 10 cumulative increments: tier 1 (1 to 5), tier 2 (6 to 8), tier 3 (9 to 10). AI draft at 1/16\"=1'-0\". Placeholders are marked (verify).",
+ "scale": "1/16\"=1'-0\"",
+ "draft_note": "Draft: verify before use. Schematic, not surveyed. Parcel shape, streets, footprint, parking, trees, contours and utilities are placeholders. Export is manual (DXF/DWG to-do).",
+ "steps": [
+  {
+   "n": 1,
+   "id": "increment-01-boundary-and-streets",
+   "title": "Boundary and streets",
+   "tier": 1,
+   "items": 11,
+   "spec": "docs/examples/lucas-museum/increment-01-boundary-and-streets.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-01-boundary-and-streets.png",
+   "description": "Tier 1. Parcel boundary and four streets, labelled (verify). North up.",
+   "changes": [
+    "Parcel 960 x 500 ft, about 11 acres (placeholder shape)",
+    "Exposition Blvd north, Figueroa St east, Leighton St west, south street"
+   ],
+   "gaps": [
+    "Parcel shape is a placeholder",
+    "Leighton St and south street unconfirmed"
+   ]
+  },
+  {
+   "n": 2,
+   "id": "increment-02-museum-footprint",
+   "title": "Museum footprint",
+   "tier": 1,
+   "items": 14,
+   "spec": "docs/examples/lucas-museum/increment-02-museum-footprint.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-02-museum-footprint.png",
+   "description": "Tier 1. Building footprint placed inside the parcel.",
+   "changes": [
+    "Museum footprint 400 x 220 ft, placeholder",
+    "Curb outline 2 ft out"
+   ],
+   "gaps": [
+    "Footprint is a placeholder, not traced from a plan",
+    "Height not shown"
+   ]
+  },
+  {
+   "n": 3,
+   "id": "increment-03-plaza",
+   "title": "Plaza",
+   "tier": 1,
+   "items": 17,
+   "spec": "docs/examples/lucas-museum/increment-03-plaza.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-03-plaza.png",
+   "description": "Tier 1. Plaza on the south side of the museum.",
+   "changes": [
+    "South plaza 340 x 90 ft, with curb"
+   ],
+   "gaps": [
+    "Plaza size and position are placeholders"
+   ]
+  },
+  {
+   "n": 4,
+   "id": "increment-04-entry",
+   "title": "Entry",
+   "tier": 1,
+   "items": 19,
+   "spec": "docs/examples/lucas-museum/increment-04-entry.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-04-entry.png",
+   "description": "Tier 1. Main entry marked with a leader. Placeholder.",
+   "changes": [
+    "Main entry marked on the north face"
+   ],
+   "gaps": [
+    "Entry location unverified"
+   ]
+  },
+  {
+   "n": 5,
+   "id": "increment-05-north-arrow-and-scale",
+   "title": "North arrow and scale",
+   "tier": 1,
+   "items": 23,
+   "spec": "docs/examples/lucas-museum/increment-05-north-arrow-and-scale.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-05-north-arrow-and-scale.png",
+   "description": "Tier 1. North arrow and scale bar. The 1/16\" scale was added to the app for this site.",
+   "changes": [
+    "North arrow",
+    "100 ft scale bar at 1/16\"=1'-0\""
+   ],
+   "gaps": [
+    "Scale bar checked on the drawing only"
+   ]
+  },
+  {
+   "n": 6,
+   "id": "increment-06-setbacks",
+   "title": "Setbacks",
+   "tier": 2,
+   "items": 25,
+   "spec": "docs/examples/lucas-museum/increment-06-setbacks.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-06-setbacks.png",
+   "description": "Tier 2. Setback line, to verify with the zoning code.",
+   "changes": [
+    "30 ft setback line inside the parcel"
+   ],
+   "gaps": [
+    "30 ft is a placeholder, not checked against code"
+   ]
+  },
+  {
+   "n": 7,
+   "id": "increment-07-parking-and-access",
+   "title": "Parking and access",
+   "tier": 2,
+   "items": 116,
+   "spec": "docs/examples/lucas-museum/increment-07-parking-and-access.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-07-parking-and-access.png",
+   "description": "Tier 2. Surface parking on the west and east sides.",
+   "changes": [
+    "Two surface lots with 9 x 18 ft stall striping",
+    "Aisle centrelines"
+   ],
+   "gaps": [
+    "Stall counts are placeholders",
+    "Access drives not drawn"
+   ]
+  },
+  {
+   "n": 8,
+   "id": "increment-08-trees",
+   "title": "Trees",
+   "tier": 2,
+   "items": 139,
+   "spec": "docs/examples/lucas-museum/increment-08-trees.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-08-trees.png",
+   "description": "Tier 2. Tree canopies, placeholder.",
+   "changes": [
+    "Trees along the north and south edges and in the lots",
+    "Canopy circles about 15 ft radius"
+   ],
+   "gaps": [
+    "Tree positions and sizes are placeholders"
+   ]
+  },
+  {
+   "n": 9,
+   "id": "increment-09-contours-placeholder",
+   "title": "Contours (placeholder)",
+   "tier": 3,
+   "items": 143,
+   "spec": "docs/examples/lucas-museum/increment-09-contours-placeholder.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-09-contours-placeholder.png",
+   "description": "Tier 3. Contours are invented for layout only.",
+   "changes": [
+    "Three placeholder contour rings"
+   ],
+   "gaps": [
+    "Not surveyed; needs a survey",
+    "Heights not given"
+   ]
+  },
+  {
+   "n": 10,
+   "id": "increment-10-utilities-control-points-and-legend",
+   "title": "Utilities, control points and legend",
+   "tier": 3,
+   "items": 165,
+   "spec": "docs/examples/lucas-museum/increment-10-utilities-control-points-and-legend.json",
+   "render": "../../research/detail/siteplan/lucas-museum/review/increment-10-utilities-control-points-and-legend.png",
+   "description": "Tier 3. Full draft with all layers and the legend.",
+   "changes": [
+    "Water main and storm drain placeholders",
+    "Four survey control points at the parcel corners",
+    "Legend"
+   ],
+   "gaps": [
+    "Utility runs are placeholders",
+    "Control points need a survey",
+    "Labels overlap in places (boundary and Exposition Blvd; contours and legend)"
+   ]
+  }
+ ]
+}

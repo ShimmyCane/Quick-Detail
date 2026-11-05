@@ -1,0 +1,55 @@
+{
+  "schema": "quick-detail/step-notes-1",
+  "steps": {
+    "increment-01-boundary-and-streets": {
+      "description": "Tier 1. Parcel boundary and four streets, labelled (verify). North up.",
+      "changes": ["Parcel 960 x 500 ft, about 11 acres (placeholder shape)", "Exposition Blvd north, Figueroa St east, Leighton St west, south street"],
+      "gaps": ["Parcel shape is a placeholder", "Leighton St and south street unconfirmed"]
+    },
+    "increment-02-museum-footprint": {
+      "description": "Tier 1. Building footprint placed inside the parcel.",
+      "changes": ["Museum footprint 400 x 220 ft, placeholder", "Curb outline 2 ft out"],
+      "gaps": ["Footprint is a placeholder, not traced from a plan", "Height not shown"]
+    },
+    "increment-03-plaza": {
+      "description": "Tier 1. Plaza on the south side of the museum.",
+      "changes": ["South plaza 340 x 90 ft, with curb"],
+      "gaps": ["Plaza size and position are placeholders"]
+    },
+    "increment-04-entry": {
+      "description": "Tier 1. Main entry marked with a leader. Placeholder.",
+      "changes": ["Main entry marked on the north face"],
+      "gaps": ["Entry location unverified"]
+    },
+    "increment-05-north-arrow-and-scale": {
+      "description": "Tier 1. North arrow and scale bar. The 1/16\" scale was added to the app for this site.",
+      "changes": ["North arrow", "100 ft scale bar at 1/16\"=1'-0\""],
+      "gaps": ["Scale bar checked on the drawing only"]
+    },
+    "increment-06-setbacks": {
+      "description": "Tier 2. Setback line, to verify with the zoning code.",
+      "changes": ["30 ft setback line inside the parcel"],
+      "gaps": ["30 ft is a placeholder, not checked against code"]
+    },
+    "increment-07-parking-and-access": {
+      "description": "Tier 2. Surface parking on the west and east sides.",
+      "changes": ["Two surface lots with 9 x 18 ft stall striping", "Aisle centrelines"],
+      "gaps": ["Stall counts are placeholders", "Access drives not drawn"]
+    },
+    "increment-08-trees": {
+      "description": "Tier 2. Tree canopies, placeholder.",
+      "changes": ["Trees along the north and south edges and in the lots", "Canopy circles about 15 ft radius"],
+      "gaps": ["Tree positions and sizes are placeholders"]
+    },
+    "increment-09-contours-placeholder": {
+      "description": "Tier 3. Contours are invented for layout only.",
+      "changes": ["Three placeholder contour rings"],
+      "gaps": ["Not surveyed; needs a survey", "Heights not given"]
+    },
+    "increment-10-utilities-control-points-and-legend": {
+      "description": "Tier 3. Full draft with all layers and the legend.",
+      "changes": ["Water main and storm drain placeholders", "Four survey control points at the parcel corners", "Legend"],
+      "gaps": ["Utility runs are placeholders", "Control points need a survey", "Labels overlap in places (boundary and Exposition Blvd; contours and legend)"]
+    }
+  }
+}

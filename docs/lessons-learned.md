@@ -273,3 +273,15 @@ What happened in the session, and what to do differently. The skills `note_text_
 
 - When an auto-mode check gives no verdict, retry once and use the read tools meanwhile; it cleared on its own.
 - Merge only when the user asks. This repo has no CI, so run `tests/` locally and say so when merging.
+
+---
+
+## 13. Rules are made to be questioned; graphical clarity comes first
+
+Set by the user on 5 Nov 2026: *rules are made to be questioned. In drawing, graphical clarity comes first.*
+
+- **A rule is a default with a reason.** When a rule and the drawing disagree, find the reason behind the rule. If the reason is not served, change the rule and say why. The 4 to 10 words a line rule is a default. It exists so notes read as blocks. A note that is clearer on one line stays on one line, and the reason is written beside it.
+- **Clarity beats counts.** A sheet is judged by whether it reads at its scale: no text on text, no text on linework, and each title near its view. Word counts, item counts and the number of iterations come second.
+- **Question assumed limits too.** The skills and the to-do file treated the cloud row as too large to save. The database takes rows up to about 272 KB (commit 9018ba9). The limit I hit was my SQL channel, not the database. Check where a limit comes from before designing around it.
+- **Put settings where the file is.** The Rand Hall generator set text sizes after building the spec, so the spec alone did not reproduce the drawing. `sketch/author.js` now reads `text_scale` (a number, or by class: title, note, small, dim) and each note's `text_class`. The generator relies on the spec, and a rebuild reproduces all 212 notes exactly.
+- **What changed.** The spec reader's tests cover the defaults, each class, a number, and the two refusals (an unknown class, a non-positive size). The note checker stays advisory. `--strict` is opt-in.

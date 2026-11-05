@@ -19,6 +19,9 @@
 // hatch pattern: any key in SK.HATCHES (concrete, wood1, insulation, cmu, steel, ...).
 // note: text is wrapped to width; the box top-left is at; tip is where the arrow points. Optional "tips": [[x, y], ...] for more arrows.
 // dim: mode ortho (horizontal or vertical, read from the drag) or aligned. at is a point on the dimension line's offset side.
+// text_scale (optional): text size as a multiple of the paper text size. A number sets every note and dim. An object sets
+//   them by class: { "title": 6, "note": 4, "small": 3.5, "dim": 3.5 }. A note's class is its "text_class" (default "note").
+//   Without it, text is the paper size, as before.
 (function (root) {
   'use strict';
 
@@ -59,8 +62,28 @@
     return { id: id, kind: 'stroke', t0: 0, w: SK.WEIGHTS[weight] * f, c: pen, pts: out };
   }
 
+  // The text size multiple for one note or dim, from the spec's text_scale. 1 when the spec sets none.
+  function textFactor(src, ts, where) {
+    if (ts === undefined || ts === null) return 1;
+    if (typeof ts === 'number') {
+      if (!(ts > 0) || !isFinite(ts)) fail('text_scale must be a positive number');
+      return ts;
+    }
+    if (typeof ts !== 'object') fail('text_scale must be a number or an object of classes');
+    var v;
+    if (src.kind === 'dim') v = ts.dim;
+    else {
+      var cls = src.text_class || 'note';
+      if (ts[cls] === undefined && cls !== 'note') fail(where + ' has an unknown text_class "' + cls + '"');
+      v = ts[cls] !== undefined ? ts[cls] : ts.note;
+    }
+    if (v === undefined) return 1;
+    if (!(v > 0) || !isFinite(v)) fail(where + ' text_scale must be a positive number');
+    return v;
+  }
+
   // Builds the sheet items for one spec entry. n is a running count, so every id in the detail is unique.
-  function buildItem(src, n, f, where) {
+  function buildItem(src, n, f, where, ts) {
     var id = 'j' + n;
     var pen = penOf(src.pen, where);
     if (src.kind === 'line') {
@@ -87,7 +110,7 @@
       return {
         id: id, kind: 'note', text: String(src.text || ''), c: pen,
         at: point(src.at, where + ' note at'), width: width, height: null,
-        size: SK.PAPER.text, justify: 'auto',
+        size: SK.PAPER.text * textFactor(src, ts, where), justify: 'auto',
         leaders: tips.map(function (t, i) {
           return { id: id + 'l' + i, tip: point(t, where + ' note tip'), bends: [], arrow: src.arrow || 'filled' };
         })
@@ -98,7 +121,7 @@
       if (mode !== 'ortho' && mode !== 'aligned') fail(where + ' dim mode must be ortho or aligned');
       var d = {
         id: id, kind: 'dim', mode: mode, at: point(src.at, where + ' dim at'), text: null,
-        size: SK.PAPER.text, end: src.end || 'tick', roundTo: null, c: pen,
+        size: SK.PAPER.text * textFactor(src, ts, where), end: src.end || 'tick', roundTo: null, c: pen,
         p1: point(src.p1, where + ' dim p1'), p2: point(src.p2, where + ' dim p2')
       };
       if (mode === 'ortho') d.orient = SK.orthoOrient(d.p1, d.p2, d.at);
@@ -118,7 +141,7 @@
     var f = SK.scaleOf(scaleKey).factor;
     var items = spec.items.map(function (src, i) {
       if (!src || typeof src !== 'object') fail('item ' + (i + 1) + ' is not an object');
-      return buildItem(src, i + 1, f, 'Item ' + (i + 1));
+      return buildItem(src, i + 1, f, 'Item ' + (i + 1), spec.text_scale);
     });
     return {
       name: String(spec.name || 'Drawn detail'),

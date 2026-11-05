@@ -7,7 +7,15 @@ description: Lay out note text as readable blocks, 4 to 10 words a line, with a 
 
 Notes are read as blocks of several rows, not as long lines with only a few rows. This applies to every note the AI writes: callouts, view titles, and draft warnings.
 
-## Rules
+## Clarity first
+
+These are defaults. They exist so the drawing reads. When a default and clarity disagree, clarity wins: keep the note as it reads best, and say in the spec or the lessons log why it breaks the default.
+
+- Nothing overlaps: no text on text, and no text on linework or hatch that hides either.
+- Each title sits near its view and is clear of the views around it.
+- A short label stays short, even if a long callout would count better.
+
+## Defaults
 
 1. **4 to 10 words a line, aiming for about 7.** A note of 4 to 10 words may sit on one line. A longer note wraps into a block. Every line but the last has 4 to 10 words, and the last line is not a single orphan word.
 2. **Labels are exempt.** A note of fewer than 4 words (a grid bubble, `N`, `A`, "Entry (assumed)") stays on one line.
@@ -38,5 +46,6 @@ Notes are read as blocks of several rows, not as long lines with only a few rows
 
 ## Rules for the AI
 
-- Do not show a render for review before step 5 passes, unless you say which notes are still out of range.
+- Question a default when it works against the drawing, and record the reason.
+- Show a render for review once the drawing reads clearly. If any note is still out of the word range, say which one and why it stays.
 - Keep the user's wording. Fix the width first; reword only when no width fits.

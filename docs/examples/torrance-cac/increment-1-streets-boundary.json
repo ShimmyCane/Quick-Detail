@@ -1,0 +1,151 @@
+{
+ "name": "Torrance Cultural Arts Center, site plan, increment 1 of 3 (AI draft)",
+ "scale": "1/4\"=1'-0\"",
+ "ai_inferred": true,
+ "tags": [
+  "AI",
+  "draft",
+  "site plan",
+  "Torrance",
+  "Cultural Arts Center",
+  "streets and boundary"
+ ],
+ "text_scale": {
+  "title": 24,
+  "note": 24,
+  "small": 16,
+  "dim": 16
+ },
+ "draft_note": "Draft: verify before use. Schematic, not surveyed. Streets, footprints, lots and trees are placeholders.",
+ "items": [
+  {
+   "kind": "note",
+   "text": "TORRANCE CULTURAL ARTS CENTER, 3330 CIVIC CENTER DR. DRAFT: VERIFY BEFORE USE.",
+   "at": [
+    480,
+    360
+   ],
+   "width": 2700,
+   "tip": [
+    480,
+    480
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 960,
+   "w": 14400,
+   "h": 480,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 9120,
+   "w": 14400,
+   "h": 480,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 600,
+   "y": 0,
+   "w": 480,
+   "h": 10800,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 13320,
+   "y": 0,
+   "w": 480,
+   "h": 10800,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 1560,
+   "y": 1800,
+   "w": 11280,
+   "h": 7080,
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "TORRANCE BLVD (verify)",
+   "at": [
+    6720,
+    1032
+   ],
+   "width": 1540,
+   "tip": [
+    7200,
+    1200
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "CIVIC CENTER DR (verify)",
+   "at": [
+    6720,
+    9192
+   ],
+   "width": 1680,
+   "tip": [
+    7200,
+    9360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "MADRONA AVE (verify)",
+   "at": [
+    360,
+    5160
+   ],
+   "width": 1400,
+   "tip": [
+    840,
+    5400
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "CRENSHAW BLVD (verify)",
+   "at": [
+    13080,
+    5160
+   ],
+   "width": 1540,
+   "tip": [
+    13560,
+    5400
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SITE BOUNDARY (approx.)",
+   "at": [
+    1800,
+    1440
+   ],
+   "width": 1610,
+   "tip": [
+    2280,
+    1800
+   ],
+   "arrow": "filled"
+  }
+ ]
+}

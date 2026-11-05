@@ -386,6 +386,7 @@ $('rail').addEventListener('click', function (e) {
   if (!b) return;
   var act = b.getAttribute('data-act');
   if (act === 'library') openLibrary();
+  else if (act === 'files') window.open('files.html', '_blank', 'noopener');   // a page of links, not a panel
   else openPanel(act);
 });
 

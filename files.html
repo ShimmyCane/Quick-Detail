@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Files · Quick Detail</title>
+  <!-- A static list of the project's files that are not in the cloud library. No script: it works from a file or a host. -->
+  <style>
+    :root { --paper: #fbfaf7; --ink: #1d1d1f; --muted: #6b6a66; --line: #d9d6cf; --chip: #efece5; --accent: #2a6f97; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --paper: #161616; --ink: #ecebe7; --muted: #a09e98; --line: #3a3936; --chip: #232321; --accent: #7fb6d6; }
+    }
+    :root[data-theme="dark"] { --paper: #161616; --ink: #ecebe7; --muted: #a09e98; --line: #3a3936; --chip: #232321; --accent: #7fb6d6; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+    header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+    h1 { font-size: 24px; margin: 8px 0 4px; }
+    h2 { font-size: 18px; margin: 28px 0 8px; }
+    p, li { overflow-wrap: anywhere; }
+    .muted { color: var(--muted); font-size: 14px; }
+    a { color: var(--accent); }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { border-bottom: 1px solid var(--line); padding: 10px 0; }
+    li a { font-weight: 600; text-decoration: none; }
+    li a:hover, li a:focus-visible { text-decoration: underline; }
+    code { background: var(--chip); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+    .note { background: var(--chip); border-radius: 10px; padding: 12px 14px; margin-top: 16px; font-size: 15px; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Files</h1>
+      <p class="muted">Local outputs that are not published to the cloud library. Open them from this repo.</p>
+    </div>
+    <a href="index.html">Back to the sheet</a>
+  </header>
+
+  <h2>Replay viewers (open in a browser)</h2>
+  <ul>
+    <li><a href="docs/caam/caam-history.html">CAAM, Exposition Park: 10 iterations, replay</a><br><span class="muted">Plans, elevations and isometric. Press Play on a scene card to watch it drawn. AI draft, not surveyed.</span></li>
+    <li><a href="docs/rand-hall/rand-hall-history.html">Rand Hall, Cornell: 10 iterations, replay</a><br><span class="muted">Plans, elevations and isometric. AI draft, not surveyed.</span></li>
+  </ul>
+
+  <h2>Read first</h2>
+  <ul>
+    <li><a href="docs/caam/README.md">CAAM: facts, open assumptions and sources</a></li>
+    <li><a href="docs/caam/LOG.md">CAAM: action log, including the troubleshooting</a></li>
+    <li><a href="docs/rand-hall/README.md">Rand Hall: facts, open assumptions and sources</a></li>
+    <li><a href="docs/lessons-learned.md">Lessons learned (sections 11 to 14 cover the building drafts)</a></li>
+  </ul>
+
+  <h2>Renders</h2>
+  <ul>
+    <li><a href="docs/caam/review/sheet-all.png">CAAM: the whole sheet</a></li>
+    <li><a href="docs/caam/review/iter-10.png">CAAM: iteration 10, the final isometric</a></li>
+    <li><a href="docs/caam/review/iter-06.png">CAAM: iteration 6, plaza elevation</a></li>
+    <li><a href="docs/caam/review/pass-0/sheet-all.png">CAAM: first build, before the review passes</a></li>
+    <li><a href="docs/caam/refs/osm-z19-exposition-park.png">CAAM: the OpenStreetMap reference used for the footprint</a></li>
+    <li><a href="docs/rand-hall/review/sheet-all.png">Rand Hall: the whole sheet</a></li>
+    <li><a href="docs/rand-hall/review/iter-10.png">Rand Hall: iteration 10, the final isometric</a></li>
+    <li><a href="docs/torrance-cac/review/increment-3-trees-legend.png">Torrance Cultural Arts Center: increment 3, trees and legend</a></li>
+    <li><a href="docs/torrance-cac/review/increment-2-buildings-curbs-parking.png">Torrance Cultural Arts Center: increment 2, buildings, curbs and parking</a></li>
+    <li><a href="docs/torrance-cac/review/increment-1-streets-boundary.png">Torrance Cultural Arts Center: increment 1, streets and boundary</a></li>
+  </ul>
+
+  <h2>Other pages in this repo</h2>
+  <ul>
+    <li><a href="docs/code-map/index.html">Code map: how a drawing flows through the code</a></li>
+    <li><a href="docs/ui-rules.html">UI rules</a></li>
+    <li><a href="docs/hatch-reference.md">Hatch reference</a></li>
+    <li><a href="history/v4/index.html">Archived version 4</a></li>
+  </ul>
+
+  <div class="note">
+    <strong>In the Increment Viewer repo.</strong> The CAAM progress page is <code>viewer.html?set=caam</code>. It loads the CAAM renders from this repo, so open it from a local copy of both repos, with Quick-Detail beside Increment-Viewer.
+  </div>
+</main>
+</body>
+</html>

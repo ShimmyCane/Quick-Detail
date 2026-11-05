@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Replay steps · Quick Detail</title>
+  <!-- Template for a step replay. tools/replay/build-replays.js writes one page per entry in docs/replays.json by
+       replacing the __STEPS_JSON__ placeholder with that entry's steps. Nothing about a building is written here. -->
+  <style>
+    :root { --paper: #fbfaf7; --ink: #1d1d1f; --muted: #6b6a66; --line: #d9d6cf; --chip: #efece5; --accent: #2a6f97; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --paper: #161616; --ink: #ecebe7; --muted: #a09e98; --line: #3a3936; --chip: #232321; --accent: #7fb6d6; }
+    }
+    :root[data-theme="dark"] { --paper: #161616; --ink: #ecebe7; --muted: #a09e98; --line: #3a3936; --chip: #232321; --accent: #7fb6d6; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px; }
+    h1 { font-size: 22px; margin: 4px 0; }
+    .muted { color: var(--muted); font-size: 14px; }
+    a { color: var(--accent); }
+    .layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+    ol.steps { list-style: none; padding: 0; margin: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    ol.steps li { border-bottom: 1px solid var(--line); }
+    ol.steps li:last-child { border-bottom: 0; }
+    ol.steps button { all: unset; box-sizing: border-box; display: block; width: 100%; padding: 10px 12px; cursor: pointer; }
+    ol.steps button:hover, ol.steps button:focus-visible { background: var(--chip); }
+    ol.steps button[aria-current="step"] { background: var(--chip); box-shadow: inset 3px 0 0 var(--accent); }
+    .tier { color: var(--muted); font-size: 12px; }
+    .stage { border: 1px solid var(--line); border-radius: 10px; padding: 14px; background: #fff; }
+    .stage img { display: block; width: 100%; height: auto; }
+    .controls { display: flex; gap: 8px; align-items: center; margin: 12px 0; flex-wrap: wrap; }
+    .btn { font: inherit; padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); cursor: pointer; }
+    .btn:disabled { opacity: .4; cursor: default; }
+    .panel { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 12px; }
+    .panel h2 { font-size: 15px; margin: 8px 0 4px; }
+    .panel ul { margin: 0 0 6px 18px; padding: 0; }
+    .draft { background: var(--chip); border-radius: 10px; padding: 10px 12px; margin-top: 16px; font-size: 14px; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="muted"><a href="../../files.html">Files</a></p>
+    <h1 id="title">Replay</h1>
+    <p class="muted" id="subtitle"></p>
+  </header>
+
+  <div class="layout">
+    <ol class="steps" id="steps"></ol>
+    <section>
+      <div class="stage">
+        <img id="render" alt="">
+      </div>
+      <div class="controls">
+        <button class="btn" id="prev" type="button">Previous</button>
+        <button class="btn" id="play" type="button">Play</button>
+        <button class="btn" id="next" type="button">Next</button>
+        <span class="muted" id="position"></span>
+      </div>
+      <div class="panel">
+        <h2 id="step-title"></h2>
+        <p class="muted" id="step-meta"></p>
+        <p id="step-description"></p>
+        <h2>Changes in this step</h2>
+        <ul id="step-changes"></ul>
+        <h2>Still open</h2>
+        <ul id="step-gaps"></ul>
+      </div>
+      <p class="draft" id="draft-note"></p>
+    </section>
+  </div>
+</main>
+
+<script id="steps-data" type="application/json">__STEPS_JSON__</script>
+<script>
+(function () {
+  var data = JSON.parse(document.getElementById('steps-data').textContent);
+  var steps = data.steps || [];
+  var index = 0, timer = null;
+
+  function el(id) { return document.getElementById(id); }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+  function li(text) { var n = document.createElement('li'); n.textContent = text; return n; }
+
+  el('title').textContent = data.name || 'Replay';
+  el('subtitle').textContent = (data.subtitle || '') + (data.scale ? ' Scale ' + data.scale + '.' : '');
+  el('draft-note').textContent = data.draft_note || '';
+
+  var list = el('steps');
+  steps.forEach(function (s, i) {
+    var item = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = '';
+    var strong = document.createElement('strong');
+    strong.textContent = s.n + '. ' + s.title;
+    var tier = document.createElement('div');
+    tier.className = 'tier';
+    tier.textContent = 'Tier ' + s.tier + ' · ' + s.items + ' items';
+    b.appendChild(strong);
+    b.appendChild(tier);
+    b.addEventListener('click', function () { show(i); stop(); });
+    item.appendChild(b);
+    list.appendChild(item);
+  });
+
+  function show(i) {
+    if (!steps.length) return;
+    index = Math.max(0, Math.min(steps.length - 1, i));
+    var s = steps[index];
+    el('render').src = s.render;
+    el('render').alt = s.title;
+    el('step-title').textContent = s.n + '. ' + s.title;
+    el('step-meta').textContent = 'Step ' + s.n + ' of ' + steps.length + ' · Tier ' + s.tier + ' · ' + s.items + ' items · ' + s.id;
+    el('step-description').textContent = s.description || '';
+    clear(el('step-changes')); (s.changes || []).forEach(function (t) { el('step-changes').appendChild(li(t)); });
+    clear(el('step-gaps')); (s.gaps || []).forEach(function (t) { el('step-gaps').appendChild(li(t)); });
+    el('position').textContent = (index + 1) + ' / ' + steps.length;
+    el('prev').disabled = index === 0;
+    el('next').disabled = index === steps.length - 1;
+    Array.prototype.forEach.call(list.querySelectorAll('button'), function (btn, j) {
+      if (j === index) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current');
+    });
+  }
+
+  function stop() { if (timer) { clearInterval(timer); timer = null; el('play').textContent = 'Play'; } }
+  el('prev').addEventListener('click', function () { show(index - 1); stop(); });
+  el('next').addEventListener('click', function () { show(index + 1); stop(); });
+  el('play').addEventListener('click', function () {
+    if (timer) { stop(); return; }
+    if (index >= steps.length - 1) show(0);
+    el('play').textContent = 'Pause';
+    timer = setInterval(function () {
+      if (index >= steps.length - 1) { stop(); return; }
+      show(index + 1);
+    }, 2500);
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>

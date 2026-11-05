@@ -233,3 +233,15 @@ The whole session, from the left-bar rework to the grid, the phone layout and th
 3. Screenshot the same views on both at 1200 and 390 px and compare the bytes. Blank out dates first.
 4. Watch the code map's "not used anywhere" list: it found `jpeg()`, which a plain word search had missed because of `'image/jpeg'` strings.
 
+
+---
+
+## 11. Rand Hall, Cornell, plans, elevations and isometric (AI draft, 5 Nov 2026)
+
+- **Request:** research Rand Hall as it stood in the 2000s, with no other input from the user. Draw plans, elevations and an isometric in at most 10 iterations, tracked in the edit-history viewer.
+- **References used:** none from the library, because there is no building-scale detail in it. The facts came from Wikipedia, Cornell Facilities, Architectural Record and Ochshorn (see `docs/rand-hall/README.md`).
+- **Questions asked:** none. The user asked for no input, so every assumption is listed in the README as open.
+- **Method:** `tools/rand-hall.js` writes one spec per iteration and builds each with `SK.authorDetail`. It then writes the iterations as recordings, one scene per iteration, separated by a gap longer than `SK.IDLE_MS` and a mark. The result is a lane tree: 0 for the 2-D views, 0.6 for the north-elevation option, and 0.7 for the isometric. The exported viewer is built the way Export HTML builds it.
+- **Went wrong first:** at 1/4"=1'-0" on a 200 ft building, paper-size notes cannot be read in a review render. Notes and dims are now at `text_scale` 2.5, with widths ×2.2. Mirrored views (the north elevation) put their level labels on the wrong side, so the labels now go outward based on the screen direction.
+- **Next time:** check each view's title position against the views drawn before it, because iterations 5 and 6 first put their titles in the same place. Ask for archive photos if the user can give them; the pane counts and the sawtooth direction are the weakest assumptions.
+- **Text passes (same day):** text needs a hierarchy, not one scale. At 1/4" titles read at 6×, callouts at 4×, labels at 3.5×. Note widths have to grow with the text, or every callout wraps into a column. Each view needs room below it for its title (about 2 lines of title text) and room above for a row of callouts. Check mirrored views and labels sitting on closely spaced levels (Grade and 1st floor) on their own.

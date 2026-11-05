@@ -84,3 +84,7 @@ Things to decide and review before the drafts are trusted. Nothing here is built
 - Each drawing carries a "verify before use" note. Before a detail leaves this tool, check it against the listed assembly (UL, GA or manufacturer data) and the local code.
 - Start the next round with the roofing drafts above, so we can settle the drafting standard before the rest are drawn.
 - Add items freely. Categories can be split later.
+
+## Site plans
+
+- [ ] Export site plans to DXF or DWG with layers (boundary, streets, buildings, parking, trees, labels, map underlay). Manual for now; the Lucas Museum draft is the first case.

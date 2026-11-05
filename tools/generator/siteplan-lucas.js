@@ -5,9 +5,9 @@
 // Increments 1-5 are tier 1 (concept), 6-8 are tier 2 (schematic), 9-10 are tier 3 (design development).
 // Writes one spec per increment, cumulative (increment 10 holds everything), to docs/examples/lucas-museum/.
 //
-// Geometry is laid out in feet (north up, y down) and written in real inches (feet x 12). Scale 1/4"=1'-0"
-// (factor 48): the app has no 1/16" scale, and this is the smallest one in SK.SCALES. Known from public sources: about 11 acres, Exposition Blvd to the north,
-// Figueroa St to the east. Everything else is a placeholder: parcel lines, street names, building footprint,
+// Geometry is laid out in feet (north up, y down) and written in real inches (feet x 12). Scale 1/16"=1'-0"
+// (factor 192, added to SK.SCALES for this site). Known from public sources: about 11 acres, Exposition Blvd
+// to the north, Figueroa St to the east. Everything else is a placeholder: parcel lines, street names, building footprint,
 // setbacks, parking counts, trees, contours and utilities. Those are marked "(verify)" or "(placeholder)".
 'use strict';
 const fs = require('fs');
@@ -54,7 +54,9 @@ const LEGEND = { x: 1080, y: 0, w: 260, h: 230 };
 // --- spec helpers, real inches ---
 const rectItem = (r, weight, pen) => ({ kind: 'rect', x: FT(r.x), y: FT(r.y), w: FT(r.w), h: FT(r.h), weight, pen });
 const lineItem = (pts, weight, pen) => ({ kind: 'line', pts: pts.map(p => [FT(p[0]), FT(p[1])]), weight, pen });
-const noteItem = (text, at, tip, wrap) => ({ kind: 'note', text, at: [FT(at[0]), FT(at[1])], width: wrap || Math.max(300, text.length * 70), tip: [FT(tip[0]), FT(tip[1])], arrow: 'filled' });
+// Note text keeps its paper size, so in real inches it grows with the scale: 1/16" is 4x the 1/4" size (192 / 48).
+const SCALE_MULT = 192 / 48;
+const noteItem = (text, at, tip, wrap) => ({ kind: 'note', text, at: [FT(at[0]), FT(at[1])], width: (wrap || Math.max(300, text.length * 70)) * SCALE_MULT, tip: [FT(tip[0]), FT(tip[1])], arrow: 'filled' });
 const circle = (cx, cy, r, n = 16) => {
   const pts = [];
   for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
@@ -169,14 +171,14 @@ const inc10 = () => {
   return items;
 };
 
-const titleNote = () => noteItem('LUCAS MUSEUM, ONE LUCAS PLAZA, EXPOSITION PARK, LOS ANGELES. DRAFT: VERIFY BEFORE USE.', [40, -160], [40, -140], 2700);
+const titleNote = () => noteItem('LUCAS MUSEUM, ONE LUCAS PLAZA, EXPOSITION PARK, LOS ANGELES. DRAFT: VERIFY BEFORE USE.', [40, -160], [40, -140], 1215);
 
 const header = (n, tier, title) => ({
   name: `LA Lucas Museum, site plan, increment ${n} of 10 (AI draft)`,
-  scale: '1/4"=1\'-0"',
+  scale: '1/16"=1\'-0"',
   ai_inferred: true,
   tags: ['AI', 'draft', 'site plan', 'Lucas Museum', 'Exposition Park', `tier ${tier}`, title],
-  text_scale: { title: 24, note: 24, small: 16, dim: 16 },
+  text_scale: { title: 14, note: 10, small: 8, dim: 8 },
   draft_note: 'Draft: verify before use. Schematic, not surveyed. Parcel shape, streets, footprint, parking, trees, contours and utilities are placeholders.'
 });
 

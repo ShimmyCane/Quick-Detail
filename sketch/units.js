@@ -14,6 +14,7 @@
     { key: '3/4"=1\'-0"', label: '3/4" = 1\'-0"', factor: 16 },
     { key: '1/2"=1\'-0"', label: '1/2" = 1\'-0"', factor: 24 },
     { key: '1/4"=1\'-0"', label: '1/4" = 1\'-0"', factor: 48 },
+    { key: '1/16"=1\'-0"', label: '1/16" = 1\'-0"', factor: 192 },
     { key: 'Full size', label: 'Full size', factor: 1 },
     { key: 'NTS', label: 'Not to scale', factor: 4 }    // NTS keeps 3"=1' graphics
   ];

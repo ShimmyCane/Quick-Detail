@@ -44,19 +44,19 @@ Scope: construction details only, such as wall, roof, window, door, floor, and p
 
 - When a drawing offers versions, give each a confidence score from 0 to 1 for how well it matches the reference, with one line on why. Use 0 for a placeholder where no reference exists.
 
-## Action
+## Steps
 
 1. **Validate the command.** Run the command check from Input. Stop if the subject is unclear and wait for the user.
-2. **Research** (only with `[research]`). Create a research folder for this detail at `docs/research/<name>/`. Then:
+2. **Research** (only with `[research]`). Create a research folder for this detail at `research/detail/<category>/<name>/`, where `<category>` is the kind of assembly, such as `hatch`, `roof`, `footing`, or `door`. Then:
    - Search the existing library for similar details, and read their JSON descriptions in `docs/examples/`.
    - Search online for published references.
    - Dissect the general conditions, the details, and the materials, and flag possible complexities such as rating, drainage, movement, and thermal bridging.
    - Review the findings with the user before drafting. Do not continue until they confirm.
-3. **Read the subject.** Check every component the detail uses against the library and the spec format. A component that does not exist is not drawn: report it and leave it out. Never invent one. Check that every hatch tracking number an item uses appears in the Hatches input. State the assumptions (layer thicknesses, substrate, fastener spacing, rating) and mark them as placeholders.
+3. **Read the subject.** Look at the existing examples for the same kind of assembly first: hatches, footings, doors, and so on. Check every component the detail uses against the library and the spec format. A component that does not exist is not drawn: report it and leave it out. Never invent one. Check that every hatch tracking number an item uses appears in the Hatches input. State the assumptions (layer thicknesses, substrate, fastener spacing, rating) and mark them as placeholders.
 4. **Plan the increments.** Write the steps in order: base layer (substrate and structure), then the next layer (insulation, membrane, cladding), then the last (flashing, sealant, notes and dimensions). Each increment repeats the earlier layers, so it stands alone.
    - With `[multi]`, first draft options A, B, C, and so on. Show them to the user and pick one before layering.
-5. **Write the generator** in `tools/<name>.js`, following the pattern of the existing generators in `tools/`. It writes one spec per increment to `docs/examples/<name>/`. Each spec has `name`, `scale`, `tags` (including `AI` and `draft`), `ai_inferred: true`, `text_scale`, `version`, and `items`. Every note has a `tip`. Run it and fix any spec that throws.
-6. **Check the notes.** `node tools/note-blocks.js docs/examples/<name>/*.json`. Fix any note the checker flags, by changing its width or its wording.
+5. **Write the generator** in `tools/generator/<kind>.js`. A construction detail uses `tools/generator/detail.js`, which holds the shared `writeIncrements` pattern. A site plan uses `tools/generator/siteplan.js`, and elevation, floor plan, and isometric generators get their own files in the same folder. Each generator writes one spec per increment to `docs/examples/<name>/`. Each spec has `name`, `scale`, `tags` (including `AI` and `draft`), `ai_inferred: true`, `text_scale`, `version`, and `items`. Every note has a `tip`. Run it and fix any spec that throws.
+6. **Check the notes.** `node tools/note-blocks.js docs/examples/<name>/*.json`. Fix any note the checker flags, by changing its width or its wording. The rules are in the header of `tools/note-blocks.js`, and in the `note_text_blocks` skill.
 7. **Draw into the canvas.** `node tools/draw-canvas.js docs/examples/<name>/*.json --out docs/<name>/review`. This opens the app in headless Chromium, calls `window.QuickDetail.draw(spec)` for each spec (the same path as the JSON panel's "Create detail"), fits the view, and saves a PNG per increment. Exit code 1 means a spec failed or the page threw. Fix it and run again.
 8. **Look at the renders.** Check orientation, that labels read, that notes do not sit on the drawing where they hide it, and that the draft note is there. Note any overlap in the report.
 9. **Track the versions in the increment viewer.** The increment viewer is its own repo (`viewer.html`). Each increment is one scene, `[multi]` options are branches, and the exported file is what gets shared. Write the version record to the increment viewer table in the Architecture Supabase project, as these details are architectural. This is a cloud write, so it runs only with the rights described under Output.
@@ -66,7 +66,7 @@ Scope: construction details only, such as wall, roof, window, door, floor, and p
 ## Output
 
 - **Canvas**: each increment is a new canvas detail, tagged `AI` and `draft`.
-- **Files**: specs and PNGs in `docs/examples/<name>/` and `docs/<name>/review/`, plus the research folder if one was made.
+- **Files**: specs and PNGs in `docs/examples/<name>/` and `docs/<name>/review/`, plus the research folder at `research/detail/<category>/<name>/` if one was made.
 - **Increment viewer**: version records for each increment, written to the increment viewer table in the Architecture project. `[multi]` options are recorded as branches, and the chosen option continues as the main line.
 - **Rights**: the cloud write in step 9 depends on the layout and on cloud rights. A `[default]` run writes its version records only after the user grants cloud rights for that run. A `[multi]` run asks for the rights before the first option is recorded. Without rights, the version records are kept as a local file and the skill reports that they were not written.
 - **3D model** (only with `[3d]`): built from the make3d repo, after v05.

@@ -1,6 +1,6 @@
 // Torrance Cultural Arts Center, site plan: an AI draft in 3 increments, for use as an architectural background.
 //
-//   node tools/torrance-cac.js
+//   node tools/generator/siteplan.js
 //
 // Writes one drawing spec per increment (cumulative: increment 3 holds everything):
 //   docs/examples/torrance-cac/increment-1-streets-boundary.json
@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const OUT = path.join(__dirname, '..', 'docs', 'examples', 'torrance-cac');
+const OUT = path.join(__dirname, '..', '..', 'docs', 'examples', 'torrance-cac');
 const IN = 12; // real inches per foot
 const FT = v => v * IN;
 

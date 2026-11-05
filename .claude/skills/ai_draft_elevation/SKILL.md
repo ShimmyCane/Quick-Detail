@@ -1,9 +1,9 @@
 ---
-name: elevation
-description: Draft an elevation on the canvas with the AI, built as massing first: proportion and scale before detail, from references ranked by confidence, in increments drawn at scale. Triggers a site plan for a complex site and a floor plan for a complex elevation. Use when the user says "elevation [subject] [views] [increments] [name] [flags]".
+name: ai_draft_elevation
+description: Draft an elevation on the canvas with the AI, built as massing first: proportion and scale before detail, from references ranked by confidence, in increments drawn at scale. Triggers a site plan for a complex site and a floor plan for a complex elevation. Use when the user says "ai_draft_elevation [subject] [views] [increments] [name] [flags]".
 ---
 
-# elevation
+# ai_draft_elevation
 
 Status: **best-guess draft, for review.** No generator exists yet. Shape follows `ai_draft_detail`.
 
@@ -11,7 +11,7 @@ Scope: elevations of a building, one face per view (north, south, east, west, or
 
 ## Input
 
-`elevation [subject] [views] [increments] [name] [flags]`
+`ai_draft_elevation [subject] [views] [increments] [name] [flags]`
 
 - **Subject**: the building and what it looks like, in words, for example "two-storey clinic, brick base, storefront at ground floor".
 - **Views**: which faces to draw, such as `south` or `north, south`. Default one view, the front. If references are given, the views they show are read from them (see Steps).
@@ -42,8 +42,8 @@ Check database access to `viewer_sets` and `viewer_scenes`.
 2. **Reference views.** For each reference, read the view it shows and record it. A reference with no clear view is asked about in validation.
 3. **Research** (only with `[research]`). Find images, diagrams, and drawings of similar buildings. Rank each one on confidence (0 to 1) for how well it matches the subject, with one line on why. Save in `research/detail/elevation/<name>/references/`, with a ranking note. If anything is unclear, ask the user before drawing.
 4. **Complexity check.** An elevation is complex if it has several roof planes, a setback, or more than three material changes. If it is:
-   - Trigger the site plan first, with `siteplan`, to set the site and orientation.
-   - Trigger the floor plan, with `floor_plan`, to set the openings and the levels.
+   - Trigger the site plan first, with `ai_draft_siteplan`, to set the site and orientation.
+   - Trigger the floor plan, with `ai_draft_floor_plan`, to set the openings and the levels.
    Do not draw the complex elevation until both are confirmed.
 5. **Plan the increments (massing first).**
    - Increment 1: the massing. The outline, the floor levels, and the roof line, to scale.
@@ -72,5 +72,5 @@ Check database access to `viewer_sets` and `viewer_scenes`.
 ## Open questions for review
 
 - What counts as "complex": is the three-material and three-roof-plane threshold right?
-- Should the complex-elevation trigger run `siteplan` and `floor_plan` automatically, or ask first?
+- Should the complex-elevation trigger run `ai_draft_siteplan` and `ai_draft_floor_plan` automatically, or ask first?
 - Is `1/8"=1'-0"` right for a whole face?

@@ -1,9 +1,9 @@
 ---
-name: siteplan
-description: Draft a site plan from an address: extract the address and boundaries, validate them against a map snippet, research and save references, draw the site at scale into the Quick Detail canvas in increments, QC it, and export a CAD/Revit-ready file with an optional map underlay (hidden by default). Use when the user says "siteplan [address or subject] [tier] [increments] [name] [flags]".
+name: ai_draft_siteplan
+description: Draft a site plan from an address: extract the address and boundaries, validate them against a map snippet, research and save references, draw the site at scale into the Quick Detail canvas in increments, QC it, and export a CAD/Revit-ready file with an optional map underlay (hidden by default). Use when the user says "ai_draft_siteplan [address or subject] [tier] [increments] [name] [flags]".
 ---
 
-# siteplan
+# ai_draft_siteplan
 
 Status: **best-guess draft, for review.** The generator `tools/generator/siteplan.js` exists as the Torrance draft. The export step does not exist yet.
 
@@ -11,7 +11,7 @@ Shape follows `ai_draft_detail`: understand input, validate the database, plan, 
 
 ## Input
 
-`siteplan [address or subject] [tier] [increments] [name] [flags]`
+`ai_draft_siteplan [address or subject] [tier] [increments] [name] [flags]`
 
 - **Address or subject**: a street address, APN, or a named site. The skill extracts the address, the parcel boundary, and the adjacent streets from it.
 - **Tier**: how much information to extract and draw. Default `[tier 1]`.
@@ -49,7 +49,13 @@ Stop at validation until the user confirms. `[no input]` skips the questions but
 ## Steps
 
 1. **Validate.** Run the Validation section. Wait for answers.
-2. **Research** (with `[research]` or with any tier 2 or 3 request). Gather references: parcel records, zoning map, public plans, and any survey. Save each reference, with its source and date, in `research/detail/siteplan/<name>/references/`. Save a short research note listing what was found and what is still missing.
+2. **Research** (with `[research]` or with any tier 2 or 3 request). Pull at least three independent sources for the same site, so the information can be cross-checked:
+   - **Google Maps**: satellite and street imagery of the site, through the Maps Static API with the session's key. Use it to see the site and its context, not as a source of dimensions.
+   - **OpenStreetMap**: the map, building footprints, roads, and parking, from OSM tiles or the Overpass API. Record the ODbL attribution with the reference.
+   - **Other site plans**: existing site plans, parcel maps, and survey sheets from the county assessor, the planning department, or a published project for the same site.
+   - Add any others that exist for the site (zoning map, flood map, utility map).
+
+   Save each pull, with its source, URL or file, date, and scale, in `research/detail/siteplan/<name>/references/`. Compare the sources against each other: where two disagree on a boundary, street, or footprint, record both and flag it for review. Save a short research note listing what was found, what disagrees, and what is still missing. Check each provider's terms of use before a pull, and do not keep a copy that its terms do not allow.
 3. **Extract.** Pull the information the tier needs, from the references and the validated boundary. Each item is one of: found (with source), derived (with method), or placeholder (marked). Nothing is invented.
 4. **Plan the increments.** Best guess, cumulative:
    - Increment 1: boundary and streets (the tier 1 base).
@@ -83,5 +89,7 @@ Stop at validation until the user confirms. `[no input]` skips the questions but
 ## Open questions for review
 
 - "maybe with snip": I read this as a map screenshot for the boundary check. Is that right?
+- Google Maps needs an API key in the session, and its terms limit storing and redrawing imagery. Is a Maps Static API key available, and is saving a reference image for review allowed for this use?
+- Which county or city sources are the "other site plans" for the sites you draw? These differ by jurisdiction.
 - Export format: DXF (opens in CAD and Revit) or DWG? Should the map underlay be an image layer or a separate file?
 - Is `1/16"=1'-0"` right as the default for every site, or should small sites default larger?

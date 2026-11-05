@@ -1,0 +1,1678 @@
+{
+ "name": "LA Lucas Museum, site plan, increment 7 of 10 (AI draft)",
+ "scale": "1/16\"=1'-0\"",
+ "ai_inferred": true,
+ "tags": [
+  "AI",
+  "draft",
+  "site plan",
+  "Lucas Museum",
+  "Exposition Park",
+  "tier 2",
+  "parking and access"
+ ],
+ "text_scale": {
+  "title": 14,
+  "note": 10,
+  "small": 8,
+  "dim": 8
+ },
+ "draft_note": "Draft: verify before use. Schematic, not surveyed. Parcel shape, streets, footprint, parking, trees, contours and utilities are placeholders.",
+ "items": [
+  {
+   "kind": "note",
+   "text": "LUCAS MUSEUM, ONE LUCAS PLAZA, EXPOSITION PARK, LOS ANGELES. DRAFT: VERIFY BEFORE USE.",
+   "at": [
+    480,
+    -1920
+   ],
+   "width": 4860,
+   "tip": [
+    480,
+    -1680
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": -720,
+   "w": 11520,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 11520,
+   "y": -720,
+   "w": 720,
+   "h": 7440,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": -720,
+   "y": 0,
+   "w": 720,
+   "h": 6000,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 6000,
+   "w": 11520,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 0,
+   "w": 11520,
+   "h": 6000,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "EXPOSITION BLVD (verify)",
+   "at": [
+    4080,
+    -1320
+   ],
+   "width": 6720,
+   "tip": [
+    5760,
+    -360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "FIGUEROA ST (verify)",
+   "at": [
+    12000,
+    2760
+   ],
+   "width": 5600,
+   "tip": [
+    11880,
+    3000
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "LEIGHTON ST (verify)",
+   "at": [
+    -3360,
+    2520
+   ],
+   "width": 5600,
+   "tip": [
+    -360,
+    3000
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SOUTH STREET (placeholder)",
+   "at": [
+    4080,
+    6660
+   ],
+   "width": 7280,
+   "tip": [
+    5760,
+    6360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SITE BOUNDARY (about 11 acres, placeholder shape)",
+   "at": [
+    240,
+    -1320
+   ],
+   "width": 13720,
+   "tip": [
+    720,
+    0
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 2976,
+   "y": 1416,
+   "w": 4848,
+   "h": 2688,
+   "weight": "w1",
+   "pen": "red"
+  },
+  {
+   "kind": "rect",
+   "x": 3000,
+   "y": 1440,
+   "w": 4800,
+   "h": 2640,
+   "weight": "w3",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "LUCAS MUSEUM (placeholder footprint)",
+   "at": [
+    8040,
+    1200
+   ],
+   "width": 10080,
+   "tip": [
+    7080,
+    1968
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 3336,
+   "y": 4056,
+   "w": 4128,
+   "h": 1128,
+   "weight": "w1",
+   "pen": "red"
+  },
+  {
+   "kind": "rect",
+   "x": 3360,
+   "y": 4080,
+   "w": 4080,
+   "h": 1080,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "PLAZA (placeholder)",
+   "at": [
+    7680,
+    4200
+   ],
+   "width": 5320,
+   "tip": [
+    7320,
+    4620
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     5760,
+     0
+    ],
+    [
+     5760,
+     1440
+    ]
+   ],
+   "weight": "w1",
+   "pen": "blue"
+  },
+  {
+   "kind": "note",
+   "text": "MAIN ENTRY (placeholder, verify)",
+   "at": [
+    6000,
+    720
+   ],
+   "width": 8960,
+   "tip": [
+    5784,
+    1080
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     12000,
+     9120
+    ],
+    [
+     12144,
+     8640
+    ],
+    [
+     12000,
+     8736
+    ],
+    [
+     11856,
+     8640
+    ],
+    [
+     12000,
+     9120
+    ]
+   ],
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "N",
+   "at": [
+    12000,
+    9360
+   ],
+   "width": 1200,
+   "tip": [
+    12000,
+    9120
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     720,
+     9600
+    ],
+    [
+     1920,
+     9600
+    ]
+   ],
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "100 FT",
+   "at": [
+    720,
+    9840
+   ],
+   "width": 1680,
+   "tip": [
+    1200,
+    9600
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 360,
+   "y": 360,
+   "w": 10800,
+   "h": 5280,
+   "weight": "w1",
+   "pen": "blue"
+  },
+  {
+   "kind": "note",
+   "text": "SETBACK 30 FT (placeholder, verify with code)",
+   "at": [
+    600,
+    600
+   ],
+   "width": 12600,
+   "tip": [
+    1080,
+    360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 696,
+   "y": 3576,
+   "w": 2088,
+   "h": 1968,
+   "weight": "w1",
+   "pen": "red"
+  },
+  {
+   "kind": "rect",
+   "x": 720,
+   "y": 3600,
+   "w": 2040,
+   "h": 1920,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     720,
+     3600
+    ],
+    [
+     720,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     720,
+     5520
+    ],
+    [
+     720,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     828,
+     3600
+    ],
+    [
+     828,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     828,
+     5520
+    ],
+    [
+     828,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     936,
+     3600
+    ],
+    [
+     936,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     936,
+     5520
+    ],
+    [
+     936,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1044,
+     3600
+    ],
+    [
+     1044,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1044,
+     5520
+    ],
+    [
+     1044,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1152,
+     3600
+    ],
+    [
+     1152,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1152,
+     5520
+    ],
+    [
+     1152,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1260,
+     3600
+    ],
+    [
+     1260,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1260,
+     5520
+    ],
+    [
+     1260,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1368,
+     3600
+    ],
+    [
+     1368,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1368,
+     5520
+    ],
+    [
+     1368,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1476,
+     3600
+    ],
+    [
+     1476,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1476,
+     5520
+    ],
+    [
+     1476,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1584,
+     3600
+    ],
+    [
+     1584,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1584,
+     5520
+    ],
+    [
+     1584,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1692,
+     3600
+    ],
+    [
+     1692,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1692,
+     5520
+    ],
+    [
+     1692,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1800,
+     3600
+    ],
+    [
+     1800,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1800,
+     5520
+    ],
+    [
+     1800,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1908,
+     3600
+    ],
+    [
+     1908,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     1908,
+     5520
+    ],
+    [
+     1908,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2016,
+     3600
+    ],
+    [
+     2016,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2016,
+     5520
+    ],
+    [
+     2016,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2124,
+     3600
+    ],
+    [
+     2124,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2124,
+     5520
+    ],
+    [
+     2124,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2232,
+     3600
+    ],
+    [
+     2232,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2232,
+     5520
+    ],
+    [
+     2232,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2340,
+     3600
+    ],
+    [
+     2340,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2340,
+     5520
+    ],
+    [
+     2340,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2448,
+     3600
+    ],
+    [
+     2448,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2448,
+     5520
+    ],
+    [
+     2448,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2556,
+     3600
+    ],
+    [
+     2556,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     2556,
+     5520
+    ],
+    [
+     2556,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     720,
+     3816
+    ],
+    [
+     2760,
+     3816
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     720,
+     5304
+    ],
+    [
+     2760,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     720,
+     4560
+    ],
+    [
+     2760,
+     4560
+    ]
+   ],
+   "weight": "w1",
+   "pen": "blue"
+  },
+  {
+   "kind": "rect",
+   "x": 8376,
+   "y": 3096,
+   "w": 2448,
+   "h": 2448,
+   "weight": "w1",
+   "pen": "red"
+  },
+  {
+   "kind": "rect",
+   "x": 8400,
+   "y": 3120,
+   "w": 2400,
+   "h": 2400,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8400,
+     3120
+    ],
+    [
+     8400,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8400,
+     5520
+    ],
+    [
+     8400,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8508,
+     3120
+    ],
+    [
+     8508,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8508,
+     5520
+    ],
+    [
+     8508,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8616,
+     3120
+    ],
+    [
+     8616,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8616,
+     5520
+    ],
+    [
+     8616,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8724,
+     3120
+    ],
+    [
+     8724,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8724,
+     5520
+    ],
+    [
+     8724,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8832,
+     3120
+    ],
+    [
+     8832,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8832,
+     5520
+    ],
+    [
+     8832,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8940,
+     3120
+    ],
+    [
+     8940,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8940,
+     5520
+    ],
+    [
+     8940,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9048,
+     3120
+    ],
+    [
+     9048,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9048,
+     5520
+    ],
+    [
+     9048,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9156,
+     3120
+    ],
+    [
+     9156,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9156,
+     5520
+    ],
+    [
+     9156,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9264,
+     3120
+    ],
+    [
+     9264,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9264,
+     5520
+    ],
+    [
+     9264,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9372,
+     3120
+    ],
+    [
+     9372,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9372,
+     5520
+    ],
+    [
+     9372,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9480,
+     3120
+    ],
+    [
+     9480,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9480,
+     5520
+    ],
+    [
+     9480,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9588,
+     3120
+    ],
+    [
+     9588,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9588,
+     5520
+    ],
+    [
+     9588,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9696,
+     3120
+    ],
+    [
+     9696,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9696,
+     5520
+    ],
+    [
+     9696,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9804,
+     3120
+    ],
+    [
+     9804,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9804,
+     5520
+    ],
+    [
+     9804,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9912,
+     3120
+    ],
+    [
+     9912,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     9912,
+     5520
+    ],
+    [
+     9912,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10020,
+     3120
+    ],
+    [
+     10020,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10020,
+     5520
+    ],
+    [
+     10020,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10128,
+     3120
+    ],
+    [
+     10128,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10128,
+     5520
+    ],
+    [
+     10128,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10236,
+     3120
+    ],
+    [
+     10236,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10236,
+     5520
+    ],
+    [
+     10236,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10344,
+     3120
+    ],
+    [
+     10344,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10344,
+     5520
+    ],
+    [
+     10344,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10452,
+     3120
+    ],
+    [
+     10452,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10452,
+     5520
+    ],
+    [
+     10452,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10560,
+     3120
+    ],
+    [
+     10560,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10560,
+     5520
+    ],
+    [
+     10560,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10668,
+     3120
+    ],
+    [
+     10668,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     10668,
+     5520
+    ],
+    [
+     10668,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8400,
+     3336
+    ],
+    [
+     10800,
+     3336
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8400,
+     5304
+    ],
+    [
+     10800,
+     5304
+    ]
+   ],
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     8400,
+     4320
+    ],
+    [
+     10800,
+     4320
+    ]
+   ],
+   "weight": "w1",
+   "pen": "blue"
+  },
+  {
+   "kind": "note",
+   "text": "SURFACE PARKING, 9x18 FT STALLS (count placeholder)",
+   "at": [
+    960,
+    3120
+   ],
+   "width": 14280,
+   "tip": [
+    1440,
+    3600
+   ],
+   "arrow": "filled"
+  }
+ ]
+}

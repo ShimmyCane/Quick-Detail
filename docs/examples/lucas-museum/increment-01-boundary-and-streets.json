@@ -1,0 +1,152 @@
+{
+ "name": "LA Lucas Museum, site plan, increment 1 of 10 (AI draft)",
+ "scale": "1/16\"=1'-0\"",
+ "ai_inferred": true,
+ "tags": [
+  "AI",
+  "draft",
+  "site plan",
+  "Lucas Museum",
+  "Exposition Park",
+  "tier 1",
+  "boundary and streets"
+ ],
+ "text_scale": {
+  "title": 14,
+  "note": 10,
+  "small": 8,
+  "dim": 8
+ },
+ "draft_note": "Draft: verify before use. Schematic, not surveyed. Parcel shape, streets, footprint, parking, trees, contours and utilities are placeholders.",
+ "items": [
+  {
+   "kind": "note",
+   "text": "LUCAS MUSEUM, ONE LUCAS PLAZA, EXPOSITION PARK, LOS ANGELES. DRAFT: VERIFY BEFORE USE.",
+   "at": [
+    480,
+    -1920
+   ],
+   "width": 4860,
+   "tip": [
+    480,
+    -1680
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": -720,
+   "w": 11520,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 11520,
+   "y": -720,
+   "w": 720,
+   "h": 7440,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": -720,
+   "y": 0,
+   "w": 720,
+   "h": 6000,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 6000,
+   "w": 11520,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 0,
+   "w": 11520,
+   "h": 6000,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "EXPOSITION BLVD (verify)",
+   "at": [
+    4080,
+    -1320
+   ],
+   "width": 6720,
+   "tip": [
+    5760,
+    -360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "FIGUEROA ST (verify)",
+   "at": [
+    12000,
+    2760
+   ],
+   "width": 5600,
+   "tip": [
+    11880,
+    3000
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "LEIGHTON ST (verify)",
+   "at": [
+    -3360,
+    2520
+   ],
+   "width": 5600,
+   "tip": [
+    -360,
+    3000
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SOUTH STREET (placeholder)",
+   "at": [
+    4080,
+    6660
+   ],
+   "width": 7280,
+   "tip": [
+    5760,
+    6360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SITE BOUNDARY (about 11 acres, placeholder shape)",
+   "at": [
+    240,
+    -1320
+   ],
+   "width": 13720,
+   "tip": [
+    720,
+    0
+   ],
+   "arrow": "filled"
+  }
+ ]
+}

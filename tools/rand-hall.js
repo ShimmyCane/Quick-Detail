@@ -630,7 +630,7 @@ function iter10() {
     for (let g = 20; g < L; g += 20) s.line([iso(g, ya, B.parapet), iso(g, y1, B.peak)], 'w1', 'grey');
   }
   s.note('Yellow brick piers, light stone bands wrapping the corner', iso(-40, 0, 56), 230, iso(40, 0, B.sills[2]), 'grey');
-  s.note('Steel daylight-factory sash, three units a bay', iso(70, 0, 70), 230, iso(70, 0, 24));
+  s.note('Steel daylight-factory sash, three units a bay', iso(96, -34, -14), 230, iso(70, 0, 24));
   s.note('Sawtooth roof, four teeth, glass facing north (assumed)', iso(150, 26, 78), 230, iso(150, 26, B.peak));
   s.note('East entry (assumed)', iso(L + 30, 0, -4), 130, east(10, 6));
   s.note('ITERATION 10 (FINAL): ISOMETRIC FROM THE SOUTHEAST, DETAILED. Piers, stone bands, sash with a pivoting vent, the east entry and the sawtooth roof. AI draft from published descriptions; verify against archive drawings and photos before use.',

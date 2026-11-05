@@ -115,6 +115,25 @@ const COLLIDE = function (src, laneIndex, pad) {
   });
   function hit(a, b) { return a.x < b.x + b.w + pad && b.x < a.x + a.w + pad && a.y < b.y + b.h + pad && b.y < a.y + a.h + pad; }
   function inRect(p, r) { return p[0] >= r.x - pad && p[0] <= r.x + r.w + pad && p[1] >= r.y - pad && p[1] <= r.y + r.h + pad; }
+  // Whether the segment a-b crosses rectangle r (grown by pad). Liang-Barsky clipping, so a long line that runs
+  // through a box with no point inside it is still found.
+  function segHits(a, b, r) {
+    const x0 = r.x - pad, x1 = r.x + r.w + pad, y0 = r.y - pad, y1 = r.y + r.h + pad;
+    let t0 = 0, t1 = 1; const dx = b[0] - a[0], dy = b[1] - a[1];
+    const clip = function (p, q) {
+      if (p === 0) return q >= 0;
+      const t = q / p;
+      if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+      else { if (t < t0) return false; if (t < t1) t1 = t; }
+      return true;
+    };
+    return clip(-dx, a[0] - x0) && clip(dx, x1 - a[0]) && clip(-dy, a[1] - y0) && clip(dy, y1 - a[1]) && t0 <= t1;
+  }
+  function lineHits(pts, r) {
+    if (pts.some(function (p) { return inRect(p, r); })) return true;
+    for (let i = 1; i < pts.length; i++) if (segHits(pts[i - 1], pts[i], r)) return true;
+    return false;
+  }
   const pairs = [];
   for (let i = 0; i < notes.length; i++) for (let j = i + 1; j < notes.length; j++) {
     const a = notes[i], b = notes[j];
@@ -125,9 +144,10 @@ const COLLIDE = function (src, laneIndex, pad) {
     let strokes = 0; const hatches = [];
     d.items.forEach(function (it) {
       if (it.kind === 'stroke') {
-        if (it.pts.some(function (p) { return n.rects.some(function (r) { return inRect(p, r); }); })) strokes++;
+        if (n.rects.some(function (r) { return lineHits(it.pts, r); })) strokes++;
       } else if (it.kind === 'hatch') {
-        if (it.pts.some(function (p) { return n.rects.some(function (r) { return inRect(p, r); }); })) hatches.push(it.id);
+        const closed = it.pts.concat([it.pts[0]]);
+        if (n.rects.some(function (r) { return lineHits(closed, r); })) hatches.push(it.id);
       }
     });
     if (strokes || hatches.length) over.push({ id: n.id, text: n.text, strokes: strokes, hatches: hatches });

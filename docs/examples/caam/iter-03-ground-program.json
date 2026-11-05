@@ -1,0 +1,444 @@
+{
+ "text_scale": {
+  "title": 9,
+  "note": 6,
+  "small": 5,
+  "dim": 5
+ },
+ "name": "CAAM iteration 3: ground program (AI draft)",
+ "scale": "1/4\"=1'-0\"",
+ "ai_inferred": true,
+ "tags": [
+  "AI",
+  "draft",
+  "CAAM",
+  "Los Angeles",
+  "museum",
+  "plan",
+  "elevation",
+  "isometric",
+  "iteration 3"
+ ],
+ "items": [
+  {
+   "kind": "line",
+   "pts": [
+    [
+     3752,
+     3844
+    ],
+    [
+     3752,
+     3124
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     3752,
+     3580
+    ],
+    [
+     4880,
+     3580
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4880,
+     4816
+    ],
+    [
+     4880,
+     3220
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4880,
+     3820
+    ],
+    [
+     5936,
+     3820
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4880,
+     3220
+    ],
+    [
+     5936,
+     3220
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     5936,
+     3820
+    ],
+    [
+     5936,
+     940
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4784,
+     4288
+    ],
+    [
+     4880,
+     4288
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     5936,
+     2764
+    ],
+    [
+     6164,
+     2764
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     5936,
+     1876
+    ],
+    [
+     6104,
+     1876
+    ]
+   ],
+   "weight": "w3"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4880,
+     3220
+    ],
+    [
+     4880,
+     1996
+    ]
+   ],
+   "weight": "w1",
+   "pen": "grey"
+  },
+  {
+   "kind": "note",
+   "text": "GALLERY 1 ~5,500 sf",
+   "at": [
+    3920,
+    3772
+   ],
+   "width": 358.84,
+   "tip": [
+    4040,
+    3892
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "GALLERY 2 ~8,400 sf",
+   "at": [
+    5120,
+    4180
+   ],
+   "width": 358.84,
+   "tip": [
+    5240,
+    4300
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "GALLERY 3 ~4,400 sf",
+   "at": [
+    5120,
+    3364
+   ],
+   "width": 358.84,
+   "tip": [
+    5240,
+    3484
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "THEATER GALLERY ~1,600 sf",
+   "at": [
+    3224,
+    3220
+   ],
+   "width": 469,
+   "tip": [
+    3464,
+    3628
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "LOBBY AND SHOP ~8,000 sf",
+   "at": [
+    3944,
+    2668
+   ],
+   "width": 450.64,
+   "tip": [
+    4280,
+    2980
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "SCULPTURE COURT ~12,800 sf",
+   "at": [
+    5120,
+    2356
+   ],
+   "width": 487.36,
+   "tip": [
+    5240,
+    2476
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "LOADING, STORAGE ~900 sf",
+   "at": [
+    4160,
+    4540
+   ],
+   "width": 450.64,
+   "tip": [
+    4784,
+    4660
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "Archive and research library",
+   "at": [
+    6344,
+    2980
+   ],
+   "width": 524.08,
+   "tip": [
+    6056,
+    3220
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "Administration offices",
+   "at": [
+    6344,
+    2164
+   ],
+   "width": 413.92,
+   "tip": [
+    6056,
+    2320
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "Conference and special events room",
+   "at": [
+    6344,
+    1420
+   ],
+   "width": 634.24,
+   "tip": [
+    6032,
+    1420
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4557.65,
+     2386.24
+    ],
+    [
+     4727.35,
+     2555.94
+    ],
+    [
+     4964.94,
+     2318.35
+    ],
+    [
+     4795.23,
+     2148.65
+    ],
+    [
+     4557.65,
+     2386.24
+    ]
+   ],
+   "weight": "w1",
+   "pen": "grey"
+  },
+  {
+   "kind": "note",
+   "text": "Stepped tower above (dashed)",
+   "at": [
+    2360,
+    3220
+   ],
+   "width": 524.08,
+   "tip": [
+    4761.29,
+    2352.3
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4820.69,
+     1902.58
+    ],
+    [
+     5669.22,
+     1054.05
+    ]
+   ],
+   "weight": "w1"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4846.14,
+     1928.03
+    ],
+    [
+     5694.67,
+     1079.5
+    ]
+   ],
+   "weight": "w1"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4871.6,
+     1953.49
+    ],
+    [
+     5720.13,
+     1104.96
+    ]
+   ],
+   "weight": "w1"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     4820.69,
+     1902.58
+    ],
+    [
+     4897.06,
+     1978.94
+    ]
+   ],
+   "weight": "w1"
+  },
+  {
+   "kind": "line",
+   "pts": [
+    [
+     5669.22,
+     1054.05
+    ],
+    [
+     5745.58,
+     1130.42
+    ]
+   ],
+   "weight": "w1"
+  },
+  {
+   "kind": "note",
+   "text": "Bleacher steps along the court glass (photo p1)",
+   "at": [
+    4520,
+    880
+   ],
+   "width": 450.64,
+   "tip": [
+    5270.41,
+    1503.77
+   ],
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "ITERATION 3: GROUND FLOOR PROGRAM (1/4\"=1'-0\"). Rooms from the published list, placed by assumption. Footprint ~46,400 sf traced; 44,000 sf published.",
+   "at": [
+    3200,
+    5860
+   ],
+   "width": 1469.62,
+   "tip": [
+    3920,
+    5500
+   ],
+   "text_class": "title"
+  }
+ ]
+}

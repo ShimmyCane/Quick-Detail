@@ -22,8 +22,22 @@ const SK = globalThis.SK;
 
 const SCALE = '1/4"=1\'-0"';
 const FT = 12;
-// Notes and dimensions at 2.5 times the paper size, so they read on a 200 ft building at 1/4". Note widths grow with them.
-const TEXT_SCALE = 2.5, WS = 2.2;
+// Text hierarchy, as multiples of the paper text size, so it reads on a 200 ft building at 1/4"=1'-0".
+// title: each view's ITERATION / view title. note: callouts. small: level marks, grid bubbles, section and north letters.
+// Note widths are written for 1x text and grow with their class.
+const TEXT = {
+  title: { scale: 6, width: 2.6 },
+  note: { scale: 4, width: 3.5 },
+  small: { scale: 3.5, width: 3.1 }
+};
+const DIM_SCALE = 3.5;
+const WS = TEXT.note.width;
+const TITLE_RE = /^(ITERATION|SECTION A,|EAST ELEVATION \()/;
+function textClass(text, width) {
+  if (TITLE_RE.test(text)) return 'title';
+  if (text.length <= 2 || / \(assumed\)$/.test(text) && width === 126) return 'small';
+  return 'note';
+}
 
 // ---------------------------------------------------------------------------------------------------------------
 // The building, in feet. X runs east along the long side, Y runs north, Z is up from grade.
@@ -64,11 +78,11 @@ const endOpenings = openings(endGrids, B.W, B.pier, B.corner);
 // Sheet layout, in real inches (y down). Each view has its own origin.
 // ---------------------------------------------------------------------------------------------------------------
 const SITE = { x: 0, y: 0, s: 0.25, e0: -260, n1: 230 };         // drawn at 1/4 the sheet scale
-const PLAN = { x: 2300, rows: { f1: 0, f3: 1000, roof: 2000 } };
-const ELEV = { x: 5600, south: 760, north: 1700 };
+const PLAN = { x: 2300, rows: { f1: 0, f3: 1300, roof: 2600 } };
+const ELEV = { x: 5600, south: 760, north: 1950 };
 const END = { x: 8700, base: 760 };
-const SECT = { x: 9900, base: 760 };
-const ISO = { x: 5600, y: 3300 };
+const SECT = { x: 10100, base: 760 };
+const ISO = { x: 5600, y: 3500 };
 
 // ---------------------------------------------------------------------------------------------------------------
 // A builder for one iteration's spec items.
@@ -80,7 +94,10 @@ function Sheet() {
     line: function (pts, weight, pen) { items.push({ kind: 'line', pts: pts, weight: weight || 'w2', pen: pen }); },
     poly: function (pts, weight, pen) { api.line(pts.concat([pts[0]]), weight, pen); },
     hatch: function (pattern, pts, pen, outline) { items.push({ kind: 'hatch', pattern: pattern, pts: pts, outline: !!outline, pen: pen }); },
-    note: function (text, at, width, tip, pen) { items.push({ kind: 'note', text: text, at: at, width: r(width * WS), tip: tip, pen: pen }); },
+    note: function (text, at, width, tip, pen, cls) {
+      const c = cls || textClass(text, width);
+      items.push({ kind: 'note', text: text, at: at, width: r(width * TEXT[c].width), tip: tip, pen: pen, text_class: c });
+    },
     dim: function (p1, p2, at, pen) { items.push({ kind: 'dim', mode: 'ortho', p1: p1, p2: p2, at: at, pen: pen }); }
   };
   return api;
@@ -128,7 +145,7 @@ function iter1() {
   const gorge2 = [];
   for (let e = -260; e <= 340; e += 30) gorge2.push(site(e, 205 + 10 * Math.sin(e / 38 + 1)));
   s.line(gorge2, 'w1', 'green');
-  s.note('Fall Creek gorge (schematic)', site(-240, 226), 260, site(-150, 205 + 10 * Math.sin(-150 / 38 + 1)), 'green');
+  s.note('Fall Creek gorge (schematic)', site(-250, 262), 160, site(-150, 205 + 10 * Math.sin(-150 / 38 + 1)), 'green');
   // University Avenue: a band bending up to the east.
   const road = function (e, off) { return site(e, 78 + off + 0.09 * (e + 260)); };
   const r1 = [], r2 = [];
@@ -140,7 +157,7 @@ function iter1() {
   s.hatch('brick', [site(0, 0), site(B.L, 0), site(B.L, B.W), site(0, B.W)], 'orange', true);
   s.poly([site(0, 0), site(B.L, 0), site(B.L, B.W), site(0, B.W)], 'w4');
   s.note('RAND HALL (1911, Gibb & Waltz). Three-story yellow-brick daylight-factory shop building; architecture studios in the 2000s. Footprint about 200 x 52 ft (assumed from 32,915 gsf over 3 floors and the 50 ft span).',
-    site(220, 52), 330, site(180, 30));
+    site(14, -6), 150, site(100, 10));
   // Sibley Hall to the south, with its dome at the middle.
   s.poly([site(-250, -60), site(250, -60), site(250, -112), site(-250, -112)], 'w3');
   s.poly([site(-22, -58), site(22, -58), site(22, -114), site(-22, -114)], 'w2');
@@ -154,7 +171,7 @@ function iter1() {
   // The gap where Milstein Hall was later built.
   s.poly([site(-30, -55), site(-4, -55), site(-4, 70), site(-30, 70)], 'w1', 'red');
   s.note('Gap between Foundry, Sibley and Rand: later the site of Milstein Hall (OMA, 2011). Open in the 2000s.',
-    site(-250, -10), 280, site(-17, 0), 'red');
+    site(-250, -8), 75, site(-17, 0), 'red');
   // The Arts Quad.
   s.poly([site(-200, -140), site(200, -140), site(200, -250), site(-200, -250)], 'w1', 'green');
   s.note('Arts Quad', site(-30, -190), 120, site(0, -200), 'green');
@@ -266,10 +283,10 @@ function iter2() {
   planLabels(s, 'f1', 'ITERATION 2: STRUCTURAL GRID AND FIRST FLOOR PLAN (1/4"=1\'-0"). 10 bays at 20 ft (assumed) between brick piers; one line of steel columns on grid B; stairs at both ends; doors in the end walls (assumed). Use in the 2000s: shop and review space (assumed).', [
     { text: 'Shop / review space (assumed). Open floor, steel columns at 20 ft.', at: [60, 44], tip: [70, 30], width: 300 },
     { text: 'West stair (assumed position)', at: [14, 46], tip: [6, 44], width: 160 },
-    { text: 'East stair (removed in the 2017-19 renovation)', at: [150, 46], tip: [193, 44], width: 200 },
+    { text: 'East stair (removed in the 2017-19 renovation)', at: [122, 47], tip: [193, 44], width: 150 },
     { text: 'Brick pier, 2\'-6" (assumed)', at: [86, 10], tip: [80, 1], width: 160, pen: 'orange' },
     { text: 'Steel sash, full bay between piers', at: [112, 10], tip: [110, 0.75], width: 190, pen: 'blue' },
-    { text: 'Entry, pair of doors (assumed)', at: [-34, 16], tip: [0, 13], width: 160 }
+    { text: 'Entry, pair of doors (assumed)', at: [-52, 18], tip: [0, 13], width: 120 }
   ]);
   return s;
 }
@@ -341,8 +358,10 @@ function levelMarks(s, map, len, right) {
     const a = map(right ? len + 2 : -2, mk[1]), b = map(right ? len + 8 : -8, mk[1]);
     s.line([a, b], 'w1', 'grey');
     // Labels go outward from the building, whichever way the view is mirrored.
-    const at = b[0] > a[0] ? [b[0] + 4, b[1] - 10] : [b[0] - 126 * WS - 4, b[1] - 10];
-    s.note(mk[0] + ' (assumed)', at, 126, b, 'grey');
+    // Grade sits 1'-6" under the first floor, so its label drops below the line instead of above it.
+    const dy = mk[1] === 0 ? 6 : -10;
+    const at = b[0] > a[0] ? [b[0] + 4, b[1] + dy] : [b[0] - 126 * TEXT.small.width - 4, b[1] + dy];
+    s.note(mk[0] + ' (assumed)', at, 126, b, 'grey', 'small');
   });
 }
 
@@ -416,12 +435,12 @@ function iter6() {
   const m = southEl;
   levelMarks(s, m, B.L, true);
   s.dim(m(80, -3), m(100, -3), m(90, -4.5));
-  s.note('Yellow brick piers and spandrels', m(22, 52), 170, m(21, 15), 'orange');
-  s.note('Steel daylight-factory sash: three units an opening, panes about 1\'-6" x 1\'-6", a pivoting vent in the middle unit (pane count assumed)', m(46, 54), 300, m(50, 22), 'blue');
-  s.note('Light stone: water table, sill bands, cornice band, coping', m(112, 52), 230, m(120, 40.7), 'grey');
-  s.note('Sawtooth ridge just over the parapet (assumed)', m(160, 52), 180, m(170, B.peak), 'grey');
+  s.note('Yellow brick piers and spandrels', m(0, 61), 110, m(21, 15), 'orange');
+  s.note('Steel daylight-factory sash: three units an opening, panes about 1\'-6" x 1\'-6", a pivoting vent in the middle unit (pane count assumed)', m(38, 61), 190, m(50, 22), 'blue');
+  s.note('Light stone: water table, sill bands, cornice band, coping', m(104, 61), 130, m(120, 40.7), 'grey');
+  s.note('Sawtooth ridge just over the parapet (assumed)', m(152, 61), 130, m(170, B.peak), 'grey');
   s.note('ITERATION 6: SOUTH ELEVATION, SECOND PASS (1/4"=1\'-0"). Piers, stone bands, brick spandrels and the steel sash drawn. This is the face chosen for the isometric.',
-    m(0, -19), 900, m(14, 0));
+    m(0, -24), 900, m(14, 0));
   return s;
 }
 
@@ -464,7 +483,7 @@ function iter7() {
     s.line([e(yAt43, B.parapet), e(y1, B.peak), e(y1, B.parapet)], 'w2');
   }
   s.dim(e(0, -6), e(B.W, -6), e(B.W / 2, -10));
-  s.note('EAST ELEVATION (1/4"=1\'-0"). Three openings wide on two piers and a centre pier; entry doors in the south bay (assumed); the sawtooth profile shows over the parapet.', e(0, -14), 560, e(10, 0));
+  s.note('EAST ELEVATION (1/4"=1\'-0"). Three openings wide on two piers and a centre pier; entry doors in the south bay (assumed); the sawtooth profile shows over the parapet.', e(0, -14), 420, e(10, 0));
   s.note('Sawtooth ends, glass facing north (to the right)', e(2, 54), 230, e(1 + toothLen, B.peak));
   s.note('Entry (assumed)', e(-26, 14), 110, e(8, 6));
 
@@ -507,10 +526,10 @@ function iter7() {
   s.note('2nd floor studio', x(8, 21.5), 140, x(14, 20));
   s.note('1st floor shop / review (assumed)', x(8, 8), 170, x(14, 6));
   s.note('Steel column on grid B, steel beams under concrete slabs (sizes assumed)', x(29, 21.5), 220, x(B.colY, 13.6));
-  s.note('Brick bearing piers and spandrels, steel sash', x(-34, 36), 140, x(0.7, 34));
-  s.note('SECTION A, LOOKING WEST (1/4"=1\'-0"). The space Tschapeller later opened to a ~40 ft volume by taking out the third floor and roof.', x(0, -14), 560, x(10, 0));
+  s.note('Brick bearing piers and spandrels, steel sash', x(-36, 39), 90, x(0.7, 34));
+  s.note('SECTION A, LOOKING WEST (1/4"=1\'-0"). The space Tschapeller later opened to a ~40 ft volume by taking out the third floor and roof.', x(0, -14), 520, x(10, 0));
   levelMarks(s, x, B.W, true);
-  s.note('ITERATION 7: EAST ELEVATION AND CROSS SECTION A.', e(0, -24), 400, e(4, -14));
+  s.note('ITERATION 7: EAST ELEVATION AND CROSS SECTION A.', e(0, -29), 400, e(4, -14));
   return s;
 }
 
@@ -646,10 +665,11 @@ const LANES = {
 
 // The sheet items for one iteration, with ids that stay unique across the whole tree.
 function buildIter(it) {
-  const spec = { text_scale: TEXT_SCALE, name: 'Rand Hall iteration ' + it.n + ': ' + it.file.replace(/-/g, ' ') + ' (AI draft)', scale: SCALE, ai_inferred: true, tags: TAGS.concat(['iteration ' + it.n]), items: it.fn().items };
+  const spec = { text_scale: { title: TEXT.title.scale, note: TEXT.note.scale, small: TEXT.small.scale, dim: DIM_SCALE }, name: 'Rand Hall iteration ' + it.n + ': ' + it.file.replace(/-/g, ' ') + ' (AI draft)', scale: SCALE, ai_inferred: true, tags: TAGS.concat(['iteration ' + it.n]), items: it.fn().items };
   const made = SK.authorDetail(spec);
-  made.items.forEach(function (x) {
-    if (x.kind === 'note' || x.kind === 'dim') x.size = SK.PAPER.text * TEXT_SCALE;
+  made.items.forEach(function (x, i) {
+    if (x.kind === 'note') x.size = SK.PAPER.text * TEXT[spec.items[i].text_class || 'note'].scale;
+    if (x.kind === 'dim') x.size = SK.PAPER.text * DIM_SCALE;
     x.id = 'i' + it.n + '-' + x.id;
     if (x.leaders) x.leaders.forEach(function (l, k) { l.id = x.id + 'l' + k; });
   });

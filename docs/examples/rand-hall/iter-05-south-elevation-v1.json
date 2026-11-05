@@ -1,5 +1,10 @@
 {
- "text_scale": 2.5,
+ "text_scale": {
+  "title": 6,
+  "note": 4,
+  "small": 3.5,
+  "dim": 3.5
+ },
  "name": "Rand Hall iteration 5: south elevation v1 (AI draft)",
  "scale": "1/4\"=1'-0\"",
  "ai_inferred": true,
@@ -948,11 +953,12 @@
     5600,
     928
    ],
-   "width": 1980,
+   "width": 2340,
    "tip": [
     5720,
     760
-   ]
+   ],
+   "text_class": "title"
   }
  ]
 }

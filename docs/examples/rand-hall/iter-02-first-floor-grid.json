@@ -1,5 +1,10 @@
 {
- "text_scale": 2.5,
+ "text_scale": {
+  "title": 6,
+  "note": 4,
+  "small": 3.5,
+  "dim": 3.5
+ },
  "name": "Rand Hall iteration 2: first floor grid (AI draft)",
  "scale": "1/4\"=1'-0\"",
  "ai_inferred": true,
@@ -36,12 +41,13 @@
     2294,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     2300,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -65,12 +71,13 @@
     2534,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     2540,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -94,12 +101,13 @@
     2774,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     2780,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -123,12 +131,13 @@
     3014,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     3020,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -152,12 +161,13 @@
     3254,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     3260,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -181,12 +191,13 @@
     3494,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     3500,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -210,12 +221,13 @@
     3734,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     3740,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -239,12 +251,13 @@
     3974,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     3980,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -268,12 +281,13 @@
     4214,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     4220,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -297,12 +311,13 @@
     4454,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     4460,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -326,12 +341,13 @@
     4694,
     -182
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     4700,
     -120
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -355,12 +371,13 @@
     2098,
     618
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     2180,
     624
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -384,12 +401,13 @@
     2098,
     306
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     2180,
     312
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -413,12 +431,13 @@
     2098,
     -6
    ],
-   "width": 35.2,
+   "width": 49.6,
    "tip": [
     2180,
     0
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "hatch",
@@ -3557,11 +3576,12 @@
     4978,
     -26
    ],
-   "width": 44,
+   "width": 62,
    "tip": [
     4988,
     0
-   ]
+   ],
+   "text_class": "small"
   },
   {
    "kind": "note",
@@ -3570,11 +3590,12 @@
     2300,
     888
    ],
-   "width": 1980,
+   "width": 2340,
    "tip": [
     2348,
     648
-   ]
+   ],
+   "text_class": "title"
   },
   {
    "kind": "note",
@@ -3583,11 +3604,12 @@
     3020,
     96
    ],
-   "width": 660,
+   "width": 1050,
    "tip": [
     3140,
     264
-   ]
+   ],
+   "text_class": "note"
   },
   {
    "kind": "note",
@@ -3596,24 +3618,26 @@
     2468,
     72
    ],
-   "width": 352,
+   "width": 560,
    "tip": [
     2372,
     96
-   ]
+   ],
+   "text_class": "note"
   },
   {
    "kind": "note",
    "text": "East stair (removed in the 2017-19 renovation)",
    "at": [
-    4100,
-    72
+    3764,
+    60
    ],
-   "width": 440,
+   "width": 525,
    "tip": [
     4616,
     96
-   ]
+   ],
+   "text_class": "note"
   },
   {
    "kind": "note",
@@ -3622,12 +3646,13 @@
     3332,
     504
    ],
-   "width": 352,
+   "width": 560,
    "tip": [
     3260,
     612
    ],
-   "pen": "orange"
+   "pen": "orange",
+   "text_class": "note"
   },
   {
    "kind": "note",
@@ -3636,25 +3661,27 @@
     3644,
     504
    ],
-   "width": 418,
+   "width": 665,
    "tip": [
     3620,
     615
    ],
-   "pen": "blue"
+   "pen": "blue",
+   "text_class": "note"
   },
   {
    "kind": "note",
    "text": "Entry, pair of doors (assumed)",
    "at": [
-    1892,
-    432
+    1676,
+    408
    ],
-   "width": 352,
+   "width": 420,
    "tip": [
     2300,
     468
-   ]
+   ],
+   "text_class": "note"
   }
  ]
 }

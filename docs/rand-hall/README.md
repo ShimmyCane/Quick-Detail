@@ -25,6 +25,13 @@ The sheet scale is 1/4"=1'-0". Each iteration's spec is in `docs/examples/rand-h
 
 Rebuild with `node tools/rand-hall.js`, then `node tools/rand-hall-render.js`.
 
+## Text visibility passes
+
+The first build used paper-size text, which cannot be read at 1/4"=1'-0" on a 200 ft building. Two passes fixed it for the 2-D sketches (iterations 1–8). The renders of each are kept in `review/text-pass-0` (before), `review/text-pass-1` and `review/text-pass-2`.
+
+1. **Pass 1, a text hierarchy.** Titles are 6× the paper text size, callouts 4×, and small labels (levels, grid bubbles, section and north letters) 3.5×. Dimensions are 3.5×. Note widths grow with their class. Plans and elevations are spaced further apart to make room for the larger titles.
+2. **Pass 2, the overlaps that pass 1 showed.** The site callouts are narrower and sit clear of the plan and East Avenue. The south elevation callouts are set in one row above the parapet. The Grade level label drops below its line. The plan's entry and east-stair notes are moved off the walls. The section moves right, so its titles and the pier note no longer meet the east elevation.
+
 ## What the sources say
 
 - Built in 1911 to designs by Gibb & Waltz, in a Neo-Classical style. Gross area 32,915 sq ft, net 26,976 sq ft (Cornell Facilities).

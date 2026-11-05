@@ -1,5 +1,10 @@
 {
- "text_scale": 2.5,
+ "text_scale": {
+  "title": 6,
+  "note": 4,
+  "small": 3.5,
+  "dim": 3.5
+ },
  "name": "Rand Hall iteration 6: south elevation v2 (AI draft)",
  "scale": "1/4\"=1'-0\"",
  "ai_inferred": true,
@@ -9297,14 +9302,15 @@
    "text": "Grade 0'-0\" (assumed)",
    "at": [
     8100,
-    750
+    766
    ],
-   "width": 277.2,
+   "width": 390.6,
    "tip": [
     8096,
     760
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -9328,12 +9334,13 @@
     8100,
     732
    ],
-   "width": 277.2,
+   "width": 390.6,
    "tip": [
     8096,
     742
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -9357,12 +9364,13 @@
     8100,
     564
    ],
-   "width": 277.2,
+   "width": 390.6,
    "tip": [
     8096,
     574
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -9386,12 +9394,13 @@
     8100,
     408
    ],
-   "width": 277.2,
+   "width": 390.6,
    "tip": [
     8096,
     418
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -9415,12 +9424,13 @@
     8100,
     270
    ],
-   "width": 277.2,
+   "width": 390.6,
    "tip": [
     8096,
     280
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "line",
@@ -9444,12 +9454,13 @@
     8100,
     234
    ],
-   "width": 277.2,
+   "width": 390.6,
    "tip": [
     8096,
     244
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "small"
   },
   {
    "kind": "dim",
@@ -9471,70 +9482,75 @@
    "kind": "note",
    "text": "Yellow brick piers and spandrels",
    "at": [
-    5864,
-    136
+    5600,
+    28
    ],
-   "width": 374,
+   "width": 385,
    "tip": [
     5852,
     580
    ],
-   "pen": "orange"
+   "pen": "orange",
+   "text_class": "note"
   },
   {
    "kind": "note",
    "text": "Steel daylight-factory sash: three units an opening, panes about 1'-6\" x 1'-6\", a pivoting vent in the middle unit (pane count assumed)",
    "at": [
-    6152,
-    112
+    6056,
+    28
    ],
-   "width": 660,
+   "width": 665,
    "tip": [
     6200,
     496
    ],
-   "pen": "blue"
+   "pen": "blue",
+   "text_class": "note"
   },
   {
    "kind": "note",
    "text": "Light stone: water table, sill bands, cornice band, coping",
    "at": [
-    6944,
-    136
+    6848,
+    28
    ],
-   "width": 506,
+   "width": 455,
    "tip": [
     7040,
     271.6
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "note"
   },
   {
    "kind": "note",
    "text": "Sawtooth ridge just over the parapet (assumed)",
    "at": [
-    7520,
-    136
+    7424,
+    28
    ],
-   "width": 396,
+   "width": 455,
    "tip": [
     7640,
     208
    ],
-   "pen": "grey"
+   "pen": "grey",
+   "text_class": "note"
   },
   {
    "kind": "note",
    "text": "ITERATION 6: SOUTH ELEVATION, SECOND PASS (1/4\"=1'-0\"). Piers, stone bands, brick spandrels and the steel sash drawn. This is the face chosen for the isometric.",
    "at": [
     5600,
-    988
+    1048
    ],
-   "width": 1980,
+   "width": 2340,
    "tip": [
     5768,
     760
-   ]
+   ],
+   "text_class": "title"
   }
  ]
 }

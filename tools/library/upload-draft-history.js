@@ -12,11 +12,14 @@
 //   3. Writes sketch_versions rows 1..N, one per increment (label = increment title, file_path = its spec).
 //   4. Optionally soft-deletes older per-increment rows (deleted_at = now), so they sit in the cloud recycle bin.
 //
-// Dry run by default: it prints the plan and writes nothing. --upload needs these environment variables:
-//   SUPABASE_URL          e.g. https://<project>.supabase.co  (the Architecture project)
-//   SUPABASE_SERVICE_KEY  a service role key for that project; keep it out of the repo
+// Dry run by default: it prints the plan and writes nothing. --upload sends the writes to the Architecture project.
+// No key is read from the environment. The key is a network secret saved on the environment for
+// xabgankckrcuhcgdolrg.supabase.co, and the proxy adds it to each request. SUPABASE_URL is optional.
 // Writes go only to sketch_details and sketch_versions. Nothing else is touched.
 'use strict';
+
+const SUPABASE_HOST = 'https://xabgankckrcuhcgdolrg.supabase.co';
+const PROXY_PLACEHOLDER = 'proxy-injected';
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
@@ -66,12 +69,14 @@ async function drawAll(files) {
 }
 
 async function rest(method, table, body, query = '') {
-  const url = `${process.env.SUPABASE_URL}/rest/v1/${table}${query}`;
+  // The environment's network proxy holds the Architecture key (saved as a network secret for this host) and
+  // overwrites the Authorization header on the way out. The value here is only a placeholder.
+  const url = `${process.env.SUPABASE_URL || SUPABASE_HOST}/rest/v1/${table}${query}`;
   const res = await fetch(url, {
     method,
     headers: {
-      apikey: process.env.SUPABASE_SERVICE_KEY,
-      Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
+      apikey: PROXY_PLACEHOLDER,
+      Authorization: `Bearer ${PROXY_PLACEHOLDER}`,
       'Content-Type': 'application/json',
       Prefer: 'return=representation'
     },
@@ -123,8 +128,7 @@ async function rest(method, table, body, query = '') {
   history.forEach(h => console.log(`  v${h.version}  ${h.items} items  ${h.title}`));
   if (replaceRows.length) console.log(`soft-delete (recycle bin): ${replaceRows.join(', ')}`);
 
-  if (!upload) { console.log('dry run: nothing written. Add --upload with SUPABASE_URL and SUPABASE_SERVICE_KEY to write.'); return; }
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) throw new Error('set SUPABASE_URL and SUPABASE_SERVICE_KEY');
+  if (!upload) { console.log('dry run: nothing written. Add --upload to write to the Architecture project.'); return; }
 
   const [saved] = await rest('POST', 'sketch_details', row);
   console.log('saved sketch_details', saved.id);

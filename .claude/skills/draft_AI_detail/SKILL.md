@@ -76,3 +76,4 @@ Read the log at the start of Stage 3, so earlier lessons shape the assumptions.
 - Never claim a detail is code-compliant. Every draft is for review against the listed assembly and the local code.
 - Never write to the cloud library from this skill.
 - Keep the AI tag on every file, even after the user has accepted a variant.
+- Lay out every note as a text block of 4 to 10 words a line (see `note_text_blocks`). Run `node tools/note-blocks.js` on the spec before rendering.

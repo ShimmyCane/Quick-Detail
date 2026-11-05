@@ -57,3 +57,4 @@ Numbers are tracked in `docs/hatch/palette-plan.md`. Keep them the same.
 - Never claim a detail is code-compliant, or that a hatch matches a listed assembly. Every draft carries a "Draft: verify before use" note.
 - If the insert fails, report the error and leave no partial row. A failed insert is checked before retrying.
 - Commit only when the user asks. The spec and render are the review copy.
+- Lay out every note as a text block of 4 to 10 words a line (see `note_text_blocks`). Run `node tools/note-blocks.js` on the spec before rendering.

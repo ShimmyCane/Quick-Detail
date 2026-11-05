@@ -285,3 +285,14 @@ Set by the user on 5 Nov 2026: *rules are made to be questioned. In drawing, gra
 - **Question assumed limits too.** The skills and the to-do file treated the cloud row as too large to save. The database takes rows up to about 272 KB (commit 9018ba9). The limit I hit was my SQL channel, not the database. Check where a limit comes from before designing around it.
 - **Put settings where the file is.** The Rand Hall generator set text sizes after building the spec, so the spec alone did not reproduce the drawing. `sketch/author.js` now reads `text_scale` (a number, or by class: title, note, small, dim) and each note's `text_class`. The generator relies on the spec, and a rebuild reproduces all 212 notes exactly.
 - **What changed.** The spec reader's tests cover the defaults, each class, a number, and the two refusals (an unknown class, a non-positive size). The note checker stays advisory. `--strict` is opt-in.
+
+---
+
+## 14. CAAM, Exposition Park: plans, elevations and isometric with no input (AI draft, 5 Nov 2026)
+
+- **Request:** research the California African American Museum, then draw a plan, elevations and an isometric in 10 iterations. Log the actions, make incremental view pages, and merge. No further input, so every decision and fix was made unasked (`docs/caam/LOG.md`).
+- **When a reference host fails, find another way to the same fact.** Overpass dropped every connection, so the footprint was traced from OSM tiles instead. The traced area (46,406 sf) was checked against the published 44,000 sf. The Commons API rate-limited, so thumbnails came from upload.wikimedia.org by the filename's MD5. Wikimedia wants a descriptive User-Agent; never use the user's email there.
+- **One model, many views.** The plaza and east elevations and the isometric come from one block model. They are drawn far to near with solid-tone faces (a `steel` hatch in a hex pen), so nearer faces hide farther ones. Each new view is then a projection, not a new drawing.
+- **The same bugs as Rand Hall came back:** titles on top of each other, and labels on the wrong end of a view. They are now part of the review: check each title against the views before it, and check each view's axis when placing marks.
+- **Fit note widths in the generator.** Hand widths left 36 of 57 notes out of range. A word-count estimate fixed 32. The rest took the widths `note-blocks.js` measured, because the page wraps by measured width.
+- **Text size goes with the building.** At 250 × 349 ft, the Rand Hall hierarchy was too small, so this sheet uses it at 1.5×.

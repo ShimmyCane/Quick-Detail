@@ -40,7 +40,7 @@ Validation runs first, before any drawing, and asks everything in one batch:
 
 1. **Command.** Restate the parsed command: subject, increments, versions, layout, name, category, hatches, and flags. Mark each as given or defaulted. Confirm it.
 2. **Clarifications.** Ask any question the command leaves open: unclear subject, scupper or penetration location, a range that needs narrowing, a hatch missing from the registry, or a name to propose. Ask them together, not one at a time.
-3. **Database.** Cloud rights are assumed to be given by default. Check that the Architecture project is reachable and that the increment viewer table exists. If the table is missing or unreachable, say so and offer the local fallback under Output. Do not continue to a cloud write without confirming access.
+3. **Database.** Cloud rights are assumed to be given by default. Check that the Architecture project is reachable and that the viewer tables `viewer_sets` and `viewer_scenes` exist. If they are missing or unreachable, say so and offer the local fallback under Output. Do not continue to a cloud write without confirming access.
 4. **Repos.** Check the increment viewer repo is in the session for step 9. If `[3d]` is set, check the make3d repo too.
 
 Stop at validation until the user confirms. `[no input]` skips the questions and takes defaults, but still checks database access.
@@ -68,7 +68,7 @@ Stop at validation until the user confirms. `[no input]` skips the questions and
 6. **Check the notes.** `node tools/note-blocks.js docs/examples/<name>/*.json`. Fix any note the checker flags, by changing its width or its wording. The rules are in the header of `tools/note-blocks.js`, and in the `note_text_blocks` skill.
 7. **Draw into the canvas.** `node tools/draw-canvas.js docs/examples/<name>/*.json --out research/detail/<category>/<name>/review`. This opens the app in headless Chromium, calls `window.QuickDetail.draw(spec)` for each spec (the same path as the JSON panel's "Create detail"), fits the view, and saves a PNG per increment. Exit code 1 means a spec failed or the page threw. Fix it and run again.
 8. **Look at the renders.** Check orientation, that labels read, that notes do not sit on the drawing where they hide it, and that the draft note is there. Note any overlap in the report.
-9. **Track the versions in the increment viewer.** The increment viewer is its own repo (`viewer.html`). Each increment is one scene, `[multi]` options are branches, and the exported file is what gets shared. Write the version record to the increment viewer table in the Architecture Supabase project, as these details are architectural. Cloud rights were confirmed at validation.
+9. **Track the versions in the increment viewer.** The increment viewer is its own repo (`viewer.html`). Each increment is one scene, `[multi]` options are branches, and the exported file is what gets shared. Write the version record to the viewer tables in the Architecture Supabase project, as these details are architectural. Cloud rights were confirmed at validation. Each detail is one row in `viewer_sets` (`set_id` from the detail's name and category, with `label`, `title`, and `subtitle` taken from the detail). Each increment is one row in `viewer_scenes` under that `set_id`, with `position` set to the version number and the scene in `item`. A `[multi]` option is its own set, with its own `set_id`, and the chosen option is marked in the set's `subtitle`. Write with one batch, after the user confirms.
 10. **Build the 3D model** (only with `[3d]`, and only past v05). Build the model with make3d from the latest version.
 11. **Report.** Give each increment's name, version, item count, spec path, and PNG path. List what is still open for review, and any assumption that needs a product spec, a code check, or a reference.
 
@@ -77,7 +77,7 @@ Stop at validation until the user confirms. `[no input]` skips the questions and
 - **Canvas**: each increment is a new canvas detail, tagged `AI` and `draft`.
 - **Files**: specs in `docs/examples/<name>/`. PNGs and research notes in `research/detail/<category>/<name>/`.
 - **Hatch registry**: `research/detail/hatches.json`. New hatches confirmed at validation are added here.
-- **Increment viewer**: version records for each increment, written to the increment viewer table in the Architecture project. `[multi]` options are recorded as branches, and the chosen option continues as the main line.
+- **Increment viewer**: version records for each increment, written to `viewer_sets` and `viewer_scenes` in the Architecture project. Each detail is a set, and each increment is a scene at its version position. `[multi]` options are separate sets, and the chosen option is marked in its set's subtitle.
 - **Local fallback**: if the database is unreachable or the table is missing, and the user does not fix it, version records are kept as a local file and the report says they were not written.
 - **3D model** (only with `[3d]`): built from the make3d repo, after v05.
 - **Dry run** (`[dry run]`): the report lists what would be drawn and written, and writes nothing.
@@ -86,6 +86,6 @@ Stop at validation until the user confirms. `[no input]` skips the questions and
 
 - Tag every output `AI` and `draft`. A human-drawn detail is never tagged AI.
 - Every spec carries a "Draft: verify before use" note. Never claim a detail is code-compliant, rated, or meets a listed assembly.
-- This skill draws into the canvas only through `window.QuickDetail.draw`. Cloud writes go only to the increment viewer table.
+- This skill draws into the canvas only through `window.QuickDetail.draw`. Cloud writes go only to `viewer_sets` and `viewer_scenes`.
 - Keep each increment cumulative, so the last one is the complete drawing.
 - Commit and push at the end of a run when the session's stop hook requires it. Merge only when the user asks.

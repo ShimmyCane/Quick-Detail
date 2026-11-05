@@ -93,3 +93,15 @@ Stop at validation until the user confirms. `[no input]` skips the questions but
 - Which county or city sources are the "other site plans" for the sites you draw? These differ by jurisdiction.
 - Export format: DXF (opens in CAD and Revit) or DWG? Should the map underlay be an image layer or a separate file?
 - Is `1/16"=1'-0"` right as the default for every site, or should small sites default larger?
+
+## Cloud library upload
+
+After the increments are drawn and checked, upload the draft to the cloud library as one detail with its increments as a linear history:
+
+```bash
+SUPABASE_URL=<Architecture project URL> SUPABASE_SERVICE_KEY=<service role key> \
+node tools/library/upload-draft-history.js --specs <docs/examples/<name>> --local-id <ai-name> \
+  --name "<Name> (AI draft)" --scale '<scale>' [--renders <render dir>] [--tags "<tags>"] --upload
+```
+
+Run it without `--upload` first to check the plan. The tool writes only to `sketch_details` and `sketch_versions`. See `tools/library/upload-draft-history.js`.

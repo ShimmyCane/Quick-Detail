@@ -89,3 +89,15 @@ Stop at validation until the user confirms. `[no input]` skips the questions and
 - This skill draws into the canvas only through `window.QuickDetail.draw`. Cloud writes go only to `viewer_sets` and `viewer_scenes`.
 - Keep each increment cumulative, so the last one is the complete drawing.
 - Commit and push at the end of a run when the session's stop hook requires it. Merge only when the user asks.
+
+## Cloud library upload
+
+After the increments are drawn and checked, upload the draft to the cloud library as one detail with its increments as a linear history:
+
+```bash
+SUPABASE_URL=<Architecture project URL> SUPABASE_SERVICE_KEY=<service role key> \
+node tools/library/upload-draft-history.js --specs <docs/examples/<name>> --local-id <ai-name> \
+  --name "<Name> (AI draft)" --scale '<scale>' [--renders <render dir>] [--tags "<tags>"] --upload
+```
+
+Run it without `--upload` first to check the plan. The tool writes only to `sketch_details` and `sketch_versions`. See `tools/library/upload-draft-history.js`.

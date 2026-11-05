@@ -74,3 +74,15 @@ Check database access to `viewer_sets` and `viewer_scenes`.
 - What counts as "complex": is the three-material and three-roof-plane threshold right?
 - Should the complex-elevation trigger run `ai_draft_siteplan` and `ai_draft_floor_plan` automatically, or ask first?
 - Is `1/8"=1'-0"` right for a whole face?
+
+## Cloud library upload
+
+After the increments are drawn and checked, upload the draft to the cloud library as one detail with its increments as a linear history:
+
+```bash
+SUPABASE_URL=<Architecture project URL> SUPABASE_SERVICE_KEY=<service role key> \
+node tools/library/upload-draft-history.js --specs <docs/examples/<name>> --local-id <ai-name> \
+  --name "<Name> (AI draft)" --scale '<scale>' [--renders <render dir>] [--tags "<tags>"] --upload
+```
+
+Run it without `--upload` first to check the plan. The tool writes only to `sketch_details` and `sketch_versions`. See `tools/library/upload-draft-history.js`.

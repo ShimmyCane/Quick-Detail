@@ -712,6 +712,15 @@ function main() {
     return Object.assign({ specFile: file }, it, b);
   });
 
+  // The 2-D sheet as one spec: iterations 1 to 7, the main line, in order. Import it in the app as one detail.
+  const sheet2d = {
+    name: 'Rand Hall, Cornell, c. 2005: 2-D sheet, iterations 1 to 7 (AI draft)',
+    scale: SCALE, ai_inferred: true, tags: TAGS.concat(['2-D sheet']),
+    text_scale: { title: TEXT.title.scale, note: TEXT.note.scale, small: TEXT.small.scale, dim: DIM_SCALE },
+    items: [].concat.apply([], built.filter(function (b) { return b.lane === 'main'; }).map(function (b) { return b.spec.items; }))
+  };
+  fs.writeFileSync(path.join(specDir, '2d-sheet-iterations-1-to-7.json'), JSON.stringify(sheet2d, null, 1) + '\n');
+
   // One recording per lane. Its base is the parent lane's sheet at the fork; each iteration is one scene.
   const sessions = [];
   const endState = {};

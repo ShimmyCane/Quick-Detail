@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/author.js</code></h1>
-<p class="muted">Pure logic · 134 lines · Library 10 of 18 in the load order.</p>
+<p class="muted">Pure logic · 157 lines · Library 10 of 18 in the load order.</p>
 <h2>What it does</h2>
 <p>drawing from JSON. A plain description of a detail (lines, rectangles, hatches, notes, dimensions)<br>
 becomes the same items the drawing tools make, so it can be opened, edited, undone and exported like any other detail.<br>
@@ -55,23 +55,27 @@ Spec (all positions are real inches, x to the right, y down; see docs/examples/w
 weight: w1 extra fine, w2 fine (default), w3 medium, w4 heavy. pen: ink (default), red, blue, yellow, green.<br>
 hatch pattern: any key in SK.HATCHES (concrete, wood1, insulation, cmu, steel, ...).<br>
 note: text is wrapped to width; the box top-left is at; tip is where the arrow points. Optional &quot;tips&quot;: [[x, y], ...] for more arrows.<br>
-dim: mode ortho (horizontal or vertical, read from the drag) or aligned. at is a point on the dimension line's offset side.</p>
+dim: mode ortho (horizontal or vertical, read from the drag) or aligned. at is a point on the dimension line's offset side.<br>
+text_scale (optional): text size as a multiple of the paper text size. A number sets every note and dim. An object sets<br>
+  them by class: { &quot;title&quot;: 6, &quot;note&quot;: 4, &quot;small&quot;: 3.5, &quot;dim&quot;: 3.5 }. A note's class is its &quot;text_class&quot; (default &quot;note&quot;).<br>
+  Without it, text is the paper size, as before.</p>
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
-<tr><td class="n">112</td><td class="name"><code>SK.authorDetail(spec)</code></td><td>A complete detail from a spec. Throws an Error that says what is wrong, so the caller can correct the spec. A parallel (see sketch/parallel.js) works too: its spec is used.</td><td><a href="app-panels.html">panels</a>, <span class="tag">test: author.js</span>, <span class="tag">test: parallel.js</span></td></tr>
+<tr><td class="n">135</td><td class="name"><code>SK.authorDetail(spec)</code></td><td>A complete detail from a spec. Throws an Error that says what is wrong, so the caller can correct the spec. A parallel (see sketch/parallel.js) works too: its spec is used.</td><td><a href="app-panels.html">panels</a>, <span class="tag">test: author.js</span>, <span class="tag">test: parallel.js</span></td></tr>
 </table></div>
 <h2>Private helpers</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
-<tr><td class="n">27</td><td class="name"><code>fail(msg)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">29</td><td class="name"><code>point(p, where)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">34</td><td class="name"><code>pointList(pts, where, min)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">39</td><td class="name"><code>penOf(name, where)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">45</td><td class="name"><code>weightOf(name, where)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">53</td><td class="name"><code>stroke(id, pts, weight, pen, f)</code></td><td>A stroke: the same shape the pen makes, with no pressure or timing. The page smooths strokes through their points, so each interior corner is listed twice: the smoothing then keeps the corner sharp.</td></tr>
-<tr><td class="n">63</td><td class="name"><code>buildItem(src, n, f, where)</code></td><td>Builds the sheet items for one spec entry. n is a running count, so every id in the detail is unique.</td></tr>
+<tr><td class="n">30</td><td class="name"><code>fail(msg)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">32</td><td class="name"><code>point(p, where)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">37</td><td class="name"><code>pointList(pts, where, min)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">42</td><td class="name"><code>penOf(name, where)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">48</td><td class="name"><code>weightOf(name, where)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">56</td><td class="name"><code>stroke(id, pts, weight, pen, f)</code></td><td>A stroke: the same shape the pen makes, with no pressure or timing. The page smooths strokes through their points, so each interior corner is listed twice: the smoothing then keeps the corner sharp.</td></tr>
+<tr><td class="n">66</td><td class="name"><code>textFactor(src, ts, where)</code></td><td>The text size multiple for one note or dim, from the spec's text_scale. 1 when the spec sets none.</td></tr>
+<tr><td class="n">86</td><td class="name"><code>buildItem(src, n, f, where, ts)</code></td><td>Builds the sheet items for one spec entry. n is a running count, so every id in the detail is unique.</td></tr>
 </table></div>
 
-<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-01. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-05. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
 </main>
 </body>
 </html>

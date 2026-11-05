@@ -667,9 +667,7 @@ const LANES = {
 function buildIter(it) {
   const spec = { text_scale: { title: TEXT.title.scale, note: TEXT.note.scale, small: TEXT.small.scale, dim: DIM_SCALE }, name: 'Rand Hall iteration ' + it.n + ': ' + it.file.replace(/-/g, ' ') + ' (AI draft)', scale: SCALE, ai_inferred: true, tags: TAGS.concat(['iteration ' + it.n]), items: it.fn().items };
   const made = SK.authorDetail(spec);
-  made.items.forEach(function (x, i) {
-    if (x.kind === 'note') x.size = SK.PAPER.text * TEXT[spec.items[i].text_class || 'note'].scale;
-    if (x.kind === 'dim') x.size = SK.PAPER.text * DIM_SCALE;
+  made.items.forEach(function (x) {
     x.id = 'i' + it.n + '-' + x.id;
     if (x.leaders) x.leaders.forEach(function (l, k) { l.id = x.id + 'l' + k; });
   });

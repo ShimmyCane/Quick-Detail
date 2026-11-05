@@ -27,6 +27,27 @@ check('one item per spec entry', d.items.length === example.items.length, d.item
 var ids = d.items.map(function (it) { return it.id; });
 check('ids are unique', ids.filter(function (v, i) { return ids.indexOf(v) === i; }).length === ids.length);
 
+// Text sizes from the spec: text_scale as a number, and by class.
+var P = SK.PAPER.text;
+var sized = SK.authorDetail({ name: 'Sizes', scale: '1/4"=1\'-0"', items: [
+  { kind: 'note', text: 'plain', at: [0, 0], width: 40, tip: [1, 1] },
+  { kind: 'note', text: 'Title', at: [0, 0], width: 40, tip: [1, 1], text_class: 'title' },
+  { kind: 'note', text: 'Small', at: [0, 0], width: 40, tip: [1, 1], text_class: 'small' },
+  { kind: 'dim', mode: 'ortho', p1: [0, 0], p2: [10, 0], at: [5, -2] }
+], text_scale: { title: 6, note: 4, small: 3.5, dim: 3.5 } });
+check('no text_scale keeps paper text', Math.abs(d.items.filter(function (it) { return it.kind === 'note'; })[0].size - P) < 1e-9);
+check('note class sets its size', Math.abs(sized.items[0].size - P * 4) < 1e-9, sized.items[0].size);
+check('title class sets its size', Math.abs(sized.items[1].size - P * 6) < 1e-9, sized.items[1].size);
+check('small class sets its size', Math.abs(sized.items[2].size - P * 3.5) < 1e-9, sized.items[2].size);
+check('dim takes the dim size', Math.abs(sized.items[3].size - P * 3.5) < 1e-9, sized.items[3].size);
+var numeric = SK.authorDetail({ name: 'N', scale: '1/4"=1\'-0"', text_scale: 2, items: [
+  { kind: 'note', text: 'two', at: [0, 0], width: 20, tip: [1, 1] } ] });
+check('a number sets every note', Math.abs(numeric.items[0].size - P * 2) < 1e-9);
+check('unknown text_class is refused', throws(function () { SK.authorDetail({ name: 'X', items: [
+  { kind: 'note', text: 'x', at: [0, 0], width: 20, tip: [1, 1], text_class: 'huge' } ], text_scale: { note: 4 } }); }, 'unknown text_class'));
+check('non-positive text_scale is refused', throws(function () { SK.authorDetail({ name: 'X', items: [
+  { kind: 'note', text: 'x', at: [0, 0], width: 20, tip: [1, 1] } ], text_scale: -1 }); }, 'positive'));
+
 var stroke = d.items.filter(function (it) { return it.kind === 'stroke'; });
 check('lines and rects become strokes', stroke.length === 3, stroke.length + ' strokes');
 check('a rect stroke lists its interior corners twice and has a world weight', stroke[0].pts.length === 8 && stroke[0].w === SK.WEIGHTS.w3 * 4, 'pts=' + stroke[0].pts.length + ' w=' + stroke[0].w);

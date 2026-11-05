@@ -245,3 +245,31 @@ The whole session, from the left-bar rework to the grid, the phone layout and th
 - **Went wrong first:** at 1/4"=1'-0" on a 200 ft building, paper-size notes cannot be read in a review render. Notes and dims are now at `text_scale` 2.5, with widths ×2.2. Mirrored views (the north elevation) put their level labels on the wrong side, so the labels now go outward based on the screen direction.
 - **Next time:** check each view's title position against the views drawn before it, because iterations 5 and 6 first put their titles in the same place. Ask for archive photos if the user can give them; the pane counts and the sawtooth direction are the weakest assumptions.
 - **Text passes (same day):** text needs a hierarchy, not one scale. At 1/4" titles read at 6×, callouts at 4×, labels at 3.5×. Note widths have to grow with the text, or every callout wraps into a column. Each view needs room below it for its title (about 2 lines of title text) and room above for a row of callouts. Check mirrored views and labels sitting on closely spaced levels (Grade and 1st floor) on their own.
+
+---
+
+## 12. Review of the Rand Hall session (5 Nov 2026)
+
+What happened in the session, and what to do differently. The skills `note_text_blocks` and `building_from_research` come from this review.
+
+**Text**
+
+- **Notes are blocks, not lines** (from the user). Use 4 to 10 words a line, aiming for about 7. A note of 4 to 10 words may sit on one line; a longer one wraps into several rows. The first two text passes made the text large enough but kept long 11 to 25 word lines, which read poorly. `tools/note-blocks.js` counts the words on each wrapped line and suggests widths: 20 of the 56 Rand Hall notes were out of range after those passes.
+- **Size alone is not enough.** The first renders used paper-size text, which disappears on a 200 ft building at 1/4". A hierarchy fixed it: titles 6×, callouts 4×, labels and dimensions 3.5×. Store `text_class` on each note, so tools can work with the classes.
+- **Look at every render before showing it.** Each pass found problems only a picture showed: titles of neighbouring views meeting, callouts stacked on a facade, a mirrored view's labels on the wrong side, and Grade and 1st floor labels on top of each other.
+
+**Research**
+
+- **The user expected pictures.** A text-only draft disappointed: "at least pull a google map view or articles and a few picture references". For a building, gather a map or aerial view, the footprint and photos first, or say up front that they cannot be reached.
+- **Check the network first.** The default environment blocked every reference host (Wikimedia, Wikipedia, OSM, Overpass, blogs). Ask for all of them in one environment change at the start, not after each fetch fails. A Google static map needs an API key; OpenStreetMap does not.
+- **Stop means stop.** When the user interrupted a fetch and then said to drop the maps, the right move was to stop, report what had run, and carry on without it.
+
+**Viewer and iterations**
+
+- The "increment viewer" is the edit-history viewer (`viewer.html`). Iterations map cleanly onto it: one scene for each iteration, branches for options, and the exported file to share.
+- Keep the iteration cap the user sets. Record later text passes as renders kept beside the iterations, not as extra scenes, so the count stays as agreed.
+
+**Process**
+
+- When an auto-mode check gives no verdict, retry once and use the read tools meanwhile; it cleared on its own.
+- Merge only when the user asks. This repo has no CI, so run `tests/` locally and say so when merging.

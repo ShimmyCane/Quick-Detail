@@ -10,7 +10,7 @@
 // Geometry is laid out in feet here and written in real inches (feet x 12), so the spec matches the canvas.
 // Scale 1/4"=1'-0" (factor 48), the same as the Rand Hall sheet. Every position is an assumption: building
 // footprints, lots, stall counts and tree positions are placeholders, and the streets are labelled "(verify)".
-// Checked with SK.authorDetail in tools/torrance-cac-check.js, and drawn into the canvas with window.QuickDetail.draw.
+// Drawn into the canvas with window.QuickDetail.draw.
 'use strict';
 const fs = require('fs');
 const path = require('path');

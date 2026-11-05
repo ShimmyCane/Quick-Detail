@@ -1,0 +1,184 @@
+{
+ "name": "LA Lucas Museum, site plan, increment 2 of 10 (AI draft)",
+ "scale": "1/4\"=1'-0\"",
+ "ai_inferred": true,
+ "tags": [
+  "AI",
+  "draft",
+  "site plan",
+  "Lucas Museum",
+  "Exposition Park",
+  "tier 1",
+  "museum footprint"
+ ],
+ "text_scale": {
+  "title": 24,
+  "note": 24,
+  "small": 16,
+  "dim": 16
+ },
+ "draft_note": "Draft: verify before use. Schematic, not surveyed. Parcel shape, streets, footprint, parking, trees, contours and utilities are placeholders.",
+ "items": [
+  {
+   "kind": "note",
+   "text": "LUCAS MUSEUM, ONE LUCAS PLAZA, EXPOSITION PARK, LOS ANGELES. DRAFT: VERIFY BEFORE USE.",
+   "at": [
+    480,
+    -1920
+   ],
+   "width": 2700,
+   "tip": [
+    480,
+    -1680
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": -720,
+   "w": 11520,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 11520,
+   "y": -720,
+   "w": 720,
+   "h": 7440,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": -720,
+   "y": 0,
+   "w": 720,
+   "h": 6000,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 6000,
+   "w": 11520,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 0,
+   "y": 0,
+   "w": 11520,
+   "h": 6000,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "EXPOSITION BLVD (verify)",
+   "at": [
+    4080,
+    -1320
+   ],
+   "width": 1680,
+   "tip": [
+    5760,
+    -360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "FIGUEROA ST (verify)",
+   "at": [
+    12000,
+    2760
+   ],
+   "width": 1400,
+   "tip": [
+    11880,
+    3000
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "LEIGHTON ST (verify)",
+   "at": [
+    -3360,
+    2520
+   ],
+   "width": 1400,
+   "tip": [
+    -360,
+    3000
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SOUTH STREET (placeholder)",
+   "at": [
+    4080,
+    6660
+   ],
+   "width": 1820,
+   "tip": [
+    5760,
+    6360
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "note",
+   "text": "SITE BOUNDARY (about 11 acres, placeholder shape)",
+   "at": [
+    240,
+    -1320
+   ],
+   "width": 3430,
+   "tip": [
+    720,
+    0
+   ],
+   "arrow": "filled"
+  },
+  {
+   "kind": "rect",
+   "x": 2976,
+   "y": 1416,
+   "w": 4848,
+   "h": 2688,
+   "weight": "w1",
+   "pen": "red"
+  },
+  {
+   "kind": "rect",
+   "x": 3000,
+   "y": 1440,
+   "w": 4800,
+   "h": 2640,
+   "weight": "w3",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "LUCAS MUSEUM (placeholder footprint)",
+   "at": [
+    8040,
+    1200
+   ],
+   "width": 2520,
+   "tip": [
+    7080,
+    1968
+   ],
+   "arrow": "filled"
+  }
+ ]
+}

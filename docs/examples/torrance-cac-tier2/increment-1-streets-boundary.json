@@ -1,0 +1,158 @@
+{
+ "name": "Torrance Cultural Arts Center, site plan, tier 2, increment 1 of 3 (AI draft)",
+ "scale": "1/16\"=1'-0\"",
+ "ai_inferred": true,
+ "tags": [
+  "AI",
+  "draft",
+  "site plan",
+  "Torrance",
+  "Cultural Arts Center",
+  "tier 2",
+  "streets and boundary"
+ ],
+ "text_scale": {
+  "title": 24,
+  "note": 24,
+  "small": 16,
+  "dim": 16
+ },
+ "draft_note": "Draft: verify before use. Schematic from OpenStreetMap imagery, not surveyed. Parcel is a map estimate. Buildings, lots and trees are placeholders. No zoning, setbacks or easements shown.",
+ "items": [
+  {
+   "kind": "note",
+   "text": "TORRANCE CULTURAL ARTS CENTER, 3330 CIVIC CENTER DR. DRAFT: VERIFY BEFORE USE.",
+   "at": [
+    480,
+    -2760
+   ],
+   "width": 12300,
+   "tip": [
+    480,
+    -2160
+   ],
+   "arrow": "filled",
+   "text_class": "title"
+  },
+  {
+   "kind": "rect",
+   "x": -480,
+   "y": -360,
+   "w": 17760,
+   "h": 720,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": -480,
+   "y": 13320,
+   "w": 17760,
+   "h": 960,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": -480,
+   "y": -2400,
+   "w": 960,
+   "h": 17400,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 16332,
+   "y": -2400,
+   "w": 960,
+   "h": 17400,
+   "weight": "w2",
+   "pen": "ink"
+  },
+  {
+   "kind": "rect",
+   "x": 720,
+   "y": 720,
+   "w": 15360,
+   "h": 12360,
+   "weight": "w1",
+   "pen": "ink"
+  },
+  {
+   "kind": "note",
+   "text": "CIVIC CENTER DR",
+   "at": [
+    6720,
+    -936
+   ],
+   "width": 3900,
+   "tip": [
+    6720,
+    -360
+   ],
+   "arrow": "filled",
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "TORRANCE BLVD",
+   "at": [
+    6720,
+    14616
+   ],
+   "width": 3380,
+   "tip": [
+    6720,
+    14280
+   ],
+   "arrow": "filled",
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "MADRONA AVE",
+   "at": [
+    -3240,
+    5040
+   ],
+   "width": 2860,
+   "tip": [
+    -480,
+    5040
+   ],
+   "arrow": "filled",
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "MAPLE AVE",
+   "at": [
+    17760,
+    5040
+   ],
+   "width": 2340,
+   "tip": [
+    17292,
+    5040
+   ],
+   "arrow": "filled",
+   "text_class": "note"
+  },
+  {
+   "kind": "note",
+   "text": "CAMPUS BOUNDARY, ESTIMATE",
+   "at": [
+    960,
+    360
+   ],
+   "width": 6500,
+   "tip": [
+    1440,
+    720
+   ],
+   "arrow": "filled",
+   "text_class": "note"
+  }
+ ]
+}

@@ -39,6 +39,23 @@
   function gcd(a, b) { return b ? gcd(b, a % b) : a; }
 
   // Architectural length: 1'-3 1/2". roundTo is a fraction of an inch (1/16 by default).
+  // Reads a length typed by a person, into real inches: 2'-0", 2' 6", 2 ft, 2.5 ft, 24", 24 in, 6 1/2", 24.
+  // Returns null when it cannot be read or is not more than zero.
+  SK.parseLength = function (text) {
+    var t = String(text == null ? '' : text).trim().toLowerCase();
+    if (!t) return null;
+    var total = 0, m = /^(\d+(?:\.\d+)?)\s*(?:'|ft|feet|foot)/.exec(t);
+    if (m) { total += parseFloat(m[1]) * 12; t = t.slice(m[0].length); }
+    t = t.replace(/"|inches|inch|in\b|-/g, ' ').trim();
+    if (t) {
+      var f = /^(\d+)\s+(\d+)\/(\d+)$/.exec(t) || /^(\d+)\/(\d+)$/.exec(t);
+      if (f) total += f.length === 4 ? +f[1] + f[2] / f[3] : +f[1] / f[2];
+      else if (/^\d+(\.\d+)?$/.test(t)) total += parseFloat(t);
+      else return null;
+    }
+    return total > 0 ? total : null;
+  };
+
   SK.formatLength = function (inches, roundTo) {
     var den = Math.round(1 / (roundTo || 1 / 16));
     var units = Math.round(Math.abs(inches) * den);

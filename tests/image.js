@@ -40,5 +40,15 @@ var moved = SK.transformItem(turned, function (p) { return [p[0] + 1, p[1] + 2];
 check('moving a turned picture moves its centre and keeps the turn', moved.rot === turned.rot && Math.abs(moved.at[0] - 3) < 1e-9 && Math.abs(moved.at[1] - 5) < 1e-9, JSON.stringify(moved.at));
 var spun = SK.transformItem(img, function (p) { return p; }, 1, Math.PI / 2);
 check('turning an unturned picture sets its turn', Math.abs(spun.rot - Math.PI / 2) < 1e-9);
+
+// Calibration reads a typed length into real inches.
+check('2 feet 0 inches reads as 24 inches', SK.parseLength("2'-0\"") === 24, String(SK.parseLength("2'-0\"")));
+check('2 feet 6 inches reads as 30 inches', SK.parseLength("2' 6\"") === 30);
+check('2 feet reads as 24 inches', SK.parseLength('2 ft') === 24);
+check('2.5 feet reads as 30 inches', SK.parseLength('2.5 ft') === 30);
+check('24 inches reads as 24', SK.parseLength('24"') === 24 && SK.parseLength('24 in') === 24 && SK.parseLength('24') === 24);
+check('6 and a half inches reads as 6.5', SK.parseLength('6 1/2"') === 6.5);
+check('a fraction alone reads as its value', SK.parseLength('1/2"') === 0.5);
+check('nonsense reads as null', SK.parseLength('two feet') === null && SK.parseLength('') === null && SK.parseLength(null) === null);
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

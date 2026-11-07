@@ -160,6 +160,13 @@ function drawSelection(col) {
     ctx.fillRect(s[0] - 5, s[1] - 5, 10, 10);
     ctx.strokeRect(s[0] - 5, s[1] - 5, 10, 10);
   });
+  // Calibration: the points picked so far, as small rings.
+  if (calib && calib.id === it.id) calib.pts.forEach(function (p) {
+    var s = SK.toScreen(view, p);
+    ctx.beginPath();
+    ctx.arc(s[0], s[1], 7, 0, Math.PI * 2);
+    ctx.stroke();
+  });
 }
 
 // Live pen: only the newest piece is painted; the whole stroke is repainted on pen up.

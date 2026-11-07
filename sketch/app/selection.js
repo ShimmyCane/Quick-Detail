@@ -157,6 +157,7 @@ function renderChips() {
         var k = pct / 100, c = SK.imageCentre(it);
         edit(function (n) { n.w = it.w * k; n.h = it.h * k; n.at = [c[0] - n.w / 2, c[1] - n.h / 2]; });
       } } }),
+      el('button', { class: 'chip', text: 'Calibrate…', title: 'Click two points on the picture, then give their real length. The picture is scaled to that length, keeping the first point where it is.', on: { click: function () { startCalibrate(it); } } }),
       el('button', { class: 'chip', text: 'Turn…', title: 'Turn the picture by degrees about its centre (positive is clockwise on screen)', on: { click: function () {
         var deg = parseFloat(window.prompt('Turn by how many degrees? Positive turns clockwise.', '90'));
         if (!deg) return;
@@ -202,4 +203,44 @@ function renderChips() {
   chips.push(el('button', { class: 'chip danger', text: 'Delete', on: { click: deleteSelected } }));
   chips.forEach(function (c) { if (c) bar.appendChild(c); });
   bar.hidden = false;
+}
+
+// ---- Calibrate: two points on a picture and their real length. The picture is scaled so the two points measure that
+// length, keeping the first point where it is. Lengths are in real inches; on paper they print at the sheet's scale.
+var calib = null;   // { id, pts } while the two points are being picked
+
+function startCalibrate(it) {
+  calib = { id: it.id, pts: [] };
+  redraw();
+  toast('Click the first point on the picture. Esc cancels.');
+}
+
+function cancelCalibrate() {
+  calib = null;
+  redraw();
+  toast('Calibration cancelled.');
+}
+
+function calibratePick(w) {
+  var it = calib && byId(calib.id);
+  if (!it) { calib = null; redraw(); return; }
+  calib.pts.push(w);
+  if (calib.pts.length === 1) { redraw(); toast('Now click the second point on the picture.'); return; }
+  var a = calib.pts[0], b = calib.pts[1];
+  var measured = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  calib = null;
+  var typed = window.prompt('Real length between the two points, for example 2\'-0" or 24" or 2 ft:', '');
+  if (typed == null) { redraw(); toast('Calibration cancelled.'); return; }
+  var real = SK.parseLength(typed);
+  if (!real) { redraw(); toast('Could not read that length. Start again.'); return; }
+  if (measured < 1e-6) { redraw(); toast('Those two points are the same. Start again.'); return; }
+  var k = real / measured;
+  var c = SK.imageCentre(it);
+  var nc = [a[0] + k * (c[0] - a[0]), a[1] + k * (c[1] - a[1])];   // scaled about the first point
+  var n = clone(it);
+  n.w = it.w * k;
+  n.h = it.h * k;
+  n.at = [nc[0] - n.w / 2, nc[1] - n.h / 2];
+  commitPut(n, it);
+  toast('Calibrated: ' + SK.formatLength(real) + ' prints as ' + SK.formatLength(real / factorOf(detail)) + ' at ' + detail.scale + '.');
 }

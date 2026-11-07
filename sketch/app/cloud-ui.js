@@ -156,6 +156,36 @@ function openCloudDetail(d) {
   }).catch(function (e) { fail(e, 'Could not open: '); });
 }
 
+// Opens a cloud copy named by an id, as a link does: index.html#import=<id>. A copy made in the Detail Library
+// keeps its picture as a background underlay (no-print), so the sheet opens with the picture under the drawing.
+function importCloudLink(localId) {
+  if (!SK.Cloud.ready()) { toast('The cloud library did not load. Check the connection and try again.'); return Promise.resolve(null); }
+  return SK.Cloud.session().then(function (s) {
+    if (!s) { toast('Sign in to the cloud library (Library, then Cloud) to open this copy from the Detail Library.'); return null; }
+    return SK.Cloud.init().from('sketch_details')
+      .select('id, local_id, name, scale, tags, items, metadata, created_at, updated_at')
+      .eq('local_id', localId).maybeSingle()
+      .then(function (r) {
+        if (r.error) throw r.error;
+        if (!r.data) { toast('No cloud copy with that id. It may be in the recycle bin.'); return null; }
+        var d = fromCloudRow(r.data);
+        if (r.data.metadata && r.data.metadata.source === 'detail-library') {
+          d.items = d.items.map(function (it) { return it.kind === 'image' ? Object.assign({}, it, { noPrint: true }) : it; });
+        }
+        return openCloudDetail(d);
+      });
+  }).catch(function (e) { fail(e, 'Could not open the cloud copy: '); });
+}
+
+// Reads index.html#import=<id> once at startup, then clears it from the address bar.
+function importFromHash() {
+  var m = /^#import=(.+)$/.exec(location.hash || '');
+  if (!m) return null;
+  var id = decodeURIComponent(m[1]);
+  history.replaceState(null, '', location.pathname + location.search);
+  return importCloudLink(id);
+}
+
 // The recordings uploaded for a cloud detail: audio and scene pictures.
 function renderCloudDetail(d) {
   var body = $('libBody');

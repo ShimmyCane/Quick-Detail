@@ -15,6 +15,7 @@ var VERSIONS = [
 
 // Changes, newest first: [date, what changed].
 var CHANGES = [
+  ['7 Nov', 'Calibrate a picture: click two points on it, type their real length, and it is scaled to that length about the first point. It then prints at the sheet scale (at 3 in = 1 ft, a 2 ft object prints as 6 in)'],
   ['7 Nov', 'Pictures (underlays) can be scaled by a percentage, turned by any number of degrees, and set straight again; the corner handle scales and the top handle turns'],
   ['7 Nov', 'Open from the Detail Library: a link with #import=<id> opens that cloud copy here, its picture as the background (never printed)'],
   ['5 Nov', 'Files button in the right rail opens files.html: links to the local files that are not in the cloud library'],

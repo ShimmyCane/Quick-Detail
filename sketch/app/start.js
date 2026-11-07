@@ -24,6 +24,7 @@ Promise.all([SK.DB.get('kv', 'settings'), SK.DB.get('kv', 'customTags'), SK.DB.g
     resize();
     return openDetail(d);
   })
+  .then(function () { return importFromHash(); })
   .catch(function (e) {
     fail(e, 'Storage is unavailable, so nothing will be kept: ');
     detail = newDetail();

@@ -26,6 +26,7 @@ canvas.addEventListener('pointerdown', function (e) {
   }
   if (pb) return;
   if (e.pointerType === 'mouse' && e.button !== 0) return;
+  if (calib) { calibratePick(SK.toWorld(view, sp)); return; }   // calibrating: this tap is a point on the picture
   canvas.setPointerCapture(e.pointerId);
   active = { id: e.pointerId, s0: sp, t0: performance.now(), moved: false };
   clearTimeout(stopTimer);

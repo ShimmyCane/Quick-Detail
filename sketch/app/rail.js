@@ -436,7 +436,8 @@ document.addEventListener('keydown', function (e) {
   var tag = e.target && e.target.tagName;
   var typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
   if (e.key === 'Escape') {
-    if (!$('tagsPage').hidden) closeTags();
+    if (calib) cancelCalibrate();
+    else if (!$('tagsPage').hidden) closeTags();
     else if (!$('libPage').hidden) closeLibrary();
     else if (draft) endDraft();
     else if (sel) select(null);

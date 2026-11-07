@@ -107,7 +107,12 @@ function handlesOf(it) {
   }
   if (it.kind === 'block') return sourceOf(it.sourceId) ? boxHandles(SK.blockBounds(it, sourceOf, a)) : [];
   if (it.kind === 'stroke' || it.kind === 'hatch') return boxHandles(SK.itemBounds(it, a));
-  if (it.kind === 'image') return [{ key: 'move', p: it.at }, { key: 'size', p: [it.at[0] + it.w, it.at[1] + it.h] }];
+  if (it.kind === 'image') {
+    var ctop = SK.imageToWorld(it, it.w / 2, 0), cen = SK.imageCentre(it);
+    var dx = ctop[0] - cen[0], dy = ctop[1] - cen[1], dl = Math.hypot(dx, dy) || 1;
+    var turn = [ctop[0] + dx / dl * ROT_PX / view.z, ctop[1] + dy / dl * ROT_PX / view.z];
+    return [{ key: 'move', p: SK.imageToWorld(it, 0, 0) }, { key: 'size', p: SK.imageToWorld(it, it.w, it.h) }, { key: 'rot', p: turn }];
+  }
   return [];
 }
 

@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/blocks.js</code></h1>
-<p class="muted">Pure logic · 217 lines · Library 9 of 18 in the load order.</p>
+<p class="muted">Pure logic · 222 lines · Library 9 of 18 in the load order.</p>
 <h2>What it does</h2>
 <p>blocks: a finished detail placed inside another detail, as an underlay.<br>
 A block is { id, kind: 'block', sourceId, at: [x, y], k, opacity, print }. The source's items are drawn with their<br>
@@ -41,22 +41,22 @@ origin at <code>at</code>, scaled by k. Edits to the source show in every block 
 <h2>Functions</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
 <tr><td class="n">12</td><td class="name"><code>SK.blockScale(bk)</code></td><td>A block's scale. Blocks saved before scaling existed have no k, which means 1.</td><td><a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">53</td><td class="name"><code>SK.transformItem(it, f, sc, angle)</code></td><td>Moves, scales or rotates an item. f maps each point; sc scales sizes and widths; angle turns a block (in radians). Used by the select tool. Note and dimension text stays upright: only their geometry turns.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">91</td><td class="name"><code>SK.flattenItems(items, sourceOf)</code></td><td>sourceOf(id) returns the detail with that id, or null when it is not on this device.</td><td><a href="app-base.html">base</a>, <a href="app-branches.html">branches</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">96</td><td class="name"><code>SK.isUnderlay(it)</code></td><td>An underlay is an image or a block. It paints under all the linework, so it never takes a pen stroke.</td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">101</td><td class="name"><code>SK.drawOrderMove(items, id, how)</code></td><td>Draw order. Items paint in list order, later ones on top, but underlays always paint first. So a move only reorders the other items. how: 'front', 'forward', 'backward' or 'back'. Returns the new list, or null when the item is already where it asked to go, or when it is an underlay (which has no order of its own).</td><td><a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">137</td><td class="name"><code>SK.missingBlocks(items, sourceOf)</code></td><td>Blocks in a list whose source is not on this device.</td><td><a href="app-canvas.html">canvas</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">141</td><td class="name"><code>SK.blockBounds(block, sourceOf, ac)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">147</td><td class="name"><code>SK.blockHit(block, p, tol, sourceOf, ac)</code></td><td>Is world point p on the block? A block counts as hit anywhere on its lines or notes.</td><td><a href="app-base.html">base</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">156</td><td class="name"><code>SK.usersOf(sourceId, details)</code></td><td>Every detail that shows the source, directly or through a block in another block.</td><td><a href="app-details.html">details</a>, <a href="app-library-info.html">library-info</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">172</td><td class="name"><code>SK.nestingOf(items, sourceOf, stack)</code></td><td>How many block levels deep a list goes. Missing sources count as empty.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">196</td><td class="name"><code>SK.blockRefusal(hostId, hostItems, sourceId, sourceOf)</code></td><td>Why a block of sourceId cannot go into the host's list, or null when it can.</td><td><a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
-<tr><td class="n">206</td><td class="name"><code>SK.copyInBlock(block, sourceOf, newId)</code></td><td>Plain copies of a block's lines, notes and dimensions, with new ids, placed and scaled. This is the duplicate route.</td><td><a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">53</td><td class="name"><code>SK.transformItem(it, f, sc, angle)</code></td><td>Moves, scales or rotates an item. f maps each point; sc scales sizes and widths; angle turns a block (in radians). Used by the select tool. Note and dimension text stays upright: only their geometry turns.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: blocks.js</span>, <span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">96</td><td class="name"><code>SK.flattenItems(items, sourceOf)</code></td><td>sourceOf(id) returns the detail with that id, or null when it is not on this device.</td><td><a href="app-base.html">base</a>, <a href="app-branches.html">branches</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">101</td><td class="name"><code>SK.isUnderlay(it)</code></td><td>An underlay is an image or a block. It paints under all the linework, so it never takes a pen stroke.</td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">106</td><td class="name"><code>SK.drawOrderMove(items, id, how)</code></td><td>Draw order. Items paint in list order, later ones on top, but underlays always paint first. So a move only reorders the other items. how: 'front', 'forward', 'backward' or 'back'. Returns the new list, or null when the item is already where it asked to go, or when it is an underlay (which has no order of its own).</td><td><a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">142</td><td class="name"><code>SK.missingBlocks(items, sourceOf)</code></td><td>Blocks in a list whose source is not on this device.</td><td><a href="app-canvas.html">canvas</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">146</td><td class="name"><code>SK.blockBounds(block, sourceOf, ac)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">152</td><td class="name"><code>SK.blockHit(block, p, tol, sourceOf, ac)</code></td><td>Is world point p on the block? A block counts as hit anywhere on its lines or notes.</td><td><a href="app-base.html">base</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">161</td><td class="name"><code>SK.usersOf(sourceId, details)</code></td><td>Every detail that shows the source, directly or through a block in another block.</td><td><a href="app-details.html">details</a>, <a href="app-library-info.html">library-info</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">177</td><td class="name"><code>SK.nestingOf(items, sourceOf, stack)</code></td><td>How many block levels deep a list goes. Missing sources count as empty.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">201</td><td class="name"><code>SK.blockRefusal(hostId, hostItems, sourceId, sourceOf)</code></td><td>Why a block of sourceId cannot go into the host's list, or null when it can.</td><td><a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
+<tr><td class="n">211</td><td class="name"><code>SK.copyInBlock(block, sourceOf, newId)</code></td><td>Plain copies of a block's lines, notes and dimensions, with new ids, placed and scaled. This is the duplicate route.</td><td><a href="app-branches.html">branches</a>, <span class="tag">test: blocks.js</span></td></tr>
 </table></div>
 <h2>Values</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
 <tr><td class="n">9</td><td class="name"><code>SK.MAX_BLOCK_DEPTH</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">134</td><td class="name"><code>SK.blockPlaceholder</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a></td></tr>
+<tr><td class="n">139</td><td class="name"><code>SK.blockPlaceholder</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a></td></tr>
 </table></div>
 <h2>Private helpers</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th></tr>
@@ -64,9 +64,9 @@ origin at <code>at</code>, scaled by k. Edits to the source show in every block 
 <tr><td class="n">20</td><td class="name"><code>moved(it, t)</code></td><td><span class="muted">—</span></td></tr>
 <tr><td class="n">23</td><td class="name"><code>pt(p)</code></td><td><span class="muted">—</span></td></tr>
 <tr><td class="n">54</td><td class="name"><code>P(p)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">78</td><td class="name"><code>expand(items, t, depth, stack, sourceOf, out)</code></td><td>The drawable items of a list, with each block replaced by its source's items, placed and scaled. Ids are the source's own, so a flattened list is for drawing and measuring only, never for editing.</td></tr>
-<tr><td class="n">129</td><td class="name"><code>placeholderBox(block, ac)</code></td><td>The box a block with a missing source is drawn in, so it can be seen and selected.</td></tr>
-<tr><td class="n">185</td><td class="name"><code>reaches(from, target, sourceOf, seen)</code></td><td>Does the detail with id <code>from</code> reach the detail with id <code>target</code> through its blocks?</td></tr>
+<tr><td class="n">83</td><td class="name"><code>expand(items, t, depth, stack, sourceOf, out)</code></td><td>The drawable items of a list, with each block replaced by its source's items, placed and scaled. Ids are the source's own, so a flattened list is for drawing and measuring only, never for editing.</td></tr>
+<tr><td class="n">134</td><td class="name"><code>placeholderBox(block, ac)</code></td><td>The box a block with a missing source is drawn in, so it can be seen and selected.</td></tr>
+<tr><td class="n">190</td><td class="name"><code>reaches(from, target, sourceOf, seen)</code></td><td>Does the detail with id <code>from</code> reach the detail with id <code>target</code> through its blocks?</td></tr>
 </table></div>
 
 <p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-07. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>

@@ -96,9 +96,18 @@
       if (it.kind !== 'image' || (it.noPrint && (opts.print || opts.hideUnderlay))) return;
       var im = imageOf(it.src);
       if (!im) return;
-      var s = SK.toScreen(v, it.at);
       c.globalAlpha = (it.noPrint ? 0.55 : 1) * (opts.alpha == null ? 1 : opts.alpha);
-      c.drawImage(im, s[0], s[1], it.w * v.z, it.h * v.z);
+      if (it.rot) {
+        var cc = SK.toScreen(v, SK.imageCentre(it));
+        c.save();
+        c.translate(cc[0], cc[1]);
+        c.rotate(it.rot);
+        c.drawImage(im, -it.w * v.z / 2, -it.h * v.z / 2, it.w * v.z, it.h * v.z);
+        c.restore();
+      } else {
+        var s = SK.toScreen(v, it.at);
+        c.drawImage(im, s[0], s[1], it.w * v.z, it.h * v.z);
+      }
     });
     c.globalAlpha = 1;
 

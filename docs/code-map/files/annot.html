@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/annot.js</code></h1>
-<p class="muted">Pure logic · 422 lines · Library 8 of 18 in the load order.</p>
+<p class="muted">Pure logic · 442 lines · Library 8 of 18 in the load order.</p>
 <h2>What it does</h2>
 <p>geometry for notes and dimensions, as drawing primitives in world inches.<br>
 Pure: the page passes a context { factor, measure(text, size) -&gt; width, caps, roundTo }.<br>
@@ -56,11 +56,14 @@ Primitives:<br>
 <tr><td class="n">279</td><td class="name"><code>SK.itemPrims(item, ac)</code></td><td><span class="muted">—</span></td><td><a href="paint.html">paint</a></td></tr>
 <tr><td class="n">304</td><td class="name"><code>SK.boundsOf(pts)</code></td><td><span class="muted">—</span></td><td><a href="app-export.html">export</a></td></tr>
 <tr><td class="n">319</td><td class="name"><code>SK.printable(items)</code></td><td>image: { id, kind: 'image', src (a JPEG data URL), at: [x, y] top-left, w, h (world inches), noPrint, name } A no-print image is a reference on screen only; exports and prints leave it out. A block is an underlay like an image: left out of prints unless its print flag is set.</td><td><a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-library-info.html">library-info</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <span class="tag">test: blocks.js</span>, <span class="tag">test: image.js</span></td></tr>
-<tr><td class="n">327</td><td class="name"><code>SK.itemBounds(item, ac)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <span class="tag">test: image.js</span>, <span class="tag">test: sketch.js</span></td></tr>
-<tr><td class="n">338</td><td class="name"><code>SK.itemsBounds(items, ac)</code></td><td><span class="muted">—</span></td><td><a href="blocks.html">blocks</a>, <a href="app-details.html">details</a>, <a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-branches.html">branches</a>, <a href="app-log.html">log</a>, <a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="gifs.html">gifs</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: image.js</span></td></tr>
-<tr><td class="n">363</td><td class="name"><code>SK.hitItem(item, p, tol, ac)</code></td><td>Is world point p on the item, within tol world inches?</td><td><a href="blocks.html">blocks</a>, <a href="app-base.html">base</a>, <span class="tag">test: image.js</span>, <span class="tag">test: sketch.js</span></td></tr>
-<tr><td class="n">382</td><td class="name"><code>SK.snapPoints(items)</code></td><td>Points worth snapping to: stroke ends, leader tips, dimension points.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">400</td><td class="name"><code>SK.snap(items, p, tol)</code></td><td>Snap p to a nearby point: first a snap point within tol, then the nearest point on a stroke within tol.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">328</td><td class="name"><code>SK.imageCentre(it)</code></td><td>An image may be turned: it.rot (radians) about its centre. at, w and h describe the box before the turn.</td><td><a href="blocks.html">blocks</a>, <a href="paint.html">paint</a>, <a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <a href="app-selection.html">selection</a></td></tr>
+<tr><td class="n">330</td><td class="name"><code>SK.imageToWorld(it, lx, ly)</code></td><td>World point for a point (lx, ly) measured from the unturned top-left corner.</td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">336</td><td class="name"><code>SK.worldToImage(it, p)</code></td><td>The inverse: a world point as (lx, ly) from the unturned top-left corner.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">342</td><td class="name"><code>SK.itemBounds(item, ac)</code></td><td><span class="muted">—</span></td><td><a href="app-canvas.html">canvas</a>, <a href="app-tools.html">tools</a>, <span class="tag">test: image.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">357</td><td class="name"><code>SK.itemsBounds(items, ac)</code></td><td><span class="muted">—</span></td><td><a href="blocks.html">blocks</a>, <a href="app-details.html">details</a>, <a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-branches.html">branches</a>, <a href="app-log.html">log</a>, <a href="app-export.html">export</a>, <a href="app-library.html">library</a>, <a href="app-cloud-ui.html">cloud-ui</a>, <a href="gifs.html">gifs</a>, <a href="viewer.html">viewer</a>, <span class="tag">test: image.js</span></td></tr>
+<tr><td class="n">382</td><td class="name"><code>SK.hitItem(item, p, tol, ac)</code></td><td>Is world point p on the item, within tol world inches?</td><td><a href="blocks.html">blocks</a>, <a href="app-base.html">base</a>, <span class="tag">test: image.js</span>, <span class="tag">test: sketch.js</span></td></tr>
+<tr><td class="n">402</td><td class="name"><code>SK.snapPoints(items)</code></td><td>Points worth snapping to: stroke ends, leader tips, dimension points.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">420</td><td class="name"><code>SK.snap(items, p, tol)</code></td><td>Snap p to a nearby point: first a snap point within tol, then the nearest point on a stroke within tol.</td><td><a href="app-tools.html">tools</a>, <span class="tag">test: sketch.js</span></td></tr>
 </table></div>
 <h2>Values</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
@@ -82,8 +85,8 @@ Primitives:<br>
 <tr><td class="n">204</td><td class="name"><code>extLine(P0, A, gap, over)</code></td><td><span class="muted">—</span></td></tr>
 <tr><td class="n">287</td><td class="name"><code>textCorners(p, ac)</code></td><td>Corners of a text primitive's box, in world inches.</td></tr>
 <tr><td class="n">294</td><td class="name"><code>primsPoints(prims, ac)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">347</td><td class="name"><code>pointInPoly(p, poly)</code></td><td><span class="muted">—</span></td></tr>
-<tr><td class="n">356</td><td class="name"><code>nearPath(p, pts, tol)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">366</td><td class="name"><code>pointInPoly(p, poly)</code></td><td><span class="muted">—</span></td></tr>
+<tr><td class="n">375</td><td class="name"><code>nearPath(p, pts, tol)</code></td><td><span class="muted">—</span></td></tr>
 </table></div>
 
 <p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-07. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>

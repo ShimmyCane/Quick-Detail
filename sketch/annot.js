@@ -324,7 +324,26 @@
     });
   };
 
+  // An image may be turned: it.rot (radians) about its centre. at, w and h describe the box before the turn.
+  SK.imageCentre = function (it) { return [it.at[0] + it.w / 2, it.at[1] + it.h / 2]; };
+  // World point for a point (lx, ly) measured from the unturned top-left corner.
+  SK.imageToWorld = function (it, lx, ly) {
+    var c = SK.imageCentre(it), r = it.rot || 0, cs = Math.cos(r), sn = Math.sin(r);
+    var x = lx - it.w / 2, y = ly - it.h / 2;
+    return [c[0] + cs * x - sn * y, c[1] + sn * x + cs * y];
+  };
+  // The inverse: a world point as (lx, ly) from the unturned top-left corner.
+  SK.worldToImage = function (it, p) {
+    var c = SK.imageCentre(it), r = -(it.rot || 0), cs = Math.cos(r), sn = Math.sin(r);
+    var x = p[0] - c[0], y = p[1] - c[1];
+    return [cs * x - sn * y + it.w / 2, sn * x + cs * y + it.h / 2];
+  };
+
   SK.itemBounds = function (item, ac) {
+    if (item.kind === 'image' && item.rot) {
+      var corners = [[0, 0], [item.w, 0], [item.w, item.h], [0, item.h]].map(function (q) { return SK.imageToWorld(item, q[0], q[1]); });
+      return SK.boundsOf(corners);
+    }
     if (item.kind === 'image') return { minx: item.at[0], miny: item.at[1], maxx: item.at[0] + item.w, maxy: item.at[1] + item.h };
     if (item.kind === 'stroke' || item.kind === 'hatch') return SK.boundsOf(item.pts);
     var pts = primsPoints(SK.itemPrims(item, ac), ac);
@@ -362,7 +381,8 @@
   // Is world point p on the item, within tol world inches?
   SK.hitItem = function (item, p, tol, ac) {
     if (item.kind === 'image') {
-      return p[0] >= item.at[0] - tol && p[0] <= item.at[0] + item.w + tol && p[1] >= item.at[1] - tol && p[1] <= item.at[1] + item.h + tol;
+      var q = item.rot ? SK.worldToImage(item, p) : [p[0] - item.at[0], p[1] - item.at[1]];
+      return q[0] >= -tol && q[0] <= item.w + tol && q[1] >= -tol && q[1] <= item.h + tol;
     }
     if (item.kind === 'stroke') return nearPath(p, item.pts, tol + (item.w || 0) / 2);
     if (item.kind === 'hatch') return pointInPoly(p, item.pts) || nearPath(p, item.pts.concat([item.pts[0]]), tol);

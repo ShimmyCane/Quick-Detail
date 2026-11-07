@@ -186,7 +186,7 @@ function snapAt(w, exceptId) {
 function startHandleDrag(h, w) {
   var it = byId(sel.id);
   var box = it.kind === 'block' ? SK.blockBounds(it, sourceOf, ac()) : (it.kind === 'stroke' || it.kind === 'hatch') ? SK.itemBounds(it, ac()) : null;
-  var c = box ? [(box.minx + box.maxx) / 2, (box.miny + box.maxy) / 2] : null;
+  var c = box ? [(box.minx + box.maxx) / 2, (box.miny + box.maxy) / 2] : it.kind === 'image' ? SK.imageCentre(it) : null;
   drag = { id: it.id, key: h.key, before: it, w0: w, box: box, c: c, a0: c ? Math.atan2(w[1] - c[1], w[0] - c[0]) : 0 };
   if (h.key.indexOf('tip:') === 0) { sel.leader = +h.key.slice(4); renderChips(); }
 }
@@ -206,6 +206,9 @@ function moveHandleDrag(w) {
     var q = drag.box, s = Math.max(0.05, (w[0] - q.minx) / Math.max(q.maxx - q.minx, 1e-6));
     it = SK.transformItem(b, function (p) { return [q.minx + s * (p[0] - q.minx), q.miny + s * (p[1] - q.miny)]; }, s, 0);
   }
+  else if (k === 'rot' && b.kind === 'image') {
+    it.rot = (b.rot || 0) + Math.atan2(w[1] - drag.c[1], w[0] - drag.c[0]) - drag.a0;
+  }
   else if (k === 'rot') {
     var ang = Math.atan2(w[1] - drag.c[1], w[0] - drag.c[0]) - drag.a0, cs = Math.cos(ang), sn = Math.sin(ang);
     var cx = drag.c[0], cy = drag.c[1];
@@ -216,6 +219,13 @@ function moveHandleDrag(w) {
   else if (k === 'size' && b.kind === 'block') {
     var bx = drag.box;
     scaleBlockTo(it, bx, SK.blockScale(b) * (w[0] - bx.minx) / Math.max(bx.maxx - bx.minx, 1e-6));
+  }
+  else if (k === 'size' && b.kind === 'image') {
+    // The top-left corner stays put, measured in the picture's own turned frame; proportions are kept.
+    var lp = SK.worldToImage(b, w), nw = Math.max(f / 4, lp[0]), nh = nw * b.h / b.w;
+    var tl = SK.imageToWorld(b, 0, 0), r = b.rot || 0, cs = Math.cos(r), sn = Math.sin(r);
+    var ncx = tl[0] + cs * nw / 2 - sn * nh / 2, ncy = tl[1] + sn * nw / 2 + cs * nh / 2;
+    it.w = nw; it.h = nh; it.at = [ncx - nw / 2, ncy - nh / 2];
   }
   else if (k === 'size') { it.w = Math.max(f / 4, w[0] - b.at[0]); it.h = it.w * b.h / b.w; }   // keeps the image's proportions
   else if (k === 'p1' || k === 'p2' || k === 'vertex') it[k] = snapped();

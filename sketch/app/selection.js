@@ -150,7 +150,19 @@ function renderChips() {
       el('button', { class: 'chip' + (it.noPrint ? ' on' : ''), text: it.noPrint ? 'No print' : 'Prints', title: 'No-print images show faintly and are left out of exports', on: { click: function () {
         edit(function (n) { n.noPrint = !it.noPrint; });
       } } }),
-      el('button', { class: 'chip', text: 'Accept as detail…', on: { click: function () { acceptImage(it); } } })
+      el('button', { class: 'chip', text: 'Accept as detail…', on: { click: function () { acceptImage(it); } } }),
+      el('button', { class: 'chip', text: 'Scale…', title: 'Scale the picture by a percentage of its current size, around its centre', on: { click: function () {
+        var pct = parseFloat(window.prompt('Scale to what percent of the current size?', '100'));
+        if (!pct || pct <= 0) return;
+        var k = pct / 100, c = SK.imageCentre(it);
+        edit(function (n) { n.w = it.w * k; n.h = it.h * k; n.at = [c[0] - n.w / 2, c[1] - n.h / 2]; });
+      } } }),
+      el('button', { class: 'chip', text: 'Turn…', title: 'Turn the picture by degrees about its centre (positive is clockwise on screen)', on: { click: function () {
+        var deg = parseFloat(window.prompt('Turn by how many degrees? Positive turns clockwise.', '90'));
+        if (!deg) return;
+        edit(function (n) { n.rot = (it.rot || 0) + deg * Math.PI / 180; });
+      } } }),
+      el('button', { class: 'chip', text: 'Straight', title: 'Set the picture back to level', on: { click: function () { edit(function (n) { n.rot = 0; }); } } })
     );
   } else if (it.kind === 'dim') {
     chips.push(

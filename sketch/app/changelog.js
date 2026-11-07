@@ -15,6 +15,7 @@ var VERSIONS = [
 
 // Changes, newest first: [date, what changed].
 var CHANGES = [
+  ['7 Nov', 'Pictures (underlays) can be scaled by a percentage, turned by any number of degrees, and set straight again; the corner handle scales and the top handle turns'],
   ['7 Nov', 'Open from the Detail Library: a link with #import=<id> opens that cloud copy here, its picture as the background (never printed)'],
   ['5 Nov', 'Files button in the right rail opens files.html: links to the local files that are not in the cloud library'],
   ['1 Nov', 'Pen colour: black, red, blue and +. The + opens yellow, green, magenta, 50% grey, orange, purple, your custom colour and a mixer (HSL or CMYK grid, or type a hex)'],

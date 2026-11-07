@@ -55,7 +55,12 @@
     var out = Object.assign({}, it);
     if (it.kind === 'stroke') { out.pts = it.pts.map(P); out.w = it.w * sc; }
     else if (it.kind === 'hatch') out.pts = it.pts.map(P);
-    else if (it.kind === 'image') { out.at = f(it.at); out.w = it.w * sc; out.h = it.h * sc; }
+    else if (it.kind === 'image') {
+      var ic = f(SK.imageCentre(it));
+      out.w = it.w * sc; out.h = it.h * sc;
+      out.at = [ic[0] - out.w / 2, ic[1] - out.h / 2];
+      out.rot = (it.rot || 0) + (angle || 0);
+    }
     else if (it.kind === 'note') {
       out.at = f(it.at);
       out.width = it.width * sc;

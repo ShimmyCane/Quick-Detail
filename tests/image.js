@@ -4,6 +4,7 @@ require('../sketch/core.js');
 require('../sketch/units.js');
 require('../sketch/hatch.js');
 require('../sketch/annot.js');
+require('../sketch/blocks.js');
 require('../sketch/analyze.js');
 var SK = globalThis.SK;
 var failures = 0;
@@ -26,5 +27,18 @@ check('print bounds ignore the no-print image', SK.itemsBounds(SK.printable([lin
 var d = SK.describeItem(img, ac);
 check('an image is described for metadata', d.type === 'image' && d.label === 'image: site photo (no print)', d.label);
 
+
+// Turning: the box turns about its centre, and bounds, hits and the transform follow it.
+var turned = { id: 'i2', kind: 'image', src: 'data:image/jpeg;base64,', at: [2, 3], w: 10, h: 5, rot: Math.PI / 2, name: 'turned' };
+var tb = SK.itemBounds(turned, ac);
+check('a quarter turn swaps the bounds about the centre', Math.abs(tb.minx - 4.5) < 1e-9 && Math.abs(tb.maxx - 9.5) < 1e-9 && Math.abs(tb.miny - 0.5) < 1e-9 && Math.abs(tb.maxy - 10.5) < 1e-9, JSON.stringify(tb));
+check('a point inside the turned picture hits it', SK.hitItem(turned, [5, 5.5], 0.01, ac));
+check('a point outside the turned picture misses it', !SK.hitItem(turned, [1, 5.5], 0.01, ac));
+var rt = SK.worldToImage(turned, SK.imageToWorld(turned, 3, 1));
+check('world and picture coordinates round-trip', Math.abs(rt[0] - 3) < 1e-9 && Math.abs(rt[1] - 1) < 1e-9, JSON.stringify(rt));
+var moved = SK.transformItem(turned, function (p) { return [p[0] + 1, p[1] + 2]; }, 1, 0);
+check('moving a turned picture moves its centre and keeps the turn', moved.rot === turned.rot && Math.abs(moved.at[0] - 3) < 1e-9 && Math.abs(moved.at[1] - 5) < 1e-9, JSON.stringify(moved.at));
+var spun = SK.transformItem(img, function (p) { return p; }, 1, Math.PI / 2);
+check('turning an unturned picture sets its turn', Math.abs(spun.rot - Math.PI / 2) < 1e-9);
 console.log(failures ? failures + ' failed' : 'all passed');
 process.exit(failures ? 1 : 0);

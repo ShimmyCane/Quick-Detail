@@ -11,6 +11,7 @@
 // Selects an item (or nothing), optionally one of a note's arrows, and shows its chips.
 function select(id, leader) {
   sel = id ? { id: id, leader: leader == null ? null : leader } : null;
+  group = null;   // a single pick replaces any group
   if (settings.autoCollapse) setCollapsed(!!id);
   renderChips();
   redraw();
@@ -50,7 +51,7 @@ renderMic();
 
 // Deletes the selected item.
 function deleteSelected() {
-  if (!sel) return;
+  if (!sel) { if (group) deleteGroup(); return; }
   var id = sel.id;
   sel = null;
   commitDel(id);
@@ -110,6 +111,14 @@ function renderChips() {
   var it = sel && byId(sel.id);
   if (editing) {
     bar.appendChild(el('button', { class: 'chip on', text: 'Done', on: { mousedown: function (e) { e.preventDefault(); }, click: function () { closeEditor(true); } } }));
+    bar.hidden = false;
+    return;
+  }
+  if (!it && group) {
+    bar.appendChild(el('span', { class: 'muted small', text: group.length + ' selected. Drag inside the box to move them.' }));
+    bar.appendChild(el('button', { class: 'chip', text: 'Duplicate', on: { click: duplicateGroup } }));
+    bar.appendChild(el('button', { class: 'chip danger', text: 'Delete', on: { click: deleteGroup } }));
+    bar.appendChild(el('button', { class: 'chip', text: 'Clear', on: { click: function () { select(null); } } }));
     bar.hidden = false;
     return;
   }
@@ -203,6 +212,85 @@ function renderChips() {
   chips.push(el('button', { class: 'chip danger', text: 'Delete', on: { click: deleteSelected } }));
   chips.forEach(function (c) { if (c) bar.appendChild(c); });
   bar.hidden = false;
+}
+
+// ---- Box select and group move ----
+// In select mode a pen or mouse drag on empty space draws a box. Every item wholly inside it is picked. Two or more
+// items become a group: drag inside the group's dashed box to move them all, as one undo step. Tap empty space or press
+// Esc to clear. A finger on empty space still pans; two fingers pinch.
+
+// The bounds of one item in world units (a block through its source).
+function boundsOf(it) {
+  return it.kind === 'block' ? SK.blockBounds(it, sourceOf, ac()) : SK.itemBounds(it, ac());
+}
+
+// The box round the whole group, or null.
+function groupBox() {
+  if (!group) return null;
+  var b = null;
+  group.forEach(function (id) {
+    var it = byId(id), q = it && boundsOf(it);
+    if (!q) return;
+    b = b ? { minx: Math.min(b.minx, q.minx), miny: Math.min(b.miny, q.miny), maxx: Math.max(b.maxx, q.maxx), maxy: Math.max(b.maxy, q.maxy) }
+          : { minx: q.minx, miny: q.miny, maxx: q.maxx, maxy: q.maxy };
+  });
+  return b;
+}
+
+// Ends the box: the items wholly inside it are picked. One picks as a single item; two or more form a group.
+function finishMarquee(a, b) {
+  var x0 = Math.min(a[0], b[0]), x1 = Math.max(a[0], b[0]), y0 = Math.min(a[1], b[1]), y1 = Math.max(a[1], b[1]);
+  var ids = [];
+  detail.items.forEach(function (it) {
+    if (SK.isUnderlay(it) && !settings.underlay) return;
+    var q = boundsOf(it);
+    if (q && q.minx >= x0 && q.maxx <= x1 && q.miny >= y0 && q.maxy <= y1) ids.push(it.id);
+  });
+  $('hint').hidden = true;   // the select hint would sit over the group's chips
+  select(null);
+  if (ids.length === 1) select(ids[0]);
+  else if (ids.length > 1) { group = ids; renderChips(); }
+  redraw();
+}
+
+// Moves the group: a copy of every item is offset as the pointer moves; the undo step is written when the drag ends.
+function startGroupDrag(w) {
+  drag = { group: true, ids: group.slice(), all: clone(detail.items), w0: w };
+}
+function moveGroupDrag(w) {
+  var dx = w[0] - drag.w0[0], dy = w[1] - drag.w0[1];
+  detail.items = drag.all.map(function (it) { return drag.ids.indexOf(it.id) >= 0 ? offsetCopy(it, dx, dy) : it; });
+  redraw();
+}
+function endGroupDrag(d) {
+  var after = detail.items;
+  var moved = after.some(function (it, i) { return JSON.stringify(it) !== JSON.stringify(d.all[i]); });
+  detail.items = d.all;
+  if (moved) commitReplace(after);
+  else redraw();
+}
+
+// Copies the group a little down and to the right, and selects the copies as the new group.
+function duplicateGroup() {
+  var d = SK.PAPER.text * factorOf(detail) * 2;
+  var copies = detail.items.filter(function (it) { return group.indexOf(it.id) >= 0; }).map(function (it) {
+    var c = offsetCopy(it, d, d);
+    c.id = uid(it.id.charAt(0));
+    return c;
+  });
+  var ids = copies.map(function (c) { return c.id; });
+  commitReplace(detail.items.concat(copies));
+  group = ids.length > 1 ? ids : null;
+  renderChips();
+  redraw();
+  toast('Duplicated ' + ids.length + '. Drag the copies where you need them.');
+}
+
+// Deletes every item in the group, as one undo step.
+function deleteGroup() {
+  var ids = group;
+  group = null;
+  commitReplace(detail.items.filter(function (it) { return ids.indexOf(it.id) < 0; }));
 }
 
 // ---- Calibrate: two points on a picture and their real length. The picture is scaled so the two points measure that

@@ -31,6 +31,8 @@ function redraw() {
   if (!pb) {
     drawDraft(col);
     drawSelection(col);
+    drawGroup(col);
+    drawMarquee(col);
   }
   updateTitle();
 }
@@ -167,6 +169,31 @@ function drawSelection(col) {
     ctx.arc(s[0], s[1], 7, 0, Math.PI * 2);
     ctx.stroke();
   });
+}
+
+// Paints the dashed box round a box-selected group.
+function drawGroup(col) {
+  var b = groupBox();
+  if (!b) return;
+  var p = SK.toScreen(view, [b.minx, b.miny]), q = SK.toScreen(view, [b.maxx, b.maxy]);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.strokeStyle = col.accent;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.strokeRect(p[0] - 8, p[1] - 8, q[0] - p[0] + 16, q[1] - p[1] + 16);
+  ctx.setLineDash([]);
+}
+
+// Paints the box being drawn in select mode.
+function drawMarquee(col) {
+  if (!marquee) return;
+  var p = SK.toScreen(view, marquee.a), q = SK.toScreen(view, marquee.b);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.strokeStyle = col.accent;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.strokeRect(p[0], p[1], q[0] - p[0], q[1] - p[1]);
+  ctx.setLineDash([]);
 }
 
 // Live pen: only the newest piece is painted; the whole stroke is repainted on pen up.

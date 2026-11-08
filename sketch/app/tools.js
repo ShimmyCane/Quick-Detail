@@ -26,6 +26,7 @@ function toolDown(e, sp) {
 // Pointer move: erases, drags a handle, extends the stroke, or follows the step in progress.
 function toolMove(e, sp) {
   var w = SK.toWorld(view, sp);
+  if (marquee) { marquee.b = w; redraw(); return; }
   if (tool === 'erase') { eraseAt(w); return; }
   if (drag) { moveHandleDrag(w); return; }
   if (drawing) {
@@ -44,6 +45,7 @@ function toolMove(e, sp) {
 // Pointer up: ends a drag, commits a stroke (a short tap selects instead), or a tool step.
 function toolUp(e, sp, a) {
   var w = SK.toWorld(view, sp);
+  if (marquee) { var m = marquee; marquee = null; finishMarquee(m.a, w); return; }
   if (drag) { endHandleDrag(); return; }
   if (drawing) {
     var it = drawing.item;
@@ -146,15 +148,24 @@ function selectDown(e, sp, w) {
     var h = hitHandle(sp);
     if (h) { startHandleDrag(h, w); return; }
   }
+  var gb = groupBox(), pad = 8 / view.z;
+  if (group && gb && w[0] >= gb.minx - pad && w[0] <= gb.maxx + pad && w[1] >= gb.miny - pad && w[1] <= gb.maxy + pad) {
+    startGroupDrag(w);   // inside the group's box: the whole group moves
+    return;
+  }
   var it = pickAt(w);
   if (it) {
     select(it.id);
     startHandleDrag({ key: 'move' }, w);
     return;
   }
-  if (sel) select(null);
-  active = null;
-  startPan(e, sp);
+  if (sel || group) select(null);
+  if (e.pointerType === 'touch') {   // a finger pans; the pen and the mouse draw the box
+    active = null;
+    startPan(e, sp);
+    return;
+  }
+  marquee = { a: w, b: w };
 }
 
 // Handles for a box: the bottom-right corner scales, and a round handle above the top edge turns.
@@ -193,6 +204,7 @@ function startHandleDrag(h, w) {
 
 // Moves, scales or turns the selected item, or moves one of its points, while dragging.
 function moveHandleDrag(w) {
+  if (drag.group) { moveGroupDrag(w); return; }
   var b = drag.before, it = clone(b), k = drag.key;
   var snapped = function () { return snapAt(w, b.id).p; };
   var f = factorOf(detail);
@@ -250,6 +262,7 @@ function scaleBlockTo(it, box, k) {
 function endHandleDrag() {
   var d = drag;
   drag = null;
+  if (d.group) { endGroupDrag(d); return; }
   var after = byId(d.id);
   if (after && JSON.stringify(after) !== JSON.stringify(d.before)) commitPut(after, d.before);
   else redraw();

@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/app/rail.js</code></h1>
-<p class="muted">App: bars and start · 489 lines · App part 22 of 23 in the load order.</p>
+<p class="muted">App: bars and start · 509 lines · App part 22 of 23 in the load order.</p>
 <h2>What it does</h2>
 <p>Left bar, right rail and keys.<br>
 Colour, weight and dimension pickers, the left-bar tools, the overflow column on small screens,<br>
@@ -51,10 +51,13 @@ hold-for-redo, the scene button, library header wiring, and keyboard shortcuts.<
 <tr><td class="n">241</td><td class="name"><code>toggleUnderlay()</code></td><td>Underlays (no-print images) can be hidden by hand. They stay in the detail, its exports and the cloud upload.</td><td><span class="muted">this file only</span></td></tr>
 <tr><td class="n">251</td><td class="name"><code>renderUnderlay()</code></td><td>Shows whether underlays are on, on the left bar.</td><td><a href="app-start.html">start</a></td></tr>
 <tr><td class="n">273</td><td class="name"><code>renderDimPicker()</code></td><td>Shows the current dimension type on the left bar.</td><td><a href="app-draft.html">draft</a></td></tr>
-<tr><td class="n">294</td><td class="name"><code>railHome()</code></td><td>Puts every tool moved to the overflow column back on the left bar.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">298</td><td class="name"><code>railTidy()</code></td><td>Hides tool groups that are left empty.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">302</td><td class="name"><code>railShowMore()</code></td><td>Opens or closes the overflow column, beside the bar's bottom edge.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">317</td><td class="name"><code>fitLeftRail()</code></td><td>Moves the tools that do not fit on the left bar into the overflow column, from the bottom up.</td><td><a href="app-selection.html">selection</a></td></tr>
+<tr><td class="n">293</td><td class="name"><code>isTablet()</code></td><td>Whether this is a tablet: a touch screen at least 600 px across its short side.</td><td><a href="app-settings.html">settings</a></td></tr>
+<tr><td class="n">295</td><td class="name"><code>setUiScale()</code></td><td>Sets the scale from the short side of the screen: 1 up to about 560 px, then grows to 1.4 on the largest tablets.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">302</td><td class="name"><code>applyPenLayout()</code></td><td>Every colour and line weight shown at once: on by default on a tablet, or as Settings says.</td><td><a href="app-settings.html">settings</a></td></tr>
+<tr><td class="n">309</td><td class="name"><code>railHome()</code></td><td>Puts every tool moved to the overflow column back on the left bar.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">313</td><td class="name"><code>railTidy()</code></td><td>Hides tool groups that are left empty.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">317</td><td class="name"><code>railShowMore()</code></td><td>Opens or closes the overflow column, beside the bar's bottom edge.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">332</td><td class="name"><code>fitLeftRail()</code></td><td>Moves the tools that do not fit on the left bar into the overflow column, from the bottom up.</td><td><a href="app-selection.html">selection</a>, <a href="app-settings.html">settings</a></td></tr>
 </table></div>
 <h2>Values</h2>
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
@@ -62,11 +65,12 @@ hold-for-redo, the scene button, library header wiring, and keyboard shortcuts.<
 <tr><td class="n">258</td><td class="name"><code>DIM_ICON</code></td><td>Dimension type: a picker like colour and weight. The dot shows the current type; the row holds the three.</td><td><span class="muted">this file only</span></td></tr>
 <tr><td class="n">263</td><td class="name"><code>DIM_NAME</code></td><td><span class="muted">—</span></td><td><span class="muted">this file only</span></td></tr>
 <tr><td class="n">290</td><td class="name"><code>LEFT_BAR_TOP</code></td><td>Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the &quot;+&quot;. Each tool is put back where it was before every refit, so the bar always fills from the top.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">291</td><td class="name"><code>railMoved</code><span class="tag">state</span></td><td>{ unit, slot } for each tool moved out</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">292</td><td class="name"><code>railOpen</code><span class="tag">state</span></td><td>whether the second column is open</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">291</td><td class="name"><code>UI</code></td><td>the screen scale: 1 on a phone or desktop, larger on a tablet (see tablet.css)</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">306</td><td class="name"><code>railMoved</code><span class="tag">state</span></td><td>{ unit, slot } for each tool moved out</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">307</td><td class="name"><code>railOpen</code><span class="tag">state</span></td><td>whether the second column is open</td><td><span class="muted">this file only</span></td></tr>
 </table></div>
 
-<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-07. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-08. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
 </main>
 </body>
 </html>

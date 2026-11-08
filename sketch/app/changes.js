@@ -23,6 +23,7 @@ function changed() {
   saveSoon();
   scheduleLive();
   if (sel && !byId(sel.id)) sel = null;
+  if (group) { group = group.filter(function (id) { return !!byId(id); }); if (group.length < 2) group = null; }
   renderChips();
   redraw();
 }

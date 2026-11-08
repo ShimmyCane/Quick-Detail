@@ -13,7 +13,7 @@ function setTool(t) {
   select(null);
   if (same && t !== 'select') return;
   tool = t;
-  if (t === 'select') showHint('Tap to pick up. Drag to move. Corner: scale. Round handle: turn. Drag empty space to pan.');
+  if (t === 'select') showHint('Tap to pick up. Drag to move. Corner: scale. Round handle: turn. Drag empty space to box-select a group.');
   if (t === 'text') {
     draft = { tool: 'text', step: 0 };
     showHint('Tap the arrow point.');

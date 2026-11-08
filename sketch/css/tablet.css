@@ -1,0 +1,37 @@
+/* Quick Detail styles — Tablets: the bars, title and panels grow with the screen (--ui, set in rail.js), and the right rail gets
+   the same box as the left bar. --ui is 1 on a phone or a desktop, so those screens look as before.
+   Part of the stylesheet split across sketch/css/*.css. The files load in order (see index.html), as one stylesheet would. */
+
+/* ---- the scale: zoom grows the bars, title, panel and chips from one number ---- */
+.lrail, .lrail-more, .rail, .title-block, .panel, .chips, .hint { zoom: var(--ui, 1); }
+.chips, .hint { max-width: calc(100vw / var(--ui, 1) - 32px); }
+
+/* ---- the right rail is a box, like the left bar ---- */
+.rail {
+  padding: 6px;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.rail button { border-radius: 12px; }
+.rail button.on { border-radius: 12px; }
+.rail .scene { margin-top: 0; }
+
+/* ---- every colour and every line weight, shown at once (Settings → Toolbars, or on by default on a tablet) ---- */
+body.all-pens #colorPicker .pick-cur, body.all-pens #weightPicker .pick-cur, body.all-pens #colorMore { display: none; }
+body.all-pens #colorPicker .pick-row, body.all-pens #weightPicker .pick-row {
+  display: grid !important;
+  position: static;
+  margin: 0;
+  padding: 4px 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+body.all-pens #colorPicker .pick-row { grid-template-columns: repeat(4, auto); gap: 5px; }
+body.all-pens #weightPicker .pick-row { grid-template-columns: repeat(2, auto); gap: 5px; }
+body.all-pens .pick-row .color-extra { display: flex !important; }
+body.all-pens #colorPicker .pick-row [data-color], body.all-pens #colorPicker .color-mix-btn { width: 26px; height: 26px; }
+body.all-pens #colorPicker .color-mix { z-index: 10; }
+body.all-pens #weightPicker .pick-row button { width: 40px; height: 28px; }

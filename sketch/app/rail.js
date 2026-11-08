@@ -207,12 +207,12 @@ var colorMix = (function () {
     if (!on) return;
     hex = pen.custom; update('hex');
     var row = document.querySelector('#colorPicker .pick-row').getBoundingClientRect();
-    var bw = box.offsetWidth, bh = box.offsetHeight;
+    var bb = box.getBoundingClientRect(), bw = bb.width, bh = bb.height;
     var left = row.right + 8, top = row.top;
     if (left + bw > window.innerWidth - 8) left = Math.max(8, row.left);
     if (left !== row.right + 8) top = row.bottom + 8;
     top = clamp(top, 8, Math.max(8, window.innerHeight - bh - 8));
-    box.style.left = left + 'px'; box.style.top = top + 'px';
+    box.style.left = left / UI + 'px'; box.style.top = top / UI + 'px';   // the box sits in the zoomed bar: CSS pixels
   }
   return { show: show, hslRgb: hslRgb, cmykRgb: cmykRgb, toHex: toHex };
 })();
@@ -287,7 +287,22 @@ renderDimPicker();
 
 // Small screens: when the left bar runs down past the screen, its last tools move into a second column, opened by the "+".
 // Each tool is put back where it was before every refit, so the bar always fills from the top.
-var LEFT_BAR_TOP = 60, LEFT_BAR_BOTTOM = 124;   // px kept clear: the title block (about 97 px) and its 14 px margin (see style.css)
+var LEFT_BAR_TOP = 60, LEFT_BAR_BOTTOM = 124;   // px kept clear at scale 1: the title block (about 97 px) and its 14 px margin
+var UI = 1;   // the screen scale: 1 on a phone or desktop, larger on a tablet (see tablet.css)
+// Whether this is a tablet: a touch screen at least 600 px across its short side.
+function isTablet() { return window.matchMedia('(pointer: coarse)').matches && Math.min(window.innerWidth, window.innerHeight) >= 600; }
+// Sets the scale from the short side of the screen: 1 up to about 560 px, then grows to 1.4 on the largest tablets.
+function setUiScale() {
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  UI = coarse ? Math.max(1, Math.min(1.4, Math.round(Math.min(window.innerWidth, window.innerHeight) / 560 * 100) / 100)) : 1;
+  document.documentElement.style.setProperty('--ui', String(UI));
+  applyPenLayout();
+}
+// Every colour and line weight shown at once: on by default on a tablet, or as Settings says.
+function applyPenLayout() {
+  var on = settings.allPens == null ? isTablet() : !!settings.allPens;
+  document.body.classList.toggle('all-pens', on);
+}
 var railMoved = [];      // { unit, slot } for each tool moved out
 var railOpen = false;    // whether the second column is open
 // Puts every tool moved to the overflow column back on the left bar.
@@ -308,9 +323,9 @@ function railShowMore() {
   if (on) {
     // The bar grows up from the lower left corner, so the second column lines up with its bottom edge.
     var r = $('lrail').getBoundingClientRect();
-    more.style.left = Math.round(r.right + 10) + 'px';
+    more.style.left = Math.round((r.right + 10) / UI) + 'px';
     more.style.top = 'auto';
-    more.style.bottom = Math.round(window.innerHeight - r.bottom) + 'px';
+    more.style.bottom = Math.round((window.innerHeight - r.bottom) / UI) + 'px';
   }
 }
 // Moves the tools that do not fit on the left bar into the overflow column, from the bottom up.
@@ -320,7 +335,11 @@ function fitLeftRail() {
   plusGroup.hidden = true;
   railTidy();
   // The bar sits between the top of the sheet and the title block at the bottom left, so that is the room it has.
-  var room = window.innerHeight - LEFT_BAR_BOTTOM - LEFT_BAR_TOP;
+  // The bar's bottom edge sits just above the title block, which grows with the scale. Measured, not assumed.
+  var t = $('title').getBoundingClientRect();
+  var clear = t.height ? window.innerHeight - t.top + 12 * UI : LEFT_BAR_BOTTOM * UI;
+  rail.style.bottom = Math.round(clear / UI) + 'px';
+  var room = window.innerHeight - clear - LEFT_BAR_TOP * UI;
   if (rail.getBoundingClientRect().height > room) {
     plusGroup.hidden = false;
     var units = Array.prototype.slice.call(rail.querySelectorAll('.tool, .picker'));
@@ -337,8 +356,9 @@ function fitLeftRail() {
   railShowMore();
 }
 $('lrailPlus').addEventListener('click', function () { railOpen = !railOpen; railShowMore(); });
-window.addEventListener('resize', fitLeftRail);
+window.addEventListener('resize', function () { setUiScale(); fitLeftRail(); });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitLeftRail);
+setUiScale();
 fitLeftRail();
 
 // Undo: a tap undoes. Holding it opens Redo to the right. Drag onto Redo and let go to redo; let go anywhere else to cancel.
@@ -440,7 +460,7 @@ document.addEventListener('keydown', function (e) {
     else if (!$('tagsPage').hidden) closeTags();
     else if (!$('libPage').hidden) closeLibrary();
     else if (draft) endDraft();
-    else if (sel) select(null);
+    else if (sel || group) select(null);
     else if (panelKind) closePanel();
     else if (pb) exitReplay();
     return;
@@ -455,7 +475,7 @@ document.addEventListener('keydown', function (e) {
     e.preventDefault();
     if (pb) { if (pb.playing) pausePlay(); else startPlay(); }
     else spaceDown = true;
-  } else if ((e.key === 'Delete' || e.key === 'Backspace') && sel) { e.preventDefault(); deleteSelected(); }
+  } else if ((e.key === 'Delete' || e.key === 'Backspace') && (sel || group)) { e.preventDefault(); deleteSelected(); }
   else if (e.key === 't' || e.key === 'T') setTool('text');
   else if (e.key === 'd' || e.key === 'D') setTool('dim');
   else if (e.key === 'n' || e.key === 'N') newScene();

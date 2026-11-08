@@ -6,7 +6,7 @@
 'use strict';
 
 var VERSIONS = [
-  { label: 'v5 · current', href: null, text: 'Playback in the right panel, compact Info, clean screen hides the title' },
+  { label: 'v5 · current', href: null, text: 'Playback in the right panel, compact Info, clean screen hides the title, box select, tablet layout' },
   { label: 'v4 · archived', href: 'history/v4/index.html', text: 'The app before v5, kept as it was' },
   { label: 'v3', href: null, text: 'Endless sheet, scenes, notes, dimensions, library' },
   { label: 'v2 · Wall sketch', href: 'history/v2/index.html', text: 'Blank sheet with recording and replay' },
@@ -15,6 +15,9 @@ var VERSIONS = [
 
 // Changes, newest first: [date, what changed].
 var CHANGES = [
+  ['8 Nov', 'Box select: in select mode, drag a box over empty space with the pen or mouse. Every item wholly inside it is picked; two or more form a group that moves together (drag inside its dashed box), duplicates or deletes as one undo step. Esc or a tap on empty space clears it. A finger on empty space still pans'],
+  ['8 Nov', 'On a tablet the bars, title and panels grow with the screen, and the right rail is a box like the left bar'],
+  ['8 Nov', 'Every colour and line weight shows in the left bar on a tablet by default. Settings → Toolbars turns it on or off on any screen'],
   ['7 Nov', 'Calibrate a picture: click two points on it, type their real length, and it is scaled to that length about the first point. It then prints at the sheet scale (at 3 in = 1 ft, a 2 ft object prints as 6 in)'],
   ['7 Nov', 'Pictures (underlays) can be scaled by a percentage, turned by any number of degrees, and set straight again; the corner handle scales and the top handle turns'],
   ['7 Nov', 'Open from the Detail Library: a link with #import=<id> opens that cloud copy here, its picture as the background (never printed)'],

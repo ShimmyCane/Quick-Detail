@@ -75,9 +75,20 @@ function renderSettings(body) {
     setCollapsed(!!sel && settings.autoCollapse);
   } } });
 
+  // On a tablet every colour and weight shows in the left bar by default. This turns that on or off on any screen.
+  var allPens = el('input', { type: 'checkbox', checked: settings.allPens == null ? isTablet() : !!settings.allPens, on: { change: function (e) {
+    settings.allPens = e.target.checked;
+    saveSettings();
+    applyPenLayout();
+    fitLeftRail();
+  } } });
+
   [
     appearanceSection(),
-    section('Toolbars', [el('label', { class: 'check' }, [autoCollapse, ' Hide toolbars while an object is selected'])]),
+    section('Toolbars', [
+      el('label', { class: 'check' }, [autoCollapse, ' Hide toolbars while an object is selected']),
+      el('label', { class: 'check' }, [allPens, ' Show every colour and line weight in the left bar'])
+    ]),
     section('Notes', [el('label', { class: 'check' }, [caps, ' Capitals'])]),
     section('Dimensions', [el('label', { class: 'check' }, ['Round to ', round])]),
     el('details', {}, [el('summary', { text: 'Version' }), versions]),

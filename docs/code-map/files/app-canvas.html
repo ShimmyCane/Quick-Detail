@@ -33,7 +33,7 @@ input.find { width: 100%; max-width: 420px; padding: 8px 12px; font: inherit; bo
 <main>
 <nav class="crumbs"><a href="../index.html">← Code map</a><a href="../review.html">Review notes</a></nav>
 <h1><code>sketch/app/canvas.js</code></h1>
-<p class="muted">App: the sheet · 196 lines · App part 5 of 23 in the load order.</p>
+<p class="muted">App: the sheet · 223 lines · App part 5 of 23 in the load order.</p>
 <h2>What it does</h2>
 <p>Painting the sheet.<br>
 redraw() paints the grid, underlays, linework, the draft in progress and the selection handles on the canvas.</p>
@@ -45,17 +45,19 @@ redraw() paints the grid, underlays, linework, the draft in progress and the sel
 <div class="wrap"><table><tr><th>Line</th><th>Name</th><th>What it does</th><th>Used in</th></tr>
 <tr><td class="n">12</td><td class="name"><code>resize()</code></td><td>Matches the canvas to the window and the screen's pixel ratio.</td><td><a href="app-rail.html">rail</a>, <a href="app-start.html">start</a></td></tr>
 <tr><td class="n">20</td><td class="name"><code>redraw()</code></td><td>Paints the whole sheet: background, grid, underlays, items, missing blocks, then the draft and the selection.</td><td><a href="app-details.html">details</a>, <a href="app-changes.html">changes</a>, <a href="app-input.html">input</a>, <a href="app-tools.html">tools</a>, <a href="app-draft.html">draft</a>, <a href="app-selection.html">selection</a>, <a href="app-editor.html">editor</a>, <a href="app-settings.html">settings</a>, <a href="app-log.html">log</a>, <a href="app-rail.html">rail</a></td></tr>
-<tr><td class="n">39</td><td class="name"><code>marker(p, col, filled)</code></td><td>A small circle at a snap point or a picked point.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">51</td><td class="name"><code>drawDraft(col)</code></td><td>Paints the step in progress: the hatch rectangle, the note's arrow and box, or the dimension being placed.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">87</td><td class="name"><code>handlesOf(it)</code></td><td>The drag handles of an item: { key, p } for each, in world inches.</td><td><a href="app-tools.html">tools</a></td></tr>
-<tr><td class="n">120</td><td class="name"><code>drawUnderlay(bk, col)</code></td><td>A block is an underlay: drawn faint under the linework, at the block's own opacity.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">125</td><td class="name"><code>drawPlaceholder(bk, col)</code></td><td>A block whose source is not on this device: a dashed box with its name, so it can still be selected and erased.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">140</td><td class="name"><code>drawSelection(col)</code></td><td>Paints the dashed box and handles of the selected item.</td><td><span class="muted">this file only</span></td></tr>
-<tr><td class="n">173</td><td class="name"><code>drawPiece(item, a, b)</code></td><td>Live pen: only the newest piece is painted; the whole stroke is repainted on pen up.</td><td><a href="app-tools.html">tools</a></td></tr>
-<tr><td class="n">187</td><td class="name"><code>updateTitle()</code></td><td>Updates the title block: name, scale and graphic scale bar.</td><td><a href="app-panels.html">panels</a>, <a href="app-library-info.html">library-info</a></td></tr>
+<tr><td class="n">41</td><td class="name"><code>marker(p, col, filled)</code></td><td>A small circle at a snap point or a picked point.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">53</td><td class="name"><code>drawDraft(col)</code></td><td>Paints the step in progress: the hatch rectangle, the note's arrow and box, or the dimension being placed.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">89</td><td class="name"><code>handlesOf(it)</code></td><td>The drag handles of an item: { key, p } for each, in world inches.</td><td><a href="app-tools.html">tools</a></td></tr>
+<tr><td class="n">122</td><td class="name"><code>drawUnderlay(bk, col)</code></td><td>A block is an underlay: drawn faint under the linework, at the block's own opacity.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">127</td><td class="name"><code>drawPlaceholder(bk, col)</code></td><td>A block whose source is not on this device: a dashed box with its name, so it can still be selected and erased.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">142</td><td class="name"><code>drawSelection(col)</code></td><td>Paints the dashed box and handles of the selected item.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">175</td><td class="name"><code>drawGroup(col)</code></td><td>Paints the dashed box round a box-selected group.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">188</td><td class="name"><code>drawMarquee(col)</code></td><td>Paints the box being drawn in select mode.</td><td><span class="muted">this file only</span></td></tr>
+<tr><td class="n">200</td><td class="name"><code>drawPiece(item, a, b)</code></td><td>Live pen: only the newest piece is painted; the whole stroke is repainted on pen up.</td><td><a href="app-tools.html">tools</a></td></tr>
+<tr><td class="n">214</td><td class="name"><code>updateTitle()</code></td><td>Updates the title block: name, scale and graphic scale bar.</td><td><a href="app-panels.html">panels</a>, <a href="app-library-info.html">library-info</a></td></tr>
 </table></div>
 
-<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-07. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
+<p class="muted small">Generated by <code>node tools/codemap.js</code> from the code on 2026-11-08. Line numbers are current as of that run. Do not edit this page by hand: change the code's comments and run the script again.</p>
 </main>
 </body>
 </html>
